@@ -6,6 +6,15 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/resource" type="java-resource" relativeOutputPath="resource" />
+      <sourceFolder url="file://$MODULE_DIR$/external/sphinx4-5prealpha-src/sphinx4-core/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/external/sphinx4-5prealpha-src/sphinx4-core/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/external/sphinx4-5prealpha-src/sphinx4-data/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/java-speech-api-master/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/sphinx4-5prealpha-src/sphinx4-core/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/sphinx4-5prealpha-src/sphinx4-core/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/sphinx4-5prealpha-src/sphinx4-data/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/sphinx4-5prealpha-src/sphinx4-samples/src/main/resources" type="java-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

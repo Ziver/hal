@@ -33,10 +33,13 @@ import java.io.*;
  * This version of the TwoWaySerialComm example makes use of the
  * SerialPortEventListener to avoid polling.
  */
-public class TwoWaySerialComm extends Thread{
+public class TellstickSerialComm extends Thread{
+    public static TellstickSerialComm instance;
+
     private BufferedReader in;
     private OutputStream out;
     private TellstickParser parser = new TellstickParser();
+    private TellstickChangeListener listener;
 
     public void connect(String portName) throws Exception {
         CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
@@ -66,16 +69,29 @@ public class TwoWaySerialComm extends Thread{
         try {
             String data;
             while ((data = in.readLine()) != null) {
-                System.out.println("> "+data);
-                parser.decode(data);
+                System.out.println("> " + data);
+                TellstickProtocol protocol = parser.decode(data);
+                if (protocol == null && (data.startsWith("+S") || data.startsWith("+T"))) {
+                    synchronized (this) {
+                        this.notifyAll();
+                    }
+                }
+                else if(listener != null){
+                    listener.stateChange(protocol);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void write(TellstickProtocol prot) {
+    public synchronized void write(TellstickProtocol prot) {
         write(prot.encode());
+        try {
+            this.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void write(String data) {
@@ -89,29 +105,58 @@ public class TwoWaySerialComm extends Thread{
         }
     }
 
+    public void setListener(TellstickChangeListener listener){
+        this.listener = listener;
+    }
+
+
+    public static TellstickSerialComm getInstance(){
+        if(instance == null){
+            try {
+                instance = new TellstickSerialComm();
+                instance.connect("COM6");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return instance;
+    }
+
+
+
 
     public static void main(String[] args) {
         try {
             // http://developer.telldus.com/doxygen/TellStick.html
-            TwoWaySerialComm comm = new TwoWaySerialComm();
+            TellstickSerialComm comm = new TellstickSerialComm();
             comm.connect("COM6");
 
             try{Thread.sleep(1000);}catch(Exception e){}
 
             NexaSelfLearning nexa = new NexaSelfLearning();
-            nexa.setHouse(11772006);
+            //nexa.setHouse(11772006);
+            nexa.setHouse(15087918);
             nexa.setGroup(0);
-            nexa.setUnit(1);
+            nexa.setUnit(0);
 
 
             while(true) {
                 nexa.setEnable(true);
+                nexa.setUnit(0);
+                comm.write(nexa);
+                Thread.sleep(2000);
+                nexa.setUnit(1);
                 comm.write(nexa);
                 Thread.sleep(2000);
 
+
                 nexa.setEnable(false);
+                nexa.setUnit(0);
                 comm.write(nexa);
-                Thread.sleep(4000);
+                Thread.sleep(2000);
+                nexa.setUnit(1);
+                comm.write(nexa);
+                Thread.sleep(2000);
             }
         } catch (Exception e) {
             e.printStackTrace();

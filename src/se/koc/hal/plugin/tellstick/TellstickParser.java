@@ -38,8 +38,9 @@ public class TellstickParser {
     }
 
 
+    private TellstickProtocol previus;
 
-    public void decode(String data) {
+    public TellstickProtocol decode(String data) {
         if (data.startsWith("+W")) {
             data = data.substring(2);
             HashMap<String, String> map = new HashMap<String, String>();
@@ -56,7 +57,11 @@ public class TellstickParser {
                     TellstickProtocol protocol = protClass.newInstance();
                     String binData = map.get("data");
                     protocol.decode(Converter.hexToByte(binData));
-                    System.out.println("Decoded: " + protocol);
+                    if(!protocol.equals(previus)) {
+                        previus = protocol;
+                        System.out.println("Decoded: " + protocol);
+                        return protocol;
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -68,6 +73,8 @@ public class TellstickParser {
         }else {
             System.out.println("Unknown prefix: " + data);
         }
+
+        return null;
     }
 
 

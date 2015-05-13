@@ -152,4 +152,11 @@ public class NexaSelfLearning implements TellstickProtocol {
                 ";unit:"+unit+
                 ";method:"+enable;
     }
+
+    public boolean equals(Object obj){
+        if(obj instanceof NexaSelfLearning)
+            return ((NexaSelfLearning) obj).house == house &&
+                    ((NexaSelfLearning)obj).unit == unit;
+        return false;
+    }
 }

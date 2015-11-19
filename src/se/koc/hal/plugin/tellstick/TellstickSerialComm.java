@@ -22,12 +22,9 @@
 
 package se.koc.hal.plugin.tellstick;
 
-import gnu.io.CommPort;
-import gnu.io.CommPortIdentifier;
-import gnu.io.SerialPort;
-import se.koc.hal.plugin.tellstick.protocols.NexaSelfLearning;
-
 import java.io.*;
+
+import com.fazecast.jSerialComm.SerialPort;
 
 /**
  * This version of the TwoWaySerialComm example makes use of the
@@ -36,33 +33,24 @@ import java.io.*;
 public class TellstickSerialComm extends Thread{
     public static TellstickSerialComm instance;
 
+    private com.fazecast.jSerialComm.SerialPort serial;
     private BufferedReader in;
-    private OutputStream out;
+    private Writer out;
+
     private TellstickParser parser = new TellstickParser();
     private TellstickChangeListener listener;
 
     public void connect(String portName) throws Exception {
-        CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
-        if (portIdentifier.isCurrentlyOwned()) {
-            System.out.println("Error: Port is currently in use");
-        } else {
-            CommPort commPort = portIdentifier.open(this.getClass().getName(), 2000);
+        serial = SerialPort.getCommPort(portName);
+        serial.setBaudRate(115200);
+        if(!serial.openPort())
+            throw new IOException("Could not open port: "+portName);
+        serial.setComPortTimeouts(
+                SerialPort.TIMEOUT_READ_SEMI_BLOCKING,
+                5000, 0);
 
-            if (commPort instanceof SerialPort) {
-                SerialPort serialPort = (SerialPort) commPort;
-                serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-
-                in  = new BufferedReader(new InputStreamReader (serialPort.getInputStream()));
-                out = new BufferedOutputStream(serialPort.getOutputStream());
-
-                serialPort.disableReceiveTimeout();
-                serialPort.enableReceiveThreshold(1);
-                this.start();
-
-            } else {
-                System.out.println("Error: Only serial ports are handled by this example.");
-            }
-        }
+        in  = new BufferedReader(new InputStreamReader(serial.getInputStream(),  "UTF-8"));
+        out = new BufferedWriter(new OutputStreamWriter(serial.getOutputStream(), "UTF-8"));
     }
 
     public void run() {

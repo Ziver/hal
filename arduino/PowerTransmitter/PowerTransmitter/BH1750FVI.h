@@ -21,9 +21,8 @@
 #ifndef BH1750FVI_h
 #define BH1750FVI_h
 
-#include "Arduino.h"
-
-#include "Wire.h"
+#include <Arduino.h>
+#include <Wire.h>
 
 #define Device_Address_L 0x23 // Device address when address pin LOW
 #define Device_Address_H 0x5C // Device address when address pin LOW
@@ -47,22 +46,24 @@
 #define OneTime_L_resolution_Mode  0x23//As well as address value
 
 #define AddrPin 17 // Address pin enable
-  class BH1750FVI {    
-    public:
-    BH1750FVI();
-    void begin(void);
-    void Sleep(void); 
-    void SetMode(uint8_t MODE);
-    void Reset(void);
-    void SetAddress(uint8_t add);
-    uint16_t GetLightIntensity(void);
-    
-    private:
-    void I2CWriteTo(uint8_t DataToSend);  
-    byte address_value;
-    boolean state;
-  };
-  #endif
+
+
+class BH1750FVI {    
+  public:
+  BH1750FVI();
+  void begin(void);
+  void Sleep(void); 
+  void SetMode(uint8_t MODE);
+  void Reset(void);
+  void SetAddress(uint8_t add);
+  uint16_t GetLightIntensity(void);
+  
+  private:
+  void I2CWriteTo(uint8_t DataToSend);  
+  byte address_value;
+  boolean state;
+};
+#endif
 
 
 

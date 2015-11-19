@@ -23,6 +23,7 @@
 package se.koc.hal.plugin.tellstick;
 
 import se.koc.hal.plugin.tellstick.protocols.NexaSelfLearning;
+import se.koc.hal.plugin.tellstick.protocols.Oregon0x1A2D;
 import zutil.converters.Converter;
 
 import java.util.HashMap;
@@ -35,6 +36,7 @@ public class TellstickParser {
 
     static {
         registerProtocol(NexaSelfLearning.class);
+        registerProtocol(Oregon0x1A2D.class);
     }
 
 

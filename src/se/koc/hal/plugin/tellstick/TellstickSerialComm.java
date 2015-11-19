@@ -121,46 +121,4 @@ public class TellstickSerialComm extends Thread{
         }
         return instance;
     }
-
-
-
-
-    public static void main(String[] args) {
-        try {
-            // http://developer.telldus.com/doxygen/TellStick.html
-            TellstickSerialComm comm = new TellstickSerialComm();
-            comm.connect("COM6");
-
-            try{Thread.sleep(1000);}catch(Exception e){}
-
-            NexaSelfLearning nexa = new NexaSelfLearning();
-            //nexa.setHouse(11772006);
-            nexa.setHouse(15087918);
-            nexa.setGroup(0);
-            nexa.setUnit(0);
-
-
-            while(true) {
-                nexa.setEnable(true);
-                nexa.setUnit(0);
-                comm.write(nexa);
-                Thread.sleep(2000);
-                nexa.setUnit(1);
-                comm.write(nexa);
-                Thread.sleep(2000);
-
-
-                nexa.setEnable(false);
-                nexa.setUnit(0);
-                comm.write(nexa);
-                Thread.sleep(2000);
-                nexa.setUnit(1);
-                comm.write(nexa);
-                Thread.sleep(2000);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }

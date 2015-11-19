@@ -1,0 +1,1 @@
+This are the official FTDI Virtual Com Port divers (VCP-Drivers) version 2.08.30 where information about the product ID:s of Tellstick, FHZ1000 and FHZ1300 in the files ftdiport.inf and ftdibus.inf have been added. 

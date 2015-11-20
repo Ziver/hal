@@ -23,53 +23,72 @@
 package se.koc.hal.plugin.tellstick;
 
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.fazecast.jSerialComm.SerialPort;
+import zutil.log.InputStreamLogger;
+import zutil.log.LogUtil;
+import zutil.log.OutputStreamLogger;
+import zutil.struct.TimedHashSet;
 
 /**
  * This version of the TwoWaySerialComm example makes use of the
  * SerialPortEventListener to avoid polling.
  */
 public class TellstickSerialComm extends Thread{
-    public static TellstickSerialComm instance;
+    private static final long TRANSMISSION_UNIQUENESS_TTL = 100; // milliseconds
+    private static final Logger logger = LogUtil.getLogger();
+    private static TellstickSerialComm instance;
 
-    private com.fazecast.jSerialComm.SerialPort serial;
+    private SerialPort serial;
     private BufferedReader in;
-    private Writer out;
+    private BufferedWriter out;
+    private TimedHashSet set; // To check for retransmissions
 
     private TellstickParser parser = new TellstickParser();
     private TellstickChangeListener listener;
 
+
+    public TellstickSerialComm(){
+        set = new TimedHashSet(TRANSMISSION_UNIQUENESS_TTL);
+    }
+
     public void connect(String portName) throws Exception {
         serial = SerialPort.getCommPort(portName);
-        serial.setBaudRate(115200);
+        serial.setBaudRate(9600);
         if(!serial.openPort())
             throw new IOException("Could not open port: "+portName);
         serial.setComPortTimeouts(
-                SerialPort.TIMEOUT_READ_SEMI_BLOCKING,
-                5000, 0);
+                SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
 
-        in  = new BufferedReader(new InputStreamReader(serial.getInputStream(),  "UTF-8"));
-        out = new BufferedWriter(new OutputStreamWriter(serial.getOutputStream(), "UTF-8"));
+        in  = new BufferedReader(new InputStreamReader(new InputStreamLogger(serial.getInputStream()),  "UTF-8"));
+        out = new BufferedWriter(new OutputStreamWriter(new OutputStreamLogger(serial.getOutputStream()), "UTF-8"));
+        this.start();
     }
+
 
     public void run() {
         try {
             String data;
             while ((data = in.readLine()) != null) {
-                System.out.println("> " + data);
-                TellstickProtocol protocol = parser.decode(data);
-                if (protocol == null && (data.startsWith("+S") || data.startsWith("+T"))) {
+                if ((data.startsWith("+S") || data.startsWith("+T"))) {
                     synchronized (this) {
                         this.notifyAll();
                     }
                 }
-                else if(listener != null){
-                    listener.stateChange(protocol);
+                else {
+                    if(!set.contains(data)) {
+                        TellstickProtocol protocol = parser.decode(data);
+                        set.add(data);
+                        if (listener != null) {
+                            listener.stateChange(protocol);
+                        }
+                    }
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, null, e);
         }
     }
 
@@ -78,18 +97,18 @@ public class TellstickSerialComm extends Thread{
         try {
             this.wait();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, null, e);
         }
     }
 
     public void write(String data) {
         try {
-            System.out.println("< "+data);
             for(int i=0; i<data.length();i++)
                 out.write(0xFF & data.charAt(i));
+            out.write('\n');
             out.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, null, e);
         }
     }
 
@@ -104,7 +123,7 @@ public class TellstickSerialComm extends Thread{
                 instance = new TellstickSerialComm();
                 instance.connect("COM6");
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, null, e);
             }
         }
         return instance;

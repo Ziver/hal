@@ -41,10 +41,12 @@ void loop()
 {
   currentTime = millis();
   uint16_t lux = LightSensor.GetLightIntensity();
-  if(lux > 100 && !light){
+  //Serial.print("lux=");
+  //Serial.println(lux);
+  if(lux > 40 && !light){
     light = true;
     impulseCount++;
-  }else if(lux < 100){
+  }else if(lux < 40){
     light = false;
   }
   if(currentTime - previousTime > 60000) {

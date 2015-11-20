@@ -25,13 +25,17 @@ package se.koc.hal.plugin.tellstick;
 import se.koc.hal.plugin.tellstick.protocols.NexaSelfLearning;
 import se.koc.hal.plugin.tellstick.protocols.Oregon0x1A2D;
 import zutil.converters.Converter;
+import zutil.log.LogUtil;
 
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Ziver on 2015-02-18.
  */
 public class TellstickParser {
+    private static final Logger logger = LogUtil.getLogger();
     private static HashMap<String, Class<? extends TellstickProtocol>> protocolMap;
 
     static {
@@ -61,19 +65,19 @@ public class TellstickParser {
                     protocol.decode(Converter.hexToByte(binData));
                     if(!protocol.equals(previus)) {
                         previus = protocol;
-                        System.out.println("Decoded: " + protocol);
+                        logger.finest("Decoded: " + protocol);
                         return protocol;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.log(Level.WARNING, null, e);
                 }
             } else {
-                System.out.println("Unknown protocol: " + data);
+                logger.warning("Unknown protocol: " + data);
             }
         } else if (data.startsWith("+S") || data.startsWith("+T")) {
             // This is confirmation of send commands
         }else {
-            System.out.println("Unknown prefix: " + data);
+            logger.severe("Unknown prefix: " + data);
         }
 
         return null;
@@ -90,7 +94,7 @@ public class TellstickParser {
                     tmp.getProtocolName() + "-" + tmp.getModelName(),
                     protClass);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, null, e);
         }
     }
 

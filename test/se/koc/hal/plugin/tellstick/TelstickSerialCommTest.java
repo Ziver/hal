@@ -4,32 +4,34 @@ import se.koc.hal.plugin.tellstick.TellstickSerialComm;
 import se.koc.hal.plugin.tellstick.protocols.NexaSelfLearning;
 import se.koc.hal.plugin.tellstick.protocols.Oregon0x1A2D;
 import zutil.db.DBConnection;
+import zutil.log.CompactLogFormatter;
+import zutil.log.LogUtil;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Ziver on 2015-11-19.
  */
 public class TelstickSerialCommTest {
+    private static final Logger logger = LogUtil.getLogger();
 
     public static void main(String[] args) {
         try {
+            LogUtil.setGlobalFormatter(new CompactLogFormatter());
+            LogUtil.setGlobalLevel(Level.FINEST);
+
+            logger.info("Connecting to db...");
             final DBConnection db = new DBConnection(DBConnection.DBMS.SQLite, "hal.db");
-            // http://developer.telldus.com/doxygen/TellStick.html
+
+            logger.info("Setting up Tellstick listeners...");
             TellstickSerialComm comm = new TellstickSerialComm();
             comm.setListener(new TellstickChangeListener() {
-                boolean toggle = false;
                 @Override
                 public void stateChange(TellstickProtocol protocol) {
-                    if(toggle) {
-                        toggle = false;
-                        return;
-                    }
-                    toggle = true;
-
                     if(protocol instanceof Oregon0x1A2D){
-                        System.out.println("Oregon0x1A2D= Temperature: "+((Oregon0x1A2D)protocol).getTemperature() +
-                                "Humidity: "+((Oregon0x1A2D)protocol).getHumidity());
+                        logger.info("Power used: "+ ((Oregon0x1A2D)protocol).getTemperature() +" pulses");
                         try {
                             db.exec("INSERT INTO power_meter (timestamp, pulses) VALUES("+System.currentTimeMillis()+","+(int)((Oregon0x1A2D)protocol).getTemperature()+")");
                         } catch (SQLException e) {
@@ -38,37 +40,12 @@ public class TelstickSerialCommTest {
                     }
                 }
             });
+            logger.info("Connecting to com port...");
             //comm.connect("COM5");
+            comm.setDaemon(false);
             comm.connect("/dev/ttyUSB1");
 
-            Thread.sleep(1000);
-
-            NexaSelfLearning nexa = new NexaSelfLearning();
-            //nexa.setHouse(11772006);
-            nexa.setHouse(15087918);
-            nexa.setGroup(0);
-            nexa.setUnit(0);
-
-
-            while(true) {
-                Thread.sleep(1000);
-                /*nexa.setEnable(true);
-                nexa.setUnit(0);
-                comm.write(nexa);
-                Thread.sleep(2000);
-                nexa.setUnit(1);
-                comm.write(nexa);
-                Thread.sleep(2000);
-
-
-                nexa.setEnable(false);
-                nexa.setUnit(0);
-                comm.write(nexa);
-                Thread.sleep(2000);
-                nexa.setUnit(1);
-                comm.write(nexa);
-                Thread.sleep(2000);*/
-            }
+            logger.info("Up and Running");
         } catch (Exception e) {
             e.printStackTrace();
         }

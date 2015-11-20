@@ -37,7 +37,7 @@ import zutil.struct.TimedHashSet;
  * SerialPortEventListener to avoid polling.
  */
 public class TellstickSerialComm extends Thread{
-    private static final long TRANSMISSION_UNIQUENESS_TTL = 100; // milliseconds
+    private static final long TRANSMISSION_UNIQUENESS_TTL = 300; // milliseconds
     private static final Logger logger = LogUtil.getLogger();
     private static TellstickSerialComm instance;
 

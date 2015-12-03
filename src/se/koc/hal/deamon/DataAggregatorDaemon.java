@@ -21,9 +21,12 @@ import zutil.log.LogUtil;
  */
 public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
-    private static final int FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
-    private static final int HOUR_IN_MS = FIVE_MINUTES_IN_MS * 12;
-    private static final int DAY_IN_MS = HOUR_IN_MS * 24;
+    private static final long FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
+    private static final long HOUR_IN_MS = FIVE_MINUTES_IN_MS * 12;
+    private static final long DAY_IN_MS = HOUR_IN_MS * 24;
+    
+    private static final long HOUR_AGGREGATION_OFFSET = DAY_IN_MS;    
+    private static final long DAY_AGGREGATION_OFFSET = DAY_IN_MS * 30 * 6; // ~6 months
 
 
     public void initiate(Timer timer){
@@ -51,10 +54,10 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     		maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE timestamp_end-timestamp_start == " + (HOUR_IN_MS-1), new SimpleSQLHandler<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
-    		long hourPeriodTimestamp = getTimestampMinutePeriodStart(60, System.currentTimeMillis());
-    		logger.fine("Calculating hour periods... (from:"+ maxDBTimestamp +", to:"+ minPeriodTimestamp +")");
+    		long hourPeriodTimestamp = getTimestampMinutePeriodStart(60, System.currentTimeMillis()-HOUR_AGGREGATION_OFFSET);
+    		logger.fine("Calculating hour periods... (from:"+ maxDBTimestamp +", to:"+ hourPeriodTimestamp +")");
     		db.exec("SELECT * FROM sensor_data_aggr "
-    				+ "WHERE timestamp_start > " + maxDBTimestamp + " AND timestamp_start < " + hourPeriodTimestamp + " AND timestamp_end-timestamp_start == " + (FIVE_MINUTES_IN_MS-1) 
+    				+ "WHERE " + maxDBTimestamp + " < timestamp_start AND timestamp_start < " + hourPeriodTimestamp + " AND timestamp_end-timestamp_start == " + (FIVE_MINUTES_IN_MS-1) 
     				+" ORDER BY timestamp_start ASC", 
     				new HourAggregator());
     		
@@ -62,10 +65,10 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     		maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE timestamp_end-timestamp_start == " + (DAY_IN_MS-1), new SimpleSQLHandler<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
-    		long dayPeriodTimestamp = getTimestampHourPeriodStart(24, System.currentTimeMillis());
-    		logger.fine("Calculating day periods... (from:"+ maxDBTimestamp +", to:"+ minPeriodTimestamp +")");
+    		long dayPeriodTimestamp = getTimestampHourPeriodStart(24, System.currentTimeMillis()-DAY_AGGREGATION_OFFSET);
+    		logger.fine("Calculating day periods... (from:"+ maxDBTimestamp +", to:"+ dayPeriodTimestamp +")");
     		db.exec("SELECT * FROM sensor_data_aggr "
-    				+ "WHERE timestamp_start > " + maxDBTimestamp + " AND timestamp_start < " + dayPeriodTimestamp + " AND timestamp_end-timestamp_start == " + (HOUR_IN_MS-1)
+    				+ "WHERE " + maxDBTimestamp + " < timestamp_start AND timestamp_start < " + dayPeriodTimestamp + " AND timestamp_end-timestamp_start == " + (HOUR_IN_MS-1)
     				+" ORDER BY timestamp_start ASC", 
     				new DayAggregator());
     		
@@ -97,6 +100,11 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 		return cal.getTimeInMillis();
     }
     
+    public static Integer getNextSequenceId(long sensorId) throws SQLException{
+    	 Integer id = PowerChallenge.db.exec("SELECT MAX(sequence_id) FROM sensor_data_aggr WHERE sensor_id == "+ sensorId, new SimpleSQLHandler<Integer>());
+    	 return (id != null ? id+1 : 1);
+    }
+    
     private class FiveMinuteAggregator implements SQLResultHandler<Object>{
 		@Override
 		public Object handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
@@ -111,7 +119,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 					logger.finer("Calculated minute period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ confidence);
 					PowerChallenge.db.exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
 							result.getInt("sensor_id"),
-							42,
+							getNextSequenceId(result.getInt("sensor_id")),
 							currentPeriodTimestamp,
 							currentPeriodTimestamp + FIVE_MINUTES_IN_MS -1,
 							sum,
@@ -143,7 +151,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 					logger.finer("Calculated hour period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ aggrConfidence);
 					PowerChallenge.db.exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
 							result.getInt("sensor_id"),
-							42,
+							getNextSequenceId(result.getInt("sensor_id")),
 							currentPeriodTimestamp,
 							currentPeriodTimestamp + HOUR_IN_MS -1,
 							sum,
@@ -156,6 +164,10 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				if(currentPeriodTimestamp == 0) currentPeriodTimestamp = periodTimestamp;
 				sum += result.getInt("data");
 				confidenceSum += result.getFloat("confidence");
+				
+				//TODO: SHould not be here!
+				PowerChallenge.db.exec("DELETE FROM sensor_data_aggr "
+						+ "WHERE sensor_id == "+ result.getInt("sensor_id") +" AND sequence_id == "+ result.getInt("sequence_id"));
 			}
 			return null;
 		}    	
@@ -176,7 +188,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 					logger.finer("Calculated day period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ aggrConfidence+ " samples: " + samples);
 					PowerChallenge.db.exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
 							result.getInt("sensor_id"),
-							42,
+							getNextSequenceId(result.getInt("sensor_id")),
 							currentPeriodTimestamp,
 							currentPeriodTimestamp + DAY_IN_MS -1,
 							sum,
@@ -191,6 +203,10 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				sum += result.getInt("data");
 				confidenceSum += result.getFloat("confidence");
 				samples++;
+				
+				//TODO: SHould not be here!
+				PowerChallenge.db.exec("DELETE FROM sensor_data_aggr "
+						+ "WHERE sensor_id == "+ result.getInt("sensor_id") +" AND sequence_id == "+ result.getInt("sequence_id"));
 			}
 			return null;
 		}    	

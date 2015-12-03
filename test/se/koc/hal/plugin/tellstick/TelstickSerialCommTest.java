@@ -33,7 +33,11 @@ public class TelstickSerialCommTest {
                     if(protocol instanceof Oregon0x1A2D){
                         logger.info("Power used: "+ ((Oregon0x1A2D)protocol).getTemperature() +" pulses");
                         try {
-                            db.exec("INSERT INTO power_meter (timestamp, pulses) VALUES("+System.currentTimeMillis()+","+(int)((Oregon0x1A2D)protocol).getTemperature()+")");
+                            db.exec("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUES("+
+                                        System.currentTimeMillis() + "," +
+                                        "0," +
+                                        (int)((Oregon0x1A2D)protocol).getTemperature()
+                                    +")");
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }

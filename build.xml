@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Hal" default="" >
+	
+	<!-- ________________________ PROPERTIES AND SETTINGS ________________________ -->
+	
+	<!--common properties-->
+	<property name="gitRoot" value="." />
+	<property name="srcDir" value="${gitRoot}/src" />
+	<property name="testDir" value="${gitRoot}/test" />
+	<property name="libDir" value="${gitRoot}/lib" />
+	<property name="buildDir" value="${gitRoot}/build" />
+	
+	<!--define standard arduments for javac-->
+	<presetdef name="javac">
+		<javac includeantruntime="false" />
+	</presetdef>
+	
+	<!-- ________________________ CLASSPATHS ________________________ -->
+	
+	<!--classpath included when building-->
+	<path id="classpath.build">
+		<pathelement location="${libDir}/*" />
+	</path>
+	
+	<!-- ________________________ PUBLIC TARGETS ________________________ -->
+	
+
+	<target name="run-local-sensor" depends="build">
+		<java fork="true" failonerror="true" classname="se.koc.hal.plugin.localsensor.ImpulseTracker">
+			<classpath>
+				<pathelement path="${buildDir}/hal.jar"/>	<!--wildcard may not be platform independent, ok?-->
+				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="run-remote-sensor" depends="build">
+		<java fork="true" failonerror="true" classname="se.koc.hal.plugin.tellstick.TelstickSerialCommTest">
+			<classpath>
+				<pathelement path="${buildDir}/hal.jar"/>	<!--wildcard may not be platform independent, ok?-->
+				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="run-main-server" depends="build">
+		<java fork="true" failonerror="true" classname="se.koc.hal.PowerChallenge">
+			<classpath>
+				<pathelement path="${buildDir}/hal.jar"/>	<!--wildcard may not be platform independent, ok?-->
+				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
+			</classpath>
+		</java>
+	</target>
+	
+	<!--clean all build paths-->
+	<target name="clean">
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="${buildDir}" includes="**/*"/>
+		</delete>
+	</target>
+	
+	<!--build product code-->
+	<target name="build" depends="build-dependencies">
+		<mkdir dir="${buildDir}" />
+		<javac srcdir="${srcDir}" destdir="${buildDir}" fork="yes">
+			<include name="**/*.java" />
+			<classpath refid="classpath.build" />
+		</javac>
+		<javac srcdir="${testDir}" destdir="${buildDir}" fork="yes">
+			<include name="**/*.java" />
+			<classpath refid="classpath.build" />
+		</javac>
+		<jar destfile="${buildDir}/hal.jar" basedir="${buildDir}" excludes="hal.jar" />
+	</target>
+	
+	<target name="build-dependencies">
+		<mkdir dir="${buildDir}" />
+		<javac srcdir="${libDir}/java-speech-api-master/src" destdir="${buildDir}" fork="yes">
+			<include name="**/*.java" />
+			<classpath refid="classpath.build" />
+		</javac>
+		<javac srcdir="${libDir}/sphinx4-5prealpha-src/sphinx4-core/src/main/java" destdir="${buildDir}" fork="yes" encoding="UTF-8">
+			<include name="**/*.java" />
+			<classpath refid="classpath.build" />
+		</javac>
+		<get src="http://repo.koc.se/zutil-java.git/blob/master/Zutil.jar" dest="${libDir}" verbose="true" usetimestamp="true"/>
+	</target>
+	
+	
+</project>

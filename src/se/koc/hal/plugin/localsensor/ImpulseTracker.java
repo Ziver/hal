@@ -1,8 +1,12 @@
 package se.koc.hal.plugin.localsensor;
 
-import java.io.IOException;
+import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
+
+import zutil.db.DBConnection;
+import zutil.log.LogUtil;
 
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
@@ -14,17 +18,19 @@ import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 
 public class ImpulseTracker implements Runnable {
-    
+	private static final Logger logger = LogUtil.getLogger();
+	
     private static final int IMPULSE_REPORT_TIMEOUT = 60000;   //one minute
     private long nanoSecondsSleep = IMPULSE_REPORT_TIMEOUT * 1000000L;
     private Integer impulseCount = 0;
     private ExecutorService executorPool;
+    private final DBConnection db;
     
-    public static void main(String args[]) throws InterruptedException, IOException {
+    public static void main(String args[]) throws Exception {
         new ImpulseTracker();
     }
     
-    public ImpulseTracker() throws InterruptedException, IOException{
+    public ImpulseTracker() throws Exception{
         
         // create gpio controller
         final GpioController gpio = GpioFactory.getInstance();
@@ -47,6 +53,9 @@ public class ImpulseTracker implements Runnable {
         });
         
         this.executorPool = Executors.newCachedThreadPool();
+        
+        logger.info("Connecting to db...");
+        db = new DBConnection(DBConnection.DBMS.SQLite, "hal.db");
         
         //start a daemon thread to save the impulse count every minute 
         Thread thread = new Thread(this);
@@ -92,15 +101,13 @@ public class ImpulseTracker implements Runnable {
     	executorPool.execute(new Runnable(){
 			@Override
 			public void run() {
-				//this.listener.
+				try {
+					db.exec("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUE("+timestamp_end+", "+2+", "+data+")");
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		});
     }
-    
-    /*
-    public void setListener(Object listener){
-    	this.listener = listener;
-    }
-    */
     
 }

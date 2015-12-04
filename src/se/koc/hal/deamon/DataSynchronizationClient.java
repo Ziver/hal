@@ -66,6 +66,7 @@ public class DataSynchronizationClient extends TimerTask implements HalDaemon{
 									data.data,
 									data.confidence));
 						}
+						logger.fine("Stored " + dataList.size() + " entries for sensor " + sensor.getId() + " from " + user.getName());
 					}
 					out.writeObject(null);
 					out.close();

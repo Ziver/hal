@@ -33,7 +33,7 @@ public class Sensor extends DBBean{
 	}
 
 	public static List<Sensor> getSensors(DBConnection db, User user) throws SQLException{
-		PreparedStatement stmt = db.getPreparedStatement( "SELECT sensor.* FROM sensor,user WHERE user.id == "+ user.getId() );
+		PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM sensor WHERE user_id == " + user.getId() );
 		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
 	}
 

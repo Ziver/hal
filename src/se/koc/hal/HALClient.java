@@ -8,14 +8,10 @@ import se.koc.hal.plugin.tellstick.TellstickProtocol;
 import se.koc.hal.plugin.tellstick.TellstickSerialComm;
 import se.koc.hal.plugin.tellstick.protocols.NexaSelfLearning;
 import se.koc.hal.struct.Switch;
-import se.koc.hal.stt.GoogleSTTClient;
 import se.koc.hal.intf.HalSpeachToText;
 import se.koc.hal.stt.ManualSTTClient;
-import se.koc.hal.stt.Sphinx4STTClient;
 import se.koc.hal.tts.MaryRemoteTTSClient;
-import zutil.log.LogUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

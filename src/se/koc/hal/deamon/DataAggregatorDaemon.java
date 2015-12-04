@@ -3,7 +3,6 @@ package se.koc.hal.deamon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -38,26 +37,17 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     @Override
     public void run(){
     	try {
-			List<Integer> sensorIdList = HalContext.db.exec("SELECT id FROM sensor", new SQLResultHandler<List<Integer>>(){
-				@Override
-				public List<Integer> handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
-					ArrayList<Integer> list = new ArrayList<>();
-					while(result.next()){
-						list.add(result.getInt("id"));
-					}
-					return list;
-				}
-			});
-			for(int id : sensorIdList){
-				logger.fine("Aggregating sensor_id: " + id);
-				aggregateSensor(id);
+			List<Sensor> sensorList = Sensor.getLocalSensors(HalContext.db);
+			for(Sensor sensor : sensorList){
+				logger.fine("Aggregating sensor_id: " + sensor.getId());
+				aggregateSensor(sensor.getId());
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
     }
 
-    public void aggregateSensor(int sensorId) {
+    public void aggregateSensor(long sensorId) {
     	DBConnection db = HalContext.db;
     	try {
     		Long maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId, new SimpleSQLHandler<Long>());

@@ -7,7 +7,6 @@ import se.koc.hal.deamon.HalDaemon;
 import se.koc.hal.page.PCConfigureHttpPage;
 import se.koc.hal.page.PCHeatMapHttpPage;
 import se.koc.hal.page.PCOverviewHttpPage;
-import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;

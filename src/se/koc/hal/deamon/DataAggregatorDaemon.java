@@ -3,12 +3,11 @@ package se.koc.hal.deamon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
-
-import com.ibm.icu.util.Calendar;
 
 import se.koc.hal.PowerChallenge;
 import zutil.db.DBConnection;

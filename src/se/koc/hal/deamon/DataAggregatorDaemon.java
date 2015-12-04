@@ -73,7 +73,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     				new DayAggregator());
     		
     		
-    		logger.fine("Done aggrigating");
+    		logger.fine("Done aggregation");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -4,8 +4,11 @@ package se.koc.hal;
 import se.koc.hal.deamon.DataAggregatorDaemon;
 import se.koc.hal.deamon.HalDaemon;
 import zutil.db.DBConnection;
+import zutil.io.file.FileUtil;
 import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
+import zutil.net.http.HttpServer;
+import zutil.net.http.pages.HttpFilePage;
 
 import java.util.Timer;
 import java.util.logging.Level;
@@ -35,5 +38,9 @@ public class PowerChallenge {
         for(HalDaemon daemon : daemons){
             daemon.initiate(daemonTimer);
         }
+        
+        HttpServer http = new HttpServer(8080);
+        http.setDefaultPage(new HttpFilePage(FileUtil.find("resource/")));
+        http.setPage("/", new PowerChallengeHttpPage());
     }
 }

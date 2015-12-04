@@ -103,3 +103,7 @@ body {
   display: inline-block;
   border-radius: 50%;
 }
+
+.panel{
+	margin-bottom: 70px;
+}

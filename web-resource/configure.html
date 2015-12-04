@@ -45,8 +45,83 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Configuration</h1>
 
-
-         
+			<div class="panel panel-default">
+			  <div class="panel-heading">Profile Information</div>
+			  <div class="panel-body">
+			    <form>
+				  <div class="form-group col-md-4">
+				    <label for="username">Username</label>
+				    <input type="text" class="form-control" id="username" value="{{username}}">
+				  </div>
+				  <div class="col-md-12">
+				  	<button type="submit" class="btn btn-default">Save</button>
+				  </div>
+				</form>
+			  </div>
+			</div>
+			
+			<div class="panel panel-default">
+			  <div class="panel-heading">Local Sensors</div>
+			  <div class="panel-body">
+			    This is a local list of sensors connected to this node.
+			  </div>
+			  <table class="table table-hover">
+			  	<tr>
+			  		<th>Name</th>
+			  		<th>Type</th>
+			  		<th>Configuration</th>
+			  	</tr>
+			  	{{#localSensor}}
+			  	<tr>
+			  		<td>{{.name}}</td>
+			  		<td>{{.type}}</td>
+			  		<td>{{.config}}</td>
+			  	</tr>
+			  	{{/localSensor}}
+			  </table>
+			</div>
+			
+			<div class="panel panel-default">
+			  <div class="panel-heading">External Users</div>
+			  <div class="panel-body">
+			    Add or remove users that you want to synchronized data with.
+			  </div>
+			  <table class="table table-hover">
+			  	<tr>
+			  		<th>Username</th>
+			  		<th>Hostname</th>
+			  		<th>Port</th>
+			  	</tr>
+			   {{#extUsers}}
+			  	<tr>
+			  		<td>{{.username}}</td>
+			  		<td>{{.host}}</td>
+			  		<td>{{.port}}</td>
+			  	</tr>
+			  	{{/extUsers}}
+			  </table>
+			</div>
+			
+			<div class="panel panel-default">
+			  <div class="panel-heading">External Sensors</div>
+			  <div class="panel-body">
+			    This is a read only list of synchronized sensors from external users.
+			  </div>
+			  <table class="table table-hover">
+			   	<tr>
+			  		<th>Name</th>
+			  		<th>Type</th>
+			  		<th>Configuration</th>
+			  	</tr>
+			  	{{#localSensor}}
+			  	<tr>
+			  		<td>{{.name}}</td>
+			  		<td>{{.type}}</td>
+			  		<td>{{.config}}</td>
+			  	</tr>
+			  	{{/localSensor}}
+			  </table>
+			</div>         
         </div>
       </div>
     </div>

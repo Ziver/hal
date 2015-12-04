@@ -84,7 +84,7 @@ public class DataSynchronizationClient extends TimerTask implements HalDaemon{
 
 
 	///////////////  DTO ///////////////////////
-	protected class PeerDataReqDTO implements Serializable{
+	protected static class PeerDataReqDTO implements Serializable{
 		private static final long serialVersionUID = -9066734025245139989L;
 		
 		public long sensorId;

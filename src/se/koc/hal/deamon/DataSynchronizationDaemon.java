@@ -21,7 +21,8 @@ import zutil.net.threaded.ThreadedTCPNetworkServerThread;
 
 public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implements HalDaemon{
 	private static final Logger logger = LogUtil.getLogger();
-	public static final int SERVER_PORT = 6666;
+	//public static final int SERVER_PORT = 6666;
+	public static final int SERVER_PORT = 80;
 
 
 	public DataSynchronizationDaemon() {
@@ -88,6 +89,9 @@ public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implemen
 						out.writeObject(list);
 					}
 				}
+                out.close();
+                in.close();
+				s.close();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -99,11 +103,11 @@ public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implemen
 	}
 
 	///////////////  DTO ///////////////////////
-	protected class SensorDataListDTO extends ArrayList<SensorDataDTO> implements Serializable{
+	protected static class SensorDataListDTO extends ArrayList<SensorDataDTO> implements Serializable{
 		private static final long serialVersionUID = -5701618637734020691L;	
 	}
 	
-	protected class SensorDataDTO implements Serializable{
+	protected static class SensorDataDTO implements Serializable{
 		private static final long serialVersionUID = 8494331502087736809L;
 		
 		public long sequenceId;

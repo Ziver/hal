@@ -2,6 +2,7 @@ package se.koc.hal;
 
 
 import se.koc.hal.deamon.DataAggregatorDaemon;
+import se.koc.hal.deamon.DataSynchronizationClient;
 import se.koc.hal.deamon.DataSynchronizationDaemon;
 import se.koc.hal.deamon.HalDaemon;
 import se.koc.hal.page.PCConfigureHttpPage;
@@ -24,7 +25,8 @@ public class PowerChallenge {
 	
     private static HalDaemon[] daemons = new HalDaemon[]{
             new DataAggregatorDaemon(),
-            new DataSynchronizationDaemon()
+            new DataSynchronizationDaemon(),
+            new DataSynchronizationClient()
     };
 
     public static void main(String[] args) throws Exception {
@@ -41,11 +43,11 @@ public class PowerChallenge {
             daemon.initiate(daemonTimer);
         }
         
-        HttpServer http = new HttpServer(80);
+        /*HttpServer http = new HttpServer(80);
         http.setDefaultPage(new HttpFilePage(FileUtil.find("web-resource/")));
         http.setPage("/", new PCOverviewHttpPage());
         http.setPage("/configure", new PCConfigureHttpPage());
         http.setPage("/heatmap", new PCHeatMapHttpPage());
-        http.start();
+        http.start();*/
     }
 }

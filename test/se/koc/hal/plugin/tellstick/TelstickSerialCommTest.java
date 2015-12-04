@@ -35,7 +35,7 @@ public class TelstickSerialCommTest {
                         try {
                             db.exec("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUES("+
                                         System.currentTimeMillis() + "," +
-                                        "0," +
+                                        "1," +
                                         (int)((Oregon0x1A2D)protocol).getTemperature()
                                     +")");
                         } catch (SQLException e) {

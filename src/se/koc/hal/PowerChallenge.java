@@ -2,6 +2,7 @@ package se.koc.hal;
 
 
 import se.koc.hal.deamon.DataAggregatorDaemon;
+import se.koc.hal.deamon.DataSynchronizationDaemon;
 import se.koc.hal.deamon.HalDaemon;
 import se.koc.hal.page.PCConfigureHttpPage;
 import se.koc.hal.page.PCHeatMapHttpPage;
@@ -20,21 +21,20 @@ import java.util.logging.Level;
  * Created by Ziver on 2015-12-03.
  */
 public class PowerChallenge {
-	
-	public static DBConnection db;
+
 	
     private static HalDaemon[] daemons = new HalDaemon[]{
-            new DataAggregatorDaemon()
+            new DataAggregatorDaemon(),
+            new DataSynchronizationDaemon()
     };
 
     public static void main(String[] args) throws Exception {
 
+    	HalContext.initialize();
+    	
     	// init logging
     	LogUtil.setGlobalLevel(Level.ALL);
     	LogUtil.setGlobalFormatter(new CompactLogFormatter());
-    	
-        // init Database
-        db = new DBConnection(DBConnection.DBMS.SQLite, "hal.db");
 
         // init daemons
         Timer daemonTimer = new Timer();

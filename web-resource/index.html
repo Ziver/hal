@@ -13,16 +13,19 @@
     <link href="css/main.css" rel="stylesheet">
     
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+	<script src="js/jquery-1.11.3.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/morris.min.js"></script>
 	
 	<script>
 		$(function(){
 			chartData("min-power-chart", 
-					[{{#minData}}  
-						{ y: {{.timestamp}}, {{.username}}: {{.data}}/1000 },  
-					{{/minData}}]
+					[
+					 {{#minData}}  
+						{ y: {{.timestamp}}, {{.username}}: {{.data}}/1000 },
+					{{/minData}}
+					{ y: Date.now() },
+					]
 			);
 			chartData("hour-power-chart", 
 					[{{#hourData}}  
@@ -31,7 +34,7 @@
 			);
 			chartData("day-power-chart", 
 					[{{#dayData}}  
-						{ y: {{.timestamp}}, {{.username}}: {{.data}}/1000 },  
+						{ y: {{.timestamp}}, {{.username}}: {{.data}}/1000 },
 					{{/dayData}}]
 			);
 		});

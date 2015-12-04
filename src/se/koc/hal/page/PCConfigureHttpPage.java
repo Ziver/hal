@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
-import se.koc.hal.PowerChallenge;
+import se.koc.hal.HalContext;
 import se.koc.hal.struct.Sensor;
 import se.koc.hal.struct.User;
 import zutil.db.DBConnection;
@@ -22,7 +22,7 @@ public class PCConfigureHttpPage implements HttpPage {
 			Map<String, String> request) throws IOException {
 
 		try {
-			DBConnection db = PowerChallenge.db;
+			DBConnection db = HalContext.db;
 			
 			Templator tmpl = new Templator(FileUtil.find("web-resource/configure.html"));
 			tmpl.set("user", User.getLocalUser(db));

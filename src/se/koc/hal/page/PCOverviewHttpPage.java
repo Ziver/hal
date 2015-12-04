@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map;
 
-import se.koc.hal.PowerChallenge;
+import se.koc.hal.HalContext;
 import se.koc.hal.deamon.DataAggregatorDaemon;
 import zutil.db.SQLResultHandler;
 import zutil.io.file.FileUtil;
@@ -22,21 +22,21 @@ public class PCOverviewHttpPage implements HttpPage {
 	public void respond(HttpPrintStream out, HttpHeaderParser client_info, Map<String, Object> session, Map<String, String> cookie, Map<String, String> request) throws IOException {
 		
 		try {
-			ArrayList<PowerData> minDataList = PowerChallenge.db.exec(
+			ArrayList<PowerData> minDataList = HalContext.db.exec(
 					"SELECT user.username as username, sensor_data_aggr.timestamp_start as timestamp, sensor_data_aggr.data as data "
 					+ "FROM sensor_data_aggr, user, sensor "
 					+ "WHERE sensor.id = sensor_data_aggr.sensor_id "
 					+ "AND user.id = sensor.user_id "
 					+ "AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.FIVE_MINUTES_IN_MS-1), 
 					new SQLPowerDataBuilder());
-			ArrayList<PowerData> hourDataList = PowerChallenge.db.exec(
+			ArrayList<PowerData> hourDataList = HalContext.db.exec(
 					"SELECT user.username as username, sensor_data_aggr.timestamp_start as timestamp, sensor_data_aggr.data as data "
 					+ "FROM sensor_data_aggr, user, sensor "
 					+ "WHERE sensor.id = sensor_data_aggr.sensor_id "
 					+ "AND user.id = sensor.user_id "
 					+ "AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.HOUR_IN_MS-1), 
 					new SQLPowerDataBuilder());
-			ArrayList<PowerData> dayDataList = PowerChallenge.db.exec(
+			ArrayList<PowerData> dayDataList = HalContext.db.exec(
 					"SELECT user.username as username, sensor_data_aggr.timestamp_start as timestamp, sensor_data_aggr.data as data "
 					+ "FROM sensor_data_aggr, user, sensor "
 					+ "WHERE sensor.id = sensor_data_aggr.sensor_id "

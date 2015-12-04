@@ -12,7 +12,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
     
-	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+	<script src="js/jquery-1.11.3.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	
   </head>
@@ -49,6 +49,7 @@
 			  <div class="panel-heading">Profile Information</div>
 			  <div class="panel-body">
 			    <form>
+			      <hidden id="id" value="{{user.getId()}}">
 				  <div class="form-group col-md-4">
 				    <label for="username">Username</label>
 				    <input type="text" class="form-control" id="username" value="{{user.username}}">

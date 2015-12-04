@@ -37,6 +37,10 @@ public class DataSynchronizationClient extends TimerTask implements HalDaemon{
 			DBConnection db = HalContext.db;
 			List<User> users = User.getExternalUsers(db);
 			for(User user : users){
+				if(user.getHostname() == null){
+					logger.fine("Hostname not defined for user: "+ user.getName());
+					continue;
+				}
 				logger.fine("Synchronizing user: "+ user.getName() +" ("+user.getHostname()+":"+user.getPort()+")");
 				try (Socket s = new Socket(user.getHostname(), user.getPort());){
 					ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());

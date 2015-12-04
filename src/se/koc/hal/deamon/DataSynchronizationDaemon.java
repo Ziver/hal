@@ -99,11 +99,11 @@ public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implemen
 	}
 
 	///////////////  DTO ///////////////////////
-	protected class SensorDataListDTO extends ArrayList<SensorDataDTO> implements Serializable{
+	protected static class SensorDataListDTO extends ArrayList<SensorDataDTO> implements Serializable{
 		private static final long serialVersionUID = -5701618637734020691L;	
 	}
 	
-	protected class SensorDataDTO implements Serializable{
+	protected static class SensorDataDTO implements Serializable{
 		private static final long serialVersionUID = 8494331502087736809L;
 		
 		public long sequenceId;

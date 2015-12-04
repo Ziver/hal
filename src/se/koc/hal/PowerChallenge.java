@@ -2,6 +2,7 @@ package se.koc.hal;
 
 
 import se.koc.hal.deamon.DataAggregatorDaemon;
+import se.koc.hal.deamon.DataSynchronizationClient;
 import se.koc.hal.deamon.DataSynchronizationDaemon;
 import se.koc.hal.deamon.HalDaemon;
 import se.koc.hal.page.PCConfigureHttpPage;
@@ -24,7 +25,8 @@ public class PowerChallenge {
 	
     private static HalDaemon[] daemons = new HalDaemon[]{
             new DataAggregatorDaemon(),
-            new DataSynchronizationDaemon()
+            new DataSynchronizationDaemon(),
+            new DataSynchronizationClient()
     };
 
     public static void main(String[] args) throws Exception {

@@ -41,7 +41,8 @@ public class PowerChallenge {
         
         HttpServer http = new HttpServer(8080);
         http.setDefaultPage(new HttpFilePage(FileUtil.find("web-resource/")));
-        http.setPage("/", new PowerChallengeHttpPage());
+        http.setPage("/", new PCOverviewHttpPage());
+        http.setPage("/configure", new PCConfigureHttpPage());
         http.start();
     }
 }

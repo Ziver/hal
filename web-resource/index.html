@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Dashboard Template for Bootstrap</title>
+    <title>Power;Challenge</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -19,55 +19,36 @@
 	
 	<script>
 		$(function(){
-			Morris.Line({
-				  element: 'min-power-chart',
-				  data: [
-			         {{#minData}}
-			         	{ y: {{.timestamp}}, a: {{.data}} },
-			         {{/minData}}
-				  ],
-				  xkey: 'y',
-				  ykeys: ['a'],
-				  labels: [
-				           '{{username}}'
-				  ],
-				  continuousLine: false,
-				  pointSize: 0,
-				  postUnits: 'Wh'
-				});
-			Morris.Line({
-				  element: 'hour-power-chart',
-				  data: [
-			         {{#hourData}}
-			         	{ y: {{.timestamp}}, a: {{.data}} },
-			         {{/hourData}}
-				  ],
-				  xkey: 'y',
-				  ykeys: ['a'],
-				  labels: [
-				           '{{username}}'
-				  ],
-				  continuousLine: false,
-				  pointSize: 0,
-				  postUnits: 'Wh'
-				});
-			Morris.Line({
-				  element: 'day-power-chart',
-				  data: [
-			         {{#dayData}}
-			         	{ y: {{.timestamp}}, a: {{.data}} },
-			         {{/dayData}}
-				  ],
-				  xkey: 'y',
-				  ykeys: ['a'],
-				  labels: [
-				           '{{username}}'
-				  ],
-				  continuousLine: false,
-				  pointSize: 0,
-				  postUnits: 'Wh'
-				});
+			chartData("min-power-chart", 
+					[{{#minData}}  
+						{ y: {{.timestamp}}, {{.username}}: {{.data}}/1000 },  
+					{{/minData}}]
+			);
+			chartData("hour-power-chart", 
+					[{{#hourData}}  
+						{ y: {{.timestamp}}, {{.username}}: {{.data}}/1000 },  
+					{{/hourData}}]
+			);
+			chartData("day-power-chart", 
+					[{{#dayData}}  
+						{ y: {{.timestamp}}, {{.username}}: {{.data}}/1000 },  
+					{{/dayData}}]
+			);
 		});
+		var userArray = [ {{#username}} '{{.}}', {{/username}} ];
+		function chartData(elementId, data){
+			Morris.Line({
+				  element: elementId,
+				  data: data,
+				  xkey: 'y',
+				  ykeys: userArray,
+				  labels: userArray,
+				  continuousLine: false,
+				  pointSize: 0,
+				  postUnits: 'kWh',
+				  resize: true
+				});
+		}
 	</script>
 	
   </head>
@@ -91,53 +72,28 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Analytics</a></li>
-            <li><a href="#">Export</a></li>
+            <li class="active"><a href="/">Overview <span class="sr-only">(current)</span></a></li>
+            <li><a href="#">Heat Map</a></li>
+            <li><a href="#">Statistics</a></li>
+            <li><a href="configure">Configuration</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Dashboard</h1>
+          <h1 class="page-header">Overview</h1>
 
           <div class="row placeholders">
-          	<H2>Last 24 hours</H2>
-            <div id="min-power-chart"></div>
+          	<H1>Last 24 hours</H1>
+            <div id="min-power-chart" style="height:450px;"></div>
           </div>
-          
           <div class="row placeholders">
-          	<H2>Previous two days</H2>
-            <div id="hour-power-chart"></div>
+          	<H1>Previous two days</H1>
+            <div id="hour-power-chart" style="height:450px;"></div>
           </div>
-          
           <div class="row placeholders">
-          	<H2>Long term</H2>
-            <div id="day-power-chart"></div>
+          	<H1>Long term</H1>
+            <div id="day-power-chart" style="height:450px;"></div>
           </div>
-
-          <h2 class="sub-header">Section title</h2>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1,001</td>
-                  <td>Lorem</td>
-                  <td>ipsum</td>
-                  <td>dolor</td>
-                  <td>sit</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+         
         </div>
       </div>
     </div>

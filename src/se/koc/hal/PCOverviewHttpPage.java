@@ -15,23 +15,32 @@ import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
 import zutil.parser.Templator;
 
-public class PowerChallengeHttpPage implements HttpPage {
+public class PCOverviewHttpPage implements HttpPage {
 
 	@Override
 	public void respond(HttpPrintStream out, HttpHeaderParser client_info, Map<String, Object> session, Map<String, String> cookie, Map<String, String> request) throws IOException {
 		
 		try {
 			ArrayList<PowerData> minDataList = PowerChallenge.db.exec(
-					"SELECT * FROM sensor_data_aggr "
-					+ "WHERE sensor_id == 1 AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.FIVE_MINUTES_IN_MS-1), 
+					"SELECT user.username as username, sensor_data_aggr.timestamp_start as timestamp, sensor_data_aggr.data as data "
+					+ "FROM sensor_data_aggr, user, sensor "
+					+ "WHERE sensor.id = sensor_data_aggr.sensor_id "
+					+ "AND user.id = sensor.user_id "
+					+ "AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.FIVE_MINUTES_IN_MS-1), 
 					new SQLPowerDataBuilder());
 			ArrayList<PowerData> hourDataList = PowerChallenge.db.exec(
-					"SELECT * FROM sensor_data_aggr "
-					+ "WHERE sensor_id == 1 AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.HOUR_IN_MS-1), 
+					"SELECT user.username as username, sensor_data_aggr.timestamp_start as timestamp, sensor_data_aggr.data as data "
+					+ "FROM sensor_data_aggr, user, sensor "
+					+ "WHERE sensor.id = sensor_data_aggr.sensor_id "
+					+ "AND user.id = sensor.user_id "
+					+ "AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.HOUR_IN_MS-1), 
 					new SQLPowerDataBuilder());
 			ArrayList<PowerData> dayDataList = PowerChallenge.db.exec(
-					"SELECT * FROM sensor_data_aggr "
-					+ "WHERE sensor_id == 1 AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.DAY_IN_MS-1), 
+					"SELECT user.username as username, sensor_data_aggr.timestamp_start as timestamp, sensor_data_aggr.data as data "
+					+ "FROM sensor_data_aggr, user, sensor "
+					+ "WHERE sensor.id = sensor_data_aggr.sensor_id "
+					+ "AND user.id = sensor.user_id "
+					+ "AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.DAY_IN_MS-1), 
 					new SQLPowerDataBuilder());
 		
 		
@@ -39,7 +48,7 @@ public class PowerChallengeHttpPage implements HttpPage {
 			tmpl.set("minData", minDataList);
 			tmpl.set("hourData", hourDataList);
 			tmpl.set("dayData", dayDataList);
-			tmpl.set("username", "Ziver");
+			tmpl.set("username", new String[]{"Ziver", "Daniel"});
 			
 			out.print(tmpl.compile());
 		
@@ -51,9 +60,11 @@ public class PowerChallengeHttpPage implements HttpPage {
 	public static class PowerData{
 		long timestamp;
 		int data;
-		public PowerData(long time, int data) {
+		String username;
+		public PowerData(long time, int data, String uname) {
 			this.timestamp = time;
 			this.data = data;
+			this.username = uname;
 		}
 	}
 	
@@ -62,7 +73,7 @@ public class PowerChallengeHttpPage implements HttpPage {
 		public ArrayList<PowerData> handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
 			ArrayList<PowerData> list = new ArrayList<>();
 			while(result.next()){
-				list.add(new PowerData(result.getLong("timestamp_start"), result.getInt("data")));
+				list.add(new PowerData(result.getLong("timestamp"), result.getInt("data"), result.getString("username")));
 			}
 			return list;
 		}

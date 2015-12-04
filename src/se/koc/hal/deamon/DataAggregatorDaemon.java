@@ -3,7 +3,9 @@ package se.koc.hal.deamon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,41 +35,61 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
         run();
     }
 
-
     @Override
-    public void run() {
+    public void run(){
+    	try {
+			List<Integer> sensorIdList = PowerChallenge.db.exec("SELECT id FROM sensor", new SQLResultHandler<List<Integer>>(){
+				@Override
+				public List<Integer> handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
+					ArrayList<Integer> list = new ArrayList<>();
+					while(result.next()){
+						list.add(result.getInt("id"));
+					}
+					return list;
+				}
+			});
+			for(int id : sensorIdList){
+				logger.fine("Aggregating sensor_id: " + id);
+				aggregateSensor(id);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    }
+
+    public void aggregateSensor(int sensorId) {
     	DBConnection db = PowerChallenge.db;
     	try {
-    		Long maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr", new SimpleSQLHandler<Long>());
+    		Long maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId, new SimpleSQLHandler<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
     		// 5 minute aggregation
     		long minPeriodTimestamp = getTimestampMinutePeriodStart(5, System.currentTimeMillis());
     		logger.fine("Calculating 5 min periods... (from:"+ maxDBTimestamp +", to:"+ minPeriodTimestamp +")");
     		db.exec("SELECT * FROM sensor_data_raw "
-    				+ "WHERE timestamp > " + maxDBTimestamp + " AND timestamp < " + minPeriodTimestamp
+    				+ "WHERE sensor_id == "+sensorId+" AND timestamp > " + maxDBTimestamp + " AND timestamp < " + minPeriodTimestamp
     				+ " ORDER BY timestamp ASC", 
     				new FiveMinuteAggregator());
     		
     		// hour aggregation
-    		maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE timestamp_end-timestamp_start == " + (HOUR_IN_MS-1), new SimpleSQLHandler<Long>());
+    		maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId+" AND timestamp_end-timestamp_start == " + (HOUR_IN_MS-1), new SimpleSQLHandler<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
     		long hourPeriodTimestamp = getTimestampMinutePeriodStart(60, System.currentTimeMillis()-HOUR_AGGREGATION_OFFSET);
     		logger.fine("Calculating hour periods... (from:"+ maxDBTimestamp +", to:"+ hourPeriodTimestamp +")");
     		db.exec("SELECT * FROM sensor_data_aggr "
-    				+ "WHERE " + maxDBTimestamp + " < timestamp_start AND timestamp_start < " + hourPeriodTimestamp + " AND timestamp_end-timestamp_start == " + (FIVE_MINUTES_IN_MS-1) 
+    				+ "WHERE sensor_id == "+sensorId+" AND " + maxDBTimestamp + " < timestamp_start AND timestamp_start < " + hourPeriodTimestamp + " AND timestamp_end-timestamp_start == " + (FIVE_MINUTES_IN_MS-1) 
     				+" ORDER BY timestamp_start ASC", 
     				new HourAggregator());
     		
     		// day aggregation
-    		maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE timestamp_end-timestamp_start == " + (DAY_IN_MS-1), new SimpleSQLHandler<Long>());
+    		maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId+" AND timestamp_end-timestamp_start == " + (DAY_IN_MS-1), new SimpleSQLHandler<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
     		long dayPeriodTimestamp = getTimestampHourPeriodStart(24, System.currentTimeMillis()-DAY_AGGREGATION_OFFSET);
     		logger.fine("Calculating day periods... (from:"+ maxDBTimestamp +", to:"+ dayPeriodTimestamp +")");
     		db.exec("SELECT * FROM sensor_data_aggr "
-    				+ "WHERE " + maxDBTimestamp + " < timestamp_start AND timestamp_start < " + dayPeriodTimestamp + " AND timestamp_end-timestamp_start == " + (HOUR_IN_MS-1)
+    				+ "WHERE sensor_id == "+sensorId+" AND " + maxDBTimestamp + " < timestamp_start AND timestamp_start < " + dayPeriodTimestamp + " AND timestamp_end-timestamp_start == " + (HOUR_IN_MS-1)
     				+" ORDER BY timestamp_start ASC", 
     				new DayAggregator());
     		

@@ -56,7 +56,8 @@ public class DataSynchronizationClient extends TimerTask implements HalDaemon{
 						SensorDataListDTO dataList = (SensorDataListDTO) in.readObject();
 						for(SensorDataDTO data : dataList){
 							int deletions = db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id == "+ sensor.getId() +" AND "+ data.timestampStart +" <= timestamp_start AND timestamp_end <= "+ data.timestampEnd);
-							logger.finer("Aggregate data replaced "+ deletions +" entries");
+							if(deletions > 0)
+								logger.finer("Aggregate data replaced "+ deletions +" entries");
 							db.exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
 									sensor.getId(),
 									data.sequenceId,
@@ -66,6 +67,10 @@ public class DataSynchronizationClient extends TimerTask implements HalDaemon{
 									data.confidence));
 						}
 					}
+					out.writeObject(null);
+					out.close();
+					in.close();
+					s.close();
 					
 				} catch (UnknownHostException e) {
 					e.printStackTrace();

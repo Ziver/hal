@@ -3,6 +3,9 @@ package se.koc.hal;
 
 import se.koc.hal.deamon.DataAggregatorDaemon;
 import se.koc.hal.deamon.HalDaemon;
+import se.koc.hal.page.PCConfigureHttpPage;
+import se.koc.hal.page.PCHeatMapHttpPage;
+import se.koc.hal.page.PCOverviewHttpPage;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.log.CompactLogFormatter;
@@ -39,10 +42,11 @@ public class PowerChallenge {
             daemon.initiate(daemonTimer);
         }
         
-        HttpServer http = new HttpServer(8080);
+        HttpServer http = new HttpServer(80);
         http.setDefaultPage(new HttpFilePage(FileUtil.find("web-resource/")));
         http.setPage("/", new PCOverviewHttpPage());
         http.setPage("/configure", new PCConfigureHttpPage());
+        http.setPage("/heatmap", new PCHeatMapHttpPage());
         http.start();
     }
 }

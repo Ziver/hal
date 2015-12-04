@@ -1,4 +1,4 @@
-package se.koc.hal;
+package se.koc.hal.page;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map;
 
+import se.koc.hal.PowerChallenge;
 import se.koc.hal.deamon.DataAggregatorDaemon;
 import zutil.db.SQLResultHandler;
 import zutil.io.file.FileUtil;

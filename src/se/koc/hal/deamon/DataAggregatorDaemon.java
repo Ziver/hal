@@ -12,6 +12,7 @@ import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import se.koc.hal.HalContext;
+import se.koc.hal.struct.Sensor;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 import zutil.db.handler.SimpleSQLHandler;
@@ -120,10 +121,6 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 		return cal.getTimeInMillis();
     }
     
-    public static Integer getNextSequenceId(long sensorId) throws SQLException{
-    	 Integer id = HalContext.db.exec("SELECT MAX(sequence_id) FROM sensor_data_aggr WHERE sensor_id == "+ sensorId, new SimpleSQLHandler<Integer>());
-    	 return (id != null ? id+1 : 1);
-    }
     
     private class FiveMinuteAggregator implements SQLResultHandler<Object>{
 		@Override
@@ -139,7 +136,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 					logger.finer("Calculated minute period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ confidence);
 					HalContext.db.exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
 							result.getInt("sensor_id"),
-							getNextSequenceId(result.getInt("sensor_id")),
+							Sensor.getHighestSequenceId(result.getInt("sensor_id")) + 1,
 							currentPeriodTimestamp,
 							currentPeriodTimestamp + FIVE_MINUTES_IN_MS -1,
 							sum,
@@ -171,7 +168,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 					logger.finer("Calculated hour period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ aggrConfidence);
 					HalContext.db.exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
 							result.getInt("sensor_id"),
-							getNextSequenceId(result.getInt("sensor_id")),
+							Sensor.getHighestSequenceId(result.getInt("sensor_id")) + 1,
 							currentPeriodTimestamp,
 							currentPeriodTimestamp + HOUR_IN_MS -1,
 							sum,
@@ -208,7 +205,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 					logger.finer("Calculated day period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ aggrConfidence+ " samples: " + samples);
 					HalContext.db.exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
 							result.getInt("sensor_id"),
-							getNextSequenceId(result.getInt("sensor_id")),
+							Sensor.getHighestSequenceId(result.getInt("sensor_id")) + 1,
 							currentPeriodTimestamp,
 							currentPeriodTimestamp + DAY_IN_MS -1,
 							sum,

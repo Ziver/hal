@@ -20,12 +20,12 @@ import zutil.log.LogUtil;
  */
 public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
-    private static final long FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
-    private static final long HOUR_IN_MS = FIVE_MINUTES_IN_MS * 12;
-    private static final long DAY_IN_MS = HOUR_IN_MS * 24;
+	public static final long FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
+    public static final long HOUR_IN_MS = FIVE_MINUTES_IN_MS * 12;
+    public static final long DAY_IN_MS = HOUR_IN_MS * 24;
     
     private static final long HOUR_AGGREGATION_OFFSET = DAY_IN_MS;    
-    private static final long DAY_AGGREGATION_OFFSET = DAY_IN_MS * 30 * 6; // ~6 months
+    private static final long DAY_AGGREGATION_OFFSET = DAY_IN_MS * 3;
 
 
     public void initiate(Timer timer){

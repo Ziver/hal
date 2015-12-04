@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+    
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/morris.min.js"></script>
+	
+	<script>
+		$(function(){
+			Morris.Line({
+				  element: 'min-power-chart',
+				  data: [
+			         {{#minData}}
+			         	{ y: {{.timestamp}}, a: {{.data}} },
+			         {{/minData}}
+				  ],
+				  xkey: 'y',
+				  ykeys: ['a'],
+				  labels: [
+				           '{{username}}'
+				  ],
+				  continuousLine: false,
+				  pointSize: 0,
+				  postUnits: 'Wh'
+				});
+			Morris.Line({
+				  element: 'hour-power-chart',
+				  data: [
+			         {{#hourData}}
+			         	{ y: {{.timestamp}}, a: {{.data}} },
+			         {{/hourData}}
+				  ],
+				  xkey: 'y',
+				  ykeys: ['a'],
+				  labels: [
+				           '{{username}}'
+				  ],
+				  continuousLine: false,
+				  pointSize: 0,
+				  postUnits: 'Wh'
+				});
+			Morris.Line({
+				  element: 'day-power-chart',
+				  data: [
+			         {{#dayData}}
+			         	{ y: {{.timestamp}}, a: {{.data}} },
+			         {{/dayData}}
+				  ],
+				  xkey: 'y',
+				  ykeys: ['a'],
+				  labels: [
+				           '{{username}}'
+				  ],
+				  continuousLine: false,
+				  pointSize: 0,
+				  postUnits: 'Wh'
+				});
+		});
+	</script>
+	
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Power;Challenge</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Ziver</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+            <li><a href="#">Reports</a></li>
+            <li><a href="#">Analytics</a></li>
+            <li><a href="#">Export</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Dashboard</h1>
+
+          <div class="row placeholders">
+          	<H2>Last 24 hours</H2>
+            <div id="min-power-chart"></div>
+          </div>
+          
+          <div class="row placeholders">
+          	<H2>Previous two days</H2>
+            <div id="hour-power-chart"></div>
+          </div>
+          
+          <div class="row placeholders">
+          	<H2>Long term</H2>
+            <div id="day-power-chart"></div>
+          </div>
+
+          <h2 class="sub-header">Section title</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Header</th>
+                  <th>Header</th>
+                  <th>Header</th>
+                  <th>Header</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1,001</td>
+                  <td>Lorem</td>
+                  <td>ipsum</td>
+                  <td>dolor</td>
+                  <td>sit</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -40,7 +40,8 @@ public class PowerChallenge {
         }
         
         HttpServer http = new HttpServer(8080);
-        http.setDefaultPage(new HttpFilePage(FileUtil.find("resource/")));
+        http.setDefaultPage(new HttpFilePage(FileUtil.find("web-resource/")));
         http.setPage("/", new PowerChallengeHttpPage());
+        http.start();
     }
 }

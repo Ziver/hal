@@ -99,6 +99,7 @@ public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implemen
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+            logger.fine("User disconnected: "+ s.getInetAddress().getHostName());
 		}
 	}
 

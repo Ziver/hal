@@ -43,11 +43,11 @@ public class PowerChallenge {
             daemon.initiate(daemonTimer);
         }
         
-        /*HttpServer http = new HttpServer(80);
+        HttpServer http = new HttpServer(80);
         http.setDefaultPage(new HttpFilePage(FileUtil.find("web-resource/")));
         http.setPage("/", new PCOverviewHttpPage());
         http.setPage("/configure", new PCConfigureHttpPage());
         http.setPage("/heatmap", new PCHeatMapHttpPage());
-        http.start();*/
+        http.start();
     }
 }

@@ -59,7 +59,7 @@ public class ImpulseTracker implements Runnable {
         
         //start a daemon thread to save the impulse count every minute 
         Thread thread = new Thread(this);
-        thread.setDaemon(true);
+        thread.setDaemon(false);
         thread.start();
         
     }
@@ -102,7 +102,7 @@ public class ImpulseTracker implements Runnable {
 			@Override
 			public void run() {
 				try {
-					db.exec("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUE("+timestamp_end+", "+2+", "+data+")");
+					db.exec("INSERT INTO sensor_data_raw(timestamp, sensor_id, data) VALUES("+timestamp_end+", "+2+", "+data+")");
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

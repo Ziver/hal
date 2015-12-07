@@ -21,8 +21,7 @@ import zutil.net.threaded.ThreadedTCPNetworkServerThread;
 
 public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implements HalDaemon{
 	private static final Logger logger = LogUtil.getLogger();
-	//public static final int SERVER_PORT = 6666;
-	public static final int SERVER_PORT = 80;
+	public static final int SERVER_PORT = 6666;
 
 
 	public DataSynchronizationDaemon() {

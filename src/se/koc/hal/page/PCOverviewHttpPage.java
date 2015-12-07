@@ -111,7 +111,7 @@ public class PCOverviewHttpPage implements HttpPage {
 				}
 				
 				//add this data point to list
-				list.add(new PowerData(timestampStart, data/1000+"", username));
+				list.add(new PowerData(timestampStart, ""+ (data/1000.0), username));
 				
 				//update previous end timestamp
 				previousTimestampEnd = timestampEnd;

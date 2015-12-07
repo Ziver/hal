@@ -41,8 +41,7 @@ public class PowerChallenge {
             daemon.initiate(daemonTimer);
         }
         
-        HttpServer http = new HttpServer(
-                Integer.parseInt(HalContext.conf.getProperty("http_port")));
+        HttpServer http = new HttpServer(HalContext.getIntegerProperty("http_port"));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("web-resource/")));
         http.setPage("/", new PCOverviewHttpPage());
         http.setPage("/configure", new PCConfigureHttpPage());

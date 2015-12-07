@@ -12,7 +12,7 @@ public class HalContext {
     // Variables
     private static DBConnection db;
 
-	public static Properties conf;
+	private static Properties fileConf;
 	private static Properties defaultConf;
 
 
@@ -28,9 +28,9 @@ public class HalContext {
 	public static void initialize(){
         try {
             // Read conf
-            conf = new Properties(defaultConf);
+            fileConf = new Properties(defaultConf);
             FileReader in = new FileReader(CONF_FILE);
-            conf.load(in);
+            fileConf.load(in);
             in.close();
 
             // Init DB
@@ -40,6 +40,16 @@ public class HalContext {
         }
 	}
 
+
+    public static String getStringProperty(String key){
+        String value = fileConf.getProperty(key);
+        //if(value == null) // TODO: DB property
+        //    value = dbConf.getProperty(key);
+        return value;
+    }
+    public static int getIntegerProperty(String key){
+        return Integer.parseInt(getStringProperty(key));
+    }
 
     public static DBConnection getDB(){
         return db;

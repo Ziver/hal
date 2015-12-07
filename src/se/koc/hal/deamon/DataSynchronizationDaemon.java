@@ -24,7 +24,7 @@ public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implemen
 
 
 	public DataSynchronizationDaemon() {
-		super(Integer.parseInt(HalContext.conf.getProperty("sync_port")));
+		super(HalContext.getIntegerProperty("sync_port"));
 	}
 
 	@Override

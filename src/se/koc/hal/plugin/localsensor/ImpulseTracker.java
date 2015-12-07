@@ -97,7 +97,7 @@ public class ImpulseTracker implements Runnable {
     	}
     }
     
-    private void save(long timestamp_end, int data){
+    private void save(final long timestamp_end, final int data){
     	executorPool.execute(new Runnable(){
 			@Override
 			public void run() {

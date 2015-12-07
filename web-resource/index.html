@@ -22,19 +22,19 @@
 			chartData("min-power-chart", 
 					[
 					 {{#minData}}  
-						{ y: {{.timestamp}}, {{.username}}: {{.data}}/1000 },
+						{ y: {{.timestamp}}, {{.username}}: {{.data}} },
 					{{/minData}}
 					{ y: Date.now() },
 					]
 			);
 			chartData("hour-power-chart", 
 					[{{#hourData}}  
-						{ y: {{.timestamp}}, {{.username}}: {{.data}}/1000 },  
+						{ y: {{.timestamp}}, {{.username}}: {{.data}} },  
 					{{/hourData}}]
 			);
 			chartData("day-power-chart", 
 					[{{#dayData}}  
-						{ y: {{.timestamp}}, {{.username}}: {{.data}}/1000 },
+						{ y: {{.timestamp}}, {{.username}}: {{.data}} },
 					{{/dayData}}]
 			);
 		});

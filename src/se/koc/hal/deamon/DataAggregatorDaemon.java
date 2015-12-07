@@ -122,7 +122,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				long timestamp = result.getLong("timestamp");
 				long periodTimestamp = getTimestampMinutePeriodStart(5, timestamp);
 				if(currentPeriodTimestamp != 0 && periodTimestamp != currentPeriodTimestamp){
-					float confidence = Math.min(count / 5f, 1.0f);
+					float confidence = count / 5f;
 					logger.finer("Calculated minute period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ confidence);
 					HalContext.getDB().exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
 							result.getInt("sensor_id"),

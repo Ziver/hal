@@ -31,8 +31,6 @@ public class PowerChallenge {
 
     public static void main(String[] args) throws Exception {
 
-    	HalContext.initialize();
-    	
     	// init logging
     	LogUtil.setGlobalLevel(Level.ALL);
     	LogUtil.setGlobalFormatter(new CompactLogFormatter());
@@ -43,7 +41,8 @@ public class PowerChallenge {
             daemon.initiate(daemonTimer);
         }
         
-        HttpServer http = new HttpServer(80);
+        HttpServer http = new HttpServer(
+                Integer.parseInt(HalContext.conf.getProperty("http_port")));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("web-resource/")));
         http.setPage("/", new PCOverviewHttpPage());
         http.setPage("/configure", new PCConfigureHttpPage());

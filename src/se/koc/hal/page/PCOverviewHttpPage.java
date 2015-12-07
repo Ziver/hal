@@ -25,45 +25,45 @@ public class PCOverviewHttpPage implements HttpPage {
 		try {
 			DBConnection db = HalContext.getDB();
 			ArrayList<PowerData> minDataList = db.exec(
-					"SELECT user.username as username, "
-						+ "sensor_data_aggr.timestamp_start as timestamp_start, "
-						+ "sensor_data_aggr.timestamp_end as timestamp_end , "
-						+ "sensor_data_aggr.data as data, "
-						+ "sensor_data_aggr.confidence as confidence, "
+					"SELECT user.username as username,"
+						+ " sensor_data_aggr.timestamp_start as timestamp_start,"
+						+ " sensor_data_aggr.timestamp_end as timestamp_end,"
+						+ " sensor_data_aggr.data as data,"
+						+ " sensor_data_aggr.confidence as confidence,"
 						+ DataAggregatorDaemon.FIVE_MINUTES_IN_MS + " as period_length"
-					+ "FROM sensor_data_aggr, user, sensor "
-					+ "WHERE sensor.id = sensor_data_aggr.sensor_id "
-						+ "AND user.id = sensor.user_id "
-						+ "AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.FIVE_MINUTES_IN_MS-1)
-						+ "AND timestamp_start > " + (System.currentTimeMillis() - DataAggregatorDaemon.DAY_IN_MS)
-					+ "ORDER BY timestamp_start ASC",
+					+ " FROM sensor_data_aggr, user, sensor"
+					+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
+						+ " AND user.id = sensor.user_id"
+						+ " AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.FIVE_MINUTES_IN_MS-1)
+						+ " AND timestamp_start > " + (System.currentTimeMillis() - DataAggregatorDaemon.DAY_IN_MS)
+					+ " ORDER BY timestamp_start ASC",
 					new SQLPowerDataBuilder());
 			ArrayList<PowerData> hourDataList = db.exec(
-					"SELECT user.username as username, "
-						+ "sensor_data_aggr.timestamp_start as timestamp_start, "
-						+ "sensor_data_aggr.timestamp_end as timestamp_end , "
-						+ "sensor_data_aggr.data as data, "
-						+ "sensor_data_aggr.confidence as confidence, "
+					"SELECT user.username as username,"
+						+ " sensor_data_aggr.timestamp_start as timestamp_start,"
+						+ " sensor_data_aggr.timestamp_end as timestamp_end,"
+						+ " sensor_data_aggr.data as data,"
+						+ " sensor_data_aggr.confidence as confidence,"
 						+ DataAggregatorDaemon.HOUR_IN_MS + " as period_length"
-					+ "FROM sensor_data_aggr, user, sensor "
-					+ "WHERE sensor.id = sensor_data_aggr.sensor_id "
-						+ "AND user.id = sensor.user_id "
-						+ "AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.HOUR_IN_MS-1)
-						+ "AND timestamp_start > " + (System.currentTimeMillis() - 3*DataAggregatorDaemon.DAY_IN_MS)
-					+ "ORDER BY timestamp_start ASC",
+					+ " FROM sensor_data_aggr, user, sensor"
+					+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
+						+ " AND user.id = sensor.user_id"
+						+ " AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.HOUR_IN_MS-1)
+						+ " AND timestamp_start > " + (System.currentTimeMillis() - 3*DataAggregatorDaemon.DAY_IN_MS)
+					+ " ORDER BY timestamp_start ASC",
 					new SQLPowerDataBuilder());
 			ArrayList<PowerData> dayDataList = db.exec(
-					"SELECT user.username as username, "
-						+ "sensor_data_aggr.timestamp_start as timestamp_start, "
-						+ "sensor_data_aggr.timestamp_end as timestamp_end , "
-						+ "sensor_data_aggr.data as data, "
-						+ "sensor_data_aggr.confidence as confidence, "
+					"SELECT user.username as username,"
+						+ " sensor_data_aggr.timestamp_start as timestamp_start,"
+						+ " sensor_data_aggr.timestamp_end as timestamp_end,"
+						+ " sensor_data_aggr.data as data,"
+						+ " sensor_data_aggr.confidence as confidence,"
 						+ DataAggregatorDaemon.DAY_IN_MS + " as period_length"
-					+ "FROM sensor_data_aggr, user, sensor "
-					+ "WHERE sensor.id = sensor_data_aggr.sensor_id "
-						+ "AND user.id = sensor.user_id "
-						+ "AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.DAY_IN_MS-1)
-					+ "ORDER BY timestamp_start ASC",
+					+ " FROM sensor_data_aggr, user, sensor"
+					+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
+						+ " AND user.id = sensor.user_id"
+						+ " AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.DAY_IN_MS-1)
+					+ " ORDER BY timestamp_start ASC",
 					new SQLPowerDataBuilder());
 		
 		

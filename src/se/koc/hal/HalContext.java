@@ -51,15 +51,16 @@ public class HalContext {
             db = new DBConnection(DBConnection.DBMS.SQLite, DB_FILE);
 
             // Read DB conf
-            dbConf = new Properties();
-            db.exec("SELECT * FROM conf", new PropertiesSQLHandler(dbConf));
+            dbConf =
+                    db.exec("SELECT * FROM conf", new PropertiesSQLHandler());
 
             // Upgrade DB needed?
             DBConnection defaultDB = new DBConnection(DBConnection.DBMS.SQLite, DEFAULT_DB_FILE);
             Properties defaultDBConf =
-                    db.exec("SELECT * FROM conf", new PropertiesSQLHandler(new Properties()));
-            if(defaultDBConf.getProperty("db_version").compareTo(dbConf.getProperty("db_version")) > 0) {
-                logger.info("Upgrading DB (from: v"+dbConf.getProperty("db_version") +", to: v"+defaultDBConf.getProperty("db_version"));
+                    db.exec("SELECT * FROM conf", new PropertiesSQLHandler());
+            if(defaultDBConf.getProperty("db_version") != null &&
+                    defaultDBConf.getProperty("db_version").compareTo(dbConf.getProperty("db_version")) > 0) {
+                logger.info("Upgrading DB (from: v"+dbConf.getProperty("db_version") +", to: v"+defaultDBConf.getProperty("db_version") +")...");
                 upgradeDB();
             }
             defaultDB.close();
@@ -71,8 +72,8 @@ public class HalContext {
 
     public static String getStringProperty(String key){
         String value = fileConf.getProperty(key);
-        //if(value == null) // TODO: DB property
-        //    value = dbConf.getProperty(key);
+        if(value == null)
+            value = dbConf.getProperty(key);
         return value;
     }
     public static int getIntegerProperty(String key){
@@ -107,7 +108,7 @@ public class HalContext {
         - remove backup table (DROP table 'temp_" + TableName)
         - setTransactionSuccessful
          */
-        logger.severe("DB Upgrade not implemented yes!");
+        logger.severe("DB Upgrade not implemented yet!");
         //db.exec("BeginTransaction");
 
         //db.exec("EndTransaction");

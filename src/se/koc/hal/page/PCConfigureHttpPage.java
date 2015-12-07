@@ -22,7 +22,7 @@ public class PCConfigureHttpPage implements HttpPage {
 			Map<String, String> request) throws IOException {
 
 		try {
-			DBConnection db = HalContext.db;
+			DBConnection db = HalContext.getDB();
 			
 			Templator tmpl = new Templator(FileUtil.find("web-resource/configure.html"));
 			tmpl.set("user", User.getLocalUser(db));

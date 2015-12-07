@@ -9,6 +9,7 @@ import java.util.Map;
 
 import se.koc.hal.HalContext;
 import se.koc.hal.deamon.DataAggregatorDaemon;
+import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 import zutil.io.file.FileUtil;
 import zutil.net.http.HttpHeaderParser;
@@ -22,7 +23,8 @@ public class PCOverviewHttpPage implements HttpPage {
 	public void respond(HttpPrintStream out, HttpHeaderParser client_info, Map<String, Object> session, Map<String, String> cookie, Map<String, String> request) throws IOException {
 		
 		try {
-			ArrayList<PowerData> minDataList = HalContext.db.exec(
+			DBConnection db = HalContext.getDB();
+			ArrayList<PowerData> minDataList = db.exec(
 					"SELECT user.username as username, "
 						+ "sensor_data_aggr.timestamp_start as timestamp_start, "
 						+ "sensor_data_aggr.timestamp_end as timestamp_end , "
@@ -36,7 +38,7 @@ public class PCOverviewHttpPage implements HttpPage {
 						+ "AND timestamp_start > " + (System.currentTimeMillis() - DataAggregatorDaemon.DAY_IN_MS)
 					+ "ORDER BY timestamp_start ASC",
 					new SQLPowerDataBuilder());
-			ArrayList<PowerData> hourDataList = HalContext.db.exec(
+			ArrayList<PowerData> hourDataList = db.exec(
 					"SELECT user.username as username, "
 						+ "sensor_data_aggr.timestamp_start as timestamp_start, "
 						+ "sensor_data_aggr.timestamp_end as timestamp_end , "
@@ -48,9 +50,9 @@ public class PCOverviewHttpPage implements HttpPage {
 						+ "AND user.id = sensor.user_id "
 						+ "AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.HOUR_IN_MS-1)
 						+ "AND timestamp_start > " + (System.currentTimeMillis() - 3*DataAggregatorDaemon.DAY_IN_MS)
-					+ "ORDER BY timestamp_start ASC", 
+					+ "ORDER BY timestamp_start ASC",
 					new SQLPowerDataBuilder());
-			ArrayList<PowerData> dayDataList = HalContext.db.exec(
+			ArrayList<PowerData> dayDataList = db.exec(
 					"SELECT user.username as username, "
 						+ "sensor_data_aggr.timestamp_start as timestamp_start, "
 						+ "sensor_data_aggr.timestamp_end as timestamp_end , "

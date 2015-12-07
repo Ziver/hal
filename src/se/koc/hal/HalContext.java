@@ -10,8 +10,8 @@ public class HalContext {
     private static final String CONF_FILE = "hal.conf";
 
     // Variables
-    public static DBConnection db;
-	
+    private static DBConnection db;
+
 	public static Properties conf;
 	private static Properties defaultConf;
 
@@ -39,4 +39,9 @@ public class HalContext {
             throw new RuntimeException(e);
         }
 	}
+
+
+    public static DBConnection getDB(){
+        return db;
+    }
 }

@@ -37,7 +37,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     @Override
     public void run(){
     	try {
-			List<Sensor> sensorList = Sensor.getLocalSensors(HalContext.db);
+			List<Sensor> sensorList = Sensor.getLocalSensors(HalContext.getDB());
 			for(Sensor sensor : sensorList){
 				logger.fine("Aggregating sensor_id: " + sensor.getId());
 				aggregateSensor(sensor.getId());
@@ -48,7 +48,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     }
 
     public void aggregateSensor(long sensorId) {
-    	DBConnection db = HalContext.db;
+    	DBConnection db = HalContext.getDB();
     	try {
     		Long maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId, new SimpleSQLHandler<Long>());
     		if(maxDBTimestamp == null)
@@ -124,7 +124,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				if(currentPeriodTimestamp != 0 && periodTimestamp != currentPeriodTimestamp){
 					float confidence = Math.min(count / 5f, 1.0f);
 					logger.finer("Calculated minute period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ confidence);
-					HalContext.db.exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
+					HalContext.getDB().exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
 							result.getInt("sensor_id"),
 							Sensor.getHighestSequenceId(result.getInt("sensor_id")) + 1,
 							currentPeriodTimestamp,
@@ -156,7 +156,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				if(currentPeriodTimestamp != 0 && periodTimestamp != currentPeriodTimestamp){
 					float aggrConfidence = confidenceSum / 12f;
 					logger.finer("Calculated hour period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ aggrConfidence);
-					HalContext.db.exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
+					HalContext.getDB().exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
 							result.getInt("sensor_id"),
 							Sensor.getHighestSequenceId(result.getInt("sensor_id")) + 1,
 							currentPeriodTimestamp,
@@ -173,7 +173,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				confidenceSum += result.getFloat("confidence");
 				
 				//TODO: SHould not be here!
-				HalContext.db.exec("DELETE FROM sensor_data_aggr "
+				HalContext.getDB().exec("DELETE FROM sensor_data_aggr "
 						+ "WHERE sensor_id == "+ result.getInt("sensor_id") +" AND sequence_id == "+ result.getInt("sequence_id"));
 			}
 			return null;
@@ -193,7 +193,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				if(currentPeriodTimestamp != 0 && periodTimestamp != currentPeriodTimestamp){
 					float aggrConfidence = confidenceSum / 24f;
 					logger.finer("Calculated day period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ aggrConfidence+ " samples: " + samples);
-					HalContext.db.exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
+					HalContext.getDB().exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
 							result.getInt("sensor_id"),
 							Sensor.getHighestSequenceId(result.getInt("sensor_id")) + 1,
 							currentPeriodTimestamp,
@@ -212,7 +212,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				samples++;
 				
 				//TODO: SHould not be here!
-				HalContext.db.exec("DELETE FROM sensor_data_aggr "
+				HalContext.getDB().exec("DELETE FROM sensor_data_aggr "
 						+ "WHERE sensor_id == "+ result.getInt("sensor_id") +" AND sequence_id == "+ result.getInt("sequence_id"));
 			}
 			return null;

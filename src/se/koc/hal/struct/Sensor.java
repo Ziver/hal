@@ -39,7 +39,7 @@ public class Sensor extends DBBean{
 
 	
     public static long getHighestSequenceId(long sensorId) throws SQLException{
-   	 Integer id = HalContext.db.exec("SELECT MAX(sequence_id) FROM sensor_data_aggr WHERE sensor_id == "+ sensorId, new SimpleSQLHandler<Integer>());
+   	 Integer id = HalContext.getDB().exec("SELECT MAX(sequence_id) FROM sensor_data_aggr WHERE sensor_id == "+ sensorId, new SimpleSQLHandler<Integer>());
    	 return (id != null ? id+1 : 1);
    }
 	

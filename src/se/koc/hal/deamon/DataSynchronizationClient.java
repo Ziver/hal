@@ -34,7 +34,7 @@ public class DataSynchronizationClient extends TimerTask implements HalDaemon{
 	@Override
 	public void run() {
 		try {
-			DBConnection db = HalContext.db;
+			DBConnection db = HalContext.getDB();
 			List<User> users = User.getExternalUsers(db);
 			for(User user : users){
 				if(user.getHostname() == null){

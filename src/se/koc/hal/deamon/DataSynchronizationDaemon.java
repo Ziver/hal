@@ -67,7 +67,7 @@ public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implemen
 					if(obj instanceof PeerDataReqDTO){
 						PeerDataReqDTO req = (PeerDataReqDTO) obj;
 						
-						SensorDataListDTO list = HalContext.db.exec("SELECT * FROM sensor_data_aggr WHERE sensor_id == "+ req.sensorId +" AND sequence_id > "+ req.offsetSequenceId, 
+						SensorDataListDTO list = HalContext.getDB().exec("SELECT * FROM sensor_data_aggr WHERE sensor_id == "+ req.sensorId +" AND sequence_id > "+ req.offsetSequenceId,
 								new SQLResultHandler<SensorDataListDTO>() {
 									@Override
 									public SensorDataListDTO handleQueryResult(Statement stmt, ResultSet result) throws SQLException {

@@ -23,19 +23,22 @@ import java.util.logging.Level;
 public class PowerChallenge {
 
 	
-    private static HalDaemon[] daemons = new HalDaemon[]{
-            new DataAggregatorDaemon(),
-            new DataSynchronizationDaemon(),
-            new DataSynchronizationClient()
-    };
+    private static HalDaemon[] daemons;
 
     public static void main(String[] args) throws Exception {
+        // init logging
+        LogUtil.setGlobalLevel(Level.ALL);
+        LogUtil.setGlobalFormatter(new CompactLogFormatter());
 
-    	// init logging
-    	LogUtil.setGlobalLevel(Level.ALL);
-    	LogUtil.setGlobalFormatter(new CompactLogFormatter());
+        // init DB and other configurations
+        HalContext.initialize();
 
         // init daemons
+        daemons = new HalDaemon[]{
+                new DataAggregatorDaemon(),
+                new DataSynchronizationDaemon(),
+                new DataSynchronizationClient()
+        };
         Timer daemonTimer = new Timer();
         for(HalDaemon daemon : daemons){
             daemon.initiate(daemonTimer);

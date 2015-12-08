@@ -77,14 +77,6 @@
 	
 	<target name="build-dependencies">
 		<mkdir dir="${buildDir}" />
-		<javac srcdir="${libDir}/java-speech-api-master/src" destdir="${buildDir}" fork="yes">
-			<include name="**/*.java" />
-			<classpath refid="classpath.build" />
-		</javac>
-		<javac srcdir="${libDir}/sphinx4-5prealpha-src/sphinx4-core/src/main/java" destdir="${buildDir}" fork="yes" encoding="UTF-8">
-			<include name="**/*.java" />
-			<classpath refid="classpath.build" />
-		</javac>
 		<get src="http://repo.koc.se/zutil-java.git/blob/master/Zutil.jar" dest="${libDir}" verbose="true" usetimestamp="true"/>
 	</target>
 	

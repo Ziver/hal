@@ -21,21 +21,28 @@
 		$(function(){
 			chartData("min-power-chart", 
 					[
-					 {{#minData}}  
+					{ y: (Date.now()-24*60*60*1000) },
+					{{#minData}}  
 						{ y: {{.timestamp}}, {{.username}}: {{.data}} },
 					{{/minData}}
-					{ y: Date.now() },
+					{ y: Date.now() }
 					]
 			);
 			chartData("hour-power-chart", 
-					[{{#hourData}}  
+					[
+					{ y: (Date.now()-3*24*60*60*1000) },
+					{{#hourData}}  
 						{ y: {{.timestamp}}, {{.username}}: {{.data}} },  
-					{{/hourData}}]
+					{{/hourData}}
+					{ y: (Date.now()-24*60*60*1000) }
+					]
 			);
 			chartData("day-power-chart", 
 					[{{#dayData}}  
 						{ y: {{.timestamp}}, {{.username}}: {{.data}} },
-					{{/dayData}}]
+					{{/dayData}}
+					{ y: (Date.now()-3*24*60*60*1000) }
+					]
 			);
 		});
 		var userArray = [ {{#username}} '{{.}}', {{/username}} ];
@@ -47,7 +54,7 @@
 				  ykeys: userArray,
 				  labels: userArray,
 				  continuousLine: false,
-				  pointSize: 0,
+				  pointSize: 1,
 				  postUnits: 'kWh',
 				  resize: true
 				});
@@ -85,15 +92,15 @@
           <h1 class="page-header">Overview</h1>
 
           <div class="row placeholders">
-          	<H1>Last 24 hours</H1>
+          	<H1>Last 24 hours (kWh/5min)</H1>
             <div id="min-power-chart" style="height:450px;"></div>
           </div>
           <div class="row placeholders">
-          	<H1>Previous two days</H1>
+          	<H1>Previous two days (kWh/h)</H1>
             <div id="hour-power-chart" style="height:450px;"></div>
           </div>
           <div class="row placeholders">
-          	<H1>Long term</H1>
+          	<H1>Long term (kWh/day)</H1>
             <div id="day-power-chart" style="height:450px;"></div>
           </div>
          

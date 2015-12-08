@@ -1,11 +1,11 @@
 package se.koc.hal.deamon;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
@@ -17,9 +17,6 @@ import zutil.db.SQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
 import zutil.log.LogUtil;
 
-/**
- * Created by Ziver on 2015-12-03.
- */
 public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 	public static final long FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
@@ -49,40 +46,60 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 
     public void aggregateSensor(long sensorId) {
     	DBConnection db = HalContext.getDB();
+    	PreparedStatement stmt = null;
     	try {
-    		Long maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId, new SimpleSQLResult<Long>());
+    		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == ?");
+    		stmt.setLong(1, sensorId);
+    		Long maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLHandler<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
     		// 5 minute aggregation
     		long minPeriodTimestamp = getTimestampMinutePeriodStart(5, System.currentTimeMillis());
     		logger.fine("Calculating 5 min periods... (from:"+ maxDBTimestamp +", to:"+ minPeriodTimestamp +")");
-    		db.exec("SELECT * FROM sensor_data_raw "
-    				+ "WHERE sensor_id == "+sensorId+" AND timestamp > " + maxDBTimestamp + " AND timestamp < " + minPeriodTimestamp
-    				+ " ORDER BY timestamp ASC", 
-    				new FiveMinuteAggregator());
+    		stmt = db.getPreparedStatement("SELECT * FROM sensor_data_raw"
+    				+" WHERE sensor_id == ? AND timestamp > ? AND timestamp < ? "
+    				+" ORDER BY timestamp ASC");
+    		stmt.setLong(1, sensorId);
+    		stmt.setLong(2, maxDBTimestamp);
+    		stmt.setLong(3, minPeriodTimestamp);
+    		DBConnection.exec(stmt, new FiveMinuteAggregator());
     		
     		// hour aggregation
-    		maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId+" AND timestamp_end-timestamp_start == " + (HOUR_IN_MS-1), new SimpleSQLResult<Long>());
+    		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr"
+    				+" WHERE sensor_id == ? AND timestamp_end-timestamp_start == ?");
+    		stmt.setLong(1, sensorId);
+    		stmt.setLong(2, HOUR_IN_MS-1);
+    		maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLHandler<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
     		long hourPeriodTimestamp = getTimestampMinutePeriodStart(60, System.currentTimeMillis()-HOUR_AGGREGATION_OFFSET);
     		logger.fine("Calculating hour periods... (from:"+ maxDBTimestamp +", to:"+ hourPeriodTimestamp +")");
-    		db.exec("SELECT * FROM sensor_data_aggr "
-    				+ "WHERE sensor_id == "+sensorId+" AND " + maxDBTimestamp + " < timestamp_start AND timestamp_start < " + hourPeriodTimestamp + " AND timestamp_end-timestamp_start == " + (FIVE_MINUTES_IN_MS-1) 
-    				+" ORDER BY timestamp_start ASC", 
-    				new HourAggregator());
+    		stmt = db.getPreparedStatement("SELECT * FROM sensor_data_aggr"
+    				+" WHERE sensor_id == ? AND ? < timestamp_start AND timestamp_start < ? AND timestamp_end-timestamp_start == ?" 
+    				+" ORDER BY timestamp_start ASC");
+    		stmt.setLong(1, sensorId);
+    		stmt.setLong(2, maxDBTimestamp);
+    		stmt.setLong(3, hourPeriodTimestamp);
+    		stmt.setLong(4, FIVE_MINUTES_IN_MS-1);
+    		DBConnection.exec(stmt, new HourAggregator());
     		
     		// day aggregation
-    		maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId+" AND timestamp_end-timestamp_start == " + (DAY_IN_MS-1), new SimpleSQLResult<Long>());
+    		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == ? AND timestamp_end-timestamp_start == ?");
+    		stmt.setLong(1, sensorId);
+    		stmt.setLong(2, DAY_IN_MS-1);
+    		maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLHandler<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
     		long dayPeriodTimestamp = getTimestampHourPeriodStart(24, System.currentTimeMillis()-DAY_AGGREGATION_OFFSET);
     		logger.fine("Calculating day periods... (from:"+ maxDBTimestamp +", to:"+ dayPeriodTimestamp +")");
-    		db.exec("SELECT * FROM sensor_data_aggr "
-    				+ "WHERE sensor_id == "+sensorId+" AND " + maxDBTimestamp + " < timestamp_start AND timestamp_start < " + dayPeriodTimestamp + " AND timestamp_end-timestamp_start == " + (HOUR_IN_MS-1)
-    				+" ORDER BY timestamp_start ASC", 
-    				new DayAggregator());
-    		
+    		stmt = db.getPreparedStatement("SELECT * FROM sensor_data_aggr"
+    				+" WHERE sensor_id == ? AND ? < timestamp_start AND timestamp_start < ? AND timestamp_end-timestamp_start == ?"
+    				+" ORDER BY timestamp_start ASC");
+    		stmt.setLong(1, sensorId);
+    		stmt.setLong(2, maxDBTimestamp);
+    		stmt.setLong(3, dayPeriodTimestamp);
+    		stmt.setLong(4, HOUR_IN_MS-1);
+    		DBConnection.exec(stmt, new DayAggregator());
     		
     		logger.fine("Done aggregation");
 		} catch (SQLException e) {
@@ -124,13 +141,14 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				if(currentPeriodTimestamp != 0 && periodTimestamp != currentPeriodTimestamp){
 					float confidence = count / 5f;
 					logger.finer("Calculated minute period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ confidence);
-					HalContext.getDB().exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
-							result.getInt("sensor_id"),
-							Sensor.getHighestSequenceId(result.getInt("sensor_id")) + 1,
-							currentPeriodTimestamp,
-							currentPeriodTimestamp + FIVE_MINUTES_IN_MS -1,
-							sum,
-							confidence));
+					PreparedStatement prepStmt = HalContext.getDB().getPreparedStatement("INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(?, ?, ?, ?, ?, ?)");
+					prepStmt.setInt(1, result.getInt("sensor_id"));
+					prepStmt.setLong(2, Sensor.getHighestSequenceId(result.getInt("sensor_id")) + 1);
+					prepStmt.setLong(3, currentPeriodTimestamp);
+					prepStmt.setLong(4, currentPeriodTimestamp + FIVE_MINUTES_IN_MS - 1);
+					prepStmt.setInt(5, sum);
+					prepStmt.setFloat(6, confidence);
+					DBConnection.exec(prepStmt);
 					
 					// Reset variables
 					currentPeriodTimestamp = periodTimestamp;
@@ -156,13 +174,14 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				if(currentPeriodTimestamp != 0 && periodTimestamp != currentPeriodTimestamp){
 					float aggrConfidence = confidenceSum / 12f;
 					logger.finer("Calculated hour period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ aggrConfidence);
-					HalContext.getDB().exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
-							result.getInt("sensor_id"),
-							Sensor.getHighestSequenceId(result.getInt("sensor_id")) + 1,
-							currentPeriodTimestamp,
-							currentPeriodTimestamp + HOUR_IN_MS -1,
-							sum,
-							aggrConfidence));
+					PreparedStatement prepStmt = HalContext.getDB().getPreparedStatement("INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(?, ?, ?, ?, ?, ?)");
+					prepStmt.setInt(1, result.getInt("sensor_id"));
+					prepStmt.setLong(2, Sensor.getHighestSequenceId(result.getInt("sensor_id")) + 1);
+					prepStmt.setLong(3, currentPeriodTimestamp);
+					prepStmt.setLong(4, currentPeriodTimestamp + HOUR_IN_MS - 1);
+					prepStmt.setInt(5, sum);
+					prepStmt.setFloat(6, aggrConfidence);
+					DBConnection.exec(prepStmt);
 					
 					// Reset variables
 					currentPeriodTimestamp = periodTimestamp;
@@ -173,8 +192,10 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				confidenceSum += result.getFloat("confidence");
 				
 				//TODO: SHould not be here!
-				HalContext.getDB().exec("DELETE FROM sensor_data_aggr "
-						+ "WHERE sensor_id == "+ result.getInt("sensor_id") +" AND sequence_id == "+ result.getInt("sequence_id"));
+				PreparedStatement prepStmt = HalContext.getDB().getPreparedStatement("DELETE FROM sensor_data_aggr WHERE sensor_id == ? AND sequence_id == ?");
+				prepStmt.setInt(1, result.getInt("sensor_id"));
+				prepStmt.setInt(2, result.getInt("sequence_id"));
+				DBConnection.exec(prepStmt);
 			}
 			return null;
 		}    	
@@ -193,13 +214,14 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				if(currentPeriodTimestamp != 0 && periodTimestamp != currentPeriodTimestamp){
 					float aggrConfidence = confidenceSum / 24f;
 					logger.finer("Calculated day period: "+ currentPeriodTimestamp +" sum: "+ sum +" confidence: "+ aggrConfidence+ " samples: " + samples);
-					HalContext.getDB().exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
-							result.getInt("sensor_id"),
-							Sensor.getHighestSequenceId(result.getInt("sensor_id")) + 1,
-							currentPeriodTimestamp,
-							currentPeriodTimestamp + DAY_IN_MS -1,
-							sum,
-							aggrConfidence));
+					PreparedStatement prepStmt = HalContext.getDB().getPreparedStatement("INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(?, ?, ?, ?, ?, ?)");
+					prepStmt.setInt(1, result.getInt("sensor_id"));
+					prepStmt.setLong(2, Sensor.getHighestSequenceId(result.getInt("sensor_id")) + 1);
+					prepStmt.setLong(3, currentPeriodTimestamp);
+					prepStmt.setLong(4, currentPeriodTimestamp + DAY_IN_MS - 1);
+					prepStmt.setInt(5, sum);
+					prepStmt.setFloat(6, aggrConfidence);
+					DBConnection.exec(prepStmt);
 					
 					// Reset variables
 					currentPeriodTimestamp = periodTimestamp;
@@ -212,8 +234,10 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				samples++;
 				
 				//TODO: SHould not be here!
-				HalContext.getDB().exec("DELETE FROM sensor_data_aggr "
-						+ "WHERE sensor_id == "+ result.getInt("sensor_id") +" AND sequence_id == "+ result.getInt("sequence_id"));
+				PreparedStatement prepStmt = HalContext.getDB().getPreparedStatement("DELETE FROM sensor_data_aggr WHERE sensor_id == ? AND sequence_id == ?");
+				prepStmt.setInt(1, result.getInt("sensor_id"));
+				prepStmt.setInt(2, result.getInt("sequence_id"));
+				DBConnection.exec(prepStmt);
 			}
 			return null;
 		}    	

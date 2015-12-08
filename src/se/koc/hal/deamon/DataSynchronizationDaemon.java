@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,6 +15,7 @@ import java.util.logging.Logger;
 
 import se.koc.hal.HalContext;
 import se.koc.hal.deamon.DataSynchronizationClient.PeerDataReqDTO;
+import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 import zutil.log.LogUtil;
 import zutil.net.threaded.ThreadedTCPNetworkServer;
@@ -66,9 +68,10 @@ public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implemen
 				while((obj = in.readObject()) != null){
 					if(obj instanceof PeerDataReqDTO){
 						PeerDataReqDTO req = (PeerDataReqDTO) obj;
-						
-						SensorDataListDTO list = HalContext.getDB().exec("SELECT * FROM sensor_data_aggr WHERE sensor_id == "+ req.sensorId +" AND sequence_id > "+ req.offsetSequenceId,
-								new SQLResultHandler<SensorDataListDTO>() {
+						PreparedStatement stmt = HalContext.getDB().getPreparedStatement("SELECT * FROM sensor_data_aggr WHERE sensor_id == ? AND sequence_id > ?");
+						stmt.setLong(1, req.sensorId);
+						stmt.setLong(2, req.offsetSequenceId);
+						SensorDataListDTO list = DBConnection.exec(stmt, new SQLResultHandler<SensorDataListDTO>() {
 									@Override
 									public SensorDataListDTO handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
 										SensorDataListDTO list = new SensorDataListDTO();

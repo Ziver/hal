@@ -1,6 +1,7 @@
 package se.koc.hal.page;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -24,47 +25,55 @@ public class PCOverviewHttpPage implements HttpPage {
 		
 		try {
 			DBConnection db = HalContext.getDB();
-			ArrayList<PowerData> minDataList = db.exec(
-					"SELECT user.username as username,"
-						+ " sensor_data_aggr.timestamp_start as timestamp_start,"
-						+ " sensor_data_aggr.timestamp_end as timestamp_end,"
-						+ " sensor_data_aggr.data as data,"
-						+ " sensor_data_aggr.confidence as confidence,"
-						+ DataAggregatorDaemon.FIVE_MINUTES_IN_MS + " as period_length"
-					+ " FROM sensor_data_aggr, user, sensor"
-					+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
-						+ " AND user.id = sensor.user_id"
-						+ " AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.FIVE_MINUTES_IN_MS-1)
-						+ " AND timestamp_start > " + (System.currentTimeMillis() - DataAggregatorDaemon.DAY_IN_MS)
-					+ " ORDER BY timestamp_start ASC",
-					new SQLPowerDataBuilder());
-			ArrayList<PowerData> hourDataList = db.exec(
-					"SELECT user.username as username,"
-						+ " sensor_data_aggr.timestamp_start as timestamp_start,"
-						+ " sensor_data_aggr.timestamp_end as timestamp_end,"
-						+ " sensor_data_aggr.data as data,"
-						+ " sensor_data_aggr.confidence as confidence,"
-						+ DataAggregatorDaemon.HOUR_IN_MS + " as period_length"
-					+ " FROM sensor_data_aggr, user, sensor"
-					+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
-						+ " AND user.id = sensor.user_id"
-						+ " AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.HOUR_IN_MS-1)
-						+ " AND timestamp_start > " + (System.currentTimeMillis() - 3*DataAggregatorDaemon.DAY_IN_MS)
-					+ " ORDER BY timestamp_start ASC",
-					new SQLPowerDataBuilder());
-			ArrayList<PowerData> dayDataList = db.exec(
-					"SELECT user.username as username,"
-						+ " sensor_data_aggr.timestamp_start as timestamp_start,"
-						+ " sensor_data_aggr.timestamp_end as timestamp_end,"
-						+ " sensor_data_aggr.data as data,"
-						+ " sensor_data_aggr.confidence as confidence,"
-						+ DataAggregatorDaemon.DAY_IN_MS + " as period_length"
-					+ " FROM sensor_data_aggr, user, sensor"
-					+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
-						+ " AND user.id = sensor.user_id"
-						+ " AND timestamp_end-timestamp_start == " + (DataAggregatorDaemon.DAY_IN_MS-1)
-					+ " ORDER BY timestamp_start ASC",
-					new SQLPowerDataBuilder());
+			
+			PreparedStatement stmt = db.getPreparedStatement(
+				"SELECT user.username as username,"
+					+ " sensor_data_aggr.timestamp_start as timestamp_start,"
+					+ " sensor_data_aggr.timestamp_end as timestamp_end,"
+					+ " sensor_data_aggr.data as data,"
+					+ " sensor_data_aggr.confidence as confidence,"
+					+ DataAggregatorDaemon.FIVE_MINUTES_IN_MS + " as period_length"
+				+ " FROM sensor_data_aggr, user, sensor"
+				+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
+					+ " AND user.id = sensor.user_id"
+					+ " AND timestamp_end-timestamp_start == ?"
+					+ " AND timestamp_start > ?"
+				+ " ORDER BY timestamp_start ASC");
+			stmt.setLong(1, DataAggregatorDaemon.FIVE_MINUTES_IN_MS-1);
+			stmt.setLong(2, (System.currentTimeMillis() - DataAggregatorDaemon.DAY_IN_MS) );
+			ArrayList<PowerData> minDataList = DBConnection.exec(stmt , new SQLPowerDataBuilder());
+			
+			stmt = db.getPreparedStatement(
+				"SELECT user.username as username,"
+					+ " sensor_data_aggr.timestamp_start as timestamp_start,"
+					+ " sensor_data_aggr.timestamp_end as timestamp_end,"
+					+ " sensor_data_aggr.data as data,"
+					+ " sensor_data_aggr.confidence as confidence,"
+					+ DataAggregatorDaemon.HOUR_IN_MS + " as period_length"
+				+ " FROM sensor_data_aggr, user, sensor"
+				+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
+					+ " AND user.id = sensor.user_id"
+					+ " AND timestamp_end-timestamp_start == ?"
+					+ " AND timestamp_start > ?"
+				+ " ORDER BY timestamp_start ASC");
+			stmt.setLong(1, DataAggregatorDaemon.HOUR_IN_MS-1);
+			stmt.setLong(2, (System.currentTimeMillis() - 3*DataAggregatorDaemon.DAY_IN_MS) );
+			ArrayList<PowerData> hourDataList = DBConnection.exec(stmt, new SQLPowerDataBuilder());
+			
+			stmt = db.getPreparedStatement(
+				"SELECT user.username as username,"
+					+ " sensor_data_aggr.timestamp_start as timestamp_start,"
+					+ " sensor_data_aggr.timestamp_end as timestamp_end,"
+					+ " sensor_data_aggr.data as data,"
+					+ " sensor_data_aggr.confidence as confidence,"
+					+ DataAggregatorDaemon.DAY_IN_MS + " as period_length"
+				+ " FROM sensor_data_aggr, user, sensor"
+				+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
+					+ " AND user.id = sensor.user_id"
+					+ " AND timestamp_end-timestamp_start == ?"
+				+ " ORDER BY timestamp_start ASC");
+			stmt.setLong(1, DataAggregatorDaemon.DAY_IN_MS-1);
+			ArrayList<PowerData> dayDataList = DBConnection.exec(stmt, new SQLPowerDataBuilder());
 		
 		
 			Templator tmpl = new Templator(FileUtil.find("web-resource/index.html"));

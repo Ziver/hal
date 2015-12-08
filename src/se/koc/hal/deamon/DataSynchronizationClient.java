@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
@@ -55,16 +56,21 @@ public class DataSynchronizationClient extends TimerTask implements HalDaemon{
 						
 						SensorDataListDTO dataList = (SensorDataListDTO) in.readObject();
 						for(SensorDataDTO data : dataList){
-							int deletions = db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id == "+ sensor.getId() +" AND "+ data.timestampStart +" <= timestamp_start AND timestamp_end <= "+ data.timestampEnd);
+							PreparedStatement stmt  = db.getPreparedStatement("DELETE FROM sensor_data_aggr WHERE sensor_id == ? AND ? <= timestamp_start AND timestamp_end <= ?");
+							stmt.setLong(1, sensor.getId());
+							stmt.setLong(2, data.timestampStart);
+							stmt.setLong(3, data.timestampEnd);
+							int deletions = DBConnection.exec(stmt);
 							if(deletions > 0)
 								logger.finer("Aggregate data replaced "+ deletions +" entries");
-							db.exec(String.format(Locale.US, "INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(%d, %d, %d, %d, %d, %f)",
-									sensor.getId(),
-									data.sequenceId,
-									data.timestampStart,
-									data.timestampEnd,
-									data.data,
-									data.confidence));
+							stmt = db.getPreparedStatement("INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(?, ?, ?, ?, ?, ?)");
+							stmt.setLong(1, sensor.getId());
+							stmt.setLong(2, data.sequenceId);
+							stmt.setLong(3, data.timestampStart);
+							stmt.setLong(4, data.timestampEnd);
+							stmt.setInt(5, data.data);
+							stmt.setFloat(6, data.confidence);
+							DBConnection.exec(stmt);
 						}
 						logger.fine("Stored " + dataList.size() + " entries for sensor " + sensor.getId() + " from " + user.getName());
 					}

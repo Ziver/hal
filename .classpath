@@ -2,8 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="src" path="lib/sphinx4-5prealpha-src/sphinx4-core/src/main/java"/>
-	<classpathentry kind="src" path="lib/java-speech-api-master/src"/>
 	<classpathentry kind="lib" path="external/marytts-5.1.2/lib/icu4j-54.1.1.jar"/>
 	<classpathentry kind="lib" path="external/marytts-5.1.2/lib/marytts-client-5.1.2-jar-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="external/marytts-5.1.2/lib/marytts-lang-de-5.1.2.jar"/>
@@ -23,6 +21,8 @@
 	<classpathentry kind="lib" path="lib/marytts-runtime-5.1.2-jar-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="lib/pi4j-core-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="lib/java-speech-api-master.jar"/>
+	<classpathentry kind="lib" path="lib/sphinx4-core.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/zutil-java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>

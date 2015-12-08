@@ -10,9 +10,6 @@ import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
 
-/**
- * Created by Ziver on 2015-12-03.
- */
 @DBBean.DBTable("sensor")
 public class Sensor extends DBBean{
 	private String name;
@@ -33,14 +30,17 @@ public class Sensor extends DBBean{
 	}
 
 	public static List<Sensor> getSensors(DBConnection db, User user) throws SQLException{
-		PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM sensor WHERE user_id == " + user.getId() );
+		PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM sensor WHERE user_id == ?" );
+		stmt.setLong(1, user.getId());
 		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
 	}
 
 	
     public static long getHighestSequenceId(long sensorId) throws SQLException{
-   	 Integer id = HalContext.getDB().exec("SELECT MAX(sequence_id) FROM sensor_data_aggr WHERE sensor_id == "+ sensorId, new SimpleSQLResult<Integer>());
-   	 return (id != null ? id+1 : 1);
+    	PreparedStatement stmt = HalContext.getDB().getPreparedStatement("SELECT MAX(sequence_id) FROM sensor_data_aggr WHERE sensor_id == ?");
+    	stmt.setLong(1, sensorId);
+    	Integer id = DBConnection.exec(stmt, new SimpleSQLHandler<Integer>());
+    	return (id != null ? id+1 : 1);
    }
 	
 	

@@ -116,7 +116,7 @@ public class PCOverviewHttpPage implements HttpPage {
 				
 				//add null data point to list if one or more periods of data is missing before this
 				if(previousTimestampEnd != -1 && timestampStart-previousTimestampEnd > periodLength){
-					list.add(new PowerData(previousTimestampEnd+1, "undefined", username));
+					list.add(new PowerData(previousTimestampEnd+1, "null", username));
 				}
 				
 				//add this data point to list

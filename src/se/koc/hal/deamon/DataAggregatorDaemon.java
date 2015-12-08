@@ -50,7 +50,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     	try {
     		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == ?");
     		stmt.setLong(1, sensorId);
-    		Long maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLHandler<Long>());
+    		Long maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
     		// 5 minute aggregation
@@ -69,7 +69,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     				+" WHERE sensor_id == ? AND timestamp_end-timestamp_start == ?");
     		stmt.setLong(1, sensorId);
     		stmt.setLong(2, HOUR_IN_MS-1);
-    		maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLHandler<Long>());
+    		maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
     		long hourPeriodTimestamp = getTimestampMinutePeriodStart(60, System.currentTimeMillis()-HOUR_AGGREGATION_OFFSET);
@@ -87,7 +87,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == ? AND timestamp_end-timestamp_start == ?");
     		stmt.setLong(1, sensorId);
     		stmt.setLong(2, DAY_IN_MS-1);
-    		maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLHandler<Long>());
+    		maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
     		long dayPeriodTimestamp = getTimestampHourPeriodStart(24, System.currentTimeMillis()-DAY_AGGREGATION_OFFSET);

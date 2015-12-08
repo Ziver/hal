@@ -14,7 +14,7 @@ import se.koc.hal.HalContext;
 import se.koc.hal.struct.Sensor;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
-import zutil.db.handler.SimpleSQLHandler;
+import zutil.db.handler.SimpleSQLResult;
 import zutil.log.LogUtil;
 
 /**
@@ -50,7 +50,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     public void aggregateSensor(long sensorId) {
     	DBConnection db = HalContext.getDB();
     	try {
-    		Long maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId, new SimpleSQLHandler<Long>());
+    		Long maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId, new SimpleSQLResult<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
     		// 5 minute aggregation
@@ -62,7 +62,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     				new FiveMinuteAggregator());
     		
     		// hour aggregation
-    		maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId+" AND timestamp_end-timestamp_start == " + (HOUR_IN_MS-1), new SimpleSQLHandler<Long>());
+    		maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId+" AND timestamp_end-timestamp_start == " + (HOUR_IN_MS-1), new SimpleSQLResult<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
     		long hourPeriodTimestamp = getTimestampMinutePeriodStart(60, System.currentTimeMillis()-HOUR_AGGREGATION_OFFSET);
@@ -73,7 +73,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     				new HourAggregator());
     		
     		// day aggregation
-    		maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId+" AND timestamp_end-timestamp_start == " + (DAY_IN_MS-1), new SimpleSQLHandler<Long>());
+    		maxDBTimestamp = db.exec("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == "+sensorId+" AND timestamp_end-timestamp_start == " + (DAY_IN_MS-1), new SimpleSQLResult<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
     		long dayPeriodTimestamp = getTimestampHourPeriodStart(24, System.currentTimeMillis()-DAY_AGGREGATION_OFFSET);

@@ -1,11 +1,10 @@
 package se.koc.hal;
 
 import zutil.db.DBConnection;
-import zutil.db.handler.PropertiesSQLHandler;
+import zutil.db.handler.PropertiesSQLResult;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -52,12 +51,12 @@ public class HalContext {
 
             // Read DB conf
             dbConf =
-                    db.exec("SELECT * FROM conf", new PropertiesSQLHandler());
+                    db.exec("SELECT * FROM conf", new PropertiesSQLResult());
 
             // Upgrade DB needed?
             DBConnection defaultDB = new DBConnection(DBConnection.DBMS.SQLite, DEFAULT_DB_FILE);
             Properties defaultDBConf =
-                    db.exec("SELECT * FROM conf", new PropertiesSQLHandler());
+                    db.exec("SELECT * FROM conf", new PropertiesSQLResult());
             if(defaultDBConf.getProperty("db_version") != null &&
                     defaultDBConf.getProperty("db_version").compareTo(dbConf.getProperty("db_version")) > 0) {
                 logger.info("Upgrading DB (from: v"+dbConf.getProperty("db_version") +", to: v"+defaultDBConf.getProperty("db_version") +")...");

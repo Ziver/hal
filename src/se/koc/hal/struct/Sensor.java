@@ -8,7 +8,7 @@ import se.koc.hal.HalContext;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
-import zutil.db.handler.SimpleSQLHandler;
+import zutil.db.handler.SimpleSQLResult;
 
 /**
  * Created by Ziver on 2015-12-03.
@@ -39,7 +39,7 @@ public class Sensor extends DBBean{
 
 	
     public static long getHighestSequenceId(long sensorId) throws SQLException{
-   	 Integer id = HalContext.getDB().exec("SELECT MAX(sequence_id) FROM sensor_data_aggr WHERE sensor_id == "+ sensorId, new SimpleSQLHandler<Integer>());
+   	 Integer id = HalContext.getDB().exec("SELECT MAX(sequence_id) FROM sensor_data_aggr WHERE sensor_id == "+ sensorId, new SimpleSQLResult<Integer>());
    	 return (id != null ? id+1 : 1);
    }
 	

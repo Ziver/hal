@@ -1,12 +1,15 @@
 package se.koc.hal;
 
 import zutil.db.DBConnection;
+import zutil.db.DBUpgradeHandler;
 import zutil.db.handler.PropertiesSQLResult;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -15,6 +18,8 @@ public class HalContext {
     private static final Logger logger = LogUtil.getLogger();
 
     // Constants
+    private static final String PROPERTY_DB_VERSION = "db_version";
+
     private static final String CONF_FILE = "hal.conf";
     private static final String DB_FILE = "hal.db";
     private static final String DEFAULT_DB_FILE = "hal-default.db";
@@ -43,26 +48,40 @@ public class HalContext {
             in.close();
 
             // Init DB
-            if(FileUtil.find(DB_FILE) == null){
+            File dbFile = FileUtil.find(DB_FILE);
+            if(dbFile == null){
                 logger.info("Creating new DB...");
-                resetDB();
+                FileUtil.copy(dbFile, FileUtil.find(DEFAULT_DB_FILE));
             }
             db = new DBConnection(DBConnection.DBMS.SQLite, DB_FILE);
 
             // Read DB conf
-            dbConf =
-                    db.exec("SELECT * FROM conf", new PropertiesSQLResult());
+            dbConf = db.exec("SELECT * FROM conf", new PropertiesSQLResult());
 
             // Upgrade DB needed?
-            DBConnection defaultDB = new DBConnection(DBConnection.DBMS.SQLite, DEFAULT_DB_FILE);
+            DBConnection referenceDB = new DBConnection(DBConnection.DBMS.SQLite, DEFAULT_DB_FILE);
             Properties defaultDBConf =
-                    db.exec("SELECT * FROM conf", new PropertiesSQLResult());
-            if(defaultDBConf.getProperty("db_version") != null &&
-                    defaultDBConf.getProperty("db_version").compareTo(dbConf.getProperty("db_version")) > 0) {
-                logger.info("Upgrading DB (from: v"+dbConf.getProperty("db_version") +", to: v"+defaultDBConf.getProperty("db_version") +")...");
-                upgradeDB();
+                    referenceDB.exec("SELECT * FROM conf", new PropertiesSQLResult());
+            // Check DB version
+            logger.fine("DB version: "+ dbConf.getProperty(PROPERTY_DB_VERSION));
+            if(dbConf.getProperty(PROPERTY_DB_VERSION) == null ||
+                    defaultDBConf.getProperty(PROPERTY_DB_VERSION).compareTo(dbConf.getProperty(PROPERTY_DB_VERSION)) > 0) {
+                logger.info("Starting DB upgrade...");
+                File backupDB = FileUtil.getNextFile(dbFile);
+                logger.fine("Backing up DB to: "+ backupDB);
+                FileUtil.copy(dbFile, backupDB);
+
+                logger.fine("Upgrading DB (from: v"+dbConf.getProperty(PROPERTY_DB_VERSION)
+                        +", to: v"+defaultDBConf.getProperty(PROPERTY_DB_VERSION) +")...");
+                DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);
+                handler.setTargetDB(db);
+                handler.upgrade();
+
+                logger.info("DB upgrade done");
+                dbConf.setProperty(PROPERTY_DB_VERSION, defaultDBConf.getProperty(PROPERTY_DB_VERSION));
+                storeProperties();
             }
-            defaultDB.close();
+            referenceDB.close();
         } catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -78,38 +97,19 @@ public class HalContext {
     public static int getIntegerProperty(String key){
         return Integer.parseInt(getStringProperty(key));
     }
+    public synchronized static void storeProperties() throws SQLException {
+        logger.fine("Saving conf to DB...");
+        PreparedStatement stmt = db.getPreparedStatement("REPLACE INTO conf (key, value) VALUES (?, ?)");
+        for(Object key : dbConf.keySet()){
+            stmt.setObject(1, key);
+            stmt.setObject(2, dbConf.get(key));
+            stmt.addBatch();
+        }
+        DBConnection.execBatch(stmt);
+    }
 
     public static DBConnection getDB(){
         return db;
     }
 
-
-    /*************************************************************************/
-
-    private static void resetDB() throws IOException {
-        FileUtil.copy(DEFAULT_DB_FILE, DB_FILE);
-    }
-
-    // Todo:
-    private static void upgradeDB() throws SQLException {
-        /*
-        - beginTransaction
-        - run a table creation with if not exists (we are doing an upgrade, so the table might not exists yet, it will fail alter and drop)
-        - put in a list the existing columns List<String> columns = DBUtils.GetColumns(db, TableName);
-        - backup table (ALTER table " + TableName + " RENAME TO 'temp_"                    + TableName)
-        - create new table (the newest table creation schema)
-        - get the intersection with the new columns, this time columns taken from the upgraded table (columns.retainAll(DBUtils.GetColumns(db, TableName));)
-        - restore data (String cols = StringUtils.join(columns, ",");
-                    db.execSQL(String.format(
-                            "INSERT INTO %s (%s) SELECT %s from temp_%s",
-                            TableName, cols, cols, TableName));
-        )
-        - remove backup table (DROP table 'temp_" + TableName)
-        - setTransactionSuccessful
-         */
-        logger.severe("DB Upgrade not implemented yet!");
-        //db.exec("BeginTransaction");
-
-        //db.exec("EndTransaction");
-    }
 }

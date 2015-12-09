@@ -137,6 +137,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 			int sum = 0;
 			int count = 0;
 			int samples = 0;
+			HalContext.getDB().getConnection().setAutoCommit(false);
 			while(result.next()){
 				long timestamp = result.getLong("timestamp");
 				long periodTimestamp = getTimestampMinutePeriodStart(5, timestamp);
@@ -161,6 +162,8 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				++count;
 				++samples;
 			}
+			HalContext.getDB().getConnection().commit();
+			HalContext.getDB().getConnection().setAutoCommit(true);
 			return null;
 		}    	
     }
@@ -172,6 +175,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 			int sum = 0;
 			float confidenceSum = 0;
 			int samples = 0;
+			HalContext.getDB().getConnection().setAutoCommit(false);
 			while(result.next()){
 				long timestamp = result.getLong("timestamp_start");
 				long periodTimestamp = getTimestampMinutePeriodStart(60, timestamp);
@@ -202,6 +206,8 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				prepStmt.setInt(2, result.getInt("sequence_id"));
 				DBConnection.exec(prepStmt);
 			}
+			HalContext.getDB().getConnection().commit();
+			HalContext.getDB().getConnection().setAutoCommit(true);
 			return null;
 		}    	
     }
@@ -213,6 +219,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 			int sum = 0;
 			float confidenceSum = 0;
 			int samples = 0;
+			HalContext.getDB().getConnection().setAutoCommit(false);
 			while(result.next()){
 				long timestamp = result.getLong("timestamp_start");
 				long periodTimestamp = getTimestampHourPeriodStart(24, timestamp);
@@ -244,6 +251,8 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				prepStmt.setInt(2, result.getInt("sequence_id"));
 				DBConnection.exec(prepStmt);
 			}
+			HalContext.getDB().getConnection().commit();
+			HalContext.getDB().getConnection().setAutoCommit(true);
 			return null;
 		}    	
     }

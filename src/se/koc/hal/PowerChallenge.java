@@ -27,8 +27,12 @@ public class PowerChallenge {
 
     public static void main(String[] args) throws Exception {
         // init logging
-        LogUtil.setGlobalLevel(Level.ALL);
-        LogUtil.setGlobalFormatter(new CompactLogFormatter());
+        CompactLogFormatter formatter = new CompactLogFormatter();
+        LogUtil.setLevel("se.koc.hal", Level.FINEST);
+        LogUtil.setFormatter("se.koc.hal", formatter);
+        LogUtil.setLevel("zutil", Level.FINEST);
+        LogUtil.setFormatter("zutil", formatter);
+        LogUtil.setGlobalFormatter(formatter);
 
         // init DB and other configurations
         HalContext.initialize();

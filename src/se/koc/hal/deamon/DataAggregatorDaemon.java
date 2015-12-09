@@ -174,8 +174,8 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				++count;
 				++samples;
 			}
-			DBConnection.execBatch(preparedInsertStmt);
 			if(!error){
+				DBConnection.execBatch(preparedInsertStmt);
 				HalContext.getDB().getConnection().commit();
 			}else{
 				HalContext.getDB().getConnection().rollback();
@@ -233,9 +233,9 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				preparedDeleteStmt.setInt(2, result.getInt("sequence_id"));
 				preparedDeleteStmt.addBatch();
 			}
-			DBConnection.execBatch(preparedInsertStmt);
-			DBConnection.execBatch(preparedDeleteStmt);
 			if(!error){
+				DBConnection.execBatch(preparedInsertStmt);
+				DBConnection.execBatch(preparedDeleteStmt);
 				HalContext.getDB().getConnection().commit();
 			}else{
 				HalContext.getDB().getConnection().rollback();
@@ -294,9 +294,9 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				preparedDeleteStmt.setInt(2, result.getInt("sequence_id"));
 				preparedDeleteStmt.addBatch();
 			}
-			DBConnection.execBatch(preparedInsertStmt);
-			DBConnection.execBatch(preparedDeleteStmt);
 			if(!error){
+				DBConnection.execBatch(preparedInsertStmt);
+				DBConnection.execBatch(preparedDeleteStmt);
 				HalContext.getDB().getConnection().commit();
 			}else{
 				HalContext.getDB().getConnection().rollback();

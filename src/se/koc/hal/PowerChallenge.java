@@ -5,6 +5,7 @@ import se.koc.hal.deamon.DataAggregatorDaemon;
 import se.koc.hal.deamon.DataSynchronizationClient;
 import se.koc.hal.deamon.DataSynchronizationDaemon;
 import se.koc.hal.deamon.HalDaemon;
+import se.koc.hal.page.HalHttpPage;
 import se.koc.hal.page.PCConfigureHttpPage;
 import se.koc.hal.page.PCHeatMapHttpPage;
 import se.koc.hal.page.PCOverviewHttpPage;
@@ -24,6 +25,7 @@ public class PowerChallenge {
 
 	
     private static HalDaemon[] daemons;
+    private static HalHttpPage[] pages;
 
     public static void main(String[] args) throws Exception {
         // init logging
@@ -47,12 +49,18 @@ public class PowerChallenge {
         for(HalDaemon daemon : daemons){
             daemon.initiate(daemonTimer);
         }
-        
+
+        pages = new HalHttpPage[]{
+                new PCOverviewHttpPage(),
+                new PCHeatMapHttpPage(),
+                new PCConfigureHttpPage()
+        };
         HttpServer http = new HttpServer(HalContext.getIntegerProperty("http_port"));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("web-resource/")));
-        http.setPage("/", new PCOverviewHttpPage());
-        http.setPage("/configure", new PCConfigureHttpPage());
-        http.setPage("/heatmap", new PCHeatMapHttpPage());
+        http.setPage("/", pages[0]);
+        for(HalHttpPage page : pages){
+            http.setPage(page.getURL(), page);
+        }
         http.start();
     }
 }

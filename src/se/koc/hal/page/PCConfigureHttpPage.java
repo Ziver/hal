@@ -14,26 +14,30 @@ import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
 import zutil.parser.Templator;
 
-public class PCConfigureHttpPage implements HttpPage {
+public class PCConfigureHttpPage extends HalHttpPage {
 
-	@Override
-	public void respond(HttpPrintStream out, HttpHeaderParser client_info,
-			Map<String, Object> session, Map<String, String> cookie,
-			Map<String, String> request) throws IOException {
+    public PCConfigureHttpPage() {
+        super("Configuration", "config");
+    }
 
-		try {
+    @Override
+	public Templator httpRespond(
+                Map<String, Object> session,
+                Map<String, String> cookie,
+                Map<String, String> request)
+                throws Exception{
+
+
 			DBConnection db = HalContext.getDB();
 			
-			Templator tmpl = new Templator(FileUtil.find("web-resource/configure.html"));
+			Templator tmpl = new Templator(FileUtil.find("web-resource/configure.tmpl"));
 			tmpl.set("user", User.getLocalUser(db));
 			tmpl.set("localSensor", Sensor.getLocalSensors(db));
 			tmpl.set("extUsers", User.getExternalUsers(db));
 			tmpl.set("extSensor", Sensor.getExternalSensors(db));
-			out.print(tmpl.compile());
 
-		} catch (SQLException e) {
-			throw new IOException(e);
-		}
+			return tmpl;
+
 	}
 
 }

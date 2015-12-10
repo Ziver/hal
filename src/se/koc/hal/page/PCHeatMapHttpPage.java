@@ -9,15 +9,21 @@ import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
 import zutil.parser.Templator;
 
-public class PCHeatMapHttpPage implements HttpPage {
+public class PCHeatMapHttpPage extends HalHttpPage {
+
+	public PCHeatMapHttpPage() {
+		super("Heatmap", "map");
+	}
 
 	@Override
-	public void respond(HttpPrintStream out, HttpHeaderParser client_info,
-			Map<String, Object> session, Map<String, String> cookie,
-			Map<String, String> request) throws IOException {
+	public Templator httpRespond(
+			Map<String, Object> session,
+			Map<String, String> cookie,
+			Map<String, String> request)
+			throws Exception{
 
-		Templator tmpl = new Templator(FileUtil.find("web-resource/heatmap.html"));
-		out.print(tmpl.compile());
+		Templator tmpl = new Templator(FileUtil.find("web-resource/heatmap.tmpl"));
+		return tmpl;
 	}
 
 }

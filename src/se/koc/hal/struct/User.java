@@ -7,6 +7,7 @@ import java.util.List;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
+import zutil.ui.Configurator;
 
 /**
  * Created by Ziver on 2015-12-03.
@@ -37,10 +38,10 @@ public class User extends DBBean{
 	
 	
 	
-	public String getName() {
+	public String getUserName() {
 		return username;
 	}
-	public void setName(String name) {
+	public void setUserName(String name) {
 		this.username = name;
 	}
 	public String getAddress() {

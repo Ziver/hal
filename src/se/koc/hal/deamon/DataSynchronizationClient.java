@@ -9,7 +9,6 @@ import java.net.UnknownHostException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
@@ -39,10 +38,10 @@ public class DataSynchronizationClient extends TimerTask implements HalDaemon{
 			List<User> users = User.getExternalUsers(db);
 			for(User user : users){
 				if(user.getHostname() == null){
-					logger.fine("Hostname not defined for user: "+ user.getName());
+					logger.fine("Hostname not defined for user: "+ user.getUserName());
 					continue;
 				}
-				logger.fine("Synchronizing user: "+ user.getName() +" ("+user.getHostname()+":"+user.getPort()+")");
+				logger.fine("Synchronizing user: "+ user.getUserName() +" ("+user.getHostname()+":"+user.getPort()+")");
 				try (Socket s = new Socket(user.getHostname(), user.getPort());){
 					ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 					ObjectInputStream in = new ObjectInputStream(s.getInputStream());
@@ -72,7 +71,7 @@ public class DataSynchronizationClient extends TimerTask implements HalDaemon{
 							stmt.setFloat(6, data.confidence);
 							DBConnection.exec(stmt);
 						}
-						logger.fine("Stored " + dataList.size() + " entries for sensor " + sensor.getId() + " from " + user.getName());
+						logger.fine("Stored " + dataList.size() + " entries for sensor " + sensor.getId() + " from " + user.getUserName());
 					}
 					out.writeObject(null);
 					out.close();

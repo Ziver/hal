@@ -1,87 +1,129 @@
 <h1 class="page-header">Configuration</h1>
 
-<div class="panel panel-default">
-	<div class="panel-heading">Profile Information</div>
-	<div class="panel-body">
-		<form method="POST">
-			<input type="hidden" name="form" value="user">
-			<input type="hidden" name="id" value="{{user.getId()}}">
-			<div class="form-group col-md-4">
-				<label for="username">Username</label>
-				<input type="text" class="form-control" id="username" name="username" value="{{user.username}}">
-			</div>
-			<div class="form-group col-md-8">
-				<label for="address">Address</label>
-				<input type="text" class="form-control" id="address" name="address" value="{{user.address}}">
-			</div>
-			<div class="col-md-12">
-				<button type="submit" class="btn btn-default pull-right">Save</button>
-			</div>
-		</form>
-	</div>
+<div class="col-md-8">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">Profile Information</div>
+        <div class="panel-body">
+            <form class="form-horizontal" method="POST">
+                <input type="hidden" name="form" value="user">
+                <input type="hidden" name="id" value="{{user.getId()}}">
+                <div class="form-group">
+                    <label for="username" class="col-sm-2 control-label">Username</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="username" name="username" value="{{user.username}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="address" class="col-sm-2 control-label">Address</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="address" name="address" value="{{user.address}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
-<div class="panel panel-default">
-	<div class="panel-heading">Local Sensors</div>
-	<div class="panel-body">
-		This is a local list of sensors connected to this node.
-	</div>
-	<table class="table table-hover">
-		<tr>
-			<th>Name</th>
-			<th>Type</th>
-			<th>Configuration</th>
-		</tr>
-		{{#localSensor}}
-		<tr>
-			<td>{{.name}}</td>
-			<td>{{.type}}</td>
-			<td>{{.config}}</td>
-		</tr>
-		{{/localSensor}}
-	</table>
+<div class="col-md-12">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">Local Sensors</div>
+        <div class="panel-body">
+            <p>This is a local list of sensors connected to this node.</p>
+
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Configuration</th>
+                    <th>
+                        <button class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button>
+                    </th>
+                </thead>
+                {{#localSensor}}
+                <tr>
+                    <td>{{.name}}</td>
+                    <td>{{.type}}</td>
+                    <td>{{.config}}</td>
+                    <td>
+                        <div class="btn-toolbar pull-right">
+                            <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>
+                            <button class="btn btn-danger btn-xs"> <span class="glyphicon glyphicon-trash"></span></button>
+                        </div>
+                    </td>
+                </tr>
+                {{/localSensor}}
+            </table>
+        </div>
+    </div>
 </div>
 
-<div class="panel panel-default">
-	<div class="panel-heading">External Users</div>
-	<div class="panel-body">
-		Add or remove users that you want to synchronized data with.
-	</div>
-	<table class="table table-hover">
-		<tr>
-			<th>Username</th>
-			<th>Address</th>
-			<th>Hostname</th>
-			<th>Port</th>
-		</tr>
-		{{#extUsers}}
-		<tr>
-			<td>{{.username}}</td>
-			<td>{{.address}}</td>
-			<td>{{.hostname}}</td>
-			<td>{{.port}}</td>
-		</tr>
-		{{/extUsers}}
-	</table>
+<div class="col-md-12">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">External Users</div>
+        <div class="panel-body">
+            <p>Add or remove users that you want to synchronized data with.</p>
+
+            <table class="table table-hover table-condensed">
+                <thead>
+                <th>Username</th>
+                <th>Address</th>
+                <th>Hostname</th>
+                <th>Port</th>
+                <th>
+                    <button class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button>
+                </th>
+                </thead>
+                {{#extUsers}}
+                <tr>
+                    <td>{{.username}}</td>
+                    <td>{{.address}}</td>
+                    <td>{{.hostname}}</td>
+                    <td>{{.port}}</td>
+                    <td>
+                        <div class="btn-toolbar pull-right">
+                            <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>
+                            <button class="btn btn-danger btn-xs"> <span class="glyphicon glyphicon-trash"></span></button>
+                        </div>
+                    </td>
+                </tr>
+                {{/extUsers}}
+            </table>
+        </div>
+    </div>
 </div>
 
-<div class="panel panel-default">
-	<div class="panel-heading">External Sensors</div>
-	<div class="panel-body">
-		This is a read only list of synchronized sensors from external users.
-	</div>
-	<table class="table table-hover">
-		<tr>
-			<th>Name</th>
-			<th>Type</th>
-			<th>Configuration</th>
-		</tr>
-		{{#extSensor}}
-		<tr>
-			<td>{{.name}}</td>
-			<td>{{.type}}</td>
-			<td>{{.config}}</td>
-		</tr>
-		{{/extSensor}}
-	</table>
+<div class="col-md-12">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">External Sensors</div>
+        <div class="panel-body">
+            <p>This is a read only list of synchronized sensors from external users.</p>
+
+            <table class="table table-hover table-condensed">
+                <thead>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Configuration</th>
+                <th></th>
+                </thead>
+                {{#extSensor}}
+                <tr>
+                    <td>{{.name}}</td>
+                    <td>{{.type}}</td>
+                    <td>{{.config}}</td>
+                    <td>
+                        <div class="btn-toolbar pull-right">
+                            <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-save"></span></button>
+                            <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
+                        </div>
+                    </td>
+                </tr>
+                {{/extSensor}}
+            </table>
+        </div>
+    </div>
 </div>

@@ -51,6 +51,12 @@
 			</classpath>
 		</java>
 	</target>
+
+	<target name="clear-aggr-data-from-db" depends="">
+		<exec executable="sqlite3">
+			<arg line="hal.db 'DELETE FROM sensor_data_aggr'" />
+		</exec>
+	</target>
 	
 	<!--clean all build paths-->
 	<target name="clean">

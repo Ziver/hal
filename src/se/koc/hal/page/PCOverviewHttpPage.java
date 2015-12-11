@@ -79,7 +79,7 @@ public class PCOverviewHttpPage extends HalHttpPage {
 		ArrayList<PowerData> dayDataList = DBConnection.exec(stmt, new SQLPowerDataBuilder());
 
 
-		Templator tmpl = new Templator(FileUtil.find("web-resource/index.html"));
+		Templator tmpl = new Templator(FileUtil.find("web-resource/overview.tmpl"));
 		tmpl.set("minData", minDataList);
 		tmpl.set("hourData", hourDataList);
 		tmpl.set("dayData", dayDataList);

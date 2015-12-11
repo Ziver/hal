@@ -55,14 +55,7 @@ public class DataSynchronizationClient extends TimerTask implements HalDaemon{
 						
 						SensorDataListDTO dataList = (SensorDataListDTO) in.readObject();
 						for(SensorDataDTO data : dataList){
-							PreparedStatement stmt  = db.getPreparedStatement("DELETE FROM sensor_data_aggr WHERE sensor_id == ? AND ? <= timestamp_start AND timestamp_end <= ?");
-							stmt.setLong(1, sensor.getId());
-							stmt.setLong(2, data.timestampStart);
-							stmt.setLong(3, data.timestampEnd);
-							int deletions = DBConnection.exec(stmt);
-							if(deletions > 0)
-								logger.finer("Aggregate data replaced "+ deletions +" entries");
-							stmt = db.getPreparedStatement("INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(?, ?, ?, ?, ?, ?)");
+							PreparedStatement stmt = db.getPreparedStatement("INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(?, ?, ?, ?, ?, ?)");
 							stmt.setLong(1, sensor.getId());
 							stmt.setLong(2, data.sequenceId);
 							stmt.setLong(3, data.timestampStart);

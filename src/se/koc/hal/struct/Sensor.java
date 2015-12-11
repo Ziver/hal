@@ -35,6 +35,11 @@ public class Sensor extends DBBean{
 		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
 	}
 
+	public static List<Sensor> getSensors(DBConnection db) throws SQLException{
+		PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM sensor" );
+		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
+	}
+
 	
     public static long getHighestSequenceId(long sensorId) throws SQLException{
     	PreparedStatement stmt = HalContext.getDB().getPreparedStatement("SELECT MAX(sequence_id) FROM sensor_data_aggr WHERE sensor_id == ?");

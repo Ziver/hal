@@ -19,32 +19,32 @@
 
 <script>
     $(function(){
-        chartData("min-power-chart",
-                [
-                { y: (Date.now()-24*60*60*1000) },
-                {{#minData}}
-                    { y: {{.timestamp}}, {{.username}}: {{.data}} },
-                {{/minData}}
-                { y: Date.now() }
-                ]
-        );
-        chartData("hour-power-chart",
-                [
-                { y: (Date.now()-3*24*60*60*1000) },
-                {{#hourData}}
-                    { y: {{.timestamp}}, {{.username}}: {{.data}} },
-                {{/hourData}}
-                { y: (Date.now()-24*60*60*1000) }
-                ]
-        );
-        chartData("day-power-chart",
-                [{{#dayData}}
-                    { y: {{.timestamp}}, {{.username}}: {{.data}} },
-                {{/dayData}}
-                { y: (Date.now()-3*24*60*60*1000) }
-                ]
-        );
-    });
+		chartData("min-power-chart", 
+				[
+				{ y: (Date.now()-24*60*60*1000) },
+				{{#minData}}  
+					{ y: {{.timestamp}}, {{.username}}: {{.data}} },
+				{{/minData}}
+				{ y: Date.now() }
+				]
+		);
+		chartData("hour-power-chart", 
+				[
+				{ y: (Date.now()-7*24*60*60*1000) },
+				{{#hourData}}  
+					{ y: {{.timestamp}}, {{.username}}: {{.data}} },  
+				{{/hourData}}
+				{ y: Date.now() }
+				]
+		);
+		chartData("day-power-chart", 
+				[{{#dayData}}  
+					{ y: {{.timestamp}}, {{.username}}: {{.data}} },
+				{{/dayData}}
+				{ y: Date.now() }
+				]
+		);
+	});
     var userArray = [ {{#username}} '{{.}}', {{/username}} ];
     function chartData(elementId, data){
         Morris.Line({

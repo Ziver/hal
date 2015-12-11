@@ -25,20 +25,28 @@ public class ImpulseTracker implements Runnable {
     private Integer impulseCount = 0;
     private ExecutorService executorPool;
     private final DBConnection db;
+    private final int sensorId;
     
     public static void main(String args[]) throws Exception {
-        new ImpulseTracker();
+        new ImpulseTracker(2);
     }
     
-    public ImpulseTracker() throws Exception{
+    /**
+     * Constructor
+     * @param sensorId	The ID of this sensor. Will be written to the DB
+     * @throws Exception
+     */
+    public ImpulseTracker(int sensorId) throws Exception{
         
+    	this.sensorId = sensorId;
+    	
         // create gpio controller
         final GpioController gpio = GpioFactory.getInstance();
 
         // provision gpio pin #02 as an input pin with its internal pull up resistor enabled
         final GpioPinDigitalInput irLightSensor = gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_UP);
 
-        // create and register gpio pin listener
+        // create and register gpio pin listener. May require the program to be run as sudo if the GPIO pin has not been exported
         irLightSensor.addListener(new GpioPinListenerDigital() {
             @Override
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
@@ -52,8 +60,10 @@ public class ImpulseTracker implements Runnable {
             
         });
         
+        // setup a thread pool for executing database jobs
         this.executorPool = Executors.newCachedThreadPool();
         
+        // Connect to the database
         logger.info("Connecting to db...");
         db = new DBConnection(DBConnection.DBMS.SQLite, "hal.db");
         
@@ -64,6 +74,10 @@ public class ImpulseTracker implements Runnable {
         
     }
     
+    /**
+     * This loop will try to save the current time and the number of impulses seen every [IMPULSE_REPORT_TIMEOUT] milliseconds.
+     * Every iteration the actual loop time will be evaluated and used to calculate the time for the next loop.
+     */
     @Override
 	public void run() {
 		long startTime = System.nanoTime();
@@ -71,7 +85,7 @@ public class ImpulseTracker implements Runnable {
             impulseCount = 0;	//reset the impulse count
         }
         while(true) {
-            sleepNano(nanoSecondsSleep);
+            sleepNano(nanoSecondsSleep);	//sleep for some time. This variable will be modified every loop to compensate for the loop time spent.
             int count = -1;
             synchronized(impulseCount){
                 count = impulseCount;
@@ -88,6 +102,10 @@ public class ImpulseTracker implements Runnable {
         }
 	}
     
+    /**
+     * Sleep for [ns] nanoseconds
+     * @param ns
+     */
     private void sleepNano(long ns){
         //System.out.println("will go to sleep for " + ns + "ns");
     	try{
@@ -97,12 +115,21 @@ public class ImpulseTracker implements Runnable {
     	}
     }
     
+    /**
+     * Saves the data to the database.
+     * This method should block the caller as short time as possible.
+     * Try to make the time spent in the method the same for every call (low variation). 
+     * 
+     * @param timestamp_end
+     * @param data
+     */
     private void save(final long timestamp_end, final int data){
+    	//offload the timed loop by not doing the db interaction in this thread.
     	executorPool.execute(new Runnable(){
 			@Override
 			public void run() {
 				try {
-					db.exec("INSERT INTO sensor_data_raw(timestamp, sensor_id, data) VALUES("+timestamp_end+", "+2+", "+data+")");
+					db.exec("INSERT INTO sensor_data_raw(timestamp, sensor_id, data) VALUES("+timestamp_end+", "+ImpulseTracker.this.sensorId+", "+data+")");
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

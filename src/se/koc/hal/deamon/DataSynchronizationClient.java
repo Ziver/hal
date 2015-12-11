@@ -48,23 +48,27 @@ public class DataSynchronizationClient extends TimerTask implements HalDaemon{
 					
 					List<Sensor> sensors = Sensor.getSensors(db, user);
 					for(Sensor sensor : sensors){
-						PeerDataReqDTO req = new PeerDataReqDTO();
-						req.sensorId = sensor.getExternalId();	
-						req.offsetSequenceId = Sensor.getHighestSequenceId(sensor.getId());
-						out.writeObject(req);
-						
-						SensorDataListDTO dataList = (SensorDataListDTO) in.readObject();
-						for(SensorDataDTO data : dataList){
-							PreparedStatement stmt = db.getPreparedStatement("INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(?, ?, ?, ?, ?, ?)");
-							stmt.setLong(1, sensor.getId());
-							stmt.setLong(2, data.sequenceId);
-							stmt.setLong(3, data.timestampStart);
-							stmt.setLong(4, data.timestampEnd);
-							stmt.setInt(5, data.data);
-							stmt.setFloat(6, data.confidence);
-							DBConnection.exec(stmt);
+						if(sensor.isSynced()) {
+							PeerDataReqDTO req = new PeerDataReqDTO();
+							req.sensorId = sensor.getExternalId();
+							req.offsetSequenceId = Sensor.getHighestSequenceId(sensor.getId());
+							out.writeObject(req);
+
+							SensorDataListDTO dataList = (SensorDataListDTO) in.readObject();
+							for (SensorDataDTO data : dataList) {
+								PreparedStatement stmt = db.getPreparedStatement("INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(?, ?, ?, ?, ?, ?)");
+								stmt.setLong(1, sensor.getId());
+								stmt.setLong(2, data.sequenceId);
+								stmt.setLong(3, data.timestampStart);
+								stmt.setLong(4, data.timestampEnd);
+								stmt.setInt(5, data.data);
+								stmt.setFloat(6, data.confidence);
+								DBConnection.exec(stmt);
+							}
+							logger.fine("Stored " + dataList.size() + " entries for sensor " + sensor.getId() + " from " + user.getUserName());
 						}
-						logger.fine("Stored " + dataList.size() + " entries for sensor " + sensor.getId() + " from " + user.getUserName());
+                        else
+                            logger.fine("Skipped sensor " + sensor.getId());
 					}
 					out.writeObject(null);
 					out.close();

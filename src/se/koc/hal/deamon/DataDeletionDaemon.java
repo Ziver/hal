@@ -32,6 +32,7 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
 				logger.fine("Deleting old data for sensor id: " + sensor.getId());
 				cleanupSensor(sensor.getId());
 			}
+            logger.fine("Data cleanup done");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

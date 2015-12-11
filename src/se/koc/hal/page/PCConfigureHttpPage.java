@@ -27,10 +27,29 @@ public class PCConfigureHttpPage extends HalHttpPage {
 
         // Save new input
         if(request.containsKey("action")){
-            if(request.get("action").equals("update_user")){
-                localUser.setUserName(request.get("username"));
-                localUser.setAddress(request.get("address"));
-                localUser.save(db);
+            String action = request.get("action");
+            switch(action) {
+                case "modify_local_user":
+                    localUser.setUserName(request.get("username"));
+                    localUser.setAddress(request.get("address"));
+                    localUser.save(db);
+                    break;
+
+                case "create_local_sensor": break;
+                case "modify_local_sensor": break;
+                case "remove_local_sensor": break;
+
+                case "create_external_user": break;
+                case "modify_external_user": break;
+                case "remove_external_user": break;
+
+                case "modify_external_sensor":
+                    Sensor sensor = Sensor.getSensor(db, Integer.parseInt(request.get("id")));
+                    if(sensor != null){
+                        sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
+                        sensor.save(db);
+                    }
+                    break;
             }
         }
 

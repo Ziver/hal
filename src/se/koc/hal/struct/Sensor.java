@@ -12,13 +12,19 @@ import zutil.db.handler.SimpleSQLResult;
 
 @DBBean.DBTable("sensor")
 public class Sensor extends DBBean{
+	// Sensor specific data
 	private String name;
-	private long user_id;
 	private String type;
 	private String config;
-	private long external_id;
 
-	
+	// User configuration
+	private long user_id;
+	private long external_id;
+    /** local sensor= if sensor should be public. external sensor= if sensor should be requested from host **/
+    private boolean sync;
+
+
+
 	public static List<Sensor> getExternalSensors(DBConnection db) throws SQLException{
 		PreparedStatement stmt = db.getPreparedStatement( "SELECT sensor.* FROM sensor,user WHERE user.external == 1 AND user.id == sensor.user_id" );
 		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
@@ -40,7 +46,11 @@ public class Sensor extends DBBean{
 		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
 	}
 
-	
+    public static Sensor getSensor(DBConnection db, int id) throws SQLException{
+        return DBBean.load(db, Sensor.class, id);
+    }
+
+
     public static long getHighestSequenceId(long sensorId) throws SQLException{
     	PreparedStatement stmt = HalContext.getDB().getPreparedStatement("SELECT MAX(sequence_id) FROM sensor_data_aggr WHERE sensor_id == ?");
     	stmt.setLong(1, sensorId);
@@ -74,4 +84,10 @@ public class Sensor extends DBBean{
 	public void setExternalId(long external_id) {
 		this.external_id = external_id;
 	}
+    public boolean isSynced() {
+        return sync;
+    }
+    public void setSynced(boolean synced) {
+        this.sync = synced;
+    }
 }

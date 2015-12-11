@@ -5,7 +5,7 @@
         <div class="panel-heading">Profile Information</div>
         <div class="panel-body">
             <form class="form-horizontal" method="POST">
-                <input type="hidden" name="action" value="update_user">
+                <input type="hidden" name="action" value="modify_local_user">
                 <div class="form-group">
                     <label for="username" class="col-sm-2 control-label">Username:</label>
                     <div class="col-sm-10">
@@ -130,8 +130,22 @@
                     <td>{{.config}}</td>
                     <td>
                         <div class="btn-toolbar pull-right">
-                            <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-save"></span></button>
-                            <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
+                            <form method="POST">
+                                <input type="hidden" name="action" value="modify_external_sensor">
+                                <input type="hidden" name="id" value="{{.getId()}}">
+                                {{^.sync}}
+                                <input type="hidden" name="sync" value="true">
+                                <button type="submit" class="btn btn-default btn-xs" title="Start Syncing">
+                                    <span class="glyphicon glyphicon-save"></span>
+                                </button>
+                                {{/.sync}}
+                                {{#.sync}}
+                                <input type="hidden" name="sync" value="false">
+                                <button type="submit" class="btn btn-danger btn-xs" title="Stop Syncing and Clear Data">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                                {{/.sync}}
+                            </form>
                         </div>
                     </td>
                 </tr>

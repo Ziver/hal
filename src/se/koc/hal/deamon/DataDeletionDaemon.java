@@ -28,7 +28,7 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
     	try {
 			List<Sensor> sensorList = Sensor.getSensors(HalContext.getDB());
 			for(Sensor sensor : sensorList){
-				logger.fine("Deleting old data for sensor_id: " + sensor.getId());
+				logger.fine("Deleting old data for sensor id: " + sensor.getId());
 				aggregateSensor(sensor.getId());
 			}
 		} catch (SQLException e) {
@@ -80,8 +80,6 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
     		stmt.setLong(3, TimeConstants.HOUR_IN_MS-1);
     		stmt.setLong(4, System.currentTimeMillis()-TimeConstants.SEVEN_DAYS_IN_MS);
     		DBConnection.exec(stmt, new AggrDataDeletor(sensorId));
-    		
-    		logger.fine("Done deleting");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

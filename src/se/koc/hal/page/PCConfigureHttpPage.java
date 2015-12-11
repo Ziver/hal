@@ -26,8 +26,8 @@ public class PCConfigureHttpPage extends HalHttpPage {
         User localUser = User.getLocalUser(db);
 
         // Save new input
-        if(request.containsKey("form")){
-            if(request.get("form").equals("user")){
+        if(request.containsKey("action")){
+            if(request.get("action").equals("update_user")){
                 localUser.setUserName(request.get("username"));
                 localUser.setAddress(request.get("address"));
                 localUser.save(db);

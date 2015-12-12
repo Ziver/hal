@@ -34,7 +34,9 @@ public class User extends DBBean{
 		return DBConnection.exec(stmt, DBBeanSQLResultHandler.create(User.class, db) );
 	}
 
-	
+	public static User getUser(DBConnection db, int id) throws SQLException {
+		return DBBean.load(db, User.class, id);
+	}
 	
 	
 	

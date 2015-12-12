@@ -28,6 +28,8 @@ public class PCConfigureHttpPage extends HalHttpPage {
         // Save new input
         if(request.containsKey("action")){
             String action = request.get("action");
+            Sensor sensor;
+            User user;
             switch(action) {
                 case "modify_local_user":
                     localUser.setUserName(request.get("username"));
@@ -39,12 +41,30 @@ public class PCConfigureHttpPage extends HalHttpPage {
                 case "modify_local_sensor": break;
                 case "remove_local_sensor": break;
 
-                case "create_external_user": break;
-                case "modify_external_user": break;
-                case "remove_external_user": break;
+                case "create_external_user":
+                    user = new User();
+                    user.setHostname(request.get("hostname"));
+                    user.setPort(Integer.parseInt(request.get("port")));
+                    user.setExternal(true);
+                    user.save(db);
+                    break;
+                case "modify_external_user":
+                    user = User.getUser(db, Integer.parseInt(request.get("id")));
+                    if(user != null){
+                        user.setHostname(request.get("hostname"));
+                        user.setPort(Integer.parseInt(request.get("port")));
+                        user.save(db);
+                    }
+                    break;
+                case "remove_external_user":
+                    user = User.getUser(db, Integer.parseInt(request.get("id")));
+                    if(user != null){
+                        user.delete(db);
+                    }
+                    break;
 
                 case "modify_external_sensor":
-                    Sensor sensor = Sensor.getSensor(db, Integer.parseInt(request.get("id")));
+                    sensor = Sensor.getSensor(db, Integer.parseInt(request.get("id")));
                     if(sensor != null){
                         sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
                         sensor.save(db);

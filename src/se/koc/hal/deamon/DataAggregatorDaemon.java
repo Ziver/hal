@@ -67,20 +67,24 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     	PreparedStatement stmt = null;
     	try {
     		
-    		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr WHERE sensor_id == ?");
+    		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr"
+    				+ " WHERE sensor_id == ?"
+    				+ " AND timestamp_end-timestamp_start == ?");
     		stmt.setLong(1, sensorId);
-    		Long maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
-    		if(maxDBTimestamp == null)
-    			maxDBTimestamp = 0l;
-    		
-    		long minPeriodTimestamp = TimeUtility.getTimestampPeriodStart(toPeriodSizeInMs, System.currentTimeMillis());
-    		logger.fine("Calculating periods... (from:"+ maxDBTimestamp +", to:"+ minPeriodTimestamp +")");
+    		stmt.setLong(2, toPeriodSizeInMs-1);
+    		Long maxTimestampFoundForSensor = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
+    		if(maxTimestampFoundForSensor == null)
+    			maxTimestampFoundForSensor = 0l;
+    		long currentPeriodStartTimestamp = TimeUtility.getTimestampPeriodStart(toPeriodSizeInMs, System.currentTimeMillis());
+    		logger.fine("Calculating periods... (from:"+ maxTimestampFoundForSensor +", to:"+ currentPeriodStartTimestamp +")");
     		stmt = db.getPreparedStatement("SELECT *, 1 AS confidence, timestamp AS timestamp_start FROM sensor_data_raw"
-    				+" WHERE sensor_id == ? AND ? < timestamp AND timestamp < ? "
+    				+" WHERE sensor_id == ?"
+    					+ " AND ? < timestamp"
+    					+ " AND timestamp < ? "
     				+" ORDER BY timestamp ASC");
     		stmt.setLong(1, sensorId);
-    		stmt.setLong(2, maxDBTimestamp);
-    		stmt.setLong(3, minPeriodTimestamp);
+    		stmt.setLong(2, maxTimestampFoundForSensor);
+    		stmt.setLong(3, currentPeriodStartTimestamp);
     		DBConnection.exec(stmt, new DataAggregator(sensorId, toPeriodSizeInMs, expectedSampleCount, aggrMethod));
     	} catch (SQLException e) {
             logger.log(Level.SEVERE, null, e);
@@ -99,21 +103,25 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     	try {
     		
     		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr"
-    				+" WHERE sensor_id == ? AND timestamp_end-timestamp_start == ?");
+    				+" WHERE sensor_id == ?"
+    				+ " AND timestamp_end-timestamp_start == ?");
     		stmt.setLong(1, sensorId);
     		stmt.setLong(2, toPeriodSizeInMs-1);
-    		Long maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
-    		if(maxDBTimestamp == null)
-    			maxDBTimestamp = 0l;
-    		long hourPeriodTimestamp = TimeUtility.getTimestampPeriodStart(toPeriodSizeInMs, System.currentTimeMillis());
-    		logger.fine("Calculating periods... (from:"+ maxDBTimestamp +", to:"+ hourPeriodTimestamp +")");
+    		Long maxTimestampFoundForSensor = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
+    		if(maxTimestampFoundForSensor == null)
+    			maxTimestampFoundForSensor = 0l;
+    		long currentPeriodStartTimestamp = TimeUtility.getTimestampPeriodStart(toPeriodSizeInMs, System.currentTimeMillis());
+    		logger.fine("Calculating periods... (from:"+ maxTimestampFoundForSensor +", to:"+ currentPeriodStartTimestamp +")");
 
     		stmt = db.getPreparedStatement("SELECT * FROM sensor_data_aggr"
-    				+" WHERE sensor_id == ? AND ? < timestamp_start AND timestamp_start < ? AND timestamp_end-timestamp_start == ?" 
+    				+" WHERE sensor_id == ?"
+	    				+ " AND ? < timestamp_start"
+	    				+ " AND timestamp_start < ?"
+	    				+ " AND timestamp_end-timestamp_start == ?" 
     				+" ORDER BY timestamp_start ASC");
     		stmt.setLong(1, sensorId);
-    		stmt.setLong(2, maxDBTimestamp);
-    		stmt.setLong(3, hourPeriodTimestamp);
+    		stmt.setLong(2, maxTimestampFoundForSensor);
+    		stmt.setLong(3, currentPeriodStartTimestamp);
     		stmt.setLong(4, fromPeriodSizeInMs-1);
     		DBConnection.exec(stmt, new DataAggregator(sensorId, toPeriodSizeInMs, expectedSampleCount, aggrMethod));
 		} catch (SQLException e) {
@@ -166,7 +174,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 						preparedInsertStmt.setLong(2, ++highestSequenceId);
 						preparedInsertStmt.setLong(3, currentPeriodTimestamp);
 						preparedInsertStmt.setLong(4, currentPeriodTimestamp + this.aggrTimeInMs - 1);
-						preparedInsertStmt.setInt(5, (int)data);	//TODO: make data float in DB
+						preparedInsertStmt.setInt(5, (int)data);	//TODO: make data float in DB to handle aggrMethod.AVG where the data must be able to be saved as a float
 						preparedInsertStmt.setFloat(6, aggrConfidence);
 						preparedInsertStmt.addBatch();
 						

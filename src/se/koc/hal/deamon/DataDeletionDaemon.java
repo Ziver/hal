@@ -21,7 +21,7 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 
     public void initiate(Timer timer){
-        timer.schedule(this, 5000, TimeConstants.FIVE_MINUTES_IN_MS);
+        timer.schedule(this, 5000, TimeUtility.FIVE_MINUTES_IN_MS);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
     		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr"
     				+" WHERE sensor_id == ? AND timestamp_end-timestamp_start == ?");
     		stmt.setLong(1, sensorId);
-    		stmt.setLong(2, TimeConstants.HOUR_IN_MS-1);
+    		stmt.setLong(2, TimeUtility.HOUR_IN_MS-1);
     		maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
@@ -60,15 +60,15 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
 	    				+ "AND timestamp_end < ?");
     		stmt.setLong(1, sensorId);
     		stmt.setLong(2, maxDBTimestamp);
-    		stmt.setLong(3, TimeConstants.FIVE_MINUTES_IN_MS-1);
-    		stmt.setLong(4, System.currentTimeMillis()-TimeConstants.DAY_IN_MS);
+    		stmt.setLong(3, TimeUtility.FIVE_MINUTES_IN_MS-1);
+    		stmt.setLong(4, System.currentTimeMillis()-TimeUtility.DAY_IN_MS);
     		DBConnection.exec(stmt, new AggregateDataDeleter(sensorId));
     		
     		// delete too old 1 hour periods that already have been aggregated into days
     		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr"
     				+" WHERE sensor_id == ? AND timestamp_end-timestamp_start == ?");
     		stmt.setLong(1, sensorId);
-    		stmt.setLong(2, TimeConstants.DAY_IN_MS-1);
+    		stmt.setLong(2, TimeUtility.DAY_IN_MS-1);
     		maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
     		if(maxDBTimestamp == null)
     			maxDBTimestamp = 0l;
@@ -80,8 +80,8 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
 	    				+ "AND timestamp_end < ?");
     		stmt.setLong(1, sensorId);
     		stmt.setLong(2, maxDBTimestamp);
-    		stmt.setLong(3, TimeConstants.HOUR_IN_MS-1);
-    		stmt.setLong(4, System.currentTimeMillis()-TimeConstants.SEVEN_DAYS_IN_MS);
+    		stmt.setLong(3, TimeUtility.HOUR_IN_MS-1);
+    		stmt.setLong(4, System.currentTimeMillis()-TimeUtility.WEEK_IN_MS);
     		DBConnection.exec(stmt, new AggregateDataDeleter(sensorId));
 		} catch (SQLException e) {
 			logger.log(Level.SEVERE, null, e);

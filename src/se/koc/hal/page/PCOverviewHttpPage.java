@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import se.koc.hal.HalContext;
-import se.koc.hal.deamon.TimeConstants;
+import se.koc.hal.deamon.TimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 import zutil.io.file.FileUtil;
@@ -35,15 +35,15 @@ public class PCOverviewHttpPage extends HalHttpPage {
 						+ " sensor_data_aggr.timestamp_end as timestamp_end,"
 						+ " sensor_data_aggr.data as data,"
 						+ " sensor_data_aggr.confidence as confidence,"
-						+ TimeConstants.FIVE_MINUTES_IN_MS + " as period_length"
+						+ TimeUtility.FIVE_MINUTES_IN_MS + " as period_length"
 						+ " FROM sensor_data_aggr, user, sensor"
 						+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
 						+ " AND user.id = sensor.user_id"
 						+ " AND timestamp_end-timestamp_start == ?"
 						+ " AND timestamp_start > ?"
 						+ " ORDER BY timestamp_start ASC");
-		stmt.setLong(1, TimeConstants.FIVE_MINUTES_IN_MS-1);
-		stmt.setLong(2, (System.currentTimeMillis() - TimeConstants.DAY_IN_MS) );
+		stmt.setLong(1, TimeUtility.FIVE_MINUTES_IN_MS-1);
+		stmt.setLong(2, (System.currentTimeMillis() - TimeUtility.DAY_IN_MS) );
 		ArrayList<PowerData> minDataList = DBConnection.exec(stmt , new SQLPowerDataBuilder());
 
 		stmt = db.getPreparedStatement(
@@ -52,15 +52,15 @@ public class PCOverviewHttpPage extends HalHttpPage {
 						+ " sensor_data_aggr.timestamp_end as timestamp_end,"
 						+ " sensor_data_aggr.data as data,"
 						+ " sensor_data_aggr.confidence as confidence,"
-						+ TimeConstants.HOUR_IN_MS + " as period_length"
+						+ TimeUtility.HOUR_IN_MS + " as period_length"
 						+ " FROM sensor_data_aggr, user, sensor"
 						+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
 						+ " AND user.id = sensor.user_id"
 						+ " AND timestamp_end-timestamp_start == ?"
 						+ " AND timestamp_start > ?"
 						+ " ORDER BY timestamp_start ASC");
-		stmt.setLong(1, TimeConstants.HOUR_IN_MS-1);
-		stmt.setLong(2, (System.currentTimeMillis() - 3*TimeConstants.DAY_IN_MS) );
+		stmt.setLong(1, TimeUtility.HOUR_IN_MS-1);
+		stmt.setLong(2, (System.currentTimeMillis() - TimeUtility.WEEK_IN_MS) );
 		ArrayList<PowerData> hourDataList = DBConnection.exec(stmt, new SQLPowerDataBuilder());
 
 		stmt = db.getPreparedStatement(
@@ -69,13 +69,13 @@ public class PCOverviewHttpPage extends HalHttpPage {
 						+ " sensor_data_aggr.timestamp_end as timestamp_end,"
 						+ " sensor_data_aggr.data as data,"
 						+ " sensor_data_aggr.confidence as confidence,"
-						+ TimeConstants.DAY_IN_MS + " as period_length"
+						+ TimeUtility.DAY_IN_MS + " as period_length"
 						+ " FROM sensor_data_aggr, user, sensor"
 						+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
 						+ " AND user.id = sensor.user_id"
 						+ " AND timestamp_end-timestamp_start == ?"
 						+ " ORDER BY timestamp_start ASC");
-		stmt.setLong(1, TimeConstants.DAY_IN_MS-1);
+		stmt.setLong(1, TimeUtility.DAY_IN_MS-1);
 		ArrayList<PowerData> dayDataList = DBConnection.exec(stmt, new SQLPowerDataBuilder());
 
 

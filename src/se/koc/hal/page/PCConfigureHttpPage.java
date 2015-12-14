@@ -28,19 +28,42 @@ public class PCConfigureHttpPage extends HalHttpPage {
         // Save new input
         if(request.containsKey("action")){
             String action = request.get("action");
+            int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
             Sensor sensor;
             User user;
             switch(action) {
+                // Local User
                 case "modify_local_user":
                     localUser.setUserName(request.get("username"));
                     localUser.setAddress(request.get("address"));
                     localUser.save(db);
                     break;
 
-                case "create_local_sensor": break;
-                case "modify_local_sensor": break;
-                case "remove_local_sensor": break;
+                // Local Sensors
+                case "create_local_sensor":
+                    sensor = new Sensor();
+                    sensor.setName(request.get("name"));
+                    sensor.setType(request.get("type"));
+                    sensor.setConfig(request.get("config"));
+                    sensor.setUserId(localUser);
+                    sensor.setSynced(true);
+                    sensor.save(db);
+                case "modify_local_sensor":
+                    sensor = Sensor.getSensor(db, id);
+                    if(sensor != null){
+                        sensor.setName(request.get("name"));
+                        sensor.setType(request.get("type"));
+                        sensor.setConfig(request.get("config"));
+                        sensor.save(db);
+                    }
+                    break;
+                case "remove_local_sensor":
+                    sensor = Sensor.getSensor(db, id);
+                    if(sensor != null)
+                        sensor.delete(db);
+                    break;
 
+                // External Users
                 case "create_external_user":
                     user = new User();
                     user.setHostname(request.get("hostname"));
@@ -49,7 +72,7 @@ public class PCConfigureHttpPage extends HalHttpPage {
                     user.save(db);
                     break;
                 case "modify_external_user":
-                    user = User.getUser(db, Integer.parseInt(request.get("id")));
+                    user = User.getUser(db, id);
                     if(user != null){
                         user.setHostname(request.get("hostname"));
                         user.setPort(Integer.parseInt(request.get("port")));
@@ -57,14 +80,14 @@ public class PCConfigureHttpPage extends HalHttpPage {
                     }
                     break;
                 case "remove_external_user":
-                    user = User.getUser(db, Integer.parseInt(request.get("id")));
-                    if(user != null){
+                    user = User.getUser(db, id);
+                    if(user != null)
                         user.delete(db);
-                    }
                     break;
 
+                // External Sensors
                 case "modify_external_sensor":
-                    sensor = Sensor.getSensor(db, Integer.parseInt(request.get("id")));
+                    sensor = Sensor.getSensor(db, id);
                     if(sensor != null){
                         sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
                         sensor.save(db);

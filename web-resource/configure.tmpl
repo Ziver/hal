@@ -40,7 +40,10 @@
                     <th>Type</th>
                     <th>Configuration</th>
                     <th>
-                        <button class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button>
+                        <button class="btn btn-default btn-xs pull-right" data-toggle="modal"
+                                data-target="#sensorModal">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
                     </th>
                 </thead>
                 {{#localSensor}}
@@ -49,10 +52,25 @@
                     <td>{{.type}}</td>
                     <td>{{.config}}</td>
                     <td>
-                        <div class="btn-toolbar pull-right">
-                            <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>
-                            <button class="btn btn-danger btn-xs"> <span class="glyphicon glyphicon-trash"></span></button>
-                        </div>
+                        <form method="POST">
+                            <input type="hidden" name="action" value="remove_local_sensor">
+                            <input type="hidden" name="id" value="{{.getId()}}">
+
+                            <div class="btn-toolbar pull-right">
+                                <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
+                                        data-target="#sensorModal"
+                                        data-id="{{.getId()}}"
+                                        data-name="{{.name}}"
+                                        data-type="{{.type}}"
+                                        data-config="{{.config}}">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </button>
+
+                                <button type="submit" class="btn btn-danger btn-xs">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </div>
+                        </form>
                     </td>
                 </tr>
                 {{/localSensor}}
@@ -75,8 +93,7 @@
                 <th>Port</th>
                 <th>
                     <button class="btn btn-default btn-xs pull-right" data-toggle="modal"
-                            data-target="#extUserModal"
-                            data-id="-1">
+                            data-target="#userModal">
                         <span class="glyphicon glyphicon-plus"></span>
                     </button>
                 </th>
@@ -94,7 +111,7 @@
 
                             <div class="btn-toolbar pull-right">
                                 <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
-                                        data-target="#extUserModal"
+                                        data-target="#userModal"
                                         data-id="{{.getId()}}"
                                         data-hostname="{{.hostname}}"
                                         data-port="{{.port}}">
@@ -163,27 +180,45 @@
 <!------------- MODALS --------------->
 <script>
     $(function(){
-        $("#extUserModal").on('show.bs.modal', function (event) {
+        $("#sensorModal").on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var modal = $(this);
+            modal.find("input").val(""); // Reset all inputs
             if(button.data("id") >= 0){ // edit
-                modal.find("#action").val("modify_external_user");
-                modal.find("#id").val(button.data("id"));
-                modal.find("#hostname").val(button.data("hostname"));
-                modal.find("#port").val(button.data("port"));
+                modal.find("input[name=action]").val("modify_local_sensor");
+                modal.find("input[name=id]").val(button.data("id"));
+                modal.find("input[name=name]").val(button.data("name"));
+                modal.find("input[name=type]").val(button.data("type"));
+                modal.find("input[name=config]").val(button.data("config"));
             }
             else{ // create
-                modal.find("#action").val("create_external_user");
-                modal.find("#id").val(-1);
-                modal.find("#hostname").val("");
-                modal.find("#port").val("");
+                modal.find("input[name=action]").val("create_local_sensor");
+                modal.find("input[name=id]").val(-1);
+            }
+        });
+
+
+        $("#userModal").on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            modal.find("input").val(""); // Reset all inputs
+            if(button.data("id") >= 0){ // edit
+                modal.find("input[name=action]").val("modify_external_user");
+                modal.find("input[name=id]").val(button.data("id"));
+                modal.find("input[name=hostname]").val(button.data("hostname"));
+                modal.find("input[name=port]").val(button.data("port"));
+            }
+            else{ // create
+                modal.find("input[name=action]").val("create_external_user");
+                modal.find("input[name=id]").val(-1);
             }
         });
     });
 </script>
 
-<div class="modal fade" id="extUserModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+
+<div class="modal fade" id="sensorModal" tabindex="-1">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">
@@ -196,12 +231,19 @@
                     <input type="hidden" id="action" name="action" value="">
                     <input type="hidden" id="id" name="id">
                     <div class="form-group">
-                        <label for="hostname" class="control-label">Hostname/IP:</label>
-                        <input type="text" class="form-control" id="hostname" name="hostname">
+                        <label class="control-label">Name:</label>
+                        <input type="text" class="form-control" name="name">
                     </div>
                     <div class="form-group">
-                        <label for="port" class="control-label">Port:</label>
-                        <input type="number" class="form-control" id="port" name="port" min="1">
+                        <label class="control-label">Type:</label>
+                        <select class="form-control" name="type">
+                            <option>TellStickController</option>
+                            <option>RPiLocalController</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Config:</label> <!-- Should be improved, dynamic forms? -->
+                        <input type="text" class="form-control" name="config">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -212,3 +254,38 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="userModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">External User</h4>
+            </div>
+            <form method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="">
+                    <input type="hidden" name="id">
+                    <div class="form-group">
+                        <label class="control-label">Hostname/IP:</label>
+                        <input type="text" class="form-control" name="hostname">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Port:</label>
+                        <input type="number" class="form-control" name="port" min="1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+

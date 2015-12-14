@@ -19,9 +19,9 @@ public class Sensor extends DBBean{
 
 	// User configuration
 	private long user_id;
-	private long external_id;
+	private long external_id = -1;
     /** local sensor= if sensor should be public. external sensor= if sensor should be requested from host **/
-    private boolean sync;
+    private boolean sync = false;
 
 
 
@@ -66,17 +66,24 @@ public class Sensor extends DBBean{
 	public void setName(String name) {
 		this.name = name;
 	}
-	public long getUserId() {
-		return user_id;
-	}
-	public void setUserId(long user_id) {
-		this.user_id = user_id;
-	}
 	public String getType() {
 		return type;
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	public String getConfig() {
+		return config;
+	}
+	public void setConfig(String config) {
+		this.config = config;
+	}
+
+	public long getUserId() {
+		return user_id;
+	}
+	public void setUserId(User user) {
+		this.user_id = user.getId();
 	}
 	public long getExternalId() {
 		return external_id;

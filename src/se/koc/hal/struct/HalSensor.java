@@ -25,6 +25,7 @@ public class HalSensor extends DBBean{
 	private String config;
 
 	// User configuration
+    @DBColumn("user_id")
 	private User user;
 	private long external_id = -1;
     /** local sensor= if sensor should be public. external sensor= if sensor should be requested from host **/

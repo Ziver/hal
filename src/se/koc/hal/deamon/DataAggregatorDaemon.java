@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import se.koc.hal.HalContext;
 import se.koc.hal.intf.HalDaemon;
 import se.koc.hal.struct.HalSensor;
+import se.koc.hal.struct.HalSensor.AggregationMethod;
 import se.koc.hal.util.TimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
@@ -21,12 +22,7 @@ import zutil.log.LogUtil;
 
 public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
-    
-	private enum AggregationMethod{
-		SUM,
-		AVG
-	}
-	
+
     public void initiate(Timer timer){
         timer.schedule(this, 0, TimeUtility.FIVE_MINUTES_IN_MS);
     }
@@ -49,13 +45,13 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     	logger.fine("The sensor is of type: " + sensor.getType());
     	if(sensor.getType().equals("PowerMeter")){
     		logger.fine("aggregating raw data to five minute periods");
-			aggregateRawData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, 5, AggregationMethod.SUM);
+			aggregateRawData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, 5, sensor.getAggregationMethod());
 			logger.fine("aggregating five minute periods into hour periods");
-			aggrigateAggregatedData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.HOUR_IN_MS, 12, AggregationMethod.SUM);
+			aggrigateAggregatedData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.HOUR_IN_MS, 12, sensor.getAggregationMethod());
 			logger.fine("aggregating one hour periods into one day periods");
-			aggrigateAggregatedData(sensor.getId(), TimeUtility.HOUR_IN_MS, TimeUtility.DAY_IN_MS, 24, AggregationMethod.SUM);
+			aggrigateAggregatedData(sensor.getId(), TimeUtility.HOUR_IN_MS, TimeUtility.DAY_IN_MS, 24, sensor.getAggregationMethod());
     	}else{
-    		logger.fine("The sensor type is not supported by the aggregation deamon. Ignoring");
+    		logger.fine("The sensor type is not supported by the aggregation daemon. Ignoring");
     	}
     }
     
@@ -170,7 +166,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 						float data = -1;
 						switch(aggrMethod){
 							case SUM: data = sum; break;
-							case AVG: data = sum/samples; break;
+							case AVERAGE: data = sum/samples; break;
 						}
 						logger.finer("Calculated day period: " + currentPeriodTimestamp + ", data: " + sum + ", confidence: " + aggrConfidence + ", samples: " + samples + ", aggrMethod: " + aggrMethod);
 						preparedInsertStmt.setInt(1, result.getInt("sensor_id"));

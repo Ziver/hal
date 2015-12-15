@@ -46,7 +46,7 @@ public class PCConfigureHttpPage extends HalHttpPage {
                     sensor.setName(request.get("name"));
                     sensor.setType(request.get("type"));
                     sensor.setConfig(request.get("config"));
-                    sensor.setUserId(localUser);
+                    sensor.setUser(localUser);
                     sensor.setSynced(true);
                     sensor.save(db);
                 case "modify_local_sensor":

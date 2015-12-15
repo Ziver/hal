@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import se.koc.hal.HalContext;
+import se.koc.hal.intf.HalSensorController;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
@@ -12,13 +13,19 @@ import zutil.db.handler.SimpleSQLResult;
 
 @DBBean.DBTable("sensor")
 public class HalSensor extends DBBean{
+    public enum AggregationMethod{
+        SUM,
+        AVERAGE
+    }
+
+
 	// Sensor specific data
 	private String name;
 	private String type;
 	private String config;
 
 	// User configuration
-	private long user_id;
+	private User user;
 	private long external_id = -1;
     /** local sensor= if sensor should be public. external sensor= if sensor should be requested from host **/
     private boolean sync = false;
@@ -79,11 +86,11 @@ public class HalSensor extends DBBean{
 		this.config = config;
 	}
 
-	public long getUserId() {
-		return user_id;
+	public User getUser() {
+		return user;
 	}
-	public void setUserId(User user) {
-		this.user_id = user.getId();
+	public void setUser(User user) {
+		this.user = user;
 	}
 	public long getExternalId() {
 		return external_id;
@@ -97,4 +104,13 @@ public class HalSensor extends DBBean{
     public void setSynced(boolean synced) {
         this.sync = synced;
     }
+
+
+    public AggregationMethod getAggregationMethod(){
+        return AggregationMethod.SUM;
+    }
+
+	public HalSensorController getController(){
+		return null;
+	}
 }

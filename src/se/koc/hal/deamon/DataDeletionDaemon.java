@@ -11,7 +11,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import se.koc.hal.HalContext;
-import se.koc.hal.struct.Sensor;
+import se.koc.hal.intf.HalDaemon;
+import se.koc.hal.struct.HalSensor;
+import se.koc.hal.util.TimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
@@ -27,8 +29,8 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
     @Override
     public void run(){
     	try {
-			List<Sensor> sensorList = Sensor.getSensors(HalContext.getDB());
-			for(Sensor sensor : sensorList){
+			List<HalSensor> sensorList = HalSensor.getSensors(HalContext.getDB());
+			for(HalSensor sensor : sensorList){
 				logger.fine("Deleting old data for sensor id: " + sensor.getId());
 				cleanupSensor(sensor);
 			}
@@ -38,7 +40,7 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
 		}
     }
 
-    public void cleanupSensor(Sensor sensor) {
+    public void cleanupSensor(HalSensor sensor) {
     	logger.fine("The sensor is of type: " + sensor.getType());
     	if(sensor.getType().equals("PowerMeter")){
     		//if(sensor.isInternal()){	//TODO

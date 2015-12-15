@@ -1,7 +1,6 @@
-package se.koc.hal.page;
+package se.koc.hal.intf;
 
 import se.koc.hal.HalContext;
-import se.koc.hal.struct.Sensor;
 import se.koc.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -11,7 +10,6 @@ import zutil.net.http.HttpPrintStream;
 import zutil.parser.Templator;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 

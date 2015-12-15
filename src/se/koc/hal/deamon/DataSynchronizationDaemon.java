@@ -15,13 +15,14 @@ import java.util.logging.Logger;
 
 import se.koc.hal.HalContext;
 import se.koc.hal.deamon.DataSynchronizationClient.PeerDataReqDTO;
+import se.koc.hal.intf.HalDaemon;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 import zutil.log.LogUtil;
 import zutil.net.threaded.ThreadedTCPNetworkServer;
 import zutil.net.threaded.ThreadedTCPNetworkServerThread;
 
-public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implements HalDaemon{
+public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 
 

@@ -7,7 +7,7 @@ import se.koc.hal.plugin.tellstick.TellstickChangeListener;
 import se.koc.hal.plugin.tellstick.TellstickProtocol;
 import se.koc.hal.plugin.tellstick.TellstickSerialComm;
 import se.koc.hal.plugin.tellstick.protocols.NexaSelfLearning;
-import se.koc.hal.struct.Switch;
+import se.koc.hal.struct.SwitchEvent;
 import se.koc.hal.intf.HalSpeachToText;
 import se.koc.hal.stt.ManualSTTClient;
 import se.koc.hal.tts.MaryRemoteTTSClient;
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  * Time: 10:59
  */
 public class HALClient{
-    private static HashMap<String, Switch> switches = new HashMap<String, Switch>();
+    private static HashMap<String, SwitchEvent> switches = new HashMap<String, SwitchEvent>();
 
 
     public static void main(String[] args){
@@ -57,22 +57,22 @@ public class HALClient{
         NexaSelfLearning nexa1 = new NexaSelfLearning();
         nexa1.setHouse(15087918);
         nexa1.setUnit(0);
-        switches.put("livingroom", new Switch("livingroom", nexa1));
+        switches.put("livingroom", new SwitchEvent("livingroom", nexa1));
 
         NexaSelfLearning nexa2 = new NexaSelfLearning();
         nexa2.setHouse(15087918);
         nexa2.setUnit(1);
-        switches.put("bedroom", new Switch("bedroom", nexa2));
+        switches.put("bedroom", new SwitchEvent("bedroom", nexa2));
 
         NexaSelfLearning nexa3 = new NexaSelfLearning();
         nexa3.setHouse(15087918);
         nexa3.setUnit(3);
-        switches.put("kitchen", new Switch("kitchen", nexa3));
+        switches.put("kitchen", new SwitchEvent("kitchen", nexa3));
 
         TellstickSerialComm.getInstance().setListener(new TellstickChangeListener() {
             @Override
             public void stateChange(TellstickProtocol protocol) {
-                for(Switch s : switches.values()) {
+                for(SwitchEvent s : switches.values()) {
                     if(s.equals(protocol)) {
                         String response = s.getName()+" window is "+(((NexaSelfLearning)protocol).isEnabled() ? "open": "closed");
                         System.out.println(">>> " + response);
@@ -122,7 +122,7 @@ public class HALClient{
         if(m.find()){
             String name = m.group(1);
             if(name.equals("all")){
-                for(Switch s : switches.values())
+                for(SwitchEvent s : switches.values())
                     s.turnOn();
                 return "I've turned everything on for you";
             }
@@ -136,7 +136,7 @@ public class HALClient{
         if(m.find()){
             String name = m.group(1);
             if(name.equals("all")){
-                for(Switch s : switches.values())
+                for(SwitchEvent s : switches.values())
                     s.turnOff();
                 return "I turned everything off";
             }

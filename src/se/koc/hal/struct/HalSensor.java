@@ -11,7 +11,7 @@ import zutil.db.bean.DBBeanSQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
 
 @DBBean.DBTable("sensor")
-public class Sensor extends DBBean{
+public class HalSensor extends DBBean{
 	// Sensor specific data
 	private String name;
 	private String type;
@@ -25,29 +25,29 @@ public class Sensor extends DBBean{
 
 
 
-	public static List<Sensor> getExternalSensors(DBConnection db) throws SQLException{
+	public static List<HalSensor> getExternalSensors(DBConnection db) throws SQLException{
 		PreparedStatement stmt = db.getPreparedStatement( "SELECT sensor.* FROM sensor,user WHERE user.external == 1 AND user.id == sensor.user_id" );
-		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
+		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(HalSensor.class, db) );
 	}
 	
-	public static List<Sensor> getLocalSensors(DBConnection db) throws SQLException{
+	public static List<HalSensor> getLocalSensors(DBConnection db) throws SQLException{
 		PreparedStatement stmt = db.getPreparedStatement( "SELECT sensor.* FROM sensor,user WHERE user.external == 0 AND user.id == sensor.user_id" );
-		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
+		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(HalSensor.class, db) );
 	}
 
-	public static List<Sensor> getSensors(DBConnection db, User user) throws SQLException{
+	public static List<HalSensor> getSensors(DBConnection db, User user) throws SQLException{
 		PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM sensor WHERE user_id == ?" );
 		stmt.setLong(1, user.getId());
-		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
+		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(HalSensor.class, db) );
 	}
 
-	public static List<Sensor> getSensors(DBConnection db) throws SQLException{
+	public static List<HalSensor> getSensors(DBConnection db) throws SQLException{
 		PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM sensor" );
-		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
+		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(HalSensor.class, db) );
 	}
 
-    public static Sensor getSensor(DBConnection db, int id) throws SQLException{
-        return DBBean.load(db, Sensor.class, id);
+    public static HalSensor getSensor(DBConnection db, int id) throws SQLException{
+        return DBBean.load(db, HalSensor.class, id);
     }
 
 

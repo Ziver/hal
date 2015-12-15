@@ -16,12 +16,13 @@ import java.util.logging.Logger;
 import se.koc.hal.HalContext;
 import se.koc.hal.deamon.DataSynchronizationDaemon.SensorDataDTO;
 import se.koc.hal.deamon.DataSynchronizationDaemon.SensorDataListDTO;
-import se.koc.hal.struct.Sensor;
+import se.koc.hal.intf.HalDaemon;
+import se.koc.hal.struct.HalSensor;
 import se.koc.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 
-public class DataSynchronizationClient extends TimerTask implements HalDaemon{
+public class DataSynchronizationClient extends TimerTask implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 	private static final long SYNC_INTERVALL = 5 * 60 * 1000; // 5 min
 
@@ -46,12 +47,12 @@ public class DataSynchronizationClient extends TimerTask implements HalDaemon{
 					ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 					ObjectInputStream in = new ObjectInputStream(s.getInputStream());
 					
-					List<Sensor> sensors = Sensor.getSensors(db, user);
-					for(Sensor sensor : sensors){
+					List<HalSensor> sensors = HalSensor.getSensors(db, user);
+					for(HalSensor sensor : sensors){
 						if(sensor.isSynced()) {
 							PeerDataReqDTO req = new PeerDataReqDTO();
 							req.sensorId = sensor.getExternalId();
-							req.offsetSequenceId = Sensor.getHighestSequenceId(sensor.getId());
+							req.offsetSequenceId = HalSensor.getHighestSequenceId(sensor.getId());
 							out.writeObject(req);
 
 							SensorDataListDTO dataList = (SensorDataListDTO) in.readObject();

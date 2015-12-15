@@ -11,7 +11,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import se.koc.hal.HalContext;
-import se.koc.hal.struct.Sensor;
+import se.koc.hal.intf.HalDaemon;
+import se.koc.hal.struct.HalSensor;
+import se.koc.hal.util.TimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
@@ -32,8 +34,8 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     @Override
     public void run(){
     	try {
-			List<Sensor> sensorList = Sensor.getLocalSensors(HalContext.getDB());
-			for(Sensor sensor : sensorList){
+			List<HalSensor> sensorList = HalSensor.getLocalSensors(HalContext.getDB());
+			for(HalSensor sensor : sensorList){
 				logger.fine("Aggregating sensor_id: " + sensor.getId());
 				aggregateSensor(sensor);
 			}
@@ -43,7 +45,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 		}
     }
     
-    public void aggregateSensor(Sensor sensor) {
+    public void aggregateSensor(HalSensor sensor) {
     	logger.fine("The sensor is of type: " + sensor.getType());
     	if(sensor.getType().equals("PowerMeter")){
     		logger.fine("aggregating raw data to five minute periods");
@@ -154,8 +156,9 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 				int sum = 0;
 				float confidenceSum = 0;
 				int samples = 0;
-				long highestSequenceId = Sensor.getHighestSequenceId(sensorId);
-				PreparedStatement preparedInsertStmt = HalContext.getDB().getPreparedStatement("INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(?, ?, ?, ?, ?, ?)");
+				long highestSequenceId = HalSensor.getHighestSequenceId(sensorId);
+				PreparedStatement preparedInsertStmt = HalContext.getDB().getPreparedStatement(
+						"INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(?, ?, ?, ?, ?, ?)");
 				while(result.next()){
 					if(sensorId != result.getInt("sensor_id")){
 						throw new IllegalArgumentException("found entry for aggregation for the wrong sensorId (expecting: "+sensorId+", but was: "+result.getInt("sensor_id")+")");

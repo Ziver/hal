@@ -1,4 +1,4 @@
-package se.koc.hal.deamon;
+package se.koc.hal.intf;
 
 import java.util.Timer;
 

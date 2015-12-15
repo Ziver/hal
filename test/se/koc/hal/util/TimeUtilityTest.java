@@ -1,4 +1,4 @@
-package se.koc.hal.deamon;
+package se.koc.hal.util;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,7 @@ import java.util.Calendar;
 
 import org.junit.Before;
 import org.junit.Test;
+import se.koc.hal.util.TimeUtility;
 
 public class TimeUtilityTest {
 	private long currentTime;

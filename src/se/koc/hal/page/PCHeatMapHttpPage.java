@@ -1,12 +1,9 @@
 package se.koc.hal.page;
 
-import java.io.IOException;
 import java.util.Map;
 
+import se.koc.hal.intf.HalHttpPage;
 import zutil.io.file.FileUtil;
-import zutil.net.http.HttpHeaderParser;
-import zutil.net.http.HttpPage;
-import zutil.net.http.HttpPrintStream;
 import zutil.parser.Templator;
 
 public class PCHeatMapHttpPage extends HalHttpPage {

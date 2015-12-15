@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import se.koc.hal.HalContext;
-import se.koc.hal.deamon.TimeUtility;
+import se.koc.hal.util.TimeUtility;
+import se.koc.hal.intf.HalHttpPage;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 import zutil.io.file.FileUtil;

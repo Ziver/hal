@@ -8,7 +8,6 @@ import zutil.log.LogUtil;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -71,10 +70,12 @@ public class HalContext {
                 logger.fine("Backing up DB to: "+ backupDB);
                 FileUtil.copy(dbFile, backupDB);
 
-                logger.fine("Upgrading DB (from: v"+dbConf.getProperty(PROPERTY_DB_VERSION)
-                        +", to: v"+defaultDBConf.getProperty(PROPERTY_DB_VERSION) +")...");
+                logger.fine(String.format("Upgrading DB (from: v%s, to: v%s)...",
+                        dbConf.getProperty(PROPERTY_DB_VERSION),
+                        defaultDBConf.getProperty(PROPERTY_DB_VERSION)));
                 DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);
                 handler.setTargetDB(db);
+                //handler.setForcedDBUpgrade(true);
                 handler.upgrade();
 
                 logger.info("DB upgrade done");

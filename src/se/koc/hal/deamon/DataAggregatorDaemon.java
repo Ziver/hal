@@ -45,11 +45,11 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     	logger.fine("The sensor is of type: " + sensor.getType());
     	if(sensor.getType().equals("PowerMeter")){
     		logger.fine("aggregating raw data to five minute periods");
-			aggregateRawData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, 5, sensor.getAggregationMethod());
+			aggregateRawData(sensor, TimeUtility.FIVE_MINUTES_IN_MS, 5);
 			logger.fine("aggregating five minute periods into hour periods");
-			aggrigateAggregatedData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.HOUR_IN_MS, 12, sensor.getAggregationMethod());
+			aggrigateAggregatedData(sensor, TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.HOUR_IN_MS);
 			logger.fine("aggregating one hour periods into one day periods");
-			aggrigateAggregatedData(sensor.getId(), TimeUtility.HOUR_IN_MS, TimeUtility.DAY_IN_MS, 24, sensor.getAggregationMethod());
+			aggrigateAggregatedData(sensor, TimeUtility.HOUR_IN_MS, TimeUtility.DAY_IN_MS);
     	}else{
     		logger.fine("The sensor type is not supported by the aggregation daemon. Ignoring");
     	}
@@ -60,7 +60,9 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
      * @param sensorId	The sensor for to aggregate data
      * @param toPeriodSizeInMs The period length in ms to aggregate to
      */
-    private void aggregateRawData(long sensorId, long toPeriodSizeInMs, int expectedSampleCount, AggregationMethod aggrMethod){
+    private void aggregateRawData(HalSensor sensor, long toPeriodSizeInMs, int expectedSampleCount){
+    	long sensorId = sensor.getId();
+    	AggregationMethod aggrMethod = sensor.getAggregationMethod();
     	DBConnection db = HalContext.getDB();
     	PreparedStatement stmt = null;
     	try {
@@ -73,8 +75,8 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     		Long maxTimestampFoundForSensor = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
     		if(maxTimestampFoundForSensor == null)
     			maxTimestampFoundForSensor = 0l;
-    		long currentPeriodStartTimestamp = TimeUtility.getTimestampPeriodStart(toPeriodSizeInMs, System.currentTimeMillis());
-    		logger.fine("Calculating periods... (from:"+ maxTimestampFoundForSensor +", to:"+ currentPeriodStartTimestamp +")");
+    		long currentPeriodStartTimestamp = TimeUtility.getTimestampPeriodStart_UTC(toPeriodSizeInMs, System.currentTimeMillis());
+    		logger.fine("Calculating periods... (from:"+ maxTimestampFoundForSensor +", to:"+ currentPeriodStartTimestamp +") with expected sample count: " + expectedSampleCount);
     		stmt = db.getPreparedStatement("SELECT *, 1 AS confidence, timestamp AS timestamp_start FROM sensor_data_raw"
     				+" WHERE sensor_id == ?"
     					+ " AND ? < timestamp"
@@ -95,7 +97,10 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
      * @param fromPeriodSizeInMs The period length in ms to aggregate from
      * @param toPeriodSizeInMs The period length in ms to aggregate to
      */
-    private void aggrigateAggregatedData(long sensorId, long fromPeriodSizeInMs, long toPeriodSizeInMs, int expectedSampleCount, AggregationMethod aggrMethod){
+    private void aggrigateAggregatedData(HalSensor sensor, long fromPeriodSizeInMs, long toPeriodSizeInMs){
+    	long sensorId = sensor.getId();
+    	AggregationMethod aggrMethod = sensor.getAggregationMethod();
+    	int expectedSampleCount = (int)Math.ceil((double)toPeriodSizeInMs / (double)fromPeriodSizeInMs);
     	DBConnection db = HalContext.getDB();
     	PreparedStatement stmt = null;
     	try {
@@ -108,8 +113,8 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     		Long maxTimestampFoundForSensor = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
     		if(maxTimestampFoundForSensor == null)
     			maxTimestampFoundForSensor = 0l;
-    		long currentPeriodStartTimestamp = TimeUtility.getTimestampPeriodStart(toPeriodSizeInMs, System.currentTimeMillis());
-    		logger.fine("Calculating periods... (from:"+ maxTimestampFoundForSensor +", to:"+ currentPeriodStartTimestamp +")");
+    		long currentPeriodStartTimestamp = TimeUtility.getTimestampPeriodStart_UTC(toPeriodSizeInMs, System.currentTimeMillis());
+    		logger.fine("Calculating periods... (from:"+ maxTimestampFoundForSensor +", to:"+ currentPeriodStartTimestamp +") with expected sample count: " + expectedSampleCount);
 
     		stmt = db.getPreparedStatement("SELECT * FROM sensor_data_aggr"
     				+" WHERE sensor_id == ?"
@@ -160,7 +165,7 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
 						throw new IllegalArgumentException("found entry for aggregation for the wrong sensorId (expecting: "+sensorId+", but was: "+result.getInt("sensor_id")+")");
 					}
 					long timestamp = result.getLong("timestamp_start");
-					long periodTimestamp = TimeUtility.getTimestampPeriodStart(this.aggrTimeInMs, timestamp);
+					long periodTimestamp = TimeUtility.getTimestampPeriodStart_UTC(this.aggrTimeInMs, timestamp);
 					if(currentPeriodTimestamp != 0 && periodTimestamp != currentPeriodTimestamp){
 						float aggrConfidence = confidenceSum / (float)this.expectedSampleCount;
 						float data = -1;

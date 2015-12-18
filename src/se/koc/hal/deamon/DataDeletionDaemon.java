@@ -42,15 +42,14 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
 
     public void cleanupSensor(HalSensor sensor) {
     	logger.fine("The sensor is of type: " + sensor.getType());
-    	if(sensor.getType().equals("PowerMeter")){
-    		//if(sensor.isInternal()){	//TODO
-    		cleanupInternalSensorData(sensor.getId(), TimeUtility.HOUR_IN_MS, TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);
-    		cleanupInternalSensorData(sensor.getId(), TimeUtility.DAY_IN_MS, TimeUtility.HOUR_IN_MS, TimeUtility.WEEK_IN_MS);
-    		//}else{	//TODO
-    		//cleanupExternalSensorData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);
-    		//cleanupExternalSensorData(sensor.getId(), TimeUtility.DAY_IN_MS, TimeUtility.WEEK_IN_MS);
-    		//}
-    		clearPeriodsOfWrongLenght(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.HOUR_IN_MS, TimeUtility.WEEK_IN_MS);
+    	if(sensor.getType().equals("PowerMeter")){	//TODO: use instanceof instead
+    		if(sensor.getUser().isExternal()){
+    			cleanupExternalSensorData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);
+        		cleanupExternalSensorData(sensor.getId(), TimeUtility.DAY_IN_MS, TimeUtility.WEEK_IN_MS);
+    		}else{
+	    		cleanupInternalSensorData(sensor.getId(), TimeUtility.HOUR_IN_MS, TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);
+	    		cleanupInternalSensorData(sensor.getId(), TimeUtility.DAY_IN_MS, TimeUtility.HOUR_IN_MS, TimeUtility.WEEK_IN_MS);
+    		}
     	}else{
     		logger.fine("The sensor type is not supported by the cleanup deamon. Ignoring");
     	}
@@ -69,7 +68,6 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
     	try {
     		Long maxDBTimestamp = null; 
     		
-    		// delete too old 5 minute periods that already have been aggregated into hours
     		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr"
     				+" WHERE sensor_id == ? AND timestamp_end-timestamp_start == ?");
     		stmt.setLong(1, sensorId);
@@ -112,32 +110,6 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
     		stmt.setLong(2, clearPeriodlength-1);
     		stmt.setLong(3, System.currentTimeMillis()-olderThan);
     		DBConnection.exec(stmt, new AggregateDataDeleter(sensorId));
-		} catch (SQLException e) {
-			logger.log(Level.SEVERE, null, e);
-		}
-    }
-    
-    /**
-     * Will delete all aggregated entries for a sensor id where the period length is not expected 
-     * @param sensorId
-     * @param expectedPeriodLengths
-     */
-    private void clearPeriodsOfWrongLenght(long sensorId, long... expectedPeriodLengths){
-    	DBConnection db = HalContext.getDB();
-    	PreparedStatement stmt = null;
-    	try {
-    		StringBuilder querry = new StringBuilder("SELECT * FROM sensor_data_aggr WHERE sensor_id == ?");
-    		for(int i = 0; i < expectedPeriodLengths.length; ++i){
-				querry.append(" AND timestamp_end-timestamp_start != ?");
-			}
-			stmt = db.getPreparedStatement(querry.toString());
-			for(int i = 0; i < expectedPeriodLengths.length; ++i){
-				stmt.setLong(i+1, expectedPeriodLengths[i]);
-			}
-    		long deletedRows = DBConnection.exec(stmt, new AggregateDataDeleter(sensorId));
-    		if(deletedRows > 0){
-    			logger.severe("removed aggregated data with an unknown period length. Is the database corrupt?");
-    		}
 		} catch (SQLException e) {
 			logger.log(Level.SEVERE, null, e);
 		}

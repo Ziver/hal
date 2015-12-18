@@ -20,11 +20,28 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
             <a class="navbar-brand" href="#">Power;Challenge</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sensors</a>
+                    <ul class="dropdown-menu">
+                        {{#navigation}}<li><a href="{{.getURL()}}">{{.getName()}}</a></li>
+                        {{/navigation}}
+                    </ul>
+                </li>
+            </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">{{user.username}}</a></li>
+                <li>
+                    <a href="#">{{user.username}} <span class="glyphicon glyphicon-user"></span></a>
+                </li>
             </ul>
         </div>
     </div>
@@ -33,10 +50,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-            <ul class="nav nav-sidebar">
+            <ul id="sub-navbar" class="nav nav-sidebar">
                 <!-- <li class="active"><a href="/">Overview</a></li> -->
-                {{#navigation}}
-                <li><a href="{{.getURL()}}">{{.getName()}}</a></li>
+                {{#navigation}}<li><a href="{{.getURL()}}">{{.getName()}}</a></li>
                 {{/navigation}}
             </ul>
         </div>

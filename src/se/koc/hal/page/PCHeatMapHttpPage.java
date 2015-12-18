@@ -1,10 +1,10 @@
 package se.koc.hal.page;
 
-import java.util.Map;
-
 import se.koc.hal.intf.HalHttpPage;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
+
+import java.util.Map;
 
 public class PCHeatMapHttpPage extends HalHttpPage {
 

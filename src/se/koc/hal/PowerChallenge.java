@@ -16,7 +16,8 @@ import zutil.log.LogUtil;
 import zutil.net.http.HttpServer;
 import zutil.net.http.pages.HttpFilePage;
 
-import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Level;
 
 /**
@@ -47,9 +48,10 @@ public class PowerChallenge {
                 new DataSynchronizationClient(),
                 new DataCleanupDaemon()
         };
-        Timer daemonTimer = new Timer();
+        // We set only one thread for easier troubleshooting
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         for(HalDaemon daemon : daemons){
-            daemon.initiate(daemonTimer);
+            daemon.initiate(executor);
         }
 
         pages = new HalHttpPage[]{

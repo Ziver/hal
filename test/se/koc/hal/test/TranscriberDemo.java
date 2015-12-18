@@ -22,20 +22,15 @@
 
 package se.koc.hal.test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-
 import com.darkprograms.speech.microphone.MicrophoneAnalyzer;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
-import edu.cmu.sphinx.decoder.adaptation.Stats;
-import edu.cmu.sphinx.decoder.adaptation.Transform;
 import edu.cmu.sphinx.result.WordResult;
-import net.didion.jwnl.data.Exc;
 
 import javax.sound.sampled.AudioFileFormat;
+import java.io.File;
+import java.io.FileInputStream;
 
 /**
  * A simple example that shows how to transcribe a continuous audio file that

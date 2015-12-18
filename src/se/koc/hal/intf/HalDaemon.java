@@ -1,12 +1,11 @@
 package se.koc.hal.intf;
 
-import java.util.Timer;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Created by Ziver on 2015-12-03.
  */
-public interface HalDaemon {
-    public void initiate(Timer timer);
+public interface HalDaemon extends Runnable{
+    public void initiate(ScheduledExecutorService executor);
 
-    public void run();
 }

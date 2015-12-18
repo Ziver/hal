@@ -22,7 +22,6 @@
 
 package se.koc.hal.plugin.tellstick.protocols;
 
-import se.koc.hal.plugin.tellstick.protocols.NexaSelfLearning;
 import zutil.converters.Converter;
 
 import static org.junit.Assert.*;

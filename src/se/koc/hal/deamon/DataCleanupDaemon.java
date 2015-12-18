@@ -1,15 +1,5 @@
 package se.koc.hal.deamon;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import se.koc.hal.HalContext;
 import se.koc.hal.intf.HalDaemon;
 import se.koc.hal.struct.HalSensor;
@@ -20,11 +10,21 @@ import zutil.db.SQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
 import zutil.log.LogUtil;
 
-public class DataCleanupDaemon extends TimerTask implements HalDaemon {
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class DataCleanupDaemon implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 
-    public void initiate(Timer timer){
-        timer.schedule(this, 5000, TimeUtility.FIVE_MINUTES_IN_MS);
+    public void initiate(ScheduledExecutorService executor){
+		executor.scheduleAtFixedRate(this, 5000, TimeUtility.FIVE_MINUTES_IN_MS, TimeUnit.MILLISECONDS);
     }
 
     @Override

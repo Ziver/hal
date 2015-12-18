@@ -1,11 +1,5 @@
 package se.koc.hal.stt;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.LineUnavailableException;
-
 import com.darkprograms.speech.microphone.MicrophoneAnalyzer;
 import com.darkprograms.speech.recognizer.FlacEncoder;
 import com.darkprograms.speech.recognizer.GSpeechDuplex;
@@ -13,6 +7,9 @@ import com.darkprograms.speech.recognizer.GSpeechResponseListener;
 import com.darkprograms.speech.recognizer.GoogleResponse;
 import se.koc.hal.intf.HalSpeachToText;
 import zutil.io.file.FileUtil;
+
+import javax.sound.sampled.AudioFileFormat;
+import java.io.File;
 
 public class GoogleSTTClient implements HalSpeachToText, GSpeechResponseListener {
 	private MicrophoneAnalyzer mic;

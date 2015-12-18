@@ -1,15 +1,5 @@
 package se.koc.hal.deamon;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import se.koc.hal.HalContext;
 import se.koc.hal.intf.HalDaemon;
 import se.koc.hal.struct.HalSensor;
@@ -21,11 +11,21 @@ import zutil.db.SQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
 import zutil.log.LogUtil;
 
-public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class DataAggregatorDaemon implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 
-    public void initiate(Timer timer){
-        timer.schedule(this, 0, TimeUtility.FIVE_MINUTES_IN_MS);
+    public void initiate(ScheduledExecutorService executor){
+        executor.scheduleAtFixedRate(this, 0, TimeUtility.FIVE_MINUTES_IN_MS, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -58,8 +58,8 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     
     /**
      * Aggregate data from the raw DB table to the aggregated table
-     * @param sensorId	The sensor for to aggregate data
-     * @param toPeriodSizeInMs The period length in ms to aggregate to
+     * @param	sensor				The sensor for to aggregate data
+     * @param	toPeriodSizeInMs	The period length in ms to aggregate to
      */
     private void aggregateRawData(HalSensor sensor, long toPeriodSizeInMs, int expectedSampleCount){
     	long sensorId = sensor.getId();
@@ -94,9 +94,9 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     
     /**
      * Re-aggregate data from the aggregated DB table to itself
-     * @param sensorId The sensor for to aggregate data
-     * @param fromPeriodSizeInMs The period length in ms to aggregate from
-     * @param toPeriodSizeInMs The period length in ms to aggregate to
+     * @param	sensor				The sensor for to aggregate data
+     * @param	fromPeriodSizeInMs	The period length in ms to aggregate from
+     * @param	toPeriodSizeInMs	The period length in ms to aggregate to
      */
     private void aggrigateAggregatedData(HalSensor sensor, long fromPeriodSizeInMs, long toPeriodSizeInMs){
     	long sensorId = sensor.getId();

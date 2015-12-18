@@ -1,15 +1,15 @@
 package se.koc.hal.struct;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
-
 import se.koc.hal.HalContext;
 import se.koc.hal.intf.HalSensorController;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
 
 @DBBean.DBTable("sensor")
 public class HalSensor extends DBBean{

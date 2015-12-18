@@ -57,6 +57,7 @@ public class HalContext {
             // Read DB conf
             dbConf = db.exec("SELECT * FROM conf", new PropertiesSQLResult());
 
+
             // Upgrade DB needed?
             DBConnection referenceDB = new DBConnection(DBConnection.DBMS.SQLite, DEFAULT_DB_FILE);
             Properties defaultDBConf =
@@ -64,16 +65,16 @@ public class HalContext {
             // Check DB version
             logger.fine("DB version: "+ dbConf.getProperty(PROPERTY_DB_VERSION));
             int defaultDBVersion = Integer.parseInt(defaultDBConf.getProperty(PROPERTY_DB_VERSION));
-            int dbVersion = Integer.parseInt(dbConf.getProperty(PROPERTY_DB_VERSION));
-            if(dbConf.getProperty(PROPERTY_DB_VERSION) == null || defaultDBVersion > dbVersion ) {
+            int dbVersion = (dbConf.getProperty(PROPERTY_DB_VERSION) != null ?
+                                Integer.parseInt(dbConf.getProperty(PROPERTY_DB_VERSION)) :
+                                -1);
+            if(defaultDBVersion > dbVersion ) {
                 logger.info("Starting DB upgrade...");
                 File backupDB = FileUtil.getNextFile(dbFile);
                 logger.fine("Backing up DB to: "+ backupDB);
                 FileUtil.copy(dbFile, backupDB);
 
-                logger.fine(String.format("Upgrading DB (from: v%s, to: v%s)...",
-                        dbConf.getProperty(PROPERTY_DB_VERSION),
-                        defaultDBConf.getProperty(PROPERTY_DB_VERSION)));
+                logger.fine(String.format("Upgrading DB (from: v%s, to: v%s)...", dbVersion, defaultDBVersion));
                 DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);
                 handler.setTargetDB(db);
                 //handler.setForcedDBUpgrade(true);

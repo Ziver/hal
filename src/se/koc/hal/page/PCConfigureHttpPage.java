@@ -1,7 +1,5 @@
 package se.koc.hal.page;
 
-import java.util.Map;
-
 import se.koc.hal.HalContext;
 import se.koc.hal.intf.HalHttpPage;
 import se.koc.hal.struct.HalSensor;
@@ -9,6 +7,8 @@ import se.koc.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
+
+import java.util.Map;
 
 public class PCConfigureHttpPage extends HalHttpPage {
 

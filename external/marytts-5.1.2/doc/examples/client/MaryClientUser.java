@@ -27,21 +27,15 @@
  * THIS SOFTWARE.
  */
 
+import marytts.client.MaryClient;
+import marytts.util.data.audio.AudioPlayer;
+import marytts.util.http.Address;
+
+import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.Locale;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-import marytts.util.data.audio.AudioPlayer;
-import marytts.client.MaryClient;
-import marytts.util.http.Address;
 
 /**
  * A demo class illustrating how to use the MaryClient class.

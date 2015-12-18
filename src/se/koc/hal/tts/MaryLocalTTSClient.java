@@ -24,14 +24,12 @@ package se.koc.hal.tts;
 
 import marytts.LocalMaryInterface;
 import marytts.MaryInterface;
-import marytts.client.RemoteMaryInterface;
 import marytts.exceptions.MaryConfigurationException;
 import marytts.exceptions.SynthesisException;
 import marytts.util.data.audio.AudioPlayer;
 import se.koc.hal.intf.HalTextToSpeach;
 
 import javax.sound.sampled.AudioInputStream;
-import java.io.IOException;
 import java.util.Set;
 
 /**

@@ -1,12 +1,11 @@
 package se.koc.hal.util;
 
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.Calendar;
 
-import org.junit.Before;
-import org.junit.Test;
-import se.koc.hal.util.TimeUtility;
+import static org.junit.Assert.assertEquals;
 
 public class TimeUtilityTest {
 	private long currentTime_UTC;

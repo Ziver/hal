@@ -1,18 +1,5 @@
 package se.koc.hal.deamon;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Logger;
-
 import se.koc.hal.HalContext;
 import se.koc.hal.deamon.DataSynchronizationDaemon.SensorDataDTO;
 import se.koc.hal.deamon.DataSynchronizationDaemon.SensorDataListDTO;
@@ -22,14 +9,27 @@ import se.koc.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 
-public class DataSynchronizationClient extends TimerTask implements HalDaemon {
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+public class DataSynchronizationClient implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
-	private static final long SYNC_INTERVALL = 5 * 60 * 1000; // 5 min
+	private static final long SYNC_INTERVAL = 5 * 60 * 1000; // 5 min
 
 
 	@Override
-	public void initiate(Timer timer) {
-		timer.schedule(this, 10000, SYNC_INTERVALL);
+	public void initiate(ScheduledExecutorService executor){
+		executor.scheduleAtFixedRate(this, 10000, SYNC_INTERVAL, TimeUnit.MILLISECONDS);
 	}
 
 	@Override

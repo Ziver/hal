@@ -1,12 +1,6 @@
 package se.koc.hal.plugin.tellstick;
 
 import se.koc.hal.plugin.tellstick.protocols.NexaSelfLearning;
-import se.koc.hal.plugin.tellstick.protocols.Oregon0x1A2D;
-import zutil.db.DBConnection;
-import zutil.log.LogUtil;
-
-import java.sql.SQLException;
-import java.util.logging.Logger;
 
 /**
  * Created by Ziver on 2015-11-19.

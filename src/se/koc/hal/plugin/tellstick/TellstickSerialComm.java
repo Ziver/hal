@@ -22,15 +22,15 @@
 
 package se.koc.hal.plugin.tellstick;
 
-import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.fazecast.jSerialComm.SerialPort;
 import zutil.log.InputStreamLogger;
 import zutil.log.LogUtil;
 import zutil.log.OutputStreamLogger;
 import zutil.struct.TimedHashSet;
+
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This version of the TwoWaySerialComm example makes use of the

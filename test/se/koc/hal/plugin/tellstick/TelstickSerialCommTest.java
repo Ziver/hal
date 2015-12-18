@@ -1,7 +1,5 @@
 package se.koc.hal.plugin.tellstick;
 
-import se.koc.hal.plugin.tellstick.TellstickSerialComm;
-import se.koc.hal.plugin.tellstick.protocols.NexaSelfLearning;
 import se.koc.hal.plugin.tellstick.protocols.Oregon0x1A2D;
 import zutil.db.DBConnection;
 import zutil.log.CompactLogFormatter;

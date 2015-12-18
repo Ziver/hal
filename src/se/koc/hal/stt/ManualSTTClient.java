@@ -24,7 +24,9 @@ package se.koc.hal.stt;
 
 import se.koc.hal.intf.HalSpeachToText;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class ManualSTTClient implements HalSpeachToText {
     private BufferedReader in;

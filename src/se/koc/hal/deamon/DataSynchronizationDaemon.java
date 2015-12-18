@@ -1,5 +1,14 @@
 package se.koc.hal.deamon;
 
+import se.koc.hal.HalContext;
+import se.koc.hal.deamon.DataSynchronizationClient.PeerDataReqDTO;
+import se.koc.hal.intf.HalDaemon;
+import zutil.db.DBConnection;
+import zutil.db.SQLResultHandler;
+import zutil.log.LogUtil;
+import zutil.net.threaded.ThreadedTCPNetworkServer;
+import zutil.net.threaded.ThreadedTCPNetworkServerThread;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -10,17 +19,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Timer;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Logger;
-
-import se.koc.hal.HalContext;
-import se.koc.hal.deamon.DataSynchronizationClient.PeerDataReqDTO;
-import se.koc.hal.intf.HalDaemon;
-import zutil.db.DBConnection;
-import zutil.db.SQLResultHandler;
-import zutil.log.LogUtil;
-import zutil.net.threaded.ThreadedTCPNetworkServer;
-import zutil.net.threaded.ThreadedTCPNetworkServerThread;
 
 public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
@@ -31,7 +31,7 @@ public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implemen
 	}
 
 	@Override
-	public void initiate(Timer timer) {
+	public void initiate(ScheduledExecutorService executor){
 		this.start();
 	}
 

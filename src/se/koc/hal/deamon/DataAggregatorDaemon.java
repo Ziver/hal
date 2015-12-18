@@ -14,6 +14,7 @@ import se.koc.hal.HalContext;
 import se.koc.hal.intf.HalDaemon;
 import se.koc.hal.struct.HalSensor;
 import se.koc.hal.struct.HalSensor.AggregationMethod;
+import se.koc.hal.struct.PowerConsumptionSensor;
 import se.koc.hal.util.TimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
@@ -42,17 +43,17 @@ public class DataAggregatorDaemon extends TimerTask implements HalDaemon {
     }
     
     public void aggregateSensor(HalSensor sensor) {
-    	logger.fine("The sensor is of type: " + sensor.getType());
-    	if(sensor.getType().equals("PowerMeter")){
+    	//if(sensor instanceof PowerConsumptionSensor){
+    		logger.fine("The sensor is of type: " + PowerConsumptionSensor.class.getSimpleName());
     		logger.fine("aggregating raw data to five minute periods");
 			aggregateRawData(sensor, TimeUtility.FIVE_MINUTES_IN_MS, 5);
 			logger.fine("aggregating five minute periods into hour periods");
 			aggrigateAggregatedData(sensor, TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.HOUR_IN_MS);
 			logger.fine("aggregating one hour periods into one day periods");
 			aggrigateAggregatedData(sensor, TimeUtility.HOUR_IN_MS, TimeUtility.DAY_IN_MS);
-    	}else{
-    		logger.fine("The sensor type is not supported by the aggregation daemon. Ignoring");
-    	}
+    	//}else{
+    	//	logger.fine("The sensor type is not supported by the aggregation daemon. Ignoring");
+    	//}
     }
     
     /**

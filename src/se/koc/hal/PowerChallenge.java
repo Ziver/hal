@@ -2,7 +2,7 @@ package se.koc.hal;
 
 
 import se.koc.hal.deamon.DataAggregatorDaemon;
-import se.koc.hal.deamon.DataDeletionDaemon;
+import se.koc.hal.deamon.DataCleanupDaemon;
 import se.koc.hal.deamon.DataSynchronizationClient;
 import se.koc.hal.deamon.DataSynchronizationDaemon;
 import se.koc.hal.intf.HalDaemon;
@@ -45,7 +45,7 @@ public class PowerChallenge {
                 new DataAggregatorDaemon(),
                 new DataSynchronizationDaemon(),
                 new DataSynchronizationClient(),
-                new DataDeletionDaemon()
+                new DataCleanupDaemon()
         };
         Timer daemonTimer = new Timer();
         for(HalDaemon daemon : daemons){

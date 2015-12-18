@@ -13,13 +13,14 @@ import java.util.logging.Logger;
 import se.koc.hal.HalContext;
 import se.koc.hal.intf.HalDaemon;
 import se.koc.hal.struct.HalSensor;
+import se.koc.hal.struct.PowerConsumptionSensor;
 import se.koc.hal.util.TimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
 import zutil.log.LogUtil;
 
-public class DataDeletionDaemon extends TimerTask implements HalDaemon {
+public class DataCleanupDaemon extends TimerTask implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 
     public void initiate(Timer timer){
@@ -41,8 +42,8 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
     }
 
     public void cleanupSensor(HalSensor sensor) {
-    	logger.fine("The sensor is of type: " + sensor.getType());
-    	if(sensor.getType().equals("PowerMeter")){	//TODO: use instanceof instead
+    	//if(sensor instanceof PowerConsumptionSensor){
+    		logger.fine("The sensor is of type: " + PowerConsumptionSensor.class.getSimpleName());
     		if(sensor.getUser().isExternal()){
     			cleanupExternalSensorData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);
         		cleanupExternalSensorData(sensor.getId(), TimeUtility.DAY_IN_MS, TimeUtility.WEEK_IN_MS);
@@ -50,9 +51,9 @@ public class DataDeletionDaemon extends TimerTask implements HalDaemon {
 	    		cleanupInternalSensorData(sensor.getId(), TimeUtility.HOUR_IN_MS, TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);
 	    		cleanupInternalSensorData(sensor.getId(), TimeUtility.DAY_IN_MS, TimeUtility.HOUR_IN_MS, TimeUtility.WEEK_IN_MS);
     		}
-    	}else{
-    		logger.fine("The sensor type is not supported by the cleanup deamon. Ignoring");
-    	}
+    	//}else{
+    	//	logger.fine("The sensor type is not supported by the cleanup deamon. Ignoring");
+    	//}
     }
     
     /**

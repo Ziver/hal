@@ -2,6 +2,7 @@ package se.koc.hal;
 
 import zutil.db.DBConnection;
 import zutil.db.DBUpgradeHandler;
+import zutil.db.SQLResultHandler;
 import zutil.db.handler.PropertiesSQLResult;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
@@ -9,7 +10,9 @@ import zutil.log.LogUtil;
 import java.io.File;
 import java.io.FileReader;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -77,8 +80,35 @@ public class HalContext {
                 logger.fine(String.format("Upgrading DB (from: v%s, to: v%s)...", dbVersion, defaultDBVersion));
                 DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);
                 handler.setTargetDB(db);
-                //handler.setForcedDBUpgrade(true);
+                
+                //read upgrade path preferences from the reference database
+                referenceDB.exec("SELECT * FROM db_version_history"
+                		+ " WHERE db_version <= " + defaultDBVersion
+                		+ " AND db_version > " + dbVersion, 
+                		new SQLResultHandler<Object>() {
+					@Override
+					public Object handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
+						while(result.next()){
+							if(result.getBoolean("force_upgrade")){ 
+								handler.setForcedDBUpgrade(true);	//set to true if any of the intermediate db version requires it.
+							}
+							if(result.getBoolean("clear_external_aggr_data")){
+								db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
+										+ "(SELECT sensor_id FROM user, sensor WHERE user.external == 1 AND sensor.user_id = user.id)");
+							}
+							if(result.getBoolean("clear_internal_aggr_data")){
+								db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
+										+ "(SELECT sensor_id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)");
+							}
+						}
+						return null;
+					}
+				});
+                
                 handler.upgrade();
+                
+                //remove table from target database. this table is supposed to only be put in the reference db.
+                db.exec("DROP TABLE db_version_history");
 
                 logger.info("DB upgrade done");
                 dbConf.setProperty(PROPERTY_DB_VERSION, defaultDBConf.getProperty(PROPERTY_DB_VERSION));

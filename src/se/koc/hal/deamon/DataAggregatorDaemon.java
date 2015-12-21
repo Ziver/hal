@@ -80,9 +80,9 @@ public class DataAggregatorDaemon implements HalDaemon {
     		logger.fine("Calculating periods... (from:"+ maxTimestampFoundForSensor +", to:"+ currentPeriodStartTimestamp +") with expected sample count: " + expectedSampleCount);
     		stmt = db.getPreparedStatement("SELECT *, 1 AS confidence, timestamp AS timestamp_start FROM sensor_data_raw"
     				+" WHERE sensor_id == ?"
-    					+ " AND ? < timestamp"
-    					+ " AND timestamp < ? "
-    				+" ORDER BY timestamp ASC");
+    					+ " AND ? < timestamp_start"
+    					+ " AND timestamp_start < ? "
+    				+" ORDER BY timestamp_start ASC");
     		stmt.setLong(1, sensorId);
     		stmt.setLong(2, maxTimestampFoundForSensor);
     		stmt.setLong(3, currentPeriodStartTimestamp);
@@ -120,7 +120,7 @@ public class DataAggregatorDaemon implements HalDaemon {
     		stmt = db.getPreparedStatement("SELECT * FROM sensor_data_aggr"
     				+" WHERE sensor_id == ?"
 	    				+ " AND ? < timestamp_start"
-	    				+ " AND timestamp_start < ?"
+	    				+ " AND timestamp_start <= ?"
 	    				+ " AND timestamp_end-timestamp_start == ?" 
     				+" ORDER BY timestamp_start ASC");
     		stmt.setLong(1, sensorId);

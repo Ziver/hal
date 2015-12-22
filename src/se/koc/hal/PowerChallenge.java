@@ -10,6 +10,8 @@ import se.koc.hal.intf.HalHttpPage;
 import se.koc.hal.page.PCConfigureHttpPage;
 import se.koc.hal.page.PCHeatMapHttpPage;
 import se.koc.hal.page.PCOverviewHttpPage;
+import se.koc.hal.struct.HalSensor;
+import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
@@ -40,6 +42,13 @@ public class PowerChallenge {
 
         // init DB and other configurations
         HalContext.initialize();
+        DBConnection db = HalContext.getDB();
+
+        // Init sensors and controllers
+        ControllerManager.initialize();
+        for(HalSensor sensor : HalSensor.getLocalSensors(db)){
+            //ControllerManager.getInstance().register(sensor);
+        }
 
         // init daemons
         daemons = new HalDaemon[]{

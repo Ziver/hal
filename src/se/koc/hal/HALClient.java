@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  * Date: 2013-12-17
  * Time: 10:59
  */
-public class HALClient{
+public class HalClient {
     private static HashMap<String, SwitchEvent> switches = new HashMap<String, SwitchEvent>();
 
 

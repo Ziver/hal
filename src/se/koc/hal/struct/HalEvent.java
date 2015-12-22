@@ -31,7 +31,7 @@ public class HalEvent extends DBBean{
 
 
 
-    public HalEventController getController(){
+    public Class<? extends HalEventController> getController(){
         return null;
     }
 }

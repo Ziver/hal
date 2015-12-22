@@ -78,7 +78,7 @@ public class HalContext {
                 FileUtil.copy(dbFile, backupDB);
 
                 logger.fine(String.format("Upgrading DB (from: v%s, to: v%s)...", dbVersion, defaultDBVersion));
-                DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);
+                final DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);
                 handler.setTargetDB(db);
                 
                 //read upgrade path preferences from the reference database
@@ -89,14 +89,17 @@ public class HalContext {
 					@Override
 					public Object handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
 						while(result.next()){
-							if(result.getBoolean("force_upgrade")){ 
+							if(result.getBoolean("force_upgrade")){
+                                logger.fine("Forced upgrade enabled");
 								handler.setForcedDBUpgrade(true);	//set to true if any of the intermediate db version requires it.
 							}
 							if(result.getBoolean("clear_external_aggr_data")){
+                                logger.fine("Clearing external aggregate data");
 								db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
 										+ "(SELECT sensor_id FROM user, sensor WHERE user.external == 1 AND sensor.user_id = user.id)");
 							}
 							if(result.getBoolean("clear_internal_aggr_data")){
+                                logger.fine("Clearing local aggregate data");
 								db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
 										+ "(SELECT sensor_id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)");
 							}

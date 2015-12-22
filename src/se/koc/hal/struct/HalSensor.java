@@ -111,7 +111,7 @@ public class HalSensor extends DBBean{
         return AggregationMethod.SUM;
     }
 
-	public HalSensorController getController(){
+	public Class<? extends HalSensorController> getController(){
 		return null;
 	}
 }

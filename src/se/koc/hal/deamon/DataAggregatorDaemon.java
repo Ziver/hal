@@ -2,8 +2,8 @@ package se.koc.hal.deamon;
 
 import se.koc.hal.HalContext;
 import se.koc.hal.intf.HalDaemon;
-import se.koc.hal.struct.HalSensor;
-import se.koc.hal.struct.HalSensor.AggregationMethod;
+import se.koc.hal.struct.Sensor;
+import se.koc.hal.intf.HalSensor.AggregationMethod;
 import se.koc.hal.struct.PowerConsumptionSensor;
 import se.koc.hal.util.TimeUtility;
 import zutil.db.DBConnection;
@@ -31,8 +31,8 @@ public class DataAggregatorDaemon implements HalDaemon {
     @Override
     public void run(){
     	try {
-			List<HalSensor> sensorList = HalSensor.getLocalSensors(HalContext.getDB());
-			for(HalSensor sensor : sensorList){
+			List<Sensor> sensorList = Sensor.getLocalSensors(HalContext.getDB());
+			for(Sensor sensor : sensorList){
 				logger.fine("Aggregating sensor_id: " + sensor.getId());
 				aggregateSensor(sensor);
 			}
@@ -42,7 +42,7 @@ public class DataAggregatorDaemon implements HalDaemon {
 		}
     }
     
-    public void aggregateSensor(HalSensor sensor) {
+    public void aggregateSensor(Sensor sensor) {
     	//if(sensor instanceof PowerConsumptionSensor){
     		logger.fine("The sensor is of type: " + PowerConsumptionSensor.class.getSimpleName());
     		logger.fine("aggregating raw data to five minute periods");
@@ -61,7 +61,7 @@ public class DataAggregatorDaemon implements HalDaemon {
      * @param	sensor				The sensor for to aggregate data
      * @param	toPeriodSizeInMs	The period length in ms to aggregate to
      */
-    private void aggregateRawData(HalSensor sensor, long toPeriodSizeInMs, int expectedSampleCount){
+    private void aggregateRawData(Sensor sensor, long toPeriodSizeInMs, int expectedSampleCount){
     	long sensorId = sensor.getId();
     	AggregationMethod aggrMethod = sensor.getAggregationMethod();
     	DBConnection db = HalContext.getDB();
@@ -98,7 +98,7 @@ public class DataAggregatorDaemon implements HalDaemon {
      * @param	fromPeriodSizeInMs	The period length in ms to aggregate from
      * @param	toPeriodSizeInMs	The period length in ms to aggregate to
      */
-    private void aggrigateAggregatedData(HalSensor sensor, long fromPeriodSizeInMs, long toPeriodSizeInMs){
+    private void aggrigateAggregatedData(Sensor sensor, long fromPeriodSizeInMs, long toPeriodSizeInMs){
     	long sensorId = sensor.getId();
     	AggregationMethod aggrMethod = sensor.getAggregationMethod();
     	int expectedSampleCount = (int)Math.ceil((double)toPeriodSizeInMs / (double)fromPeriodSizeInMs);
@@ -158,7 +158,7 @@ public class DataAggregatorDaemon implements HalDaemon {
 				int sum = 0;
 				float confidenceSum = 0;
 				int samples = 0;
-				long highestSequenceId = HalSensor.getHighestSequenceId(sensorId);
+				long highestSequenceId = Sensor.getHighestSequenceId(sensorId);
 				PreparedStatement preparedInsertStmt = HalContext.getDB().getPreparedStatement(
 						"INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(?, ?, ?, ?, ?, ?)");
 				while(result.next()){

@@ -2,7 +2,7 @@ package se.koc.hal.deamon;
 
 import se.koc.hal.HalContext;
 import se.koc.hal.intf.HalDaemon;
-import se.koc.hal.struct.HalSensor;
+import se.koc.hal.struct.Sensor;
 import se.koc.hal.struct.PowerConsumptionSensor;
 import se.koc.hal.util.TimeUtility;
 import zutil.db.DBConnection;
@@ -30,8 +30,8 @@ public class DataCleanupDaemon implements HalDaemon {
     @Override
     public void run(){
     	try {
-			List<HalSensor> sensorList = HalSensor.getSensors(HalContext.getDB());
-			for(HalSensor sensor : sensorList){
+			List<Sensor> sensorList = Sensor.getSensors(HalContext.getDB());
+			for(Sensor sensor : sensorList){
 				logger.fine("Deleting old data for sensor id: " + sensor.getId());
 				cleanupSensor(sensor);
 			}
@@ -41,7 +41,7 @@ public class DataCleanupDaemon implements HalDaemon {
 		}
     }
 
-    public void cleanupSensor(HalSensor sensor) {
+    public void cleanupSensor(Sensor sensor) {
     	//if(sensor instanceof PowerConsumptionSensor){
     		logger.fine("The sensor is of type: " + PowerConsumptionSensor.class.getSimpleName());
     		if(sensor.getUser().isExternal()){

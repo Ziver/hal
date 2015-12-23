@@ -1,11 +1,15 @@
 package se.koc.hal.plugin.tellstick.protocols;
 
+import se.koc.hal.intf.HalSensor;
+import se.koc.hal.intf.HalSensorController;
 import se.koc.hal.plugin.tellstick.TellstickProtocol;
+import se.koc.hal.plugin.tellstick.TellstickSerialComm;
+import se.koc.hal.struct.PowerConsumptionSensor;
 
 /**
  * Created by Ziver on 2015-11-19.
  */
-public class Oregon0x1A2D implements TellstickProtocol {
+public class Oregon0x1A2D implements TellstickProtocol, PowerConsumptionSensor {
 
     double temperature = 0;
     double humidity = 0;
@@ -73,5 +77,17 @@ public class Oregon0x1A2D implements TellstickProtocol {
 
     public double getHumidity(){
         return humidity;
+    }
+
+
+
+    @Override
+    public AggregationMethod getAggregationMethod() {
+        return AggregationMethod.SUM;
+    }
+
+    @Override
+    public Class<? extends HalSensorController> getController() {
+        return TellstickSerialComm.class;
     }
 }

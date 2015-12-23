@@ -22,8 +22,10 @@
 
 package se.koc.hal.struct;
 
+import se.koc.hal.intf.HalEvent;
+
 /**
  * Created by Ziver on 2015-05-07.
  */
-public class DimmerEvent extends HalEvent{
+public abstract class DimmerEvent implements HalEvent {
 }

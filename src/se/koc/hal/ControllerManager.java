@@ -1,8 +1,7 @@
 package se.koc.hal;
 
 import se.koc.hal.intf.HalSensorController;
-import se.koc.hal.struct.HalEvent;
-import se.koc.hal.struct.HalSensor;
+import se.koc.hal.struct.Sensor;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginData;
 import zutil.plugin.PluginManager;
@@ -26,14 +25,14 @@ public class ControllerManager {
 
 
 
-    public void register(HalSensor sensor) throws IllegalAccessException, InstantiationException {
+    public void register(Sensor sensor) throws IllegalAccessException, InstantiationException {
         Class<? extends HalSensorController> c = sensor.getController();
         HalSensorController controller;
         if (controllerMap.containsKey(c))
             controller = controllerMap.get(c);
         else {
             // Instantiate controller
-            logger.fine("Instantiating controller: " + c.getName());
+            logger.fine("Instantiating new controller: " + c.getName());
             controller = c.newInstance();
             controllerMap.put(c, controller);
         }
@@ -41,7 +40,7 @@ public class ControllerManager {
         controller.register(sensor);
     }
 
-    public void deregister(HalSensor sensor){
+    public void deregister(Sensor sensor){
         Class<? extends HalSensorController> c = sensor.getController();
         HalSensorController controller;
         if (controllerMap.containsKey(c)) {
@@ -70,7 +69,7 @@ public class ControllerManager {
         Iterator<PluginData> it = pluginManager.iterator();
         while (it.hasNext()){
             PluginData plugin = it.next();
-            Iterator<Class<?>> pluginIt = plugin.getClassIterator(HalSensor.class);
+            Iterator<Class<?>> pluginIt = plugin.getClassIterator(Sensor.class);
             while (pluginIt.hasNext()){
                 manager.availableSensors.add(pluginIt.next());
             }

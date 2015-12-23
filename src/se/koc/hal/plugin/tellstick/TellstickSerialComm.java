@@ -23,12 +23,15 @@
 package se.koc.hal.plugin.tellstick;
 
 import com.fazecast.jSerialComm.SerialPort;
+import se.koc.hal.intf.HalSensorController;
+import se.koc.hal.struct.Sensor;
 import zutil.log.InputStreamLogger;
 import zutil.log.LogUtil;
 import zutil.log.OutputStreamLogger;
 import zutil.struct.TimedHashSet;
 
 import java.io.*;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,7 +39,7 @@ import java.util.logging.Logger;
  * This version of the TwoWaySerialComm example makes use of the
  * SerialPortEventListener to avoid polling.
  */
-public class TellstickSerialComm extends Thread{
+public class TellstickSerialComm implements Runnable, HalSensorController {
     private static final long TRANSMISSION_UNIQUENESS_TTL = 300; // milliseconds
     private static final Logger logger = LogUtil.getLogger();
     private static TellstickSerialComm instance;
@@ -50,8 +53,9 @@ public class TellstickSerialComm extends Thread{
     private TellstickChangeListener listener;
 
 
-    public TellstickSerialComm(){
+    public TellstickSerialComm() throws Exception {
         set = new TimedHashSet(TRANSMISSION_UNIQUENESS_TTL);
+        connect("COM6");
     }
 
     public void connect(String portName) throws Exception {
@@ -64,14 +68,29 @@ public class TellstickSerialComm extends Thread{
 
         in  = new BufferedReader(new InputStreamReader(new InputStreamLogger(serial.getInputStream()),  "UTF-8"));
         out = new BufferedWriter(new OutputStreamWriter(new OutputStreamLogger(serial.getOutputStream()), "UTF-8"));
-        this.start();
+        Executors.newSingleThreadExecutor().submit(this);
+    }
+
+    public void close() {
+        if(serial != null) {
+            try {
+                serial.closePort();
+                in.close();
+                out.close();
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, null, e);
+            }
+        }
+        serial = null;
+        in = null;
+        out = null;
     }
 
 
     public void run() {
         try {
             String data;
-            while ((data = in.readLine()) != null) {
+            while (in != null && (data = in.readLine()) != null) {
                 if ((data.startsWith("+S") || data.startsWith("+T"))) {
                     synchronized (this) {
                         this.notifyAll();
@@ -117,15 +136,17 @@ public class TellstickSerialComm extends Thread{
     }
 
 
-    public static TellstickSerialComm getInstance(){
-        if(instance == null){
-            try {
-                instance = new TellstickSerialComm();
-                instance.connect("COM6");
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, null, e);
-            }
-        }
-        return instance;
+
+    @Override
+    public void register(Sensor sensor) {
+
+    }
+    @Override
+    public void deregister(Sensor sensor) {
+
+    }
+    @Override
+    public int size() {
+        return 0;
     }
 }

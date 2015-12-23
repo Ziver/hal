@@ -1,6 +1,6 @@
 package se.koc.hal.intf;
 
-import se.koc.hal.struct.HalEvent;
+import se.koc.hal.struct.Event;
 
 /**
  * Created by Ziver on 2015-12-15.
@@ -9,18 +9,18 @@ public interface HalEventController {
     /**
      * Will register an event type to be handled by this controller
      */
-    public void register(HalEvent event);
+    public void register(Event event);
 
     /**
      * Deregisters an event from this controller, the controller
      * will no longer handle that type of event
      */
-    public void deregister(HalEvent event);
+    public void deregister(Event event);
 
     /**
      * @param   event  transmit this event if possible.
      */
-    public void send(HalEvent event);
+    public void send(Event event);
 
     /**
      * @return the number of registered objects

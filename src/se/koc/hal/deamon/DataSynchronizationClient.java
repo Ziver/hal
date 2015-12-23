@@ -4,7 +4,7 @@ import se.koc.hal.HalContext;
 import se.koc.hal.deamon.DataSynchronizationDaemon.SensorDataDTO;
 import se.koc.hal.deamon.DataSynchronizationDaemon.SensorDataListDTO;
 import se.koc.hal.intf.HalDaemon;
-import se.koc.hal.struct.HalSensor;
+import se.koc.hal.struct.Sensor;
 import se.koc.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
@@ -47,12 +47,12 @@ public class DataSynchronizationClient implements HalDaemon {
 					ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 					ObjectInputStream in = new ObjectInputStream(s.getInputStream());
 					
-					List<HalSensor> sensors = HalSensor.getSensors(db, user);
-					for(HalSensor sensor : sensors){
+					List<Sensor> sensors = Sensor.getSensors(db, user);
+					for(Sensor sensor : sensors){
 						if(sensor.isSynced()) {
 							PeerDataReqDTO req = new PeerDataReqDTO();
 							req.sensorId = sensor.getExternalId();
-							req.offsetSequenceId = HalSensor.getHighestSequenceId(sensor.getId());
+							req.offsetSequenceId = Sensor.getHighestSequenceId(sensor.getId());
 							out.writeObject(req);
 
 							SensorDataListDTO dataList = (SensorDataListDTO) in.readObject();

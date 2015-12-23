@@ -1,7 +1,13 @@
 package se.koc.hal.struct;
 
+import se.koc.hal.intf.HalSensor;
+
 /**
  * Created by Ziver on 2015-12-03.
  */
-public class TemperatureSensor extends HalSensor {
+public interface TemperatureSensor extends HalSensor {
+
+    public double getTemperature();
+
+    public double getHumidity();
 }

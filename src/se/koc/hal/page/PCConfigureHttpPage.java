@@ -2,7 +2,7 @@ package se.koc.hal.page;
 
 import se.koc.hal.HalContext;
 import se.koc.hal.intf.HalHttpPage;
-import se.koc.hal.struct.HalSensor;
+import se.koc.hal.struct.Sensor;
 import se.koc.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -30,7 +30,7 @@ public class PCConfigureHttpPage extends HalHttpPage {
         if(request.containsKey("action")){
             String action = request.get("action");
             int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
-            HalSensor sensor;
+            Sensor sensor;
             User user;
             switch(action) {
                 // Local User
@@ -42,7 +42,7 @@ public class PCConfigureHttpPage extends HalHttpPage {
 
                 // Local Sensors
                 case "create_local_sensor":
-                    sensor = new HalSensor();
+                    sensor = new Sensor();
                     sensor.setName(request.get("name"));
                     sensor.setType(request.get("type"));
                     sensor.setConfig(request.get("config"));
@@ -50,7 +50,7 @@ public class PCConfigureHttpPage extends HalHttpPage {
                     sensor.setSynced(true);
                     sensor.save(db);
                 case "modify_local_sensor":
-                    sensor = HalSensor.getSensor(db, id);
+                    sensor = Sensor.getSensor(db, id);
                     if(sensor != null){
                         sensor.setName(request.get("name"));
                         sensor.setType(request.get("type"));
@@ -59,7 +59,7 @@ public class PCConfigureHttpPage extends HalHttpPage {
                     }
                     break;
                 case "remove_local_sensor":
-                    sensor = HalSensor.getSensor(db, id);
+                    sensor = Sensor.getSensor(db, id);
                     if(sensor != null)
                         sensor.delete(db);
                     break;
@@ -88,7 +88,7 @@ public class PCConfigureHttpPage extends HalHttpPage {
 
                 // External Sensors
                 case "modify_external_sensor":
-                    sensor = HalSensor.getSensor(db, id);
+                    sensor = Sensor.getSensor(db, id);
                     if(sensor != null){
                         sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
                         sensor.save(db);
@@ -100,9 +100,9 @@ public class PCConfigureHttpPage extends HalHttpPage {
         // Output
         Templator tmpl = new Templator(FileUtil.find("web-resource/configure.tmpl"));
         tmpl.set("user", localUser);
-        tmpl.set("localSensor", HalSensor.getLocalSensors(db));
+        tmpl.set("localSensor", Sensor.getLocalSensors(db));
         tmpl.set("extUsers", User.getExternalUsers(db));
-        tmpl.set("extSensor", HalSensor.getExternalSensors(db));
+        tmpl.set("extSensor", Sensor.getExternalSensors(db));
 
         return tmpl;
 

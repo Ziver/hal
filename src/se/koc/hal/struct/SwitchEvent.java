@@ -22,44 +22,16 @@
 
 package se.koc.hal.struct;
 
+import se.koc.hal.intf.HalEvent;
 import se.koc.hal.plugin.tellstick.TellstickSerialComm;
 import se.koc.hal.plugin.tellstick.protocols.NexaSelfLearning;
 
 /**
  * Created by Ziver on 2015-05-07.
  */
-public class SwitchEvent extends HalEvent{
-    private String name;
-    private NexaSelfLearning nexa;
+public interface SwitchEvent extends HalEvent {
 
-
-    public SwitchEvent(String name, NexaSelfLearning nexa){
-        this.name = name;
-        this.nexa = nexa;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-
-    public boolean isOn(){
-        return nexa.isEnabled();
-    }
-    public void turnOn(){
-        nexa.setEnable(true);
-        TellstickSerialComm.getInstance().write(nexa);
-    }
-    public void turnOff(){
-        nexa.setEnable(false);
-        TellstickSerialComm.getInstance().write(nexa);
-    }
-
-    public boolean equals(Object obj){
-        if(obj instanceof String)
-            return name.equals(obj);
-        if(obj instanceof NexaSelfLearning)
-            return nexa.equals(obj);
-        return this == obj;
-    }
+    public boolean isOn();
+    public void turnOn();
+    public void turnOff();
 }

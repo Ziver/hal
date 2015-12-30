@@ -1,5 +1,7 @@
 package se.koc.hal.intf;
 
+import zutil.parser.DataNode;
+
 /**
  * Created by Ziver on 2015-12-23.
  */
@@ -10,9 +12,10 @@ public interface HalSensor {
     }
 
 
-    public AggregationMethod getAggregationMethod();
 
-    public Class<? extends HalSensorController> getController();
+    AggregationMethod getAggregationMethod();
+
+    Class<? extends HalSensorController> getController();
 
 
 }

@@ -1,20 +1,30 @@
 package se.koc.hal.struct;
 
 import se.koc.hal.HalContext;
-import se.koc.hal.intf.HalEvent;
 import se.koc.hal.intf.HalSensor;
 import se.koc.hal.intf.HalSensorController;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
+import zutil.io.StringInputStream;
+import zutil.io.StringOutputStream;
 import zutil.log.LogUtil;
+import zutil.parser.DataNode;
+import zutil.parser.json.JSONObjectInputStream;
+import zutil.parser.json.JSONObjectOutputStream;
+import zutil.parser.json.JSONParser;
+import zutil.parser.json.JSONWriter;
+import zutil.ui.Configurator;
+import zutil.ui.Configurator.ConfigurationParam;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 @DBBean.DBTable("sensor")
 public class Sensor extends DBBean{
@@ -73,13 +83,35 @@ public class Sensor extends DBBean{
         if(sensorData == null) {
             try {
                 Class c = Class.forName(type);
-                sensorData = (HalSensor) c.newInstance();
+
+                JSONObjectInputStream in = new JSONObjectInputStream(
+                        new StringInputStream(config));
+                sensorData = (HalSensor) in.readObject(c);
+                in.close();
             } catch (Exception e){
-                logger.log(Level.SEVERE, null, e);
+                logger.log(Level.SEVERE, "Unable to read sensor data", e);
             }
         }
         return sensorData;
     }
+    public void save(DBConnection db) throws SQLException {
+        if(sensorData != null) {
+            try {
+                StringOutputStream buff = new StringOutputStream();
+                JSONObjectOutputStream out = new JSONObjectOutputStream(buff);
+                out.enableMetaData(false);
+                out.writeObject(sensorData);
+                out.close();
+                this.config = buff.toString();
+            } catch (IOException e){
+                logger.log(Level.SEVERE, "Unable to save sensor data", e);
+            }
+        }
+        else
+            this.config = null;
+        super.save(db);
+    }
+
 	
 	public String getName() {
 		return name;

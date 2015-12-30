@@ -5,8 +5,15 @@ import se.koc.hal.intf.HalEventController;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
+import zutil.io.StringInputStream;
+import zutil.io.StringOutputStream;
 import zutil.log.LogUtil;
+import zutil.parser.json.JSONObjectInputStream;
+import zutil.parser.json.JSONObjectOutputStream;
+import zutil.parser.json.JSONParser;
+import zutil.parser.json.JSONWriter;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -41,12 +48,33 @@ public class Event extends DBBean{
         if(eventData == null) {
             try {
                 Class c = Class.forName(type);
-                eventData = (HalEvent) c.newInstance();
+
+                JSONObjectInputStream in = new JSONObjectInputStream(
+                        new StringInputStream(config));
+                eventData = (HalEvent) in.readObject(c);
+                in.close();
             } catch (Exception e){
-                logger.log(Level.SEVERE, null, e);
+                logger.log(Level.SEVERE, "Unable to read event data", e);
             }
         }
         return eventData;
+    }
+    public void save(DBConnection db) throws SQLException {
+        if(eventData != null) {
+            try {
+                StringOutputStream buff = new StringOutputStream();
+                JSONObjectOutputStream out = new JSONObjectOutputStream(buff);
+                out.enableMetaData(false);
+                out.writeObject(eventData);
+                out.close();
+                this.config = buff.toString();
+            } catch (IOException e){
+                logger.log(Level.SEVERE, "Unable to save event data", e);
+            }
+        }
+        else
+            this.config = null;
+        super.save(db);
     }
 
 

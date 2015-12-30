@@ -5,14 +5,19 @@ import se.koc.hal.intf.HalSensorController;
 import se.koc.hal.plugin.tellstick.TellstickProtocol;
 import se.koc.hal.plugin.tellstick.TellstickSerialComm;
 import se.koc.hal.struct.PowerConsumptionSensor;
+import zutil.parser.DataNode;
+import zutil.ui.Configurator;
 
 /**
  * Created by Ziver on 2015-11-19.
  */
 public class Oregon0x1A2D implements TellstickProtocol, PowerConsumptionSensor {
 
-    double temperature = 0;
-    double humidity = 0;
+    @Configurator.Configurable("Address")
+    private int address = 0;
+
+    private double temperature = 0;
+    private double humidity = 0;
 
     @Override
     public String encode() {
@@ -42,7 +47,7 @@ public class Oregon0x1A2D implements TellstickProtocol, PowerConsumptionSensor {
         int temp3 = (data[5] >> 4) & 0xF;
 
         checksum += ((data[6] >> 4) & 0xF) + (data[6] & 0xF);
-        int address = data[6] & 0xFF;
+        address = data[6] & 0xFF;
 
         checksum += ((data[7] >> 4) & 0xF) + (data[7] & 0xF);
         // channel not used

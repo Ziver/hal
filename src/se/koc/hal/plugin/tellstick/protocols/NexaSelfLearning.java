@@ -23,14 +23,20 @@
 package se.koc.hal.plugin.tellstick.protocols;
 
 import se.koc.hal.plugin.tellstick.TellstickProtocol;
+import zutil.ui.Configurator;
 
 /**
  * Created by Ziver on 2015-02-18.
  */
 public class NexaSelfLearning implements TellstickProtocol {
+
+    @Configurator.Configurable("House code")
     private int house = 0;
+    @Configurator.Configurable("Group code")
     private int group = 0;
+    @Configurator.Configurable("Unit code")
     private int unit = 0;
+
     private boolean enable = false;
 
 

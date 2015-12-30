@@ -1,5 +1,6 @@
 package se.koc.hal;
 
+import net.didion.jwnl.data.Exc;
 import se.koc.hal.intf.HalSensorController;
 import se.koc.hal.struct.Sensor;
 import zutil.log.LogUtil;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -27,17 +29,22 @@ public class ControllerManager {
 
     public void register(Sensor sensor) throws IllegalAccessException, InstantiationException {
         Class<? extends HalSensorController> c = sensor.getController();
-        HalSensorController controller;
+        HalSensorController controller = null;
         if (controllerMap.containsKey(c))
             controller = controllerMap.get(c);
         else {
             // Instantiate controller
             logger.fine("Instantiating new controller: " + c.getName());
-            controller = c.newInstance();
-            controllerMap.put(c, controller);
+            try {
+                controller = c.newInstance();
+                controllerMap.put(c, controller);
+            } catch (Exception e){
+                logger.log(Level.SEVERE, "Unable to instantiate controller: "+c.getName(), e);
+            }
         }
 
-        controller.register(sensor);
+        if(controller != null)
+            controller.register(sensor);
     }
 
     public void deregister(Sensor sensor){

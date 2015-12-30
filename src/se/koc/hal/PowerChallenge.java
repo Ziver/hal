@@ -45,11 +45,11 @@ public class PowerChallenge {
         DBConnection db = HalContext.getDB();
 
         // Init sensors and controllers
-/*        ControllerManager.initialize();
+        ControllerManager.initialize();
         for(Sensor sensor : Sensor.getLocalSensors(db)){
             ControllerManager.getInstance().register(sensor);
         }
-*/
+
         // init daemons
         daemons = new HalDaemon[]{
                 new DataAggregatorDaemon(),

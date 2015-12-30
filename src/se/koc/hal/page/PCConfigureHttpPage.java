@@ -1,5 +1,6 @@
 package se.koc.hal.page;
 
+import se.koc.hal.ControllerManager;
 import se.koc.hal.HalContext;
 import se.koc.hal.intf.HalHttpPage;
 import se.koc.hal.struct.Sensor;
@@ -7,13 +8,25 @@ import se.koc.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
+import zutil.ui.Configurator;
 
+import java.lang.reflect.Array;
 import java.util.Map;
 
 public class PCConfigureHttpPage extends HalHttpPage {
 
+    private Configurator[] sensorConfigurations;
+
+
     public PCConfigureHttpPage() {
         super("Configuration", "config");
+
+        sensorConfigurations = new Configurator[
+                ControllerManager.getInstance().getAvailableSensors().size()];
+        int i=0;
+        for(Class c : ControllerManager.getInstance().getAvailableSensors()){
+            sensorConfigurations[i++] = new Configurator(c);
+        }
     }
 
     @Override
@@ -101,6 +114,7 @@ public class PCConfigureHttpPage extends HalHttpPage {
         Templator tmpl = new Templator(FileUtil.find("web-resource/configure.tmpl"));
         tmpl.set("user", localUser);
         tmpl.set("localSensor", Sensor.getLocalSensors(db));
+        tmpl.set("localSensorConf", sensorConfigurations);
         tmpl.set("extUsers", User.getExternalUsers(db));
         tmpl.set("extSensor", Sensor.getExternalSensors(db));
 

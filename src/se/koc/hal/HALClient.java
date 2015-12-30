@@ -54,7 +54,7 @@ public class HalClient {
         bot.initialize();
 
         /********************************************************************/
-        NexaSelfLearning nexa1 = new NexaSelfLearning();
+/*        NexaSelfLearning nexa1 = new NexaSelfLearning();
         nexa1.setHouse(15087918);
         nexa1.setUnit(0);
         switches.put("livingroom", new SwitchEvent("livingroom", nexa1));
@@ -82,7 +82,7 @@ public class HalClient {
                 }
             }
         });
-
+*/
 
         System.out.println("Listening...");
         while(true){

@@ -79,7 +79,7 @@ public class Sensor extends DBBean{
    }
 
 
-    private HalSensor getSensorData(){
+    public HalSensor getSensorData(){
         if(sensorData == null) {
             try {
                 Class c = Class.forName(type);

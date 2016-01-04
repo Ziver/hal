@@ -44,7 +44,7 @@ public class Event extends DBBean{
         return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Event.class, db) );
     }
 
-    private HalEvent getEventData(){
+    public HalEvent getEventData(){
         if(eventData == null) {
             try {
                 Class c = Class.forName(type);

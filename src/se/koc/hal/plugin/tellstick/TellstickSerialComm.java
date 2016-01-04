@@ -23,8 +23,8 @@
 package se.koc.hal.plugin.tellstick;
 
 import com.fazecast.jSerialComm.SerialPort;
+import se.koc.hal.intf.HalSensor;
 import se.koc.hal.intf.HalSensorController;
-import se.koc.hal.struct.Sensor;
 import zutil.log.InputStreamLogger;
 import zutil.log.LogUtil;
 import zutil.log.OutputStreamLogger;
@@ -35,6 +35,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  * This version of the TwoWaySerialComm example makes use of the
  * SerialPortEventListener to avoid polling.
@@ -42,19 +43,19 @@ import java.util.logging.Logger;
 public class TellstickSerialComm implements Runnable, HalSensorController {
     private static final long TRANSMISSION_UNIQUENESS_TTL = 300; // milliseconds
     private static final Logger logger = LogUtil.getLogger();
-    private static TellstickSerialComm instance;
 
     private SerialPort serial;
     private BufferedReader in;
     private BufferedWriter out;
     private TimedHashSet set; // To check for retransmissions
 
-    private TellstickParser parser = new TellstickParser();
+    private TellstickParser parser;
     private TellstickChangeListener listener;
 
 
     public TellstickSerialComm() throws Exception {
         set = new TimedHashSet(TRANSMISSION_UNIQUENESS_TTL);
+        parser = new TellstickParser();
         connect("COM6");
     }
 
@@ -138,15 +139,16 @@ public class TellstickSerialComm implements Runnable, HalSensorController {
 
 
     @Override
-    public void register(Sensor sensor) {
-
-    }
+    public void register(HalSensor sensor) {}
     @Override
-    public void deregister(Sensor sensor) {
-
-    }
+    public void deregister(HalSensor sensor) {}
     @Override
     public int size() {
         return 0;
+    }
+
+    @Override
+    public void setListener(SensorReportListener listener) {
+
     }
 }

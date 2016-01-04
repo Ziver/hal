@@ -1,6 +1,7 @@
 package se.koc.hal;
 
 import net.didion.jwnl.data.Exc;
+import se.koc.hal.intf.HalSensor;
 import se.koc.hal.intf.HalSensorController;
 import se.koc.hal.struct.Sensor;
 import zutil.log.LogUtil;
@@ -22,7 +23,11 @@ public class ControllerManager {
     private static ControllerManager instance;
 
 
+    /** All available sensor plugins **/
     private ArrayList<Class<?>> availableSensors = new ArrayList<>();
+    /** List of auto detected sensors **/
+    private ArrayList<HalSensor> detectedSensors = new ArrayList<>();
+    /** A map of all instantiated controllers **/
     private HashMap<Class,HalSensorController> controllerMap = new HashMap<>();
 
 
@@ -44,7 +49,7 @@ public class ControllerManager {
         }
 
         if(controller != null)
-            controller.register(sensor);
+            controller.register(sensor.getSensorData());
     }
 
     public void deregister(Sensor sensor){
@@ -52,7 +57,7 @@ public class ControllerManager {
         HalSensorController controller;
         if (controllerMap.containsKey(c)) {
             controller = controllerMap.get(c);
-            controller.deregister(sensor);
+            controller.deregister(sensor.getSensorData());
             if(controller.size() == 0){
                 // Remove controller as it has no more registered sensors
                 logger.fine("Closing controller as it has no more registered sensors: "+c.getName());
@@ -62,11 +67,14 @@ public class ControllerManager {
         }
     }
 
+
     public List<Class<?>> getAvailableSensors(){
         return availableSensors;
     }
 
-
+    public List<HalSensor> getDetectedSensors(){
+        return detectedSensors;
+    }
 
 
 

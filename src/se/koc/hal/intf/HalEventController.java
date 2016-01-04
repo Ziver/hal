@@ -4,6 +4,9 @@ package se.koc.hal.intf;
  * Created by Ziver on 2015-12-15.
  */
 public interface HalEventController {
+
+    void initialize() throws Exception;
+
     /**
      * Will register an event type to be handled by this controller
      */

@@ -23,6 +23,7 @@
 package se.koc.hal.plugin.tellstick;
 
 import com.fazecast.jSerialComm.SerialPort;
+import se.koc.hal.HalContext;
 import se.koc.hal.intf.*;
 import zutil.io.file.FileUtil;
 import zutil.log.InputStreamLogger;
@@ -58,33 +59,35 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
 
 
 
-    public TellstickSerialComm() throws Exception {
+    public TellstickSerialComm() {
         set = new TimedHashSet(TRANSMISSION_UNIQUENESS_TTL);
         parser = new TellstickParser();
         registeredObjects = 0;
+    }
 
+    @Override
+    public void initialize() throws Exception {
         // Read properties
-        Properties prop = new Properties();
-        prop.setProperty("com_port", "COM6"); // defaults
-        if(FileUtil.find("tellstick.conf") != null) {
-            Reader reader = new FileReader("tellstick.conf");
-            prop.load(reader);
-            reader.close();
-        }
-        connect(prop.getProperty("com_port"));
+        String port = HalContext.getStringProperty("tellstick.com_port");
+        if (port == null)
+            port = "COM1"; // defaults
+
+        connect(port);
     }
 
     public void connect(String portName) throws Exception {
+        logger.info("Connecting to com port... ("+ portName +")");
         serial = SerialPort.getCommPort(portName);
         serial.setBaudRate(9600);
         if(!serial.openPort())
             throw new IOException("Could not open port: "+portName);
         serial.setComPortTimeouts(
-                SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
+                SerialPort.TIMEOUT_READ_BLOCKING, 0, 0);
 
         in  = new BufferedReader(new InputStreamReader(new InputStreamLogger(serial.getInputStream()),  "UTF-8"));
         out = new BufferedWriter(new OutputStreamWriter(new OutputStreamLogger(serial.getOutputStream()), "UTF-8"));
-        Executors.newSingleThreadExecutor().submit(this);
+
+        Executors.newSingleThreadExecutor().execute(this);
     }
 
     public void close() {

@@ -45,9 +45,12 @@ public class HalContext {
         try {
             // Read conf
             fileConf = new Properties(defaultFileConf);
-            FileReader in = new FileReader(CONF_FILE);
-            fileConf.load(in);
-            in.close();
+            if (FileUtil.find(CONF_FILE).exists()) {
+                FileReader in = new FileReader(CONF_FILE);
+                fileConf.load(in);
+                in.close();
+            }
+            else logger.info("No hal.conf file found");
 
             // Init DB
             File dbFile = FileUtil.find(DB_FILE);
@@ -66,7 +69,7 @@ public class HalContext {
             Properties defaultDBConf =
                     referenceDB.exec("SELECT * FROM conf", new PropertiesSQLResult());
             // Check DB version
-            logger.fine("DB version: "+ dbConf.getProperty(PROPERTY_DB_VERSION));
+            logger.info("DB version: "+ dbConf.getProperty(PROPERTY_DB_VERSION));
             int defaultDBVersion = Integer.parseInt(defaultDBConf.getProperty(PROPERTY_DB_VERSION));
             int dbVersion = (dbConf.getProperty(PROPERTY_DB_VERSION) != null ?
                                 Integer.parseInt(dbConf.getProperty(PROPERTY_DB_VERSION)) :
@@ -123,8 +126,10 @@ public class HalContext {
 
 
     public static String getStringProperty(String key){
-        String value = fileConf.getProperty(key);
-        if(value == null)
+        String value = null;
+        if (fileConf != null)
+            value = fileConf.getProperty(key);
+        if (dbConf != null && value == null)
             value = dbConf.getProperty(key);
         return value;
     }

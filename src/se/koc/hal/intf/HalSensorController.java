@@ -5,6 +5,8 @@ package se.koc.hal.intf;
  */
 public interface HalSensorController {
 
+    void initialize() throws Exception;
+
     /**
      * Will register a sensor type to be handled by this controller
      */

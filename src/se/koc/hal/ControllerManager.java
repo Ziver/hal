@@ -182,10 +182,15 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
             logger.fine("Instantiating new controller: " + c.getName());
             try {
                 controller = c.newInstance();
-                if(controller instanceof HalSensorController)
+                if(controller instanceof HalSensorController) {
                     ((HalSensorController) controller).setListener(this);
-                if(controller instanceof HalEventController)
+                    ((HalSensorController) controller).initialize();
+                }
+                if(controller instanceof HalEventController) {
                     ((HalEventController) controller).setListener(this);
+                    if( ! (controller instanceof HalSensorController))
+                        ((HalEventController) controller).initialize();
+                }
 
                 controllerMap.put(c, controller);
             } catch (Exception e){

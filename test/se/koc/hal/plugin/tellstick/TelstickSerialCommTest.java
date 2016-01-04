@@ -1,5 +1,6 @@
 package se.koc.hal.plugin.tellstick;
 
+import se.koc.hal.HalContext;
 import se.koc.hal.intf.HalSensor;
 import se.koc.hal.intf.HalSensorController;
 import se.koc.hal.intf.HalSensorReportListener;
@@ -24,8 +25,9 @@ public class TelstickSerialCommTest {
             LogUtil.setGlobalFormatter(new CompactLogFormatter());
             LogUtil.setGlobalLevel(Level.FINEST);
 
-            logger.info("Connecting to db...");
-            final DBConnection db = new DBConnection(DBConnection.DBMS.SQLite, "hal.db");
+            logger.info("Initializing HalContext...");
+            HalContext.initialize();
+            final DBConnection db = HalContext.getDB();
 
             logger.info("Setting up Tellstick listeners...");
             TellstickSerialComm comm = new TellstickSerialComm();
@@ -47,8 +49,8 @@ public class TelstickSerialCommTest {
                     }
                 }
             });
-            logger.info("Connecting to com port...");
-            comm.connect("/dev/ttyUSB1");
+            comm.connect("COM5");
+            //comm.connect("/dev/ttyUSB1");
 
             logger.info("Up and Running");
         } catch (Exception e) {

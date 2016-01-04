@@ -12,9 +12,8 @@ public class TelstickSerialCommNexaOnOffTest {
             System.out.println("Connecting to db...");
             TellstickSerialComm comm = new TellstickSerialComm();
             // http://developer.telldus.com/doxygen/TellStick.html
-            System.out.println("Connecting to com port...");
-            //comm.connect("COM5");
-            comm.connect("/dev/ttyUSB1");
+            comm.connect("COM5");
+            //comm.connect("/dev/ttyUSB1");
 
             Thread.sleep(1000);
 

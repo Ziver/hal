@@ -27,10 +27,10 @@ import java.util.logging.Level;
  * Created by Ziver on 2015-12-03.
  */
 public class PowerChallenge {
-
 	
     private static HalDaemon[] daemons;
     private static HalHttpPage[] pages;
+
 
     public static void main(String[] args) throws Exception {
         // init logging
@@ -41,11 +41,12 @@ public class PowerChallenge {
         LogUtil.setFormatter("zutil", formatter);
         LogUtil.setGlobalFormatter(formatter);
 
+
         // init DB and other configurations
         HalContext.initialize();
         DBConnection db = HalContext.getDB();
 
-        // Init sensors and controllers
+        // Init sensors,events and controllers
         ControllerManager.initialize();
         for(Sensor sensor : Sensor.getLocalSensors(db)){
             ControllerManager.getInstance().register(sensor);
@@ -53,6 +54,7 @@ public class PowerChallenge {
         for(Event event : Event.getEvents(db)){
             ControllerManager.getInstance().register(event);
         }
+
 
         // init daemons
         daemons = new HalDaemon[]{
@@ -67,6 +69,8 @@ public class PowerChallenge {
             daemon.initiate(executor);
         }
 
+
+        // init http server
         pages = new HalHttpPage[]{
                 new PCOverviewHttpPage(),
                 new PCHeatMapHttpPage(),

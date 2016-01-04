@@ -79,6 +79,7 @@ public class HalContext {
 
                 logger.fine(String.format("Upgrading DB (from: v%s, to: v%s)...", dbVersion, defaultDBVersion));
                 final DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);
+                handler.addIgnoredTable("db_version_history");
                 handler.setTargetDB(db);
                 
                 //read upgrade path preferences from the reference database
@@ -109,9 +110,6 @@ public class HalContext {
 				});
                 
                 handler.upgrade();
-                
-                //remove table from target database. this table is supposed to only be put in the reference db.
-                db.exec("DROP TABLE db_version_history");
 
                 logger.info("DB upgrade done");
                 dbConf.setProperty(PROPERTY_DB_VERSION, defaultDBConf.getProperty(PROPERTY_DB_VERSION));

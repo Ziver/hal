@@ -4,7 +4,7 @@
 
 #ant clean
 ant build
-screen -S hal -L -d -m ant run-remote-sensor
+screen -S hal -L -d -m ant run-main-server
 
 echo "-----------------"
 screen -list

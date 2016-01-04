@@ -10,6 +10,7 @@ import se.koc.hal.intf.HalHttpPage;
 import se.koc.hal.page.PCConfigureHttpPage;
 import se.koc.hal.page.PCHeatMapHttpPage;
 import se.koc.hal.page.PCOverviewHttpPage;
+import se.koc.hal.struct.Event;
 import se.koc.hal.struct.Sensor;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -48,6 +49,9 @@ public class PowerChallenge {
         ControllerManager.initialize();
         for(Sensor sensor : Sensor.getLocalSensors(db)){
             ControllerManager.getInstance().register(sensor);
+        }
+        for(Event event : Event.getEvents(db)){
+            ControllerManager.getInstance().register(event);
         }
 
         // init daemons

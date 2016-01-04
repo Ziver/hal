@@ -1,7 +1,5 @@
 package se.koc.hal.intf;
 
-import se.koc.hal.struct.Sensor;
-
 /**
  * Created by Ziver on 2015-12-15.
  */
@@ -26,11 +24,7 @@ public interface HalSensorController {
     /**
      * Set a listener that will receive all reports from the the registered Sensors
      */
-    void setListener(SensorReportListener listener);
-
-    interface SensorReportListener{
-        void reportReceived(HalSensor s);
-    }
+    void setListener(HalSensorReportListener listener);
 
 
     /**

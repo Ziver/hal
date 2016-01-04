@@ -11,13 +11,18 @@ import zutil.ui.Configurator;
 /**
  * Created by Ziver on 2015-11-19.
  */
-public class Oregon0x1A2D implements TellstickProtocol, PowerConsumptionSensor {
+public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionSensor {
 
     @Configurator.Configurable("Address")
     private int address = 0;
 
     private double temperature = 0;
     private double humidity = 0;
+
+
+    public Oregon0x1A2D(){
+        super("oregon", "0x1A2D");
+    }
 
     @Override
     public String encode() {
@@ -66,15 +71,6 @@ public class Oregon0x1A2D implements TellstickProtocol, PowerConsumptionSensor {
 
     }
 
-    @Override
-    public String getProtocolName() {
-        return "oregon";
-    }
-
-    @Override
-    public String getModelName() {
-        return "0x1A2D";
-    }
 
     public double getTemperature(){
         return temperature;
@@ -85,14 +81,14 @@ public class Oregon0x1A2D implements TellstickProtocol, PowerConsumptionSensor {
     }
 
 
+    @Override
+    public double getData() {
+        return temperature;
+    }
 
     @Override
     public AggregationMethod getAggregationMethod() {
         return AggregationMethod.SUM;
     }
 
-    @Override
-    public Class<? extends HalSensorController> getController() {
-        return TellstickSerialComm.class;
-    }
 }

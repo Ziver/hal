@@ -28,4 +28,5 @@ import se.koc.hal.intf.HalEvent;
  * Created by Ziver on 2015-05-07.
  */
 public abstract class DimmerEvent implements HalEvent {
+
 }

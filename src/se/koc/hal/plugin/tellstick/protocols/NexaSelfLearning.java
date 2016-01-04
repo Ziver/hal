@@ -22,13 +22,16 @@
 
 package se.koc.hal.plugin.tellstick.protocols;
 
+import se.koc.hal.intf.HalEventController;
 import se.koc.hal.plugin.tellstick.TellstickProtocol;
+import se.koc.hal.struct.DimmerEvent;
+import se.koc.hal.struct.SwitchEvent;
 import zutil.ui.Configurator;
 
 /**
  * Created by Ziver on 2015-02-18.
  */
-public class NexaSelfLearning implements TellstickProtocol {
+public class NexaSelfLearning extends TellstickProtocol implements SwitchEvent {
 
     @Configurator.Configurable("House code")
     private int house = 0;
@@ -38,6 +41,11 @@ public class NexaSelfLearning implements TellstickProtocol {
     private int unit = 0;
 
     private boolean enable = false;
+
+
+    public NexaSelfLearning() {
+        super("arctech", "selflearning");
+    }
 
 
     public String encode(){
@@ -132,23 +140,17 @@ public class NexaSelfLearning implements TellstickProtocol {
     public void setUnit(int unit) {
         this.unit = unit;
     }
-    public boolean isEnabled() {
+
+    public boolean isOn() {
         return enable;
     }
-    public void setEnable(boolean enable) {
-        this.enable = enable;
+    public void turnOn() {
+        enable = true;
+    }
+    public void turnOff() {
+        enable = false;
     }
 
-
-    @Override
-    public String getProtocolName() {
-        return "arctech";
-    }
-
-    @Override
-    public String getModelName() {
-        return "selflearning";
-    }
 
 
     public String toString(){
@@ -165,4 +167,11 @@ public class NexaSelfLearning implements TellstickProtocol {
                     ((NexaSelfLearning)obj).unit == unit;
         return false;
     }
+
+
+    @Override
+    public double getData() {
+        return (enable ? 1 : 0);
+    }
+
 }

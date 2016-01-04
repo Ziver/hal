@@ -1,7 +1,5 @@
 package se.koc.hal.intf;
 
-import se.koc.hal.struct.Event;
-
 /**
  * Created by Ziver on 2015-12-15.
  */
@@ -30,11 +28,7 @@ public interface HalEventController {
     /**
      * Set a listener that will receive all reports from the the registered Events
      */
-    void setListener(EventReportListener listener);
-
-    interface EventReportListener{
-        void reportReceived(HalEvent s); //TODO: rename, use a better name
-    }
+    void setListener(HalEventReportListener listener);
 
 
     /**

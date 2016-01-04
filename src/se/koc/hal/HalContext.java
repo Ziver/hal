@@ -27,7 +27,7 @@ public class HalContext {
     private static final String DEFAULT_DB_FILE = "hal-default.db";
 
     // Variables
-    private static DBConnection db;
+    private static DBConnection db; // TODO: Should probably be a db pool as we have multiple threads accessing the DB
 
     private static Properties defaultFileConf;
 	private static Properties fileConf;

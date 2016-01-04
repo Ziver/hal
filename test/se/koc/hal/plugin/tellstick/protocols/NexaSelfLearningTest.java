@@ -33,7 +33,7 @@ public class NexaSelfLearningTest {
         NexaSelfLearning nexa = new NexaSelfLearning();
         nexa.setHouse(11772006);
         nexa.setUnit(3);
-        nexa.setEnable(true);
+        nexa.turnOn();
 
         assertArrayEquals(
                 new char[]{
@@ -53,7 +53,7 @@ public class NexaSelfLearningTest {
 
         assertEquals("House Code", 11772006, nexa.getHouse());
         assertEquals("Unit Code", 1, nexa.getUnit());
-        assertTrue("Enabled", nexa.isEnabled());
+        assertTrue("Enabled", nexa.isOn());
     }
     @org.junit.Test
     public void decode_OFF() throws Exception {
@@ -62,6 +62,6 @@ public class NexaSelfLearningTest {
 
         assertEquals("House Code", 11772006, nexa.getHouse());
         assertEquals("Unit Code", 1, nexa.getUnit());
-        assertFalse("Enabled", nexa.isEnabled());
+        assertFalse("Enabled", nexa.isOn());
     }
 }

@@ -45,6 +45,9 @@ public class Event extends DBBean{
     }
 
 
+    public void setEventData(HalEvent eventData){
+        this.eventData = eventData;
+    }
     public HalEvent getEventData(){
         if(eventData == null) {
             try {
@@ -80,6 +83,6 @@ public class Event extends DBBean{
 
 
     public Class<? extends HalEventController> getController(){
-        return getEventData().getController();
+        return getEventData().getEventController();
     }
 }

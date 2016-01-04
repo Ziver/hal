@@ -12,10 +12,17 @@ public interface HalSensor {
     }
 
 
+    long getTimestamp();
+
+    double getData();
 
     AggregationMethod getAggregationMethod();
 
-    Class<? extends HalSensorController> getController();
+    Class<? extends HalSensorController> getSensorController();
 
-
+    /**
+     * This method needs to be implemented.
+     * NOTE: it should not compare data and timestamp, only static or unique data for the event type.
+     */
+    boolean equals(Object obj);
 }

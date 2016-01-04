@@ -7,7 +7,7 @@ import se.koc.hal.intf.HalSensor;
  */
 public interface TemperatureSensor extends HalSensor {
 
-    public double getTemperature();
+    double getTemperature();
 
-    public double getHumidity();
+    double getHumidity();
 }

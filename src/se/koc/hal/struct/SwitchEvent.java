@@ -31,7 +31,8 @@ import se.koc.hal.plugin.tellstick.protocols.NexaSelfLearning;
  */
 public interface SwitchEvent extends HalEvent {
 
-    public boolean isOn();
-    public void turnOn();
-    public void turnOff();
+    boolean isOn();
+
+    void turnOn();
+    void turnOff();
 }

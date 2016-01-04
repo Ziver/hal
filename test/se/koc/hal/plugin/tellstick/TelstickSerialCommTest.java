@@ -1,10 +1,14 @@
 package se.koc.hal.plugin.tellstick;
 
+import se.koc.hal.intf.HalSensor;
+import se.koc.hal.intf.HalSensorController;
+import se.koc.hal.intf.HalSensorReportListener;
 import se.koc.hal.plugin.tellstick.protocols.Oregon0x1A2D;
 import zutil.db.DBConnection;
 import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,17 +29,18 @@ public class TelstickSerialCommTest {
 
             logger.info("Setting up Tellstick listeners...");
             TellstickSerialComm comm = new TellstickSerialComm();
-            comm.setListener(new TellstickChangeListener() {
+            comm.setListener(new HalSensorReportListener() {
                 @Override
-                public void stateChange(TellstickProtocol protocol) {
-                    if(protocol instanceof Oregon0x1A2D){
-                        logger.info("Power used: "+ ((Oregon0x1A2D)protocol).getTemperature() +" pulses");
+                public void reportReceived(HalSensor s) {
+                    if(s instanceof Oregon0x1A2D){
+                        logger.info("Power used: "+ ((Oregon0x1A2D)s).getTemperature() +" pulses");
                         try {
-                            db.exec("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUES("+
-                                        System.currentTimeMillis() + "," +
-                                        "1," +
-                                        (int)((Oregon0x1A2D)protocol).getTemperature()
-                                    +")");
+                            PreparedStatement stmt =
+                                    db.getPreparedStatement("INSERT INTO sensor_data_raw (timestamp, event_id, data) VALUES(?, ?, ?)");
+                            stmt.setLong(1, s.getTimestamp());
+                            stmt.setLong(2, 1);
+                            stmt.setDouble(3, ((Oregon0x1A2D)s).getTemperature());
+                            db.exec(stmt);
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }

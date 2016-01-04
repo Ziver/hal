@@ -22,14 +22,47 @@
 
 package se.koc.hal.plugin.tellstick;
 
+import se.koc.hal.intf.HalEventController;
+import se.koc.hal.intf.HalSensorController;
+
 /**
  * Created by Ziver on 2015-02-18.
  */
-public interface TellstickProtocol {
+public abstract class TellstickProtocol {
 
-    public String encode();
-    public void decode(byte[] data);
+    private String protocol;
+    private String model;
+    private long timestamp = -1;
 
-    public String getProtocolName();
-    public String getModelName();
+
+    public TellstickProtocol(String protocol, String model){
+        this.protocol = protocol;
+        this.model = model;
+    }
+
+
+    public String getProtocolName(){
+        return protocol;
+    }
+    public String getModelName(){
+        return model;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+
+    public Class<? extends HalEventController> getEventController() {
+        return TellstickSerialComm.class;
+    }
+    public Class<? extends HalSensorController> getSensorController() {
+        return TellstickSerialComm.class;
+    }
+
+    public abstract String encode();
+    public abstract void decode(byte[] data);
 }

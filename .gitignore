@@ -2,3 +2,4 @@
 /hal.db*
 /build/
 /lib/Zutil.jar
+/tellstick.conf

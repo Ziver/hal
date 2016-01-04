@@ -1,15 +1,16 @@
 package se.koc.hal;
 
-import se.koc.hal.intf.HalEvent;
-import se.koc.hal.intf.HalEventController;
-import se.koc.hal.intf.HalSensor;
-import se.koc.hal.intf.HalSensorController;
+import se.koc.hal.intf.*;
+import se.koc.hal.plugin.tellstick.protocols.Oregon0x1A2D;
 import se.koc.hal.struct.Event;
 import se.koc.hal.struct.Sensor;
+import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginData;
 import zutil.plugin.PluginManager;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
 /**
  * This class manages all SensorController and EventController objects
  */
-public class ControllerManager {
+public class ControllerManager implements HalSensorReportListener, HalEventReportListener {
     private static final Logger logger = LogUtil.getLogger();
     private static ControllerManager instance;
 
@@ -75,6 +76,38 @@ public class ControllerManager {
         return detectedSensors;
     }
 
+    @Override
+    public void reportReceived(HalSensor sensorData) {
+        try{
+            DBConnection db = HalContext.getDB();
+            Sensor sensor = null;
+            for (Sensor s : registeredSensors) {
+                if (sensorData.equals(s.getSensorData())) {
+                    sensor = s;
+                    sensor.setSensorData(sensorData); // Set the latest data
+                    break;
+                }
+            }
+
+            if (sensor != null) {
+                PreparedStatement stmt =
+                        db.getPreparedStatement("INSERT INTO sensor_data_raw (timestamp, event_id, data) VALUES(?, ?, ?)");
+                stmt.setLong(1, sensorData.getTimestamp());
+                stmt.setLong(2, sensor.getId());
+                stmt.setDouble(3, sensorData.getData());
+                db.exec(stmt);
+                logger.finest("Received report from sensor: "+ sensorData);
+            }
+            else { // unknown sensor
+                if(!detectedSensors.contains(sensorData)) {
+                    logger.finest("Received report from unregistered sensor: "+ sensorData);
+                    detectedSensors.add(sensorData);
+                }
+            }
+        }catch (SQLException e){
+            logger.log(Level.WARNING, "Unable to store sensor report", e);
+        }
+    }
 
     //////////////////////////////// EVENTS ///////////////////////////////////
 
@@ -105,6 +138,38 @@ public class ControllerManager {
         return detectedEvents;
     }
 
+    @Override
+    public void reportReceived(HalEvent eventData) {
+        try {
+            DBConnection db = HalContext.getDB();
+            Event event = null;
+            for (Event e : registeredEvents) {
+                if (eventData.equals(e.getEventData())) {
+                    event = e;
+                    event.setEventData(eventData); // Set the latest data
+                    break;
+                }
+            }
+
+            if (event != null) {
+                PreparedStatement stmt =
+                        db.getPreparedStatement("INSERT INTO event_data_raw (timestamp, event_id, data) VALUES(?, ?, ?)");
+                stmt.setLong(1, eventData.getTimestamp());
+                stmt.setLong(2, event.getId());
+                stmt.setDouble(3, eventData.getData());
+                db.exec(stmt);
+                logger.finest("Received report from event: "+ eventData);
+            }
+            else { // unknown sensor
+                if(!detectedEvents.contains(eventData)) {
+                    logger.finest("Received report from unregistered event: "+ eventData);
+                    detectedEvents.add(eventData);
+                }
+            }
+        }catch (SQLException e){
+            logger.log(Level.WARNING, "Unable to store event report", e);
+        }
+    }
 
     /////////////////////////////// GENERAL ///////////////////////////////////
 
@@ -117,6 +182,11 @@ public class ControllerManager {
             logger.fine("Instantiating new controller: " + c.getName());
             try {
                 controller = c.newInstance();
+                if(controller instanceof HalSensorController)
+                    ((HalSensorController) controller).setListener(this);
+                if(controller instanceof HalEventController)
+                    ((HalEventController) controller).setListener(this);
+
                 controllerMap.put(c, controller);
             } catch (Exception e){
                 logger.log(Level.SEVERE, "Unable to instantiate controller: "+c.getName(), e);
@@ -169,4 +239,5 @@ public class ControllerManager {
     public static ControllerManager getInstance(){
         return instance;
     }
+
 }

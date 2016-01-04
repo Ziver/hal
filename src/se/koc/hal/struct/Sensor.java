@@ -79,6 +79,9 @@ public class Sensor extends DBBean{
    }
 
 
+	public void setSensorData(HalSensor sensorData){
+		this.sensorData = sensorData;
+	}
     public HalSensor getSensorData(){
         if(sensorData == null) {
             try {
@@ -125,12 +128,6 @@ public class Sensor extends DBBean{
 	public void setType(String type) {
 		this.type = type;
 	}
-	public String getConfig() {
-		return config;
-	}
-	public void setConfig(String config) {
-		this.config = config;
-	}
 
 	public User getUser() {
 		return user;
@@ -157,6 +154,6 @@ public class Sensor extends DBBean{
     }
 
 	public Class<? extends HalSensorController> getController(){
-		return getSensorData().getController();
+		return getSensorData().getSensorController();
 	}
 }

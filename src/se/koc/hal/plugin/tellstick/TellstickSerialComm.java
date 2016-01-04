@@ -23,14 +23,15 @@
 package se.koc.hal.plugin.tellstick;
 
 import com.fazecast.jSerialComm.SerialPort;
-import se.koc.hal.intf.HalSensor;
-import se.koc.hal.intf.HalSensorController;
+import se.koc.hal.intf.*;
+import zutil.io.file.FileUtil;
 import zutil.log.InputStreamLogger;
 import zutil.log.LogUtil;
 import zutil.log.OutputStreamLogger;
 import zutil.struct.TimedHashSet;
 
 import java.io.*;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +41,7 @@ import java.util.logging.Logger;
  * This version of the TwoWaySerialComm example makes use of the
  * SerialPortEventListener to avoid polling.
  */
-public class TellstickSerialComm implements Runnable, HalSensorController {
+public class TellstickSerialComm implements Runnable, HalSensorController, HalEventController {
     private static final long TRANSMISSION_UNIQUENESS_TTL = 300; // milliseconds
     private static final Logger logger = LogUtil.getLogger();
 
@@ -50,13 +51,27 @@ public class TellstickSerialComm implements Runnable, HalSensorController {
     private TimedHashSet set; // To check for retransmissions
 
     private TellstickParser parser;
-    private TellstickChangeListener listener;
+    private HalSensorReportListener sensorListener;
+    private HalEventReportListener eventListener;
+
+    private int registeredObjects;
+
 
 
     public TellstickSerialComm() throws Exception {
         set = new TimedHashSet(TRANSMISSION_UNIQUENESS_TTL);
         parser = new TellstickParser();
-        connect("COM6");
+        registeredObjects = 0;
+
+        // Read properties
+        Properties prop = new Properties();
+        prop.setProperty("com_port", "COM6"); // defaults
+        if(FileUtil.find("tellstick.conf") != null) {
+            Reader reader = new FileReader("tellstick.conf");
+            prop.load(reader);
+            reader.close();
+        }
+        connect(prop.getProperty("com_port"));
     }
 
     public void connect(String portName) throws Exception {
@@ -100,10 +115,14 @@ public class TellstickSerialComm implements Runnable, HalSensorController {
                 else {
                     if(!set.contains(data)) {
                         TellstickProtocol protocol = parser.decode(data);
+                        if(protocol.getTimestamp() < 0)
+                            protocol.setTimestamp(System.currentTimeMillis());
                         set.add(data);
-                        if (listener != null) {
-                            listener.stateChange(protocol);
-                        }
+
+                        if (sensorListener != null && protocol instanceof HalSensor)
+                            sensorListener.reportReceived((HalSensor)protocol);
+                        else if (eventListener != null && protocol instanceof HalEvent)
+                            eventListener.reportReceived((HalEvent)protocol);
                     }
                 }
             }
@@ -112,6 +131,12 @@ public class TellstickSerialComm implements Runnable, HalSensorController {
         }
     }
 
+
+    @Override
+    public void send(HalEvent event) {
+        if(event instanceof TellstickProtocol)
+            write((TellstickProtocol) event);
+    }
     public synchronized void write(TellstickProtocol prot) {
         write(prot.encode());
         try {
@@ -120,7 +145,6 @@ public class TellstickSerialComm implements Runnable, HalSensorController {
             logger.log(Level.SEVERE, null, e);
         }
     }
-
     public void write(String data) {
         try {
             for(int i=0; i<data.length();i++)
@@ -132,23 +156,28 @@ public class TellstickSerialComm implements Runnable, HalSensorController {
         }
     }
 
-    public void setListener(TellstickChangeListener listener){
-        this.listener = listener;
-    }
-
-
 
     @Override
-    public void register(HalSensor sensor) {}
+    public void register(HalEvent event) {++registeredObjects;}
     @Override
-    public void deregister(HalSensor sensor) {}
+    public void register(HalSensor sensor) {++registeredObjects;}
+
+    @Override
+    public void deregister(HalSensor sensor) {--registeredObjects;}
+    @Override
+    public void deregister(HalEvent event) {--registeredObjects;}
+
     @Override
     public int size() {
-        return 0;
+        return registeredObjects;
     }
 
     @Override
-    public void setListener(SensorReportListener listener) {
-
+    public void setListener(HalEventReportListener listener) {
+        eventListener = listener;
+    }
+    @Override
+    public void setListener(HalSensorReportListener listener) {
+        sensorListener = listener;
     }
 }

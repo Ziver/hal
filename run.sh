@@ -8,3 +8,6 @@ screen -S hal -L -d -m ant run-main-server
 
 echo "-----------------"
 screen -list
+
+echo "-----------------"
+watch tail -n 40 screenlog.0

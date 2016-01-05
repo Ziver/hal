@@ -71,6 +71,19 @@ public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionS
 
     }
 
+    public boolean equals(Object obj){
+        if(! (obj instanceof Oregon0x1A2D))
+            return false;
+        return ((Oregon0x1A2D)obj).address == this.address;
+    }
+
+    public String toString(){
+        return "protocol:oregon;model:0x1A2D;" +
+                "address:"+address+
+                ";temperature:"+temperature+
+                ";humidity:"+humidity;
+    }
+
 
     public double getTemperature(){
         return temperature;

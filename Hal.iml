@@ -30,7 +30,9 @@
         <NATIVE>
           <root url="file://$MODULE_DIR$/lib" />
         </NATIVE>
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.ideaLibSources/jSerialComm-1.3.10-sources.jar!/" />
+        </SOURCES>
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>

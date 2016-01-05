@@ -1,0 +1,3 @@
+http_port=8080
+sync_port=6666
+tellstick.com_port=COM5

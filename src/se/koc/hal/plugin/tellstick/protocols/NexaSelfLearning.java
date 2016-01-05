@@ -154,7 +154,7 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEvent {
 
 
     public String toString(){
-        return "class:command;protocol:arctech;model:selflearning;" +
+        return "protocol:arctech;model:selflearning;" +
                 "house:"+house+
                 ";group:"+group+
                 ";unit:"+unit+

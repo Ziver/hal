@@ -47,8 +47,8 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
     private static final Logger logger = LogUtil.getLogger();
 
     private SerialPort serial;
-    private BufferedReader in;
-    private BufferedWriter out;
+    private InputStream in;
+    private OutputStream out;
     private TimedHashSet set; // To check for retransmissions
 
     private TellstickParser parser;
@@ -84,8 +84,8 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
         serial.setComPortTimeouts(
                 SerialPort.TIMEOUT_READ_BLOCKING, 0, 0);
 
-        in  = new BufferedReader(new InputStreamReader(new InputStreamLogger(serial.getInputStream()),  "UTF-8"));
-        out = new BufferedWriter(new OutputStreamWriter(new OutputStreamLogger(serial.getOutputStream()), "UTF-8"));
+        in  = new InputStreamLogger(serial.getInputStream());
+        out = new OutputStreamLogger(serial.getOutputStream());
 
         Executors.newSingleThreadExecutor().execute(this);
     }
@@ -109,7 +109,8 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
     public void run() {
         try {
             String data;
-            while (in != null && (data = in.readLine()) != null) {
+
+            while (in != null && (data = readLine()) != null) {
                 if ((data.startsWith("+S") || data.startsWith("+T"))) {
                     synchronized (this) {
                         this.notifyAll();
@@ -118,20 +119,42 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
                 else {
                     if(!set.contains(data)) {
                         TellstickProtocol protocol = parser.decode(data);
-                        if(protocol.getTimestamp() < 0)
-                            protocol.setTimestamp(System.currentTimeMillis());
-                        set.add(data);
+                        if(protocol != null) {
+                            if (protocol.getTimestamp() < 0)
+                                protocol.setTimestamp(System.currentTimeMillis());
+                            set.add(data);
 
-                        if (sensorListener != null && protocol instanceof HalSensor)
-                            sensorListener.reportReceived((HalSensor)protocol);
-                        else if (eventListener != null && protocol instanceof HalEvent)
-                            eventListener.reportReceived((HalEvent)protocol);
+                            if (sensorListener != null && protocol instanceof HalSensor)
+                                sensorListener.reportReceived((HalSensor) protocol);
+                            else if (eventListener != null && protocol instanceof HalEvent)
+                                eventListener.reportReceived((HalEvent) protocol);
+                        }
                     }
                 }
             }
         } catch (IOException e) {
             logger.log(Level.SEVERE, null, e);
         }
+    }
+
+    /**
+     * There seems to be an issue with read(...) methods only read() is working
+     */
+    private String readLine() throws IOException {
+        StringBuilder str = new StringBuilder(50);
+        char c = 0;
+        while((c = (char)in.read()) >= 0){
+            switch(c) {
+                case '\n':
+                case '\r':
+                    if(str.length() > 0)
+                        return str.toString();
+                    break;
+                default:
+                    str.append(c);
+            }
+        }
+        return str.toString();
     }
 
 

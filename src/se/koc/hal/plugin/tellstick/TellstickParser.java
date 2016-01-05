@@ -44,8 +44,6 @@ public class TellstickParser {
     }
 
 
-    private TellstickProtocol previus;
-
     public TellstickProtocol decode(String data) {
         if (data.startsWith("+W")) {
             data = data.substring(2);
@@ -62,12 +60,10 @@ public class TellstickParser {
                 try {
                     TellstickProtocol protocol = protClass.newInstance();
                     String binData = map.get("data");
+
                     protocol.decode(Converter.hexToByte(binData));
-                    if(!protocol.equals(previus)) {
-                        previus = protocol;
-                        logger.finest("Decoded: " + protocol);
-                        return protocol;
-                    }
+                    logger.finest("Decoded: " + protocol);
+                    return protocol;
                 } catch (Exception e) {
                     logger.log(Level.WARNING, null, e);
                 }

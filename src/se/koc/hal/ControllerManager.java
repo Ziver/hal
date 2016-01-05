@@ -50,6 +50,7 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     /////////////////////////////// SENSORS ///////////////////////////////////
 
     public void register(Sensor sensor) throws IllegalAccessException, InstantiationException {
+        logger.info("Registering new sensor(id: "+ sensor.getId() +"): "+ sensor.getSensorData().getClass());
         Class<? extends HalSensorController> c = sensor.getController();
         HalSensorController controller = getControllerInstance(c);
 
@@ -59,6 +60,7 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     }
 
     public void deregister(Sensor sensor){
+        logger.info("Deregistering sensor(id: "+ sensor.getId() +"): "+ sensor.getSensorData().getClass());
         Class<? extends HalSensorController> c = sensor.getController();
         HalSensorController controller = (HalSensorController) controllerMap.get(c);;
         if (controller != null) {
@@ -91,7 +93,7 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
 
             if (sensor != null) {
                 PreparedStatement stmt =
-                        db.getPreparedStatement("INSERT INTO sensor_data_raw (timestamp, event_id, data) VALUES(?, ?, ?)");
+                        db.getPreparedStatement("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUES(?, ?, ?)");
                 stmt.setLong(1, sensorData.getTimestamp());
                 stmt.setLong(2, sensor.getId());
                 stmt.setDouble(3, sensorData.getData());
@@ -112,6 +114,7 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     //////////////////////////////// EVENTS ///////////////////////////////////
 
     public void register(Event event) throws IllegalAccessException, InstantiationException {
+        logger.info("Registering new event(id: "+ event.getId() +"): "+ event.getEventData().getClass());
         Class<? extends HalEventController> c = event.getController();
         HalEventController controller = getControllerInstance(c);
 
@@ -121,6 +124,7 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     }
 
     public void deregister(Event event){
+        logger.info("Deregistering event(id: "+ event.getId() +"): "+ event.getEventData().getClass());
         Class<? extends HalEventController> c = event.getController();
         HalEventController controller = (HalEventController) controllerMap.get(c);
         if (controller != null) {
@@ -179,7 +183,7 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
             controller = controllerMap.get(c);
         else {
             // Instantiate controller
-            logger.fine("Instantiating new controller: " + c.getName());
+            logger.info("Instantiating new controller: " + c.getName());
             try {
                 controller = c.newInstance();
                 if(controller instanceof HalSensorController) {
@@ -209,7 +213,7 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
 
         if(size < 0){
             // Remove controller as it has no more registered sensors
-            logger.fine("Closing controller as it has no more registered sensors: "+controller.getClass().getName());
+            logger.info("Closing controller as it has no more registered objects: "+controller.getClass().getName());
             controllerMap.remove(controller.getClass());
 
             if(controller instanceof HalSensorController)

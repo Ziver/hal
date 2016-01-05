@@ -72,6 +72,7 @@ public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implemen
 						PreparedStatement stmt = HalContext.getDB().getPreparedStatement("SELECT * FROM sensor_data_aggr WHERE sensor_id == ? AND sequence_id > ?");
 						stmt.setLong(1, req.sensorId);
 						stmt.setLong(2, req.offsetSequenceId);
+						logger.fine("Client requesting: sensorId: "+req.sensorId+", offset: "+req.offsetSequenceId);
 						SensorDataListDTO list = DBConnection.exec(stmt, new SQLResultHandler<SensorDataListDTO>() {
 									@Override
 									public SensorDataListDTO handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
@@ -88,6 +89,7 @@ public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implemen
 										return list;
 									}
 						});
+						logger.fine("Sending "+ list.size() +" sensor data items to client");
 						out.writeObject(list);
 					}
 				}

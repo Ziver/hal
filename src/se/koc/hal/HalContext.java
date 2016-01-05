@@ -45,7 +45,7 @@ public class HalContext {
         try {
             // Read conf
             fileConf = new Properties(defaultFileConf);
-            if (FileUtil.find(CONF_FILE).exists()) {
+            if (FileUtil.find(CONF_FILE) != null) {
                 FileReader in = new FileReader(CONF_FILE);
                 fileConf.load(in);
                 in.close();

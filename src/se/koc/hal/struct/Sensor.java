@@ -50,7 +50,12 @@ public class Sensor extends DBBean{
 		PreparedStatement stmt = db.getPreparedStatement( "SELECT sensor.* FROM sensor,user WHERE user.external == 1 AND user.id == sensor.user_id" );
 		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
 	}
-	
+    public static Sensor getExternalSensor(DBConnection db, long id) throws SQLException{
+        PreparedStatement stmt = db.getPreparedStatement( "SELECT sensor.* FROM sensor,user WHERE user.external == 1 AND user.id == sensor.user_id AND sensor.external_id == ?" );
+        stmt.setLong(1, id);
+        return DBConnection.exec(stmt, DBBeanSQLResultHandler.create(Sensor.class, db) );
+    }
+
 	public static List<Sensor> getLocalSensors(DBConnection db) throws SQLException{
 		PreparedStatement stmt = db.getPreparedStatement( "SELECT sensor.* FROM sensor,user WHERE user.external == 0 AND user.id == sensor.user_id" );
 		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
@@ -67,7 +72,7 @@ public class Sensor extends DBBean{
 		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
 	}
 
-    public static Sensor getSensor(DBConnection db, int id) throws SQLException{
+    public static Sensor getSensor(DBConnection db, long id) throws SQLException{
         return DBBean.load(db, Sensor.class, id);
     }
 
@@ -81,6 +86,7 @@ public class Sensor extends DBBean{
 
 	public void setSensorData(HalSensor sensorData){
 		this.sensorData = sensorData;
+        updateConfig();
 	}
     public HalSensor getSensorData(){
         if(sensorData == null) {
@@ -98,21 +104,23 @@ public class Sensor extends DBBean{
         return sensorData;
     }
     public void save(DBConnection db) throws SQLException {
-        if(sensorData != null) {
-            try {
-                StringOutputStream buff = new StringOutputStream();
-                JSONObjectOutputStream out = new JSONObjectOutputStream(buff);
-                out.enableMetaData(false);
-                out.writeObject(sensorData);
-                out.close();
-                this.config = buff.toString();
-            } catch (IOException e){
-                logger.log(Level.SEVERE, "Unable to save sensor data", e);
-            }
-        }
+        if(sensorData != null)
+            updateConfig();
         else
             this.config = null;
         super.save(db);
+    }
+    private void updateConfig(){
+        try {
+            StringOutputStream buff = new StringOutputStream();
+            JSONObjectOutputStream out = new JSONObjectOutputStream(buff);
+            out.enableMetaData(false);
+            out.writeObject(sensorData);
+            out.close();
+            this.config = buff.toString();
+        } catch (IOException e){
+            logger.log(Level.SEVERE, "Unable to save sensor data", e);
+        }
     }
 
 	
@@ -127,6 +135,13 @@ public class Sensor extends DBBean{
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	public String getConfig() {
+		return config;
+	}
+	public void setConfig(String config) {
+		this.config = config;
+        this.sensorData = null; // invalidate current sensor data object
 	}
 
 	public User getUser() {
@@ -156,4 +171,5 @@ public class Sensor extends DBBean{
 	public Class<? extends HalSensorController> getController(){
 		return getSensorData().getSensorController();
 	}
+
 }

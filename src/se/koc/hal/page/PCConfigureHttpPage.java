@@ -58,15 +58,16 @@ public class PCConfigureHttpPage extends HalHttpPage {
                     sensor = new Sensor();
                     sensor.setName(request.get("name"));
                     sensor.setType(request.get("type"));
+                    sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
                     //sensor.setConfig(request.get("config"));
                     sensor.setUser(localUser);
-                    sensor.setSynced(true);
                     sensor.save(db);
                 case "modify_local_sensor":
                     sensor = Sensor.getSensor(db, id);
                     if(sensor != null){
                         sensor.setName(request.get("name"));
                         sensor.setType(request.get("type"));
+                        sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
                         //sensor.setConfig(request.get("config"));
                         sensor.save(db);
                     }
@@ -117,6 +118,8 @@ public class PCConfigureHttpPage extends HalHttpPage {
         tmpl.set("localSensorConf", sensorConfigurations);
         tmpl.set("extUsers", User.getExternalUsers(db));
         tmpl.set("extSensor", Sensor.getExternalSensors(db));
+
+        tmpl.set("availableSensors", ControllerManager.getInstance().getAvailableSensors());
 
         return tmpl;
 

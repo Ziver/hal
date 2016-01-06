@@ -38,6 +38,7 @@
                 <thead>
                     <th>Name</th>
                     <th>Type</th>
+                    <th>Public</th>
                     <th>Configuration</th>
                     <th>
                         <button class="btn btn-default btn-xs pull-right" data-toggle="modal"
@@ -50,6 +51,7 @@
                 <tr>
                     <td>{{.name}}</td>
                     <td>{{.type}}</td>
+                    <td>{{.sync}}</td>
                     <td>{{.config}}</td>
                     <td>
                         <form method="POST">
@@ -62,6 +64,7 @@
                                         data-id="{{.getId()}}"
                                         data-name="{{.name}}"
                                         data-type="{{.type}}"
+                                        data-sync="{{.sync}}"
                                         data-config="{{.config}}">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </button>
@@ -183,17 +186,19 @@
         $("#sensorModal").on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var modal = $(this);
-            modal.find("input").val(""); // Reset all inputs
+            modal.find("input[type=text]").val(""); // Reset all inputs
             if(button.data("id") >= 0){ // edit
                 modal.find("input[name=action]").val("modify_local_sensor");
                 modal.find("input[name=id]").val(button.data("id"));
                 modal.find("input[name=name]").val(button.data("name"));
                 modal.find("input[name=type]").val(button.data("type"));
+                modal.find("input[name=sync]").prop("checked", button.data("sync"));
                 modal.find("input[name=config]").val(button.data("config"));
             }
             else{ // create
                 modal.find("input[name=action]").val("create_local_sensor");
                 modal.find("input[name=id]").val(-1);
+                modal.find("input[name=sync]").prop("checked", "false");
             }
         });
 
@@ -201,7 +206,7 @@
         $("#userModal").on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var modal = $(this);
-            modal.find("input").val(""); // Reset all inputs
+            modal.find("input[type=text]").val(""); // Reset all inputs
             if(button.data("id") >= 0){ // edit
                 modal.find("input[name=action]").val("modify_external_user");
                 modal.find("input[name=id]").val(button.data("id"));
@@ -237,10 +242,16 @@
                     <div class="form-group">
                         <label class="control-label">Type:</label>
                         <select class="form-control" name="type">
-                            <option>TellStickController</option>
-                            <option>RPiLocalController</option>
+                            {{#availableSensors}}
+                            <option>{{.getName()}}</option>
+                            {{/availableSensors}}
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label class="control-label">Public:</label>
+                        <input type="checkbox" class="form-control" name="sync" value="true">
+                    </div>
+
                     <hr>
                     <div class="form-group">
                         <label class="control-label">Config:</label> <!-- Should be improved, dynamic forms? -->

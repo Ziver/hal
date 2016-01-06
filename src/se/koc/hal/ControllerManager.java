@@ -50,6 +50,15 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     /////////////////////////////// SENSORS ///////////////////////////////////
 
     public void register(Sensor sensor) throws IllegalAccessException, InstantiationException {
+        if(sensor.getSensorData() == null) {
+            logger.warning("Sensor data is null: "+ sensor);
+            return;
+        }
+        if(!availableSensors.contains(sensor.getSensorData().getClass())) {
+            logger.warning("Sensor data plugin not available: "+ sensor.getSensorData().getClass());
+            return;
+        }
+
         logger.info("Registering new sensor(id: "+ sensor.getId() +"): "+ sensor.getSensorData().getClass());
         Class<? extends HalSensorController> c = sensor.getController();
         HalSensorController controller = getControllerInstance(c);
@@ -60,6 +69,11 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     }
 
     public void deregister(Sensor sensor){
+        if(sensor.getSensorData() == null) {
+            logger.warning("Sensor data is null: "+ sensor);
+            return;
+        }
+
         logger.info("Deregistering sensor(id: "+ sensor.getId() +"): "+ sensor.getSensorData().getClass());
         Class<? extends HalSensorController> c = sensor.getController();
         HalSensorController controller = (HalSensorController) controllerMap.get(c);;
@@ -114,6 +128,15 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     //////////////////////////////// EVENTS ///////////////////////////////////
 
     public void register(Event event) throws IllegalAccessException, InstantiationException {
+        if(event.getEventData() == null) {
+            logger.warning("Sensor data is null: "+ event);
+            return;
+        }
+        if(!availableEvents.contains(event.getEventData().getClass())) {
+            logger.warning("Sensor data plugin not available: "+ event.getEventData().getClass());
+            return;
+        }
+
         logger.info("Registering new event(id: "+ event.getId() +"): "+ event.getEventData().getClass());
         Class<? extends HalEventController> c = event.getController();
         HalEventController controller = getControllerInstance(c);
@@ -124,6 +147,11 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     }
 
     public void deregister(Event event){
+        if(event.getEventData() == null) {
+            logger.warning("Sensor data is null: "+ event);
+            return;
+        }
+
         logger.info("Deregistering event(id: "+ event.getId() +"): "+ event.getEventData().getClass());
         Class<? extends HalEventController> c = event.getController();
         HalEventController controller = (HalEventController) controllerMap.get(c);

@@ -1,8 +1,7 @@
 package se.koc.hal.deamon;
 
 import se.koc.hal.HalContext;
-import se.koc.hal.deamon.DataSynchronizationDaemon.SensorDataDTO;
-import se.koc.hal.deamon.DataSynchronizationDaemon.SensorDataListDTO;
+import se.koc.hal.deamon.DataSynchronizationDaemon.*;
 import se.koc.hal.intf.HalDaemon;
 import se.koc.hal.struct.Sensor;
 import se.koc.hal.struct.User;
@@ -13,6 +12,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.sql.PreparedStatement;
@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DataSynchronizationClient implements HalDaemon {
@@ -46,11 +47,34 @@ public class DataSynchronizationClient implements HalDaemon {
 				try (Socket s = new Socket(user.getHostname(), user.getPort());){
 					ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 					ObjectInputStream in = new ObjectInputStream(s.getInputStream());
-					
+
+                    // Request peer data
+                    out.writeObject(new PeerDataReqDTO());
+                    PeerDataRspDTO peerData = (PeerDataRspDTO) in.readObject();
+                    user.setUserName(peerData.username);
+                    user.setAddress(peerData.address);
+                    user.save(db);
+
+                    for(SensorDTO sensorDTO : peerData.sensors){
+                        Sensor sensor = Sensor.getExternalSensor(db, sensorDTO.sensorId);
+                        if(sensor != null) { // new sensor
+                            sensor = new Sensor();
+                            logger.fine("Created new external sensor with external_id: "+ sensorDTO.sensorId);
+                        }
+                        else
+                            logger.fine("Updating external sensor with external_id: "+ sensorDTO.sensorId);
+                        sensor.setExternalId(sensorDTO.sensorId);
+                        sensor.setName(sensorDTO.name);
+                        sensor.setType(sensorDTO.type);
+                        sensor.setConfig(sensorDTO.config);
+                        sensor.save(db);
+                    }
+
+                    // Request sensor data
 					List<Sensor> sensors = Sensor.getSensors(db, user);
 					for(Sensor sensor : sensors){
 						if(sensor.isSynced()) {
-							PeerDataReqDTO req = new PeerDataReqDTO();
+							SensorDataReqDTO req = new SensorDataReqDTO();
 							req.sensorId = sensor.getExternalId();
 							req.offsetSequenceId = Sensor.getHighestSequenceId(sensor.getId());
 							out.writeObject(req);
@@ -71,29 +95,36 @@ public class DataSynchronizationClient implements HalDaemon {
                         else
                             logger.fine("Skipped sensor " + sensor.getId());
 					}
-					out.writeObject(null);
+					out.writeObject(null); // Tell server we are disconnecting
 					out.close();
 					in.close();
 					s.close();
 					
-				} catch (UnknownHostException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
+				} catch (UnknownHostException|ConnectException e) {
+					logger.warning("Unable to connect to: "+ user.getHostname()+":"+user.getPort() +" "+ e.getMessage());
+				} catch (ClassNotFoundException|IOException e) {
+                    logger.log(Level.SEVERE, null, e);
 				}
 
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+            logger.log(Level.SEVERE, null, e);
 		}
 	}
 
 
 
 	///////////////  DTO ///////////////////////
-	protected static class PeerDataReqDTO implements Serializable{
+
+    /**
+     * Request Peer information and available sensors
+     */
+    protected static class PeerDataReqDTO implements Serializable{}
+
+    /**
+     * Request aggregate data for a specific sensor and offset
+     */
+    protected static class SensorDataReqDTO implements Serializable{
 		private static final long serialVersionUID = -9066734025245139989L;
 		
 		public long sensorId;

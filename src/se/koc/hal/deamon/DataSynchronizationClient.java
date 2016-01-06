@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.ConnectException;
+import java.net.NoRouteToHostException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.sql.PreparedStatement;
@@ -100,8 +101,8 @@ public class DataSynchronizationClient implements HalDaemon {
 					in.close();
 					s.close();
 					
-				} catch (UnknownHostException|ConnectException e) {
-					logger.warning("Unable to connect to: "+ user.getHostname()+":"+user.getPort() +" "+ e.getMessage());
+				} catch (NoRouteToHostException |UnknownHostException|ConnectException e) {
+					logger.warning("Unable to connect to "+ user.getHostname()+":"+user.getPort() +", "+ e.getMessage());
 				} catch (ClassNotFoundException|IOException e) {
                     logger.log(Level.SEVERE, null, e);
 				}

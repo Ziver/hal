@@ -9,23 +9,29 @@ import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
 import zutil.ui.Configurator;
+import zutil.ui.Configurator.*;
 
-import java.lang.reflect.Array;
 import java.util.Map;
 
 public class PCConfigureHttpPage extends HalHttpPage {
-
-    private Configurator[] sensorConfigurations;
+    private class SensorDataParams{
+        public Class clazz;
+        public ConfigurationParam[] params;
+    }
+    private SensorDataParams[] sensorConfigurations;
 
 
     public PCConfigureHttpPage() {
         super("Configuration", "config");
 
-        sensorConfigurations = new Configurator[
+        sensorConfigurations = new SensorDataParams[
                 ControllerManager.getInstance().getAvailableSensors().size()];
         int i=0;
         for(Class c : ControllerManager.getInstance().getAvailableSensors()){
-            sensorConfigurations[i++] = new Configurator(c);
+            sensorConfigurations[i] = new SensorDataParams();
+            sensorConfigurations[i].clazz = c;
+            sensorConfigurations[i].params = Configurator.getConfiguration(c);
+            ++i;
         }
     }
 

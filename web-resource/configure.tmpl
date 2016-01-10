@@ -182,7 +182,18 @@
 
 <!------------- MODALS --------------->
 <script>
+    var sensorDataConf = {};
+
     $(function(){
+        // initialize sensor modal things
+        $("#sensor-data-conf-template div").each(function(){
+            sensorDataConf[$(this).attr("id")] = $(this).html();
+        });
+        $("#sensorModal select[name=type]").change(function(){
+            // Update dynamic inputs
+            $("#sensorModal #sensor-data-conf").html(sensorDataConf[$(this).val()]);
+        });
+        // event
         $("#sensorModal").on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var modal = $(this);
@@ -191,7 +202,7 @@
                 modal.find("input[name=action]").val("modify_local_sensor");
                 modal.find("input[name=id]").val(button.data("id"));
                 modal.find("input[name=name]").val(button.data("name"));
-                modal.find("input[name=type]").val(button.data("type"));
+                modal.find("select[name=type]").val(button.data("type"));
                 modal.find("input[name=sync]").prop("checked", button.data("sync"));
                 modal.find("input[name=config]").val(button.data("config"));
             }
@@ -200,6 +211,8 @@
                 modal.find("input[name=id]").val(-1);
                 modal.find("input[name=sync]").prop("checked", "false");
             }
+            // Update dynamic inputs
+            modal.find("select[name=type]").change();
         });
 
 
@@ -253,9 +266,8 @@
                     </div>
 
                     <hr>
-                    <div class="form-group">
-                        <label class="control-label">Config:</label> <!-- Should be improved, dynamic forms? -->
-                        <input type="text" class="form-control" name="config">
+                    <div id="sensor-data-conf">
+                        <!-- Dynamic form -->
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -265,6 +277,18 @@
             </form>
         </div>
     </div>
+</div>
+<div id="sensor-data-conf-template" class="hidden">
+    {{#localSensorConf}}
+    <div id="{{.clazz.getName()}}">
+        {{#.params}}
+        <div class="form-group">
+            <label class="control-label">{{.getNiceName()}}:</label>
+            <input type="text" class="form-control" name="{{.getName()}}">
+        </div>
+        {{/.params}}
+    </div>
+    {{/localSensorConf}}
 </div>
 
 

@@ -120,8 +120,9 @@ public class PCConfigureHttpPage extends HalHttpPage {
         // Output
         Templator tmpl = new Templator(FileUtil.find("web-resource/configure.tmpl"));
         tmpl.set("user", localUser);
-        tmpl.set("localSensor", Sensor.getLocalSensors(db));
+        tmpl.set("localSensors", Sensor.getLocalSensors(db));
         tmpl.set("localSensorConf", sensorConfigurations);
+        tmpl.set("detectedSensors", ControllerManager.getInstance().getDetectedSensors());
         tmpl.set("extUsers", User.getExternalUsers(db));
         tmpl.set("extSensor", Sensor.getExternalSensors(db));
 

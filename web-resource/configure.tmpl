@@ -47,7 +47,7 @@
                         </button>
                     </th>
                 </thead>
-                {{#localSensor}}
+                {{#localSensors}}
                 <tr>
                     <td>{{.name}}</td>
                     <td>{{.type}}</td>
@@ -76,7 +76,32 @@
                         </form>
                     </td>
                 </tr>
-                {{/localSensor}}
+                {{/localSensors}}
+            </table>
+
+            <br>
+            <p>Sensors that has been automatically detected.</p>
+            <table class="table table-hover table-condensed">
+                <thead>
+                <th>Type</th>
+                <th>Configuration</th>
+                </thead>
+                {{#detectedSensors}}
+                <tr>
+                    <td>{{.getClass().getName()}}</td>
+                    <td>{{.}}</td>
+                    <td>
+                        <div class="btn-toolbar pull-right">
+                            <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
+                                    data-target="#sensorModal"
+                                    data-type="{{.type}}"
+                                    data-config="{{.config}}">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {{/detectedSensors}}
             </table>
         </div>
     </div>
@@ -193,7 +218,7 @@
             // Update dynamic inputs
             $("#sensorModal #sensor-data-conf").html(sensorDataConf[$(this).val()]);
         });
-        // event
+        // click event
         $("#sensorModal").on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var modal = $(this);

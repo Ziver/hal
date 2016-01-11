@@ -10,6 +10,7 @@ import se.hal.intf.HalHttpPage;
 import se.hal.page.SensorConfigHttpPage;
 import se.hal.page.PCHeatMapHttpPage;
 import se.hal.page.PCOverviewHttpPage;
+import se.hal.page.UserConfigHttpPage;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
@@ -74,7 +75,8 @@ public class HalServer {
         pages = new HalHttpPage[]{
                 new PCOverviewHttpPage(),
                 new PCHeatMapHttpPage(),
-                new SensorConfigHttpPage()
+                new SensorConfigHttpPage(),
+                new UserConfigHttpPage(),
         };
         HttpServer http = new HttpServer(HalContext.getIntegerProperty("http_port"));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("web-resource/")));

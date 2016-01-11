@@ -19,7 +19,7 @@ public class PCOverviewHttpPage extends HalHttpPage {
 	private static final String TEMPLATE = "web-resource/pc_overview.tmpl";
 
 	public PCOverviewHttpPage() {
-		super("Power;Challenge", "powerChallenge");
+		super("Power;Challenge", "pc_overview");
 	}
 
 	@Override

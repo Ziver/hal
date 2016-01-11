@@ -24,7 +24,7 @@ public class SensorConfigHttpPage extends HalHttpPage {
 
 
     public SensorConfigHttpPage() {
-        super("Configuration", "config");
+        super("Configuration", "sensor_config");
 
         sensorConfigurations = new SensorDataParams[
                 ControllerManager.getInstance().getAvailableSensors().size()];
@@ -49,18 +49,10 @@ public class SensorConfigHttpPage extends HalHttpPage {
 
         // Save new input
         if(request.containsKey("action")){
-            String action = request.get("action");
             int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
             Sensor sensor;
             User user;
-            switch(action) {
-                // Local User
-                case "modify_local_user":
-                    localUser.setUserName(request.get("username"));
-                    localUser.setAddress(request.get("address"));
-                    localUser.save(db);
-                    break;
-
+            switch(request.get("action")) {
                 // Local Sensors
                 case "create_local_sensor":
                     sensor = new Sensor();

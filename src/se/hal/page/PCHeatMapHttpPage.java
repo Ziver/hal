@@ -11,7 +11,7 @@ public class PCHeatMapHttpPage extends HalHttpPage {
 
 
 	public PCHeatMapHttpPage() {
-		super("Heatmap", "map");
+		super("Heatmap", "pc_heatmap");
 	}
 
 	@Override

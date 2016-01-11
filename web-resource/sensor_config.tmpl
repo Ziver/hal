@@ -1,33 +1,5 @@
 <h1 class="page-header">Configuration</h1>
 
-<div class="col-md-8">
-    <div class="panel panel-default drop-shadow">
-        <div class="panel-heading">Profile Information</div>
-        <div class="panel-body">
-            <form class="form-horizontal" method="POST">
-                <input type="hidden" name="action" value="modify_local_user">
-                <div class="form-group">
-                    <label for="username" class="col-sm-2 control-label">Username:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="username" name="username" value="{{user.username}}">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="address" class="col-sm-2 control-label">Address:</label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" id="address" name="address">{{user.address}}</textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <div class="col-md-12">
     <div class="panel panel-default drop-shadow">
         <div class="panel-heading">Local Sensors</div>

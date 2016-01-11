@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DataAggregatorDaemon implements HalDaemon {
+public class SensorDataAggregatorDaemon implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 
     public void initiate(ScheduledExecutorService executor){

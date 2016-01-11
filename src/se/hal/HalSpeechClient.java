@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * Date: 2013-12-17
  * Time: 10:59
  */
-public class HalClient {
+public class HalSpeechClient {
     private static HashMap<String, SwitchEvent> switches = new HashMap<String, SwitchEvent>();
 
 

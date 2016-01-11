@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DataCleanupDaemon implements HalDaemon {
+public class SensorDataCleanupDaemon implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 
     public void initiate(ScheduledExecutorService executor){

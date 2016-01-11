@@ -13,7 +13,9 @@ import zutil.ui.Configurator.*;
 
 import java.util.Map;
 
-public class PCConfigureHttpPage extends HalHttpPage {
+public class SensorConfigHttpPage extends HalHttpPage {
+    private static final String TEMPLATE = "web-resource/sensor_config.tmpl";
+
     private class SensorDataParams{
         public Class clazz;
         public ConfigurationParam[] params;
@@ -21,7 +23,7 @@ public class PCConfigureHttpPage extends HalHttpPage {
     private SensorDataParams[] sensorConfigurations;
 
 
-    public PCConfigureHttpPage() {
+    public SensorConfigHttpPage() {
         super("Configuration", "config");
 
         sensorConfigurations = new SensorDataParams[
@@ -118,7 +120,7 @@ public class PCConfigureHttpPage extends HalHttpPage {
         }
 
         // Output
-        Templator tmpl = new Templator(FileUtil.find("web-resource/configure.tmpl"));
+        Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("user", localUser);
         tmpl.set("localSensors", Sensor.getLocalSensors(db));
         tmpl.set("localSensorConf", sensorConfigurations);

@@ -44,7 +44,7 @@
 	</target>
 	
 	<target name="run-main-server" depends="">
-		<java fork="true" failonerror="true" classname="se.hal.PowerChallenge">
+		<java fork="true" failonerror="true" classname="se.hal.HalServer">
 			<classpath>
 				<pathelement path="${buildDir}/hal.jar"/>	<!--wildcard may not be platform independent, ok?-->
 				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->

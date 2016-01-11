@@ -16,9 +16,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class PCOverviewHttpPage extends HalHttpPage {
+	private static final String TEMPLATE = "web-resource/pc_overview.tmpl";
 
 	public PCOverviewHttpPage() {
-		super("Overview", "overview");
+		super("Power;Challenge", "powerChallenge");
 	}
 
 	@Override
@@ -80,7 +81,7 @@ public class PCOverviewHttpPage extends HalHttpPage {
 		ArrayList<PowerData> dayDataList = DBConnection.exec(stmt, new SQLPowerDataBuilder());
 
 
-		Templator tmpl = new Templator(FileUtil.find("web-resource/overview.tmpl"));
+		Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
 		tmpl.set("minData", minDataList);
 		tmpl.set("hourData", hourDataList);
 		tmpl.set("dayData", dayDataList);

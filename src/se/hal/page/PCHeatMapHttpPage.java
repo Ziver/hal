@@ -7,6 +7,8 @@ import zutil.parser.Templator;
 import java.util.Map;
 
 public class PCHeatMapHttpPage extends HalHttpPage {
+	private static final String TEMPLATE = "web-resource/pc_heatmap.tmpl";
+
 
 	public PCHeatMapHttpPage() {
 		super("Heatmap", "map");
@@ -19,7 +21,7 @@ public class PCHeatMapHttpPage extends HalHttpPage {
 			Map<String, String> request)
 			throws Exception{
 
-		Templator tmpl = new Templator(FileUtil.find("web-resource/heatmap.tmpl"));
+		Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
 		return tmpl;
 	}
 

@@ -1,7 +1,7 @@
 package se.hal.deamon;
 
 import se.hal.HalContext;
-import se.hal.deamon.DataSynchronizationDaemon.*;
+import se.hal.deamon.PCDataSynchronizationDaemon.*;
 import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DataSynchronizationClient implements HalDaemon {
+public class PCDataSynchronizationClient implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 	private static final long SYNC_INTERVAL = 5 * 60 * 1000; // 5 min
 

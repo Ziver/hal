@@ -1,13 +1,13 @@
 package se.hal;
 
 
-import se.hal.deamon.DataAggregatorDaemon;
-import se.hal.deamon.DataCleanupDaemon;
-import se.hal.deamon.DataSynchronizationClient;
-import se.hal.deamon.DataSynchronizationDaemon;
+import se.hal.deamon.SensorDataAggregatorDaemon;
+import se.hal.deamon.SensorDataCleanupDaemon;
+import se.hal.deamon.PCDataSynchronizationClient;
+import se.hal.deamon.PCDataSynchronizationDaemon;
 import se.hal.intf.HalDaemon;
 import se.hal.intf.HalHttpPage;
-import se.hal.page.PCConfigureHttpPage;
+import se.hal.page.SensorConfigHttpPage;
 import se.hal.page.PCHeatMapHttpPage;
 import se.hal.page.PCOverviewHttpPage;
 import se.hal.struct.Event;
@@ -26,7 +26,7 @@ import java.util.logging.Level;
 /**
  * Created by Ziver on 2015-12-03.
  */
-public class PowerChallenge {
+public class HalServer {
 	
     private static HalDaemon[] daemons;
     private static HalHttpPage[] pages;
@@ -58,10 +58,10 @@ public class PowerChallenge {
 
         // init daemons
         daemons = new HalDaemon[]{
-                new DataAggregatorDaemon(),
-                new DataSynchronizationDaemon(),
-                new DataSynchronizationClient(),
-                new DataCleanupDaemon()
+                new SensorDataAggregatorDaemon(),
+                new PCDataSynchronizationDaemon(),
+                new PCDataSynchronizationClient(),
+                new SensorDataCleanupDaemon()
         };
         // We set only one thread for easier troubleshooting
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
@@ -74,7 +74,7 @@ public class PowerChallenge {
         pages = new HalHttpPage[]{
                 new PCOverviewHttpPage(),
                 new PCHeatMapHttpPage(),
-                new PCConfigureHttpPage()
+                new SensorConfigHttpPage()
         };
         HttpServer http = new HttpServer(HalContext.getIntegerProperty("http_port"));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("web-resource/")));

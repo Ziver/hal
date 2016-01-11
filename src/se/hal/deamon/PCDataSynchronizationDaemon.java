@@ -1,7 +1,7 @@
 package se.hal.deamon;
 
 import se.hal.HalContext;
-import se.hal.deamon.DataSynchronizationClient.*;
+import se.hal.deamon.PCDataSynchronizationClient.*;
 import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
@@ -25,11 +25,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DataSynchronizationDaemon extends ThreadedTCPNetworkServer implements HalDaemon {
+public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 
 
-	public DataSynchronizationDaemon() {
+	public PCDataSynchronizationDaemon() {
 		super(HalContext.getIntegerProperty("sync_port"));
 	}
 

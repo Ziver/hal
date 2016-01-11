@@ -1,0 +1,174 @@
+<h1 class="page-header">Event Configuration</h1>
+
+<div class="col-md-12">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">Local Events</div>
+        <div class="panel-body">
+            <p>This is a local list of events connected to this node.</p>
+
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Public</th>
+                    <th>Configuration</th>
+                    <th>
+                        <button class="btn btn-default btn-xs pull-right" data-toggle="modal"
+                                data-target="#eventModal">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                    </th>
+                </thead>
+                {{#localEvents}}
+                <tr>
+                    <td>{{.name}}</td>
+                    <td>{{.type}}</td>
+                    <td>{{.sync}}</td>
+                    <td>{{.config}}</td>
+                    <td>
+                        <form method="POST">
+                            <input type="hidden" name="action" value="remove_local_event">
+                            <input type="hidden" name="id" value="{{.getId()}}">
+
+                            <div class="btn-toolbar pull-right">
+                                <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
+                                        data-target="#eventModal"
+                                        data-id="{{.getId()}}"
+                                        data-name="{{.name}}"
+                                        data-type="{{.type}}"
+                                        data-sync="{{.sync}}"
+                                        data-config="{{.config}}">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </button>
+
+                                <button type="submit" class="btn btn-danger btn-xs">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                {{/localEvents}}
+            </table>
+
+            <br>
+            <p>Events that has been automatically detected.</p>
+            <table class="table table-hover table-condensed">
+                <thead>
+                <th>Type</th>
+                <th>Configuration</th>
+                </thead>
+                {{#detectedEvents}}
+                <tr>
+                    <td>{{.getClass().getName()}}</td>
+                    <td>{{.}}</td>
+                    <td>
+                        <div class="btn-toolbar pull-right">
+                            <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
+                                    data-target="#eventModal"
+                                    data-type="{{.type}}"
+                                    data-config="{{.config}}">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {{/detectedEvents}}
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!------------- MODALS --------------->
+<script>
+    var eventDataConf = {};
+
+    $(function(){
+        // initialize event modal things
+        $("#event-data-conf-template div").each(function(){
+            eventDataConf[$(this).attr("id")] = $(this).html();
+        });
+        $("#eventModal select[name=type]").change(function(){
+            // Update dynamic inputs
+            $("#eventModal #event-data-conf").html(eventDataConf[$(this).val()]);
+        });
+        // click event
+        $("#eventModal").on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            modal.find("input[type=text]").val(""); // Reset all inputs
+            if(button.data("id") >= 0){ // edit
+                modal.find("input[name=action]").val("modify_local_event");
+                modal.find("input[name=id]").val(button.data("id"));
+                modal.find("input[name=name]").val(button.data("name"));
+                modal.find("select[name=type]").val(button.data("type"));
+                modal.find("input[name=config]").val(button.data("config"));
+            }
+            else{ // create
+                modal.find("input[name=action]").val("create_local_event");
+                modal.find("input[name=id]").val(-1);
+            }
+            // Update dynamic inputs
+            modal.find("select[name=type]").change();
+        });
+    });
+</script>
+
+
+<div class="modal fade" id="eventModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="exampleModalLabel">External User</h4>
+            </div>
+            <form method="POST">
+                <div class="modal-body">
+                    <input type="hidden" id="action" name="action" value="">
+                    <input type="hidden" id="id" name="id">
+                    <div class="form-group">
+                        <label class="control-label">Name:</label>
+                        <input type="text" class="form-control" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Type:</label>
+                        <select class="form-control" name="type">
+                            {{#availableEvents}}
+                            <option>{{.getName()}}</option>
+                            {{/availableEvents}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Public:</label>
+                        <input type="checkbox" class="form-control" name="sync" value="true">
+                    </div>
+
+                    <hr>
+                    <div id="event-data-conf">
+                        <!-- Dynamic form -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="event-data-conf-template" class="hidden">
+    {{#localEventConf}}
+    <div id="{{.clazz.getName()}}">
+        {{#.params}}
+        <div class="form-group">
+            <label class="control-label">{{.getNiceName()}}:</label>
+            <input type="text" class="form-control" name="{{.getName()}}">
+        </div>
+        {{/.params}}
+    </div>
+    {{/localEventConf}}
+</div>
+

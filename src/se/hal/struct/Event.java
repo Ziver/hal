@@ -33,12 +33,16 @@ public class Event extends DBBean{
     private transient HalEvent eventData;
 
     // User configuration
+    @DBColumn("user_id")
     private User user;
 
 
+    public static Event getEvent(DBConnection db, long id) throws SQLException{
+        return DBBean.load(db, Event.class, id);
+    }
 
-    public static List<Event> getEvents(DBConnection db) throws SQLException {
-        PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM event" );
+    public static List<Event> getLocalEvents(DBConnection db) throws SQLException {
+        PreparedStatement stmt = db.getPreparedStatement( "SELECT event.* FROM event,user WHERE user.external == 0 AND user.id == event.user_id" );
         return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Event.class, db) );
     }
 
@@ -77,6 +81,34 @@ public class Event extends DBBean{
         else
             this.config = null;
         super.save(db);
+    }
+
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+    public String getConfig() {
+        return config;
+    }
+    public void setConfig(String config) {
+        this.config = config;
+        this.eventData = null; // invalidate current sensor data object
+    }
+
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
     }
 
 

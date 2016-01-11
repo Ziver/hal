@@ -52,7 +52,7 @@ public class HalServer {
         for(Sensor sensor : Sensor.getLocalSensors(db)){
             ControllerManager.getInstance().register(sensor);
         }
-        for(Event event : Event.getEvents(db)){
+        for(Event event : Event.getLocalEvents(db)){
             ControllerManager.getInstance().register(event);
         }
 

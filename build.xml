@@ -26,7 +26,7 @@
 	
 
 	<target name="run-local-sensor" depends="">
-		<java fork="true" failonerror="true" classname="se.koc.hal.plugin.localsensor.ImpulseTracker">
+		<java fork="true" failonerror="true" classname="se.hal.plugin.localsensor.ImpulseTracker">
 			<classpath>
 				<pathelement path="${buildDir}/hal.jar"/>	<!--wildcard may not be platform independent, ok?-->
 				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
@@ -35,7 +35,7 @@
 	</target>
 	
 	<target name="run-remote-sensor" depends="">
-		<java fork="true" failonerror="true" classname="se.koc.hal.plugin.tellstick.TelstickSerialCommTest">
+		<java fork="true" failonerror="true" classname="se.hal.plugin.tellstick.TelstickSerialCommTest">
 			<classpath>
 				<pathelement path="${buildDir}/hal.jar"/>	<!--wildcard may not be platform independent, ok?-->
 				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
@@ -44,7 +44,7 @@
 	</target>
 	
 	<target name="run-main-server" depends="">
-		<java fork="true" failonerror="true" classname="se.koc.hal.PowerChallenge">
+		<java fork="true" failonerror="true" classname="se.hal.PowerChallenge">
 			<classpath>
 				<pathelement path="${buildDir}/hal.jar"/>	<!--wildcard may not be platform independent, ok?-->
 				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
@@ -70,12 +70,12 @@
 		<mkdir dir="${buildDir}" />
 		<javac srcdir="${srcDir}" destdir="${buildDir}" fork="yes">
 			<include name="**/*.java" />
-			<exclude name="se/koc/hal/tts/GoogleTTSClient.java" />
+			<exclude name="se/hal/tts/GoogleTTSClient.java" />
 			<classpath refid="classpath.build" />
 		</javac>
 		<javac srcdir="${testDir}" destdir="${buildDir}" fork="yes">
 			<include name="**/*.java" />
-			<exclude name="se/koc/hal/test/JarvisSyntersizerTest.java" />
+			<exclude name="se/hal/test/JarvisSyntersizerTest.java" />
 			<classpath refid="classpath.build" />
 		</javac>
 		<jar destfile="${buildDir}/hal.jar" basedir="${buildDir}" excludes="hal.jar" />

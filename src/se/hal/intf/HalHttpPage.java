@@ -1,6 +1,7 @@
 package se.hal.intf;
 
 import se.hal.HalContext;
+import se.hal.page.HalNavigation;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -17,26 +18,25 @@ import java.util.Map;
  * Created by Ziver on 2015-12-10.
  */
 public abstract class HalHttpPage implements HttpPage{
+    private static final String TEMPLATE = "web-resource/index.tmpl";
+    private static HalNavigation rootNav = new HalNavigation();
+    private static HalNavigation userNav = new HalNavigation();
 
-    private static ArrayList<HalHttpPage> pages = new ArrayList<>();
+    private HalNavigation nav;
 
-    private final String name;
-    private final String id;
 
     public HalHttpPage(String name, String id){
-        this.name = name;
-        this.id = id;
-        pages.add(this);
+        this.nav = new HalNavigation(id, name);
     }
 
     public String getName(){
-        return name;
+        return nav.getName();
     }
     public String getId(){
-        return id;
+        return nav.getId();
     }
-    public String getURL(){
-        return "/" + this.id;
+    public HalNavigation getNav(){
+        return nav;
     }
 
 
@@ -48,15 +48,25 @@ public abstract class HalHttpPage implements HttpPage{
         try {
             DBConnection db = HalContext.getDB();
 
-            Templator tmpl = new Templator(FileUtil.find("web-resource/index.tmpl"));
+            Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
             tmpl.set("user", User.getLocalUser(db));
-            tmpl.set("navigation", pages);
+            tmpl.set("nav", nav.getNavBreadcrumb().get(1));
+            tmpl.set("rootNav", rootNav);
+            tmpl.set("userNav", userNav);
             tmpl.set("content", httpRespond(session, cookie, request));
             out.print(tmpl.compile());
 
         } catch (Exception e) {
             throw new IOException(e);
         }
+    }
+
+
+    public static HalNavigation getRootNav(){
+        return rootNav;
+    }
+    public static HalNavigation getUserNav(){
+        return userNav;
     }
 
 

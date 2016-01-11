@@ -7,10 +7,7 @@ import se.hal.deamon.PCDataSynchronizationClient;
 import se.hal.deamon.PCDataSynchronizationDaemon;
 import se.hal.intf.HalDaemon;
 import se.hal.intf.HalHttpPage;
-import se.hal.page.SensorConfigHttpPage;
-import se.hal.page.PCHeatMapHttpPage;
-import se.hal.page.PCOverviewHttpPage;
-import se.hal.page.UserConfigHttpPage;
+import se.hal.page.*;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
@@ -72,17 +69,20 @@ public class HalServer {
 
 
         // init http server
+        HalHttpPage.getRootNav().addSubNav(new HalNavigation("sensors", "Sensors"));
+        HalHttpPage.getRootNav().addSubNav(new HalNavigation("events", "Events"));
         pages = new HalHttpPage[]{
                 new PCOverviewHttpPage(),
                 new PCHeatMapHttpPage(),
                 new SensorConfigHttpPage(),
+                new EventConfigHttpPage(),
                 new UserConfigHttpPage(),
         };
         HttpServer http = new HttpServer(HalContext.getIntegerProperty("http_port"));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("web-resource/")));
         http.setPage("/", pages[0]);
         for(HalHttpPage page : pages){
-            http.setPage(page.getURL(), page);
+            http.setPage(page.getId(), page);
         }
         http.start();
     }

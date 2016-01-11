@@ -25,6 +25,7 @@ public class SensorConfigHttpPage extends HalHttpPage {
 
     public SensorConfigHttpPage() {
         super("Configuration", "sensor_config");
+        super.getRootNav().getSubNav("sensors").addSubNav(super.getNav());
 
         sensorConfigurations = new SensorDataParams[
                 ControllerManager.getInstance().getAvailableSensors().size()];

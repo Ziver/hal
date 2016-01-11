@@ -2,7 +2,7 @@
 	"version": 1.0,
 	"name": "Tellstick",
 	"interfaces": [
-		{"se.koc.hal.intf.HalSensor": "se.koc.hal.plugin.tellstick.protocols.Oregon0x1A2D"},
-		{"se.koc.hal.intf.HalEvent":  "se.koc.hal.plugin.tellstick.protocols.NexaSelfLearning"}
+		{"se.hal.intf.HalSensor": "se.hal.plugin.tellstick.protocols.Oregon0x1A2D"},
+		{"se.hal.intf.HalEvent":  "se.hal.plugin.tellstick.protocols.NexaSelfLearning"}
 	]
 }

@@ -20,6 +20,7 @@ public class PCOverviewHttpPage extends HalHttpPage {
 
 	public PCOverviewHttpPage() {
 		super("Power;Challenge", "pc_overview");
+        super.getRootNav().getSubNav("sensors").addSubNav(super.getNav());
 	}
 
 	@Override

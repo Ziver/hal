@@ -4,7 +4,6 @@ import se.hal.ControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalHttpPage;
 import se.hal.struct.Event;
-import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -26,9 +25,10 @@ public class EventConfigHttpPage extends HalHttpPage {
 
     public EventConfigHttpPage() {
         super("Configuration", "event_config");
+        super.getRootNav().getSubNav("events").addSubNav(super.getNav());
 
         eventConfigurations = new EventDataParams[
-                ControllerManager.getInstance().getAvailableSensors().size()];
+                ControllerManager.getInstance().getAvailableEvents().size()];
         int i=0;
         for(Class c : ControllerManager.getInstance().getAvailableEvents()){
             eventConfigurations[i] = new EventDataParams();
@@ -53,12 +53,12 @@ public class EventConfigHttpPage extends HalHttpPage {
             int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
             Event event;
             switch(request.get("action")) {
-                // Local Sensors
+                // Local events
                 case "create_local_event":
                     event = new Event();
                     event.setName(request.get("name"));
                     event.setType(request.get("type"));
-                    //sensor.setConfig(request.get("config"));
+                    //event.setConfig(request.get("config"));
                     event.setUser(localUser);
                     event.save(db);
                 case "modify_local_event":
@@ -66,7 +66,7 @@ public class EventConfigHttpPage extends HalHttpPage {
                     if(event != null){
                         event.setName(request.get("name"));
                         event.setType(request.get("type"));
-                        //sensor.setConfig(request.get("config"));
+                        //event.setConfig(request.get("config"));
                         event.setUser(localUser);
                         event.save(db);
                     }
@@ -86,7 +86,7 @@ public class EventConfigHttpPage extends HalHttpPage {
         tmpl.set("localEventConf", eventConfigurations);
 
 
-        tmpl.set("availableSensors", ControllerManager.getInstance().getAvailableSensors());
+        tmpl.set("availableEvents", ControllerManager.getInstance().getAvailableEvents());
 
         return tmpl;
 

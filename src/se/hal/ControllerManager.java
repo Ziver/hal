@@ -114,8 +114,8 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
                 logger.finest("Received report from sensor: "+ sensorData);
             }
             else { // unknown sensor
+                logger.finest("Received report from unregistered sensor: "+ sensorData);
                 if(!detectedSensors.contains(sensorData)) {
-                    logger.finest("Received report from unregistered sensor: "+ sensorData);
                     detectedSensors.add(sensorData);
                 }
             }
@@ -192,8 +192,8 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
                 logger.finest("Received report from event: "+ eventData);
             }
             else { // unknown sensor
+                logger.info("Received report from unregistered event: "+ eventData);
                 if(!detectedEvents.contains(eventData)) {
-                    logger.finest("Received report from unregistered event: "+ eventData);
                     detectedEvents.add(eventData);
                 }
             }

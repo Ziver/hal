@@ -26,7 +26,10 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">HAL</a>
+            <a class="navbar-brand" href="/">
+                <span class="glyphicon glyphicon-record" style="color:red"></span>
+                HAL
+            </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             {{#rootNav}}
@@ -43,8 +46,17 @@
 
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.username}} <span class="glyphicon glyphicon-user"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-user"></span>
+                        <strong>{{user.username}}</strong>
+                    </a>
                     <ul class="dropdown-menu">
+                        <li>
+                            <div align="center" style="font-size: 110px;height: 120px;">
+                                <span class="glyphicon glyphicon-user"></span>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
                         {{#userNav}}<li><a href="{{.getURL()}}">{{.getName()}}</a></li>
                         {{/userNav}}
                     </ul>

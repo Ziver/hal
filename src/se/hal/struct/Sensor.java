@@ -45,10 +45,10 @@ public class Sensor extends DBBean{
 		PreparedStatement stmt = db.getPreparedStatement( "SELECT sensor.* FROM sensor,user WHERE user.external == 1 AND user.id == sensor.user_id" );
 		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Sensor.class, db) );
 	}
-    public static Sensor getExternalSensor(DBConnection db, User user, long id) throws SQLException{
-        PreparedStatement stmt = db.getPreparedStatement( "SELECT sensor.* FROM sensor WHERE user.external == 1 AND ? == sensor.user_id AND sensor.external_id == ?" );
+    public static Sensor getExternalSensor(DBConnection db, User user, long external_id) throws SQLException{
+        PreparedStatement stmt = db.getPreparedStatement( "SELECT sensor.* FROM sensor WHERE ? == sensor.user_id AND sensor.external_id == ?" );
         stmt.setLong(1, user.getId());
-        stmt.setLong(2, id);
+        stmt.setLong(2, external_id);
         return DBConnection.exec(stmt, DBBeanSQLResultHandler.create(Sensor.class, db) );
     }
 

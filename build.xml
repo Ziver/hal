@@ -26,7 +26,7 @@
 	
 
 	<target name="run-local-sensor" depends="">
-		<java fork="true" failonerror="true" classname="se.hal.plugin.localsensor.ImpulseTracker">
+		<java fork="true" failonerror="true" classname="se.hal.plugin.localsensor.RPiImpulseCountSensor">
 			<classpath>
 				<pathelement path="${buildDir}/hal.jar"/>	<!--wildcard may not be platform independent, ok?-->
 				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->

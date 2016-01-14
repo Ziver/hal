@@ -43,7 +43,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 
     public void cleanupSensor(Sensor sensor) {
     	//if(sensor instanceof PowerConsumptionSensor){
-    		logger.fine("The sensor is of type: " + PowerConsumptionSensor.class.getSimpleName());
+    		logger.fine("The sensor is of type: " + sensor.getSensorData().getClass().getName());
     		if(sensor.getUser().isExternal()){
     			cleanupExternalSensorData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);
         		cleanupExternalSensorData(sensor.getId(), TimeUtility.DAY_IN_MS, TimeUtility.WEEK_IN_MS);
@@ -58,6 +58,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
     
     /**
      * Will clear periods only if it has been aggregated and are too old.
+	 *
      * @param sensorId
      * @Param referencePeriodlength Will only clear periods older than the newest period of this length.
      * @Param clearPeriodlength Will clear periods with this length
@@ -94,6 +95,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
     
     /**
      * Will clear periods if they are too old.
+     *
      * @param sensorId
      * @Param clearPeriodlength Will clear periods with this length
      * @param olderThan Data must be older than this many ms to be cleared from the DB

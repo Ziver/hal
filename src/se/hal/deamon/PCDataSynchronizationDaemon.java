@@ -129,7 +129,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                 in.close();
 				s.close();
 
-			} catch (ClassNotFoundException|IOException|SQLException e) {
+			} catch (Exception e) {
 				logger.log(Level.SEVERE, null, e);
 			}
             logger.fine("User disconnected: "+ s.getInetAddress().getHostName());

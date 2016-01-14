@@ -43,8 +43,8 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     }
     
     public void aggregateSensor(Sensor sensor) {
-    	//if(sensor instanceof PowerConsumptionSensor){
-    		logger.fine("The sensor is of type: " + PowerConsumptionSensor.class.getSimpleName());
+    	//if(sensor.getSensorData() instanceof PowerConsumptionSensor){
+    		logger.fine("The sensor is of type: " + sensor.getSensorData().getClass().getName());
     		logger.fine("aggregating raw data to five minute periods");
 			aggregateRawData(sensor, TimeUtility.FIVE_MINUTES_IN_MS, 5);
 			logger.fine("aggregating five minute periods into hour periods");
@@ -52,7 +52,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 			logger.fine("aggregating one hour periods into one day periods");
 			aggrigateAggregatedData(sensor, TimeUtility.HOUR_IN_MS, TimeUtility.DAY_IN_MS);
     	//}else{
-    	//	logger.fine("The sensor type is not supported by the aggregation daemon. Ignoring");
+    	//	logger.fine("The sensor type("+ sensor.getSensorData().getClass().getName() +") is not supported by the aggregation daemon. Ignoring");
     	//}
     }
     

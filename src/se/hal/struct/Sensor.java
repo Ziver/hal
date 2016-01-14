@@ -124,7 +124,7 @@ public class Sensor extends DBBean{
 		return type;
 	}
 	public void setType(String type) {
-		if( ! this.type.equals(type)) {
+		if( !this.type.equals(type)) {
 			this.type = type;
 			this.sensorData = null; // invalidate current sensor data object
 		}
@@ -133,7 +133,7 @@ public class Sensor extends DBBean{
 		return config;
 	}
 	public void setConfig(String config) {
-        if( ! this.config.equals(config)) {
+        if(this.config == null || !this.config.equals(config)) {
             this.config = config;
             this.sensorData = null; // invalidate current sensor data object
         }

@@ -56,7 +56,7 @@ public class Event extends DBBean{
         updateConfig();
     }
     public HalEvent getEventData(){
-        if(config !=null && eventData == null) {
+        if(eventData == null) {
             try {
                 Class c = Class.forName(type);
                 eventData = (HalEvent) c.newInstance();
@@ -92,7 +92,7 @@ public class Event extends DBBean{
         return type;
     }
     public void setType(String type) {
-        if( ! this.type.equals(type)) {
+        if( !this.type.equals(type)) {
             this.type = type;
             this.eventData = null; // invalidate current sensor data object
         }
@@ -101,7 +101,7 @@ public class Event extends DBBean{
         return config;
     }
     public void setConfig(String config) {
-        if( ! this.config.equals(config)) {
+        if(this.config == null ||  !this.config.equals(config)) {
             this.config = config;
             this.eventData = null; // invalidate current sensor data object
         }

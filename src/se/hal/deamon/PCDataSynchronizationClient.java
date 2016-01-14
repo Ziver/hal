@@ -102,9 +102,9 @@ public class PCDataSynchronizationClient implements HalDaemon {
 					in.close();
 					s.close();
 					
-				} catch (NoRouteToHostException |UnknownHostException|ConnectException e) {
+				} catch (NoRouteToHostException|UnknownHostException|ConnectException e) {
 					logger.warning("Unable to connect to "+ user.getHostname()+":"+user.getPort() +", "+ e.getMessage());
-				} catch (ClassNotFoundException|IOException e) {
+				} catch (Exception e) {
                     logger.log(Level.SEVERE, null, e);
 				}
 

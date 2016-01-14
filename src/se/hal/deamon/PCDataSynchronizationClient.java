@@ -57,7 +57,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
                     user.save(db);
 
                     for(SensorDTO sensorDTO : peerData.sensors){
-                        Sensor sensor = Sensor.getExternalSensor(db, sensorDTO.sensorId);
+                        Sensor sensor = Sensor.getExternalSensor(db, user, sensorDTO.sensorId);
                         if(sensor != null) { // new sensor
                             sensor = new Sensor();
                             logger.fine("Created new external sensor with external_id: "+ sensorDTO.sensorId);
@@ -68,6 +68,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
                         sensor.setName(sensorDTO.name);
                         sensor.setType(sensorDTO.type);
                         sensor.setConfig(sensorDTO.config);
+						sensor.setUser(user);
                         sensor.save(db);
                     }
 
@@ -91,7 +92,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
 								stmt.setFloat(6, data.confidence);
 								DBConnection.exec(stmt);
 							}
-							logger.fine("Stored " + dataList.size() + " entries for sensor " + sensor.getId() + " from " + user.getUserName());
+							logger.fine("Stored " + dataList.size() + " entries for sensor " + sensor.getId() + " with offset "+ req.offsetSequenceId +" from " + user.getUserName());
 						}
                         else
                             logger.fine("Skipped sensor " + sensor.getId());

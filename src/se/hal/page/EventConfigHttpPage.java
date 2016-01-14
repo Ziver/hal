@@ -86,7 +86,6 @@ public class EventConfigHttpPage extends HalHttpPage {
         tmpl.set("localEventConf", eventConfigurations);
         tmpl.set("detectedEvents", ControllerManager.getInstance().getDetectedEvents());
 
-
         tmpl.set("availableEvents", ControllerManager.getInstance().getAvailableEvents());
 
         return tmpl;

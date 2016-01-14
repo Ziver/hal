@@ -10,7 +10,6 @@
                 <thead>
                     <th>Name</th>
                     <th>Type</th>
-                    <th>Public</th>
                     <th>Configuration</th>
                     <th>
                         <button class="btn btn-default btn-xs pull-right" data-toggle="modal"
@@ -23,7 +22,6 @@
                 <tr>
                     <td>{{.name}}</td>
                     <td>{{.type}}</td>
-                    <td>{{.sync}}</td>
                     <td>{{.config}}</td>
                     <td>
                         <form method="POST">
@@ -36,7 +34,6 @@
                                         data-id="{{.getId()}}"
                                         data-name="{{.name}}"
                                         data-type="{{.type}}"
-                                        data-sync="{{.sync}}"
                                         data-config="{{.config}}">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </button>

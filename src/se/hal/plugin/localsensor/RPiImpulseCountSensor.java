@@ -56,6 +56,7 @@ public class RPiImpulseCountSensor implements Runnable {
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
                 if(event.getState() == PinState.LOW){  //low = light went on
                     //System.out.println("IR LED turned ON");
+                    //logger.log(Level.INFO, "IR LED turned on");
                     synchronized(impulseCount){
                         impulseCount++;
                     }
@@ -132,6 +133,7 @@ public class RPiImpulseCountSensor implements Runnable {
     	executorPool.execute(new Runnable(){
 			@Override
 			public void run() {
+                                logger.log(Level.INFO, "Saving data to DB. timestamp_end="+timestamp_end+", data="+data);
 				try {
 					db.exec("INSERT INTO sensor_data_raw(timestamp, sensor_id, data) VALUES("+timestamp_end+", "+RPiImpulseCountSensor.this.sensorId+", "+data+")");
 				} catch (SQLException e) {

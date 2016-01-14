@@ -2,6 +2,7 @@ package se.hal.struct;
 
 import se.hal.intf.HalEvent;
 import se.hal.intf.HalEventController;
+import se.hal.intf.HalSensor;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
@@ -10,6 +11,9 @@ import zutil.io.StringOutputStream;
 import zutil.log.LogUtil;
 import zutil.parser.json.JSONObjectInputStream;
 import zutil.parser.json.JSONObjectOutputStream;
+import zutil.parser.json.JSONParser;
+import zutil.parser.json.JSONWriter;
+import zutil.ui.Configurator;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -49,16 +53,16 @@ public class Event extends DBBean{
 
     public void setEventData(HalEvent eventData){
         this.eventData = eventData;
+        updateConfig();
     }
     public HalEvent getEventData(){
-        if(eventData == null) {
+        if(config !=null && eventData == null) {
             try {
                 Class c = Class.forName(type);
+                eventData = (HalEvent) c.newInstance();
 
-                JSONObjectInputStream in = new JSONObjectInputStream(
-                        new StringInputStream(config));
-                eventData = (HalEvent) in.readObject(c);
-                in.close();
+                Configurator<HalEvent> configurator = new Configurator<>(eventData);
+                configurator.setValues(JSONParser.read(config));
             } catch (Exception e){
                 logger.log(Level.SEVERE, "Unable to read event data", e);
             }
@@ -66,21 +70,15 @@ public class Event extends DBBean{
         return eventData;
     }
     public void save(DBConnection db) throws SQLException {
-        if(eventData != null) {
-            try {
-                StringOutputStream buff = new StringOutputStream();
-                JSONObjectOutputStream out = new JSONObjectOutputStream(buff);
-                out.enableMetaData(false);
-                out.writeObject(eventData);
-                out.close();
-                this.config = buff.toString();
-            } catch (IOException e){
-                logger.log(Level.SEVERE, "Unable to save event data", e);
-            }
-        }
+        if(eventData != null)
+            updateConfig();
         else
             this.config = null;
         super.save(db);
+    }
+    private void updateConfig(){
+        Configurator<HalEvent> configurator = new Configurator<>(eventData);
+        this.config = JSONWriter.toString(configurator.getValuesAsNode());
     }
 
 
@@ -94,14 +92,19 @@ public class Event extends DBBean{
         return type;
     }
     public void setType(String type) {
-        this.type = type;
+        if( ! this.type.equals(type)) {
+            this.type = type;
+            this.eventData = null; // invalidate current sensor data object
+        }
     }
     public String getConfig() {
         return config;
     }
     public void setConfig(String config) {
-        this.config = config;
-        this.eventData = null; // invalidate current sensor data object
+        if( ! this.config.equals(config)) {
+            this.config = config;
+            this.eventData = null; // invalidate current sensor data object
+        }
     }
 
     public User getUser() {

@@ -12,6 +12,9 @@ import zutil.io.StringOutputStream;
 import zutil.log.LogUtil;
 import zutil.parser.json.JSONObjectInputStream;
 import zutil.parser.json.JSONObjectOutputStream;
+import zutil.parser.json.JSONParser;
+import zutil.parser.json.JSONWriter;
+import zutil.ui.Configurator;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -85,14 +88,13 @@ public class Sensor extends DBBean{
         updateConfig();
 	}
     public HalSensor getSensorData(){
-        if(sensorData == null) {
+        if(config !=null && sensorData == null) {
             try {
                 Class c = Class.forName(type);
+                sensorData = (HalSensor) c.newInstance();
 
-                JSONObjectInputStream in = new JSONObjectInputStream(
-                        new StringInputStream(config));
-                sensorData = (HalSensor) in.readObject(c);
-                in.close();
+                Configurator<HalSensor> configurator = new Configurator<>(sensorData);
+                configurator.setValues(JSONParser.read(config));
             } catch (Exception e){
                 logger.log(Level.SEVERE, "Unable to read sensor data", e);
             }
@@ -107,16 +109,8 @@ public class Sensor extends DBBean{
         super.save(db);
     }
     private void updateConfig(){
-        try {
-            StringOutputStream buff = new StringOutputStream();
-            JSONObjectOutputStream out = new JSONObjectOutputStream(buff);
-            out.enableMetaData(false);
-            out.writeObject(sensorData);
-            out.close();
-            this.config = buff.toString();
-        } catch (IOException e){
-            logger.log(Level.SEVERE, "Unable to save sensor data", e);
-        }
+        Configurator<HalSensor> configurator = new Configurator<>(sensorData);
+        this.config = JSONWriter.toString(configurator.getValuesAsNode());
     }
 
 	
@@ -130,14 +124,19 @@ public class Sensor extends DBBean{
 		return type;
 	}
 	public void setType(String type) {
-		this.type = type;
+		if( ! this.type.equals(type)) {
+			this.type = type;
+			this.sensorData = null; // invalidate current sensor data object
+		}
 	}
 	public String getConfig() {
 		return config;
 	}
 	public void setConfig(String config) {
-		this.config = config;
-        this.sensorData = null; // invalidate current sensor data object
+        if( ! this.config.equals(config)) {
+            this.config = config;
+            this.sensorData = null; // invalidate current sensor data object
+        }
 	}
 
 	public User getUser() {

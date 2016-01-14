@@ -58,12 +58,12 @@ public class PCDataSynchronizationClient implements HalDaemon {
 
                     for(SensorDTO sensorDTO : peerData.sensors){
                         Sensor sensor = Sensor.getExternalSensor(db, user, sensorDTO.sensorId);
-                        if(sensor != null) { // new sensor
+                        if(sensor == null) { // new sensor
                             sensor = new Sensor();
                             logger.fine("Created new external sensor with external_id: "+ sensorDTO.sensorId);
                         }
                         else
-                            logger.fine("Updating external sensor with external_id: "+ sensorDTO.sensorId);
+                            logger.fine("Updating external sensor with id: "+ sensor.getId() +" and external_id: "+ sensor.getExternalId());
                         sensor.setExternalId(sensorDTO.sensorId);
                         sensor.setName(sensorDTO.name);
                         sensor.setType(sensorDTO.type);

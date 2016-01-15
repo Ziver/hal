@@ -105,7 +105,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                                     SensorDataListDTO list = new SensorDataListDTO();
                                     while (result.next()) {
                                         SensorDataDTO data = new SensorDataDTO();
-                                        data.sequenceId = result.getLong("sensor_id");
+                                        data.sequenceId = result.getLong("sequence_id");
                                         data.timestampStart = result.getLong("timestamp_start");
                                         data.timestampEnd = result.getLong("timestamp_end");
                                         data.data = result.getInt("data");

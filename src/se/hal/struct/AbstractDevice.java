@@ -46,30 +46,20 @@ public abstract class AbstractDevice<T> extends DBBean {
         }
         return deviceData;
     }
-
     public void setDeviceData(T data) {
         this.deviceData = data;
         updateConfig();
     }
 
-
+    public String getConfig() {
+        return config;
+    }
     public void setConfig(String config) {
         if (this.config == null || !this.config.equals(config)) {
             this.config = config;
             this.deviceData = null; // invalidate current sensor data object
         }
     }
-
-    protected void updateConfig() {
-        Configurator<T> configurator = new Configurator<>(deviceData);
-        this.config = JSONWriter.toString(configurator.getValuesAsNode());
-    }
-
-    public String getConfig() {
-        return config;
-    }
-
-
     public void save(DBConnection db) throws SQLException {
         if (deviceData != null)
             updateConfig();
@@ -77,6 +67,11 @@ public abstract class AbstractDevice<T> extends DBBean {
             this.config = null;
         super.save(db);
     }
+    protected void updateConfig() {
+        Configurator<T> configurator = new Configurator<>(deviceData);
+        this.config = JSONWriter.toString(configurator.getValuesAsNode());
+    }
+
 
 
     public String getName() {

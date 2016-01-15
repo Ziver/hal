@@ -60,7 +60,7 @@ public class Sensor extends AbstractDevice<HalSensorData>{
     	PreparedStatement stmt = HalContext.getDB().getPreparedStatement("SELECT MAX(sequence_id) FROM sensor_data_aggr WHERE sensor_id == ?");
     	stmt.setLong(1, sensorId);
     	Integer id = DBConnection.exec(stmt, new SimpleSQLResult<Integer>());
-    	return (id != null ? id+1 : 1);
+    	return (id != null ? id : 0);
    }
 
 

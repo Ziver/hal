@@ -21,10 +21,10 @@
                 </thead>
                 {{#localSensors}}
                 <tr>
-                    <td>{{.name}}</td>
-                    <td>{{.type}}</td>
-                    <td>{{.sync}}</td>
-                    <td>{{.config}}</td>
+                    <td>{{.getName()}}</td>
+                    <td>{{.getType()}}</td>
+                    <td>{{.isSynced()}}</td>
+                    <td>{{.getConfig()}}</td>
                     <td>
                         <form method="POST">
                             <input type="hidden" name="action" value="remove_local_sensor">
@@ -34,10 +34,10 @@
                                 <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
                                         data-target="#sensorModal"
                                         data-id="{{.getId()}}"
-                                        data-name="{{.name}}"
-                                        data-type="{{.type}}"
-                                        data-sync="{{.sync}}"
-                                        data-config="{{.config}}">
+                                        data-name="{{.getName()}}"
+                                        data-type="{{.getType()}}"
+                                        data-sync="{{.isSynced()}}"
+                                        data-config="{{.getConfig()}}">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </button>
 
@@ -66,8 +66,8 @@
                         <div class="btn-toolbar pull-right">
                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
                                     data-target="#sensorModal"
-                                    data-type="{{.type}}"
-                                    data-config="{{.config}}">
+                                    data-type="{{.getClass().getName()}"
+                                    data-config="{{.}}">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         </div>
@@ -100,10 +100,10 @@
                 </thead>
                 {{#extUsers}}
                 <tr>
-                    <td>{{.username}}</td>
-                    <td>{{.address}}</td>
-                    <td>{{.hostname}}</td>
-                    <td>{{.port}}</td>
+                    <td>{{.getUsername()}}</td>
+                    <td>{{.getAddress()}}</td>
+                    <td>{{.getHostname()}}</td>
+                    <td>{{.getPort()}}</td>
                     <td>
                         <form method="POST">
                             <input type="hidden" name="action" value="remove_external_user">
@@ -113,8 +113,8 @@
                                 <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
                                         data-target="#userModal"
                                         data-id="{{.getId()}}"
-                                        data-hostname="{{.hostname}}"
-                                        data-port="{{.port}}">
+                                        data-hostname="{{.getHostname()}}"
+                                        data-port="{{.getPort()}}">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </button>
 
@@ -146,9 +146,9 @@
                 </thead>
                 {{#extSensor}}
                 <tr>
-                    <td>{{.name}}</td>
-                    <td>{{.type}}</td>
-                    <td>{{.config}}</td>
+                    <td>{{.getName()}}</td>
+                    <td>{{.getType()}}</td>
+                    <td>{{.getConfig()}}</td>
                     <td>
                         <form method="POST">
                             <div class="btn-toolbar pull-right">

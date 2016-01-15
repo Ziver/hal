@@ -20,9 +20,9 @@
                 </thead>
                 {{#localEvents}}
                 <tr>
-                    <td>{{.name}}</td>
-                    <td>{{.type}}</td>
-                    <td>{{.config}}</td>
+                    <td>{{.getName()}}</td>
+                    <td>{{.getType()}}</td>
+                    <td>{{.getConfig()}}</td>
                     <td>
                         <form method="POST">
                             <input type="hidden" name="action" value="remove_local_event">
@@ -32,9 +32,9 @@
                                 <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
                                         data-target="#eventModal"
                                         data-id="{{.getId()}}"
-                                        data-name="{{.name}}"
-                                        data-type="{{.type}}"
-                                        data-config="{{.config}}">
+                                        data-name="{{.getName()}}"
+                                        data-type="{{.getType()}}"
+                                        data-config="{{.getConfig()}}">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </button>
 
@@ -63,8 +63,8 @@
                         <div class="btn-toolbar pull-right">
                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
                                     data-target="#eventModal"
-                                    data-type="{{.type}}"
-                                    data-config="{{.config}}">
+                                    data-type="{{.getClass().getName()}}"
+                                    data-config="{{.}}">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         </div>

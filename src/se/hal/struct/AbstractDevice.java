@@ -39,6 +39,7 @@ public abstract class AbstractDevice<T> extends DBBean {
 
                 Configurator<T> configurator = new Configurator<>(deviceData);
                 configurator.setValues(JSONParser.read(config));
+                configurator.applyConfiguration();
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "Unable to read device data", e);
             }

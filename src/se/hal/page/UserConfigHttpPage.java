@@ -1,15 +1,11 @@
 package se.hal.page;
 
-import se.hal.ControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalHttpPage;
-import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
-import zutil.ui.Configurator;
-import zutil.ui.Configurator.ConfigurationParam;
 
 import java.util.Map;
 
@@ -38,7 +34,7 @@ public class UserConfigHttpPage extends HalHttpPage {
             switch(request.get("action")) {
                 // Local User
                 case "modify_local_user":
-                    localUser.setUserName(request.get("username"));
+                    localUser.setUsername(request.get("username"));
                     localUser.setAddress(request.get("address"));
                     localUser.save(db);
                     break;

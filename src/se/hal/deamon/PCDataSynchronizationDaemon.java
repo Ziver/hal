@@ -75,7 +75,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                         logger.fine("Client requesting peer data");
                         PeerDataRspDTO rsp = new PeerDataRspDTO();
                         User localUser = User.getLocalUser(db);
-                        rsp.username = localUser.getUserName();
+                        rsp.username = localUser.getUsername();
                         rsp.address = localUser.getAddress();
 
                         rsp.sensors = new ArrayList<>();

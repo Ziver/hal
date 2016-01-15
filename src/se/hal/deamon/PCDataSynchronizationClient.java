@@ -8,7 +8,6 @@ import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -41,10 +40,10 @@ public class PCDataSynchronizationClient implements HalDaemon {
 			List<User> users = User.getExternalUsers(db);
 			for(User user : users){
 				if(user.getHostname() == null){
-					logger.fine("Hostname not defined for user: "+ user.getUserName());
+					logger.fine("Hostname not defined for user: "+ user.getUsername());
 					continue;
 				}
-				logger.fine("Synchronizing user: "+ user.getUserName() +" ("+user.getHostname()+":"+user.getPort()+")");
+				logger.fine("Synchronizing user: "+ user.getUsername() +" ("+user.getHostname()+":"+user.getPort()+")");
 				try (Socket s = new Socket(user.getHostname(), user.getPort());){
 					ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 					ObjectInputStream in = new ObjectInputStream(s.getInputStream());
@@ -52,7 +51,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
                     // Request peer data
                     out.writeObject(new PeerDataReqDTO());
                     PeerDataRspDTO peerData = (PeerDataRspDTO) in.readObject();
-                    user.setUserName(peerData.username);
+                    user.setUsername(peerData.username);
                     user.setAddress(peerData.address);
                     user.save(db);
 
@@ -92,7 +91,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
 								stmt.setFloat(6, data.confidence);
 								DBConnection.exec(stmt);
 							}
-							logger.fine("Stored " + dataList.size() + " entries for sensor " + sensor.getId() + " with offset "+ req.offsetSequenceId +" from " + user.getUserName());
+							logger.fine("Stored " + dataList.size() + " entries for sensor " + sensor.getId() + " with offset "+ req.offsetSequenceId +" from " + user.getUsername());
 						}
                         else
                             logger.fine("Skipped sensor " + sensor.getId());

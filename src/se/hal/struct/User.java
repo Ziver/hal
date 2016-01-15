@@ -39,10 +39,10 @@ public class User extends DBBean{
 	
 	
 	
-	public String getUserName() {
+	public String getUsername() {
 		return username;
 	}
-	public void setUserName(String name) {
+	public void setUsername(String name) {
 		this.username = name;
 	}
 	public String getAddress() {

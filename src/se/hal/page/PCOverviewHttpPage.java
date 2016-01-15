@@ -92,9 +92,9 @@ public class PCOverviewHttpPage extends HalHttpPage {
 	}
 
 	public static class PowerData{
-		long timestamp;
-		String data;
-		String username;
+		public long timestamp;
+		public String data;
+		public String username;
 		public PowerData(long time, String data, String uname) {
 			this.timestamp = time;
 			this.data = data;

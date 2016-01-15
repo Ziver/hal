@@ -89,7 +89,7 @@ public abstract class AbstractDevice<T> extends DBBean {
         return type;
     }
     public void setType(String type) {
-        if (!this.type.equals(type)) {
+        if (this.type == null || !this.type.equals(type)) {
             this.type = type;
             this.deviceData = null; // invalidate current sensor data object
         }

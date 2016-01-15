@@ -20,7 +20,7 @@ public abstract class AbstractDevice<T> extends DBBean {
     // Sensor specific data
     private String name;
     private String type;
-    private String config;
+    private String config; // only used to store the deviceData configuration in DB
 
     // Sensor specific data
     private transient T deviceData;
@@ -30,16 +30,23 @@ public abstract class AbstractDevice<T> extends DBBean {
     private User user;
 
 
-
+    public Configurator<T> getDeviceConfig() {
+        T obj = getDeviceData();
+        if (obj != null)
+            return new Configurator<>(obj);
+        return null;
+    }
     public T getDeviceData() {
-        if (config != null && deviceData == null) {
+        if (deviceData == null) {
             try {
                 Class c = Class.forName(type);
                 deviceData = (T) c.newInstance();
 
-                Configurator<T> configurator = new Configurator<>(deviceData);
-                configurator.setValues(JSONParser.read(config));
-                configurator.applyConfiguration();
+                if (config != null && !config.isEmpty()) {
+                    Configurator<T> configurator = getDeviceConfig();
+                    configurator.setValues(JSONParser.read(config));
+                    configurator.applyConfiguration();
+                }
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "Unable to read device data", e);
             }
@@ -48,27 +55,17 @@ public abstract class AbstractDevice<T> extends DBBean {
     }
     public void setDeviceData(T data) {
         this.deviceData = data;
-        updateConfig();
-    }
-
-    public String getConfig() {
-        return config;
-    }
-    public void setConfig(String config) {
-        if (this.config == null || !this.config.equals(config)) {
-            this.config = config;
-            this.deviceData = null; // invalidate current sensor data object
-        }
+        updateConfigString();
     }
     public void save(DBConnection db) throws SQLException {
         if (deviceData != null)
-            updateConfig();
+            updateConfigString();
         else
             this.config = null;
         super.save(db);
     }
-    protected void updateConfig() {
-        Configurator<T> configurator = new Configurator<>(deviceData);
+    protected void updateConfigString() {
+        Configurator<T> configurator = getDeviceConfig();
         this.config = JSONWriter.toString(configurator.getValuesAsNode());
     }
 

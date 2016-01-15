@@ -10,6 +10,7 @@ import zutil.db.SQLResultHandler;
 import zutil.log.LogUtil;
 import zutil.net.threaded.ThreadedTCPNetworkServer;
 import zutil.net.threaded.ThreadedTCPNetworkServerThread;
+import zutil.parser.json.JSONWriter;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -85,7 +86,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                                 dto.sensorId = sensor.getId();
                                 dto.name = sensor.getName();
                                 dto.type = sensor.getType();
-                                dto.config = sensor.getConfig();
+                                dto.config = JSONWriter.toString(sensor.getDeviceConfig().getValuesAsNode());
                                 rsp.sensors.add(dto);
                             }
                         }

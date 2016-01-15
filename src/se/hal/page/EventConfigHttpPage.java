@@ -2,6 +2,7 @@ package se.hal.page;
 
 import se.hal.ControllerManager;
 import se.hal.HalContext;
+import se.hal.intf.HalEventData;
 import se.hal.intf.HalHttpPage;
 import se.hal.struct.Event;
 import se.hal.struct.User;
@@ -52,22 +53,25 @@ public class EventConfigHttpPage extends HalHttpPage {
         if(request.containsKey("action")){
             int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
             Event event;
+            Configurator<HalEventData> configurator;
             switch(request.get("action")) {
                 // Local events
                 case "create_local_event":
                     event = new Event();
                     event.setName(request.get("name"));
                     event.setType(request.get("type"));
-                    //event.setConfig(request.get("config"));
                     event.setUser(localUser);
+                    configurator = event.getDeviceConfig();
+                    configurator.setValues(request);
+                    configurator.applyConfiguration();
                     event.save(db);
                 case "modify_local_event":
                     event = Event.getEvent(db, id);
                     if(event != null){
                         event.setName(request.get("name"));
                         event.setType(request.get("type"));
-                        //event.setConfig(request.get("config"));
                         event.setUser(localUser);
+                        event.getDeviceConfig().setValues(request).applyConfiguration();
                         event.save(db);
                     }
                     break;

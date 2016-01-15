@@ -3,6 +3,7 @@ package se.hal.page;
 import se.hal.ControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalHttpPage;
+import se.hal.intf.HalSensorData;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
@@ -53,6 +54,7 @@ public class SensorConfigHttpPage extends HalHttpPage {
             int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
             Sensor sensor;
             User user;
+            Configurator<HalSensorData> configurator;
             switch(request.get("action")) {
                 // Local Sensors
                 case "create_local_sensor":
@@ -60,8 +62,10 @@ public class SensorConfigHttpPage extends HalHttpPage {
                     sensor.setName(request.get("name"));
                     sensor.setType(request.get("type"));
                     sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
-                    //sensor.setConfig(request.get("config"));
                     sensor.setUser(localUser);
+                    configurator = sensor.getDeviceConfig();
+                    configurator.setValues(request);
+                    configurator.applyConfiguration();
                     sensor.save(db);
                 case "modify_local_sensor":
                     sensor = Sensor.getSensor(db, id);
@@ -69,7 +73,7 @@ public class SensorConfigHttpPage extends HalHttpPage {
                         sensor.setName(request.get("name"));
                         sensor.setType(request.get("type"));
                         sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
-                        //sensor.setConfig(request.get("config"));
+                        sensor.getDeviceConfig().setValues(request).applyConfiguration();
                         sensor.save(db);
                     }
                     break;

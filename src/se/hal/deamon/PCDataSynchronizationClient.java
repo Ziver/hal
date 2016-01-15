@@ -7,6 +7,7 @@ import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
+import zutil.parser.json.JSONParser;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -66,7 +67,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
                         sensor.setExternalId(sensorDTO.sensorId);
                         sensor.setName(sensorDTO.name);
                         sensor.setType(sensorDTO.type);
-                        sensor.setConfig(sensorDTO.config);
+                        sensor.getDeviceConfig().setValues(JSONParser.read(sensorDTO.config)).applyConfiguration();
 						sensor.setUser(user);
                         sensor.save(db);
                     }

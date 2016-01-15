@@ -42,7 +42,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 
     public void cleanupSensor(Sensor sensor) {
     	//if(sensor instanceof PowerConsumptionSensorData){
-    		logger.fine("The sensor is of type: " + sensor.getDeviceData().getClass().getName());
+    		//logger.fine("The sensor is of type: " + sensor.getDeviceData().getClass().getName()); // this will instantiate the external sensor data
     		if(sensor.getUser().isExternal()){
     			cleanupExternalSensorData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);
         		cleanupExternalSensorData(sensor.getId(), TimeUtility.DAY_IN_MS, TimeUtility.WEEK_IN_MS);
@@ -134,7 +134,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 					if(sensorId != result.getInt("sensor_id")){
 						throw new IllegalArgumentException("Found entry for aggregation for the wrong sensorId (expecting: "+sensorId+", but was: "+result.getInt("sensor_id")+")");
 					}
-                    logger.finer("Deleting sensor aggregate entry timestamp: "+ result.getLong("timestamp_start") +" - "+ result.getLong("timestamp_end") + " (" + TimeUtility.msToString(result.getLong("timestamp_end")-result.getLong("timestamp_start")) + ")");
+                    logger.finer("Deleting sensor(id: "+ sensorId +") aggregate entry timestamp: "+ result.getLong("timestamp_start") +" - "+ result.getLong("timestamp_end") + " (" + TimeUtility.msToString(result.getLong("timestamp_end")-result.getLong("timestamp_start")) + ")");
 					preparedDeleteStmt.setInt(1, result.getInt("sensor_id"));
 					preparedDeleteStmt.setLong(2, result.getLong("sequence_id"));
 					preparedDeleteStmt.addBatch();

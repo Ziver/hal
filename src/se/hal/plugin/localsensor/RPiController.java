@@ -1,6 +1,6 @@
 package se.hal.plugin.localsensor;
 
-import se.hal.intf.HalSensor;
+import se.hal.intf.HalSensorData;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorReportListener;
 
@@ -14,12 +14,12 @@ public class RPiController implements HalSensorController {
     }
 
     @Override
-    public void register(HalSensor sensor) {
+    public void register(HalSensorData sensor) {
 
     }
 
     @Override
-    public void deregister(HalSensor sensor) {
+    public void deregister(HalSensorData sensor) {
 
     }
 

@@ -1,13 +1,12 @@
 package se.hal.plugin.localsensor;
 
-import se.hal.intf.HalSensor;
 import se.hal.intf.HalSensorController;
-import se.hal.struct.PowerConsumptionSensor;
+import se.hal.struct.PowerConsumptionSensorData;
 
 /**
  * Created by ezivkoc on 2016-01-14.
  */
-public class RPiSensor implements PowerConsumptionSensor {
+public class RPiSensor implements PowerConsumptionSensorData {
 
     @Override
     public long getTimestamp() {

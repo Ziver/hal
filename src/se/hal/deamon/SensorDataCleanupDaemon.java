@@ -3,7 +3,6 @@ package se.hal.deamon;
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
-import se.hal.struct.PowerConsumptionSensor;
 import se.hal.util.TimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
@@ -42,7 +41,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
     }
 
     public void cleanupSensor(Sensor sensor) {
-    	//if(sensor instanceof PowerConsumptionSensor){
+    	//if(sensor instanceof PowerConsumptionSensorData){
     		logger.fine("The sensor is of type: " + sensor.getDeviceData().getClass().getName());
     		if(sensor.getUser().isExternal()){
     			cleanupExternalSensorData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);

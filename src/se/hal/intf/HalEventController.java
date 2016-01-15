@@ -10,18 +10,18 @@ public interface HalEventController {
     /**
      * Will register an event type to be handled by this controller
      */
-    public void register(HalEvent event);
+    public void register(HalEventData event);
 
     /**
      * Deregisters an event from this controller, the controller
      * will no longer handle that type of event
      */
-    public void deregister(HalEvent event);
+    public void deregister(HalEventData event);
 
     /**
      * @param   event  transmit this event if possible.
      */
-    public void send(HalEvent event); // TODO: where to put data?
+    public void send(HalEventData event); // TODO: where to put data?
 
     /**
      * @return the number of registered objects

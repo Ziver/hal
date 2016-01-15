@@ -30,7 +30,7 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     /** List of all registered sensors **/
     private ArrayList<Sensor> registeredSensors = new ArrayList<>();
     /** List of auto detected sensors **/
-    private ArrayList<HalSensor> detectedSensors = new ArrayList<>();
+    private ArrayList<HalSensorData> detectedSensors = new ArrayList<>();
 
 
     /** All available event plugins **/
@@ -38,7 +38,7 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     /** List of all registered events **/
     private ArrayList<Event> registeredEvents = new ArrayList<>();
     /** List of auto detected events **/
-    private ArrayList<HalEvent> detectedEvents = new ArrayList<>();
+    private ArrayList<HalEventData> detectedEvents = new ArrayList<>();
 
 
     /** A map of all instantiated controllers **/
@@ -87,12 +87,12 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
         return availableSensors;
     }
 
-    public List<HalSensor> getDetectedSensors(){
+    public List<HalSensorData> getDetectedSensors(){
         return detectedSensors;
     }
 
     @Override
-    public void reportReceived(HalSensor sensorData) {
+    public void reportReceived(HalSensorData sensorData) {
         try{
             DBConnection db = HalContext.getDB();
             Sensor sensor = null;
@@ -165,12 +165,12 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
         return availableEvents;
     }
 
-    public List<HalEvent> getDetectedEvents(){
+    public List<HalEventData> getDetectedEvents(){
         return detectedEvents;
     }
 
     @Override
-    public void reportReceived(HalEvent eventData) {
+    public void reportReceived(HalEventData eventData) {
         try {
             DBConnection db = HalContext.getDB();
             Event event = null;
@@ -259,12 +259,12 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
         Iterator<PluginData> it = pluginManager.iterator();
         while (it.hasNext()){
             PluginData plugin = it.next();
-            Iterator<Class<?>> pluginIt = plugin.getClassIterator(HalSensor.class);
+            Iterator<Class<?>> pluginIt = plugin.getClassIterator(HalSensorData.class);
             while (pluginIt.hasNext()){
                 manager.availableSensors.add(pluginIt.next());
             }
 
-            pluginIt = plugin.getClassIterator(HalEvent.class);
+            pluginIt = plugin.getClassIterator(HalEventData.class);
             while (pluginIt.hasNext()){
                 manager.availableEvents.add(pluginIt.next());
             }

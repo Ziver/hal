@@ -4,7 +4,7 @@ import se.hal.bot.AliceBot;
 import se.hal.intf.HalBot;
 import se.hal.intf.HalSpeachToText;
 import se.hal.intf.HalTextToSpeach;
-import se.hal.struct.SwitchEvent;
+import se.hal.struct.SwitchEventData;
 import se.hal.stt.ManualSTTClient;
 import se.hal.tts.MaryRemoteTTSClient;
 
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * Time: 10:59
  */
 public class HalSpeechClient {
-    private static HashMap<String, SwitchEvent> switches = new HashMap<String, SwitchEvent>();
+    private static HashMap<String, SwitchEventData> switches = new HashMap<String, SwitchEventData>();
 
 
     public static void main(String[] args){
@@ -53,22 +53,22 @@ public class HalSpeechClient {
 /*        NexaSelfLearning nexa1 = new NexaSelfLearning();
         nexa1.setHouse(15087918);
         nexa1.setUnit(0);
-        switches.put("livingroom", new SwitchEvent("livingroom", nexa1));
+        switches.put("livingroom", new SwitchEventData("livingroom", nexa1));
 
         NexaSelfLearning nexa2 = new NexaSelfLearning();
         nexa2.setHouse(15087918);
         nexa2.setUnit(1);
-        switches.put("bedroom", new SwitchEvent("bedroom", nexa2));
+        switches.put("bedroom", new SwitchEventData("bedroom", nexa2));
 
         NexaSelfLearning nexa3 = new NexaSelfLearning();
         nexa3.setHouse(15087918);
         nexa3.setUnit(3);
-        switches.put("kitchen", new SwitchEvent("kitchen", nexa3));
+        switches.put("kitchen", new SwitchEventData("kitchen", nexa3));
 
         TellstickSerialComm.getInstance().setListener(new TellstickChangeListener() {
             @Override
             public void stateChange(TellstickProtocol protocol) {
-                for(SwitchEvent s : switches.values()) {
+                for(SwitchEventData s : switches.values()) {
                     if(s.equals(protocol)) {
                         String response = s.getName()+" window is "+(((NexaSelfLearning)protocol).isEnabled() ? "open": "closed");
                         System.out.println(">>> " + response);
@@ -118,7 +118,7 @@ public class HalSpeechClient {
         if(m.find()){
             String name = m.group(1);
             if(name.equals("all")){
-                for(SwitchEvent s : switches.values())
+                for(SwitchEventData s : switches.values())
                     s.turnOn();
                 return "I've turned everything on for you";
             }
@@ -132,7 +132,7 @@ public class HalSpeechClient {
         if(m.find()){
             String name = m.group(1);
             if(name.equals("all")){
-                for(SwitchEvent s : switches.values())
+                for(SwitchEventData s : switches.values())
                     s.turnOff();
                 return "I turned everything off";
             }

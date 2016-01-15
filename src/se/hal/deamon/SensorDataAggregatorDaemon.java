@@ -3,8 +3,7 @@ package se.hal.deamon;
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
-import se.hal.intf.HalSensor.AggregationMethod;
-import se.hal.struct.PowerConsumptionSensor;
+import se.hal.intf.HalSensorData.AggregationMethod;
 import se.hal.util.TimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
@@ -43,7 +42,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     }
     
     public void aggregateSensor(Sensor sensor) {
-    	//if(sensor.getSensorData() instanceof PowerConsumptionSensor){
+    	//if(sensor.getSensorData() instanceof PowerConsumptionSensorData){
     		logger.fine("The sensor is of type: " + sensor.getDeviceData().getClass().getName());
     		logger.fine("aggregating raw data to five minute periods");
 			aggregateRawData(sensor, TimeUtility.FIVE_MINUTES_IN_MS, 5);

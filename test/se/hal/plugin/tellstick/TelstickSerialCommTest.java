@@ -1,7 +1,7 @@
 package se.hal.plugin.tellstick;
 
 import se.hal.HalContext;
-import se.hal.intf.HalSensor;
+import se.hal.intf.HalSensorData;
 import se.hal.intf.HalSensorReportListener;
 import se.hal.plugin.tellstick.protocols.Oregon0x1A2D;
 import zutil.db.DBConnection;
@@ -32,7 +32,7 @@ public class TelstickSerialCommTest {
             TellstickSerialComm comm = new TellstickSerialComm();
             comm.setListener(new HalSensorReportListener() {
                 @Override
-                public void reportReceived(HalSensor s) {
+                public void reportReceived(HalSensorData s) {
                     if(s instanceof Oregon0x1A2D){
                         logger.info("Power used: "+ ((Oregon0x1A2D)s).getTemperature() +" pulses");
                         try {

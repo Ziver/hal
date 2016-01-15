@@ -1,31 +1,22 @@
 package se.hal.struct;
 
 import se.hal.HalContext;
-import se.hal.intf.HalSensor;
+import se.hal.intf.HalSensorData;
 import se.hal.intf.HalSensorController;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
-import zutil.io.StringInputStream;
-import zutil.io.StringOutputStream;
 import zutil.log.LogUtil;
-import zutil.parser.json.JSONObjectInputStream;
-import zutil.parser.json.JSONObjectOutputStream;
-import zutil.parser.json.JSONParser;
-import zutil.parser.json.JSONWriter;
-import zutil.ui.Configurator;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 @DBBean.DBTable(value="sensor", superBean=true)
-public class Sensor extends AbstractDevice<HalSensor>{
+public class Sensor extends AbstractDevice<HalSensorData>{
     private static final Logger logger = LogUtil.getLogger();
 
 	private long external_id = -1;
@@ -88,7 +79,7 @@ public class Sensor extends AbstractDevice<HalSensor>{
     }
 
 
-    public HalSensor.AggregationMethod getAggregationMethod(){
+    public HalSensorData.AggregationMethod getAggregationMethod(){
         return getDeviceData().getAggregationMethod();
     }
 

@@ -23,13 +23,13 @@
 package se.hal.plugin.tellstick.protocols;
 
 import se.hal.plugin.tellstick.TellstickProtocol;
-import se.hal.struct.SwitchEvent;
+import se.hal.struct.SwitchEventData;
 import zutil.ui.Configurator;
 
 /**
  * Created by Ziver on 2015-02-18.
  */
-public class NexaSelfLearning extends TellstickProtocol implements SwitchEvent {
+public class NexaSelfLearning extends TellstickProtocol implements SwitchEventData {
 
     @Configurator.Configurable("House code")
     private int house = 0;

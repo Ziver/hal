@@ -10,13 +10,13 @@ public interface HalSensorController {
     /**
      * Will register a sensor type to be handled by this controller
      */
-    void register(HalSensor sensor);
+    void register(HalSensorData sensor);
 
     /**
      * Deregisters a sensor from this controller, the controller
      * will no longer handle that type of sensor
      */
-    void deregister(HalSensor sensor);
+    void deregister(HalSensorData sensor);
 
     /**
      * @return the number of registered objects

@@ -22,11 +22,15 @@
 
 package se.hal.struct;
 
-import se.hal.intf.HalEvent;
+import se.hal.intf.HalEventData;
 
 /**
  * Created by Ziver on 2015-05-07.
  */
-public abstract class DimmerEvent implements HalEvent {
+public interface SwitchEventData extends HalEventData {
 
+    boolean isOn();
+
+    void turnOn();
+    void turnOff();
 }

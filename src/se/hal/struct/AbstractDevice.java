@@ -1,7 +1,5 @@
 package se.hal.struct;
 
-import se.hal.intf.HalSensor;
-import se.hal.intf.HalSensorController;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.log.LogUtil;

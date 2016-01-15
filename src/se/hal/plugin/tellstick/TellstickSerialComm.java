@@ -122,10 +122,10 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
                                 protocol.setTimestamp(System.currentTimeMillis());
                             set.add(data);
 
-                            if (sensorListener != null && protocol instanceof HalSensor)
-                                sensorListener.reportReceived((HalSensor) protocol);
-                            else if (eventListener != null && protocol instanceof HalEvent)
-                                eventListener.reportReceived((HalEvent) protocol);
+                            if (sensorListener != null && protocol instanceof HalSensorData)
+                                sensorListener.reportReceived((HalSensorData) protocol);
+                            else if (eventListener != null && protocol instanceof HalEventData)
+                                eventListener.reportReceived((HalEventData) protocol);
                         }
                     }
                 }
@@ -157,7 +157,7 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
 
 
     @Override
-    public void send(HalEvent event) {
+    public void send(HalEventData event) {
         if(event instanceof TellstickProtocol)
             write((TellstickProtocol) event);
     }
@@ -182,14 +182,14 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
 
 
     @Override
-    public void register(HalEvent event) {++registeredObjects;}
+    public void register(HalEventData event) {++registeredObjects;}
     @Override
-    public void register(HalSensor sensor) {++registeredObjects;}
+    public void register(HalSensorData sensor) {++registeredObjects;}
 
     @Override
-    public void deregister(HalSensor sensor) {--registeredObjects;}
+    public void deregister(HalSensorData sensor) {--registeredObjects;}
     @Override
-    public void deregister(HalEvent event) {--registeredObjects;}
+    public void deregister(HalEventData event) {--registeredObjects;}
 
     @Override
     public int size() {

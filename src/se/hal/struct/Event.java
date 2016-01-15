@@ -1,32 +1,22 @@
 package se.hal.struct;
 
-import se.hal.intf.HalEvent;
+import se.hal.intf.HalEventData;
 import se.hal.intf.HalEventController;
-import se.hal.intf.HalSensor;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
-import zutil.io.StringInputStream;
-import zutil.io.StringOutputStream;
 import zutil.log.LogUtil;
-import zutil.parser.json.JSONObjectInputStream;
-import zutil.parser.json.JSONObjectOutputStream;
-import zutil.parser.json.JSONParser;
-import zutil.parser.json.JSONWriter;
-import zutil.ui.Configurator;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Created by Ziver on 2015-12-15.
  */
 @DBBean.DBTable("event")
-public class Event extends AbstractDevice<HalEvent>{
+public class Event extends AbstractDevice<HalEventData>{
     private static final Logger logger = LogUtil.getLogger();
 
 

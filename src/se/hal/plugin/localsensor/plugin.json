@@ -2,6 +2,6 @@
 	"version": 1.0,
 	"name": "RPiImpulsCountSensor",
 	"interfaces": [
-		{"se.hal.intf.HalSensor": "se.hal.plugin.localsensor.RPiSensor"}
+		{"se.hal.intf.HalSensorData": "se.hal.plugin.localsensor.RPiSensor"}
 	]
 }

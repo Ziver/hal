@@ -1,13 +1,13 @@
 package se.hal.plugin.tellstick.protocols;
 
 import se.hal.plugin.tellstick.TellstickProtocol;
-import se.hal.struct.PowerConsumptionSensor;
+import se.hal.struct.PowerConsumptionSensorData;
 import zutil.ui.Configurator;
 
 /**
  * Created by Ziver on 2015-11-19.
  */
-public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionSensor {
+public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionSensorData {
 
     @Configurator.Configurable("Address")
     private int address = 0;

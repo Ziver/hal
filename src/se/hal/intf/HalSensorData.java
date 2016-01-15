@@ -3,7 +3,7 @@ package se.hal.intf;
 /**
  * Created by Ziver on 2015-12-23.
  */
-public interface HalSensor {
+public interface HalSensorData {
     enum AggregationMethod{
         SUM,
         AVERAGE

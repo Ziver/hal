@@ -43,7 +43,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 
     public void cleanupSensor(Sensor sensor) {
     	//if(sensor instanceof PowerConsumptionSensor){
-    		logger.fine("The sensor is of type: " + sensor.getSensorData().getClass().getName());
+    		logger.fine("The sensor is of type: " + sensor.getDeviceData().getClass().getName());
     		if(sensor.getUser().isExternal()){
     			cleanupExternalSensorData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);
         		cleanupExternalSensorData(sensor.getId(), TimeUtility.DAY_IN_MS, TimeUtility.WEEK_IN_MS);

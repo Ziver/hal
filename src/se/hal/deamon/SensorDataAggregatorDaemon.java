@@ -44,7 +44,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     
     public void aggregateSensor(Sensor sensor) {
     	//if(sensor.getSensorData() instanceof PowerConsumptionSensor){
-    		logger.fine("The sensor is of type: " + sensor.getSensorData().getClass().getName());
+    		logger.fine("The sensor is of type: " + sensor.getDeviceData().getClass().getName());
     		logger.fine("aggregating raw data to five minute periods");
 			aggregateRawData(sensor, TimeUtility.FIVE_MINUTES_IN_MS, 5);
 			logger.fine("aggregating five minute periods into hour periods");

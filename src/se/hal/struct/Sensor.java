@@ -24,20 +24,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-@DBBean.DBTable("sensor")
-public class Sensor extends DBBean{
+@DBBean.DBTable(value="sensor", superBean=true)
+public class Sensor extends AbstractDevice<HalSensor>{
     private static final Logger logger = LogUtil.getLogger();
 
-    // Sensor specific data
-	private String name;
-	private String type;
-	private String config;
-    // Sensor specific data
-    private transient HalSensor sensorData;
-
-	// User configuration
-    @DBColumn("user_id")
-	private User user;
 	private long external_id = -1;
     /** local sensor= if sensor should be public. external sensor= if sensor should be requested from host **/
     private boolean sync = false;
@@ -83,68 +73,7 @@ public class Sensor extends DBBean{
    }
 
 
-	public void setSensorData(HalSensor sensorData){
-		this.sensorData = sensorData;
-        updateConfig();
-	}
-    public HalSensor getSensorData(){
-        if(config !=null && sensorData == null) {
-            try {
-                Class c = Class.forName(type);
-                sensorData = (HalSensor) c.newInstance();
 
-                Configurator<HalSensor> configurator = new Configurator<>(sensorData);
-                configurator.setValues(JSONParser.read(config));
-            } catch (Exception e){
-                logger.log(Level.SEVERE, "Unable to read sensor data", e);
-            }
-        }
-        return sensorData;
-    }
-    public void save(DBConnection db) throws SQLException {
-        if(sensorData != null)
-            updateConfig();
-        else
-            this.config = null;
-        super.save(db);
-    }
-    private void updateConfig(){
-        Configurator<HalSensor> configurator = new Configurator<>(sensorData);
-        this.config = JSONWriter.toString(configurator.getValuesAsNode());
-    }
-
-	
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		if( !this.type.equals(type)) {
-			this.type = type;
-			this.sensorData = null; // invalidate current sensor data object
-		}
-	}
-	public String getConfig() {
-		return config;
-	}
-	public void setConfig(String config) {
-        if(this.config == null || !this.config.equals(config)) {
-            this.config = config;
-            this.sensorData = null; // invalidate current sensor data object
-        }
-	}
-
-	public User getUser() {
-		return user;
-	}
-	public void setUser(User user) {
-		this.user = user;
-	}
 	public long getExternalId() {
 		return external_id;
 	}
@@ -160,11 +89,11 @@ public class Sensor extends DBBean{
 
 
     public HalSensor.AggregationMethod getAggregationMethod(){
-        return getSensorData().getAggregationMethod();
+        return getDeviceData().getAggregationMethod();
     }
 
 	public Class<? extends HalSensorController> getController(){
-		return getSensorData().getSensorController();
+		return getDeviceData().getSensorController();
 	}
 
 }

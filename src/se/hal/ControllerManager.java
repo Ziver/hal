@@ -49,35 +49,35 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     /////////////////////////////// SENSORS ///////////////////////////////////
 
     public void register(Sensor sensor) throws IllegalAccessException, InstantiationException {
-        if(sensor.getSensorData() == null) {
+        if(sensor.getDeviceData() == null) {
             logger.warning("Sensor data is null: "+ sensor);
             return;
         }
-        if(!availableSensors.contains(sensor.getSensorData().getClass())) {
-            logger.warning("Sensor data plugin not available: "+ sensor.getSensorData().getClass());
+        if(!availableSensors.contains(sensor.getDeviceData().getClass())) {
+            logger.warning("Sensor data plugin not available: "+ sensor.getDeviceData().getClass());
             return;
         }
 
-        logger.info("Registering new sensor(id: "+ sensor.getId() +"): "+ sensor.getSensorData().getClass());
+        logger.info("Registering new sensor(id: "+ sensor.getId() +"): "+ sensor.getDeviceData().getClass());
         Class<? extends HalSensorController> c = sensor.getController();
         HalSensorController controller = getControllerInstance(c);
 
         if(controller != null)
-            controller.register(sensor.getSensorData());
+            controller.register(sensor.getDeviceData());
         registeredSensors.add(sensor);
     }
 
     public void deregister(Sensor sensor){
-        if(sensor.getSensorData() == null) {
+        if(sensor.getDeviceData() == null) {
             logger.warning("Sensor data is null: "+ sensor);
             return;
         }
 
-        logger.info("Deregistering sensor(id: "+ sensor.getId() +"): "+ sensor.getSensorData().getClass());
+        logger.info("Deregistering sensor(id: "+ sensor.getId() +"): "+ sensor.getDeviceData().getClass());
         Class<? extends HalSensorController> c = sensor.getController();
         HalSensorController controller = (HalSensorController) controllerMap.get(c);;
         if (controller != null) {
-            controller.deregister(sensor.getSensorData());
+            controller.deregister(sensor.getDeviceData());
             registeredSensors.remove(sensor);
             removeControllerIfEmpty(controller);
         }
@@ -97,9 +97,9 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
             DBConnection db = HalContext.getDB();
             Sensor sensor = null;
             for (Sensor s : registeredSensors) {
-                if (sensorData.equals(s.getSensorData())) {
+                if (sensorData.equals(s.getDeviceData())) {
                     sensor = s;
-                    sensor.setSensorData(sensorData); // Set the latest data
+                    sensor.setDeviceData(sensorData); // Set the latest data
                     break;
                 }
             }
@@ -127,35 +127,35 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     //////////////////////////////// EVENTS ///////////////////////////////////
 
     public void register(Event event) throws IllegalAccessException, InstantiationException {
-        if(event.getEventData() == null) {
+        if(event.getDeviceData() == null) {
             logger.warning("Sensor data is null: "+ event);
             return;
         }
-        if(!availableEvents.contains(event.getEventData().getClass())) {
-            logger.warning("Sensor data plugin not available: "+ event.getEventData().getClass());
+        if(!availableEvents.contains(event.getDeviceData().getClass())) {
+            logger.warning("Sensor data plugin not available: "+ event.getDeviceData().getClass());
             return;
         }
 
-        logger.info("Registering new event(id: "+ event.getId() +"): "+ event.getEventData().getClass());
+        logger.info("Registering new event(id: "+ event.getId() +"): "+ event.getDeviceData().getClass());
         Class<? extends HalEventController> c = event.getController();
         HalEventController controller = getControllerInstance(c);
 
         if(controller != null)
-            controller.register(event.getEventData());
+            controller.register(event.getDeviceData());
         registeredEvents.add(event);
     }
 
     public void deregister(Event event){
-        if(event.getEventData() == null) {
+        if(event.getDeviceData() == null) {
             logger.warning("Sensor data is null: "+ event);
             return;
         }
 
-        logger.info("Deregistering event(id: "+ event.getId() +"): "+ event.getEventData().getClass());
+        logger.info("Deregistering event(id: "+ event.getId() +"): "+ event.getDeviceData().getClass());
         Class<? extends HalEventController> c = event.getController();
         HalEventController controller = (HalEventController) controllerMap.get(c);
         if (controller != null) {
-            controller.deregister(event.getEventData());
+            controller.deregister(event.getDeviceData());
             registeredEvents.remove(event);
             removeControllerIfEmpty(controller);
         }
@@ -175,9 +175,9 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
             DBConnection db = HalContext.getDB();
             Event event = null;
             for (Event e : registeredEvents) {
-                if (eventData.equals(e.getEventData())) {
+                if (eventData.equals(e.getDeviceData())) {
                     event = e;
-                    event.setEventData(eventData); // Set the latest data
+                    event.setDeviceData(eventData); // Set the latest data
                     break;
                 }
             }

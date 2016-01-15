@@ -4,6 +4,7 @@ import com.pi4j.io.gpio.*;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import zutil.db.DBConnection;
+import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
 
 import java.sql.SQLException;
@@ -33,6 +34,14 @@ public class RPiImpulseCountSensor implements Runnable {
      */
     public RPiImpulseCountSensor(int sensorId, Pin pin) throws Exception{
         
+        // init logging
+        CompactLogFormatter formatter = new CompactLogFormatter();
+        LogUtil.setLevel("se.hal", Level.FINEST);
+        LogUtil.setFormatter("se.hal", formatter);
+        LogUtil.setLevel("zutil", Level.FINEST);
+        LogUtil.setFormatter("zutil", formatter);
+        LogUtil.setGlobalFormatter(formatter);
+
     	this.sensorId = sensorId;
     	
         // create gpio controller

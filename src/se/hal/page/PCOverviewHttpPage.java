@@ -53,14 +53,16 @@ public class PCOverviewHttpPage extends HalHttpPage {
 								+ TimeUtility.FIVE_MINUTES_IN_MS + " as period_length"
 								+ " FROM sensor_data_aggr, user, sensor"
 								+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
-								+ " AND sensor.id = " + sensor.getId()
+								+ " AND sensor.id = ?"
 								+ " AND user.id = sensor.user_id"
-								+ " AND user.id = " + user.getId()
+								+ " AND user.id = ?"
 								+ " AND timestamp_end-timestamp_start == ?"
 								+ " AND timestamp_start > ?"
 								+ " ORDER BY timestamp_start ASC");
-				stmt.setLong(1, TimeUtility.FIVE_MINUTES_IN_MS-1);
-				stmt.setLong(2, (System.currentTimeMillis() - TimeUtility.DAY_IN_MS) );
+				stmt.setLong(1, sensor.getId());
+				stmt.setLong(2, user.getId());
+				stmt.setLong(3, TimeUtility.FIVE_MINUTES_IN_MS-1);
+				stmt.setLong(4, (System.currentTimeMillis() - TimeUtility.DAY_IN_MS) );
 				ArrayList<PowerData> userPowerData = DBConnection.exec(stmt , new SQLPowerDataBuilder());
 				minDataList.addAll(userPowerData);
 
@@ -73,14 +75,16 @@ public class PCOverviewHttpPage extends HalHttpPage {
 								+ TimeUtility.HOUR_IN_MS + " as period_length"
 								+ " FROM sensor_data_aggr, user, sensor"
 								+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
-								+ " AND sensor.id = " + sensor.getId()
+								+ " AND sensor.id = ?"
 								+ " AND user.id = sensor.user_id"
-								+ " AND user.id = " + user.getId()
+								+ " AND user.id = ?"
 								+ " AND timestamp_end-timestamp_start == ?"
 								+ " AND timestamp_start > ?"
 								+ " ORDER BY timestamp_start ASC");
-				stmt.setLong(1, TimeUtility.HOUR_IN_MS-1);
-				stmt.setLong(2, (System.currentTimeMillis() - TimeUtility.WEEK_IN_MS) );
+				stmt.setLong(1, sensor.getId());
+				stmt.setLong(2, user.getId());
+				stmt.setLong(3, TimeUtility.HOUR_IN_MS-1);
+				stmt.setLong(4, (System.currentTimeMillis() - TimeUtility.WEEK_IN_MS) );
 				userPowerData = DBConnection.exec(stmt, new SQLPowerDataBuilder());
 				hourDataList.addAll(userPowerData);
 
@@ -93,12 +97,14 @@ public class PCOverviewHttpPage extends HalHttpPage {
 								+ TimeUtility.DAY_IN_MS + " as period_length"
 								+ " FROM sensor_data_aggr, user, sensor"
 								+ " WHERE sensor.id = sensor_data_aggr.sensor_id"
-								+ " AND sensor.id = " + sensor.getId()
+								+ " AND sensor.id = ?"
 								+ " AND user.id = sensor.user_id"
-								+ " AND user.id = " + user.getId()
+								+ " AND user.id = ?"
 								+ " AND timestamp_end-timestamp_start == ?"
 								+ " ORDER BY timestamp_start ASC");
-				stmt.setLong(1, TimeUtility.DAY_IN_MS-1);
+				stmt.setLong(1, sensor.getId());
+				stmt.setLong(2, user.getId());
+				stmt.setLong(3, TimeUtility.DAY_IN_MS-1);
 				userPowerData = DBConnection.exec(stmt, new SQLPowerDataBuilder());
 				dayDataList.addAll(userPowerData);
 			}
@@ -109,10 +115,11 @@ public class PCOverviewHttpPage extends HalHttpPage {
 		tmpl.set("minData", minDataList);
 		tmpl.set("hourData", hourDataList);
 		tmpl.set("dayData", dayDataList);
-		tmpl.set("username", new String[]{"Ziver", "Daniel"});
+		tmpl.set("username", User.getUsers(db));
 
 		return tmpl;
 	}
+
 
 	public static class PowerData{
 		public long timestamp;

@@ -45,7 +45,7 @@
 				]
 		);
 	});
-    var userArray = [ {{#username}} "{{.}}", {{/username}} ];
+    var userArray = [ {{#username}} "{{.getUsername()}}", {{/username}} ];
     function chartData(elementId, data){
         Morris.Line({
               element: elementId,

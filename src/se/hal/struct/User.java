@@ -33,14 +33,16 @@ public class User extends DBBean{
 		return DBConnection.exec(stmt, DBBeanSQLResultHandler.create(User.class, db) );
 	}
 
+	public static List<User> getUsers(DBConnection db) throws SQLException{
+		PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM user" );
+		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(User.class, db) );
+	}
+
 	public static User getUser(DBConnection db, int id) throws SQLException {
 		return DBBean.load(db, User.class, id);
 	}
 	
-	public static List<User> getAllUsers(DBConnection db) throws SQLException{
-		PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM user" );
-		return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(User.class, db) );
-	}	
+
 	
 	public String getUsername() {
 		return username;

@@ -35,7 +35,7 @@ public class PCOverviewHttpPage extends HalHttpPage {
 
 		DBConnection db = HalContext.getDB();
 
-		List<User> users = User.getAllUsers(db);
+		List<User> users = User.getUsers(db);
 
 		ArrayList<PowerData> minDataList = new ArrayList<PowerData>();
 		ArrayList<PowerData> hourDataList = new ArrayList<PowerData>();

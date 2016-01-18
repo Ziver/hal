@@ -49,6 +49,15 @@ public class PCDataSynchronizationClient implements HalDaemon {
 					ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 					ObjectInputStream in = new ObjectInputStream(s.getInputStream());
 
+					// Check server protocol version
+                    int version = in.readInt();
+                    if(version != PCDataSynchronizationDaemon.PROTOCOL_VERSION){
+                        logger.warning("Protocol version do not match, skipping user. " +
+                                "(local v"+PCDataSynchronizationDaemon.PROTOCOL_VERSION+" != remote v"+version+")");
+                        out.writeObject(null); // Tell server we are disconnecting
+                        continue;
+                    }
+
                     // Request peer data
                     out.writeObject(new PeerDataReqDTO());
                     PeerDataRspDTO peerData = (PeerDataRspDTO) in.readObject();
@@ -98,10 +107,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
                             logger.fine("Skipped sensor " + sensor.getId());
 					}
 					out.writeObject(null); // Tell server we are disconnecting
-					out.close();
-					in.close();
-					s.close();
-					
+
 				} catch (NoRouteToHostException|UnknownHostException|ConnectException e) {
 					logger.warning("Unable to connect to "+ user.getHostname()+":"+user.getPort() +", "+ e.getMessage());
 				} catch (Exception e) {

@@ -86,7 +86,7 @@ public class EventConfigHttpPage extends HalHttpPage {
         // Output
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("user", localUser);
-        tmpl.set("localEvent", Event.getLocalEvents(db));
+        tmpl.set("localEvents", Event.getLocalEvents(db));
         tmpl.set("localEventConf", eventConfigurations);
         tmpl.set("detectedEvents", ControllerManager.getInstance().getDetectedEvents());
 

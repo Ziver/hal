@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 /**
  * Created by Ziver on 2015-12-15.
  */
-@DBBean.DBTable("event")
+@DBBean.DBTable(value="event", superBean=true)
 public class Event extends AbstractDevice<HalEventData>{
     private static final Logger logger = LogUtil.getLogger();
 

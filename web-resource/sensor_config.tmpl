@@ -24,7 +24,7 @@
                     <td>{{.getName()}}</td>
                     <td>{{.getType()}}</td>
                     <td>{{.isSynced()}}</td>
-                    <td>{{.getDeviceConfig()}}</td>
+                    <td>{{.getDeviceData()}}</td>
                     <td>
                         <form method="POST">
                             <input type="hidden" name="action" value="remove_local_sensor">
@@ -37,7 +37,10 @@
                                         data-name="{{.getName()}}"
                                         data-type="{{.getType()}}"
                                         data-sync="{{.isSynced()}}"
-                                        data-config="{{.getConfig()}}">
+                                        {{#.getDeviceConfig().getConfiguration()}}
+                                        data-{{.getName()}}="{{.getString()}}"
+                                        {{/.getDeviceConfig().getConfiguration()}}
+                                        >
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </button>
 
@@ -67,7 +70,10 @@
                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
                                     data-target="#sensorModal"
                                     data-type="{{.getClass().getName()}"
-                                    data-config="{{.}}">
+                                    {{#.getDeviceConfig().getConfiguration()}}
+                                    data-{{.getName()}}="{{.getString()}}"
+                                    {{/.getDeviceConfig().getConfiguration()}}
+                                    >
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         </div>
@@ -148,7 +154,7 @@
                 <tr>
                     <td>{{.getName()}}</td>
                     <td>{{.getType()}}</td>
-                    <td>{{.getDeviceConfig()}}</td>
+                    <td>{{.getDeviceData()}}</td>
                     <td>
                         <form method="POST">
                             <div class="btn-toolbar pull-right">
@@ -196,20 +202,23 @@
             var modal = $(this);
             modal.find("input[type=text]").val(""); // Reset all inputs
             if(button.data("id") >= 0){ // edit
-                modal.find("input[name=action]").val("modify_local_sensor");
-                modal.find("input[name=id]").val(button.data("id"));
-                modal.find("input[name=name]").val(button.data("name"));
                 modal.find("select[name=type]").val(button.data("type"));
+                modal.find("select[name=type]").change(); // Update dynamic inputs
+                $.each(button.attr(), function(name, value) {
+                    if(name.startsWith("data-")) {
+                        name = name.substring(5);
+                        console.log(name, value);
+                        modal.find("input[name="+name+"]").val(value);
+                    }
+                });
+                modal.find("input[name=action]").val("modify_local_sensor");
                 modal.find("input[name=sync]").prop("checked", button.data("sync"));
-                modal.find("input[name=config]").val(button.data("config"));
             }
             else{ // create
                 modal.find("input[name=action]").val("create_local_sensor");
                 modal.find("input[name=id]").val(-1);
                 modal.find("input[name=sync]").prop("checked", "false");
             }
-            // Update dynamic inputs
-            modal.find("select[name=type]").change();
         });
 
 

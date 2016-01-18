@@ -55,6 +55,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
                         logger.warning("Protocol version do not match, skipping user. " +
                                 "(local v"+PCDataSynchronizationDaemon.PROTOCOL_VERSION+" != remote v"+version+")");
                         out.writeObject(null); // Tell server we are disconnecting
+                        out.flush();
                         continue;
                     }
 

@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 
 public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
-    public static final int PROTOCOL_VERSION = 2;
+    public static final int PROTOCOL_VERSION = 3;
 
 
 	public PCDataSynchronizationDaemon() {
@@ -73,6 +73,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
 			try {
 				Object obj = null;
                 out.writeInt(PROTOCOL_VERSION); // send our protocol version to client
+                out.flush();
 				while((obj = in.readObject()) != null){
                     if(obj instanceof PeerDataReqDTO){
                         logger.fine("Client requesting peer data");

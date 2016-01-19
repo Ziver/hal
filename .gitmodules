@@ -1,0 +1,3 @@
+[submodule "arduino/lib/NexaControl"]
+	path = arduino/lib/NexaControl
+	url = https://github.com/dcollin/NexaControl.git

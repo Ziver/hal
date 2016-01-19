@@ -1,0 +1,8 @@
+{
+	"version": 1.1,
+	"name": "Raspberry Pi Sensors",
+	"interfaces": [
+		{"se.hal.intf.HalSensorData": "se.hal.plugin.raspberry.RPiPowerConsumptionSensor"},
+		{"se.hal.intf.HalSensorData": "se.hal.plugin.raspberry.RPiTemperatureSensor"}
+	]
+}

@@ -24,16 +24,6 @@
 	
 	<!-- ________________________ PUBLIC TARGETS ________________________ -->
 	
-
-	<target name="run-local-sensor" depends="">
-		<java fork="true" failonerror="true" classname="se.hal.plugin.localsensor.RPiImpulseCountSensor">
-			<classpath>
-				<pathelement path="${buildDir}/hal.jar"/>	<!--wildcard may not be platform independent, ok?-->
-				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
-			</classpath>
-		</java>
-	</target>
-	
 	<target name="run-remote-sensor" depends="">
 		<java fork="true" failonerror="true" classname="se.hal.plugin.tellstick.TelstickSerialCommTest">
 			<classpath>
@@ -85,6 +75,5 @@
 		<mkdir dir="${buildDir}" />
 		<get src="http://repo.koc.se/zutil-java.git/blob/master/Zutil.jar" dest="${libDir}" verbose="true" usetimestamp="true"/>
 	</target>
-	
-	
+		
 </project>

@@ -7,38 +7,44 @@ import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginData;
 import zutil.plugin.PluginManager;
+import zutil.ui.Configurator;
+import zutil.ui.Configurator.*;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * This class manages all SensorController and EventController objects
  */
-public class ControllerManager implements HalSensorReportListener, HalEventReportListener {
+public class ControllerManager implements HalSensorReportListener,
+        HalEventReportListener,
+        PreConfigurationActionListener,
+        PostConfigurationActionListener {
     private static final Logger logger = LogUtil.getLogger();
     private static ControllerManager instance;
 
 
     /** All available sensor plugins **/
-    private ArrayList<Class<?>> availableSensors = new ArrayList<>();
+    private List<Class<?>> availableSensors = new ArrayList<>();
     /** List of all registered sensors **/
-    private ArrayList<Sensor> registeredSensors = new ArrayList<>();
+    private List<Sensor> registeredSensors = new ArrayList<>();
     /** List of auto detected sensors **/
-    private ArrayList<HalSensorData> detectedSensors = new ArrayList<>();
+    private List<HalSensorData> detectedSensors = new ArrayList<>();
+    /** List of sensors that are currently being reconfigured **/
+    private List<Sensor> limboSensors = new LinkedList<>();
 
 
     /** All available event plugins **/
-    private ArrayList<Class<?>> availableEvents = new ArrayList<>();
+    private List<Class<?>> availableEvents = new ArrayList<>();
     /** List of all registered events **/
-    private ArrayList<Event> registeredEvents = new ArrayList<>();
+    private List<Event> registeredEvents = new ArrayList<>();
     /** List of auto detected events **/
-    private ArrayList<HalEventData> detectedEvents = new ArrayList<>();
+    private List<HalEventData> detectedEvents = new ArrayList<>();
+    /** List of all registered events **/
+    private List<Event> limboEvents = new LinkedList<>();
 
 
     /** A map of all instantiated controllers **/
@@ -48,7 +54,7 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
 
     /////////////////////////////// SENSORS ///////////////////////////////////
 
-    public void register(Sensor sensor) throws IllegalAccessException, InstantiationException {
+    public void register(Sensor sensor) {
         if(sensor.getDeviceData() == null) {
             logger.warning("Sensor data is null: "+ sensor);
             return;
@@ -95,16 +101,11 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     public void reportReceived(HalSensorData sensorData) {
         try{
             DBConnection db = HalContext.getDB();
-            Sensor sensor = null;
-            for (Sensor s : registeredSensors) {
-                if (sensorData.equals(s.getDeviceData())) {
-                    sensor = s;
-                    sensor.setDeviceData(sensorData); // Set the latest data
-                    break;
-                }
-            }
+            Sensor sensor = findSensor(sensorData, registeredSensors);
 
             if (sensor != null) {
+                sensor.setDeviceData(sensorData); // Set the latest data
+
                 PreparedStatement stmt =
                         db.getPreparedStatement("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUES(?, ?, ?)");
                 stmt.setLong(1, sensorData.getTimestamp());
@@ -124,9 +125,18 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
         }
     }
 
+    private static Sensor findSensor(HalSensorData sensorData, List<Sensor> list){
+        for (Sensor s : list) {
+            if (sensorData.equals(s.getDeviceData())) {
+                return s;
+            }
+        }
+        return null;
+    }
+
     //////////////////////////////// EVENTS ///////////////////////////////////
 
-    public void register(Event event) throws IllegalAccessException, InstantiationException {
+    public void register(Event event) {
         if(event.getDeviceData() == null) {
             logger.warning("Sensor data is null: "+ event);
             return;
@@ -173,16 +183,11 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
     public void reportReceived(HalEventData eventData) {
         try {
             DBConnection db = HalContext.getDB();
-            Event event = null;
-            for (Event e : registeredEvents) {
-                if (eventData.equals(e.getDeviceData())) {
-                    event = e;
-                    event.setDeviceData(eventData); // Set the latest data
-                    break;
-                }
-            }
+            Event event = findRegisteredEvent(eventData, registeredEvents);
 
             if (event != null) {
+                event.setDeviceData(eventData); // Set the latest data
+
                 PreparedStatement stmt =
                         db.getPreparedStatement("INSERT INTO event_data_raw (timestamp, event_id, data) VALUES(?, ?, ?)");
                 stmt.setLong(1, eventData.getTimestamp());
@@ -202,7 +207,51 @@ public class ControllerManager implements HalSensorReportListener, HalEventRepor
         }
     }
 
+    private static Event findRegisteredEvent(HalEventData eventData, List<Event> list){
+        for (Event e : list) {
+            if (eventData.equals(e.getDeviceData())) {
+                return e;
+            }
+        }
+        return null;
+    }
+
     /////////////////////////////// GENERAL ///////////////////////////////////
+    @Override
+    public void postConfigurationAction(Configurator configurator, Object obj) {
+        if(obj instanceof HalSensorData) {
+            Sensor sensor = findSensor((HalSensorData) obj, registeredSensors);
+            if(sensor != null){
+                deregister(sensor);
+                limboSensors.add(sensor);
+            }
+        }
+        else if(obj instanceof HalEventController) {
+            Event event = findRegisteredEvent((HalEventData) obj, registeredEvents);
+            if(event != null){
+                deregister(event);
+                limboEvents.add(event);
+            }
+        }
+    }
+
+    @Override
+    public void preConfigurationAction(Configurator configurator, Object obj) {
+        if(obj instanceof HalSensorController) {
+            Sensor sensor = findSensor((HalSensorData) obj, limboSensors);
+            if(sensor != null){
+                register(sensor);
+                limboSensors.remove(sensor);
+            }
+        }
+        else if(obj instanceof HalEventController) {
+            Event event = findRegisteredEvent((HalEventData) obj, limboEvents);
+            if(event != null){
+                register(event);
+                limboEvents.remove(event);
+            }
+        }
+    }
 
     private <T> T getControllerInstance(Class<T> c){
         Object controller = null;

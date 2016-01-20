@@ -1,5 +1,6 @@
 package se.hal.struct;
 
+import se.hal.ControllerManager;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.log.LogUtil;
@@ -32,8 +33,12 @@ public abstract class AbstractDevice<T> extends DBBean {
 
     public Configurator<T> getDeviceConfig() {
         T obj = getDeviceData();
-        if (obj != null)
-            return new Configurator<>(obj);
+        if (obj != null) {
+            Configurator<T> configurator = new Configurator<>(obj);
+            configurator.setPreConfigurationListener(ControllerManager.getInstance());
+            configurator.setPostConfigurationListener(ControllerManager.getInstance());
+            return configurator;
+        }
         return null;
     }
     public T getDeviceData() {

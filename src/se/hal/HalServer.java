@@ -8,6 +8,7 @@ import se.hal.deamon.PCDataSynchronizationDaemon;
 import se.hal.intf.HalDaemon;
 import se.hal.intf.HalHttpPage;
 import se.hal.page.*;
+import se.hal.page.HalAlertManager.*;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
@@ -39,13 +40,16 @@ public class HalServer {
         LogUtil.setFormatter("zutil", formatter);
         LogUtil.setGlobalFormatter(formatter);
 
+        // init Managers
+        HalContext.initialize();
+        ControllerManager.initialize();
+        HalAlertManager.initialize();
+
 
         // init DB and other configurations
-        HalContext.initialize();
         DBConnection db = HalContext.getDB();
 
         // Init sensors,events and controllers
-        ControllerManager.initialize();
         for(Sensor sensor : Sensor.getLocalSensors(db)){
             ControllerManager.getInstance().register(sensor);
         }
@@ -69,6 +73,9 @@ public class HalServer {
 
 
         // init http server
+        HalAlertManager.getInstance().addAlert(new HalAlert(AlertLevel.ERROR, "error test"));
+        HalAlertManager.getInstance().addAlert(new HalAlert(AlertLevel.INFO, "info test"));
+
         HalHttpPage.getRootNav().addSubNav(new HalNavigation("sensors", "Sensors"));
         HalHttpPage.getRootNav().addSubNav(new HalNavigation("events", "Events"));
         pages = new HalHttpPage[]{

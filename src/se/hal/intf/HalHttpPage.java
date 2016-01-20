@@ -1,6 +1,7 @@
 package se.hal.intf;
 
 import se.hal.HalContext;
+import se.hal.page.HalAlertManager;
 import se.hal.page.HalNavigation;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
@@ -53,6 +54,7 @@ public abstract class HalHttpPage implements HttpPage{
             tmpl.set("nav", nav.getNavBreadcrumb().get(1));
             tmpl.set("rootNav", rootNav);
             tmpl.set("userNav", userNav);
+            tmpl.set("alerts", HalAlertManager.getInstance().generateAlerts());
             tmpl.set("content", httpRespond(session, cookie, request));
             out.print(tmpl.compile());
 

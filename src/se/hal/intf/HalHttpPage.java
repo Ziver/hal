@@ -19,7 +19,7 @@ import java.util.Map;
  * Created by Ziver on 2015-12-10.
  */
 public abstract class HalHttpPage implements HttpPage{
-    private static final String TEMPLATE = "web-resource/index.tmpl";
+    private static final String TEMPLATE = "web-resource/main_index.tmpl";
     private static HalNavigation rootNav = new HalNavigation();
     private static HalNavigation userNav = new HalNavigation();
 

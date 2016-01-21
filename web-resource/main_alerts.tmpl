@@ -1,30 +1,46 @@
 {{#alerts}}
     {{#.isError()}}
         <div class="alert alert-danger alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" data-id="{{.getId()}}">
+                <span aria-hidden="true">&times;</span>
+            </button>
             <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
             <strong>Error:</strong> {{.getMessage()}}
         </div>
     {{/.isError()}}
     {{#.isWarning()}}
         <div class="alert alert-warning alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" data-id="{{.getId()}}">
+                <span aria-hidden="true">&times;</span>
+            </button>
             <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
             <strong>Warning:</strong> {{.getMessage()}}
         </div>
     {{/.isWarning()}}
     {{#.isSuccess()}}
     <div class="alert alert-success alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" data-id="{{.getId()}}">
+            <span aria-hidden="true">&times;</span>
+        </button>
         <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
         <strong>Success:</strong> {{.getMessage()}}
     </div>
     {{/.isSuccess()}}
     {{#.isInfo()}}
         <div class="alert alert-info alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" data-id="{{.getId()}}">
+                <span aria-hidden="true">&times;</span>
+            </button>
             <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
             <strong>Info:</strong> {{.getMessage()}}
         </div>
     {{/.isInfo()}}
 {{/alerts}}
+
+<script>
+    $(function(){
+        $(".alert .close").click(function(event){
+            $.get("{{url}}?action=dismiss&id="+$(this).data("id"));
+        });
+    });
+</script>

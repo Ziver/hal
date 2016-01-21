@@ -1,6 +1,6 @@
 {{#alerts}}
     {{#.isError()}}
-        <div class="alert alert-danger alert-dismissible" role="alert">
+        <div class="alert alert-danger alert-dismissible fade in" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close" data-id="{{.getId()}}">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -9,7 +9,7 @@
         </div>
     {{/.isError()}}
     {{#.isWarning()}}
-        <div class="alert alert-warning alert-dismissible" role="alert">
+        <div class="alert alert-warning alert-dismissible fade in" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close" data-id="{{.getId()}}">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -18,7 +18,7 @@
         </div>
     {{/.isWarning()}}
     {{#.isSuccess()}}
-    <div class="alert alert-success alert-dismissible" role="alert">
+    <div class="alert alert-success alert-dismissible fade in" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close" data-id="{{.getId()}}">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -27,7 +27,7 @@
     </div>
     {{/.isSuccess()}}
     {{#.isInfo()}}
-        <div class="alert alert-info alert-dismissible" role="alert">
+        <div class="alert alert-info alert-dismissible fade in" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close" data-id="{{.getId()}}">
                 <span aria-hidden="true">&times;</span>
             </button>

@@ -1,6 +1,26 @@
 <h1 class="page-header">Details for <a href="#">{{event.getName()}}</a></h1>
 
-<div class="col-md-12">
+<div class="col-md-5">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">Configuration</div>
+        <div class="panel-body">
+            <table class="table table-hover table-condensed">
+                <thead>
+                <tr>
+                    <th class="text-right">Name:</th>
+                    <td>{{event.getName()}}</td>
+                </tr>
+                </thead>
+                <tr>
+                    <th class="text-right">Type:</th>
+                    <td>{{event.getDeviceData().getClass().getSimpleName()}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-7">
     <div class="panel panel-default drop-shadow">
         <div class="panel-heading">History data</div>
         <div class="panel-body">
@@ -13,7 +33,7 @@
                 {{#history}}
                 <tr>
                     <td>{{.timestamp}}</a></td>
-                    <td>{{.data()}}</td>
+                    <td>{{.data}}</td>
                 </tr>
                 {{/history}}
             </table>

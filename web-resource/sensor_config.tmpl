@@ -64,14 +64,14 @@
                 </thead>
                 {{#detectedSensors}}
                 <tr>
-                    <td>{{.getClass().getName()}}</td>
-                    <td>{{.getTimestamp()}}</td>
+                    <td>{{.getType()}}</td>
+                    <td>{{.getDeviceData().getTimestamp()}}</td>
                     <td>{{.}}</td>
                     <td>
                         <div class="btn-toolbar pull-right">
                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
                                     data-target="#sensorModal"
-                                    data-type="{{.getClass().getName()}"
+                                    data-type="{{.getType()}}"
                                     {{#.getDeviceConfig().getConfiguration()}}
                                     data-{{.getName()}}="{{.getString()}}"
                                     {{/.getDeviceConfig().getConfiguration()}}

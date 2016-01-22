@@ -32,7 +32,7 @@ public class ControllerManager implements HalSensorReportListener,
     /** List of all registered sensors **/
     private List<Sensor> registeredSensors = new ArrayList<>();
     /** List of auto detected sensors **/
-    private List<HalSensorData> detectedSensors = new ArrayList<>();
+    private List<Sensor> detectedSensors = new ArrayList<>();
     /** List of sensors that are currently being reconfigured **/
     private List<Sensor> limboSensors = new LinkedList<>();
 
@@ -42,7 +42,7 @@ public class ControllerManager implements HalSensorReportListener,
     /** List of all registered events **/
     private List<Event> registeredEvents = new ArrayList<>();
     /** List of auto detected events **/
-    private List<HalEventData> detectedEvents = new ArrayList<>();
+    private List<Event> detectedEvents = new ArrayList<>();
     /** List of all registered events **/
     private List<Event> limboEvents = new LinkedList<>();
 
@@ -71,6 +71,7 @@ public class ControllerManager implements HalSensorReportListener,
         if(controller != null)
             controller.register(sensor.getDeviceData());
         registeredSensors.add(sensor);
+        detectedSensors.remove(findSensor(sensor.getDeviceData(), detectedSensors)); // Remove if this device was detected
     }
 
     public void deregister(Sensor sensor){
@@ -93,7 +94,7 @@ public class ControllerManager implements HalSensorReportListener,
         return availableSensors;
     }
 
-    public List<HalSensorData> getDetectedSensors(){
+    public List<Sensor> getDetectedSensors(){
         return detectedSensors;
     }
 
@@ -117,7 +118,9 @@ public class ControllerManager implements HalSensorReportListener,
             else { // unknown sensor
                 logger.finest("Received report from unregistered sensor: "+ sensorData);
                 if(!detectedSensors.contains(sensorData)) {
-                    detectedSensors.add(sensorData);
+                    Sensor detectedSensor = new Sensor();
+                    detectedSensor.setDeviceData(sensorData);
+                    detectedSensors.add(detectedSensor);
                 }
             }
         }catch (SQLException e){
@@ -153,6 +156,7 @@ public class ControllerManager implements HalSensorReportListener,
         if(controller != null)
             controller.register(event.getDeviceData());
         registeredEvents.add(event);
+        detectedEvents.remove(findEvent(event.getDeviceData(), detectedEvents)); // Remove if this device was detected
     }
 
     public void deregister(Event event){
@@ -175,7 +179,7 @@ public class ControllerManager implements HalSensorReportListener,
         return availableEvents;
     }
 
-    public List<HalEventData> getDetectedEvents(){
+    public List<Event> getDetectedEvents(){
         return detectedEvents;
     }
 
@@ -183,7 +187,7 @@ public class ControllerManager implements HalSensorReportListener,
     public void reportReceived(HalEventData eventData) {
         try {
             DBConnection db = HalContext.getDB();
-            Event event = findRegisteredEvent(eventData, registeredEvents);
+            Event event = findEvent(eventData, registeredEvents);
 
             if (event != null) {
                 event.setDeviceData(eventData); // Set the latest data
@@ -199,7 +203,9 @@ public class ControllerManager implements HalSensorReportListener,
             else { // unknown sensor
                 logger.info("Received report from unregistered event: "+ eventData);
                 if(!detectedEvents.contains(eventData)) {
-                    detectedEvents.add(eventData);
+                    Event detectedEvent = new Event();
+                    detectedEvent.setDeviceData(eventData);
+                    detectedEvents.add(detectedEvent);
                 }
             }
         }catch (SQLException e){
@@ -207,7 +213,7 @@ public class ControllerManager implements HalSensorReportListener,
         }
     }
 
-    private static Event findRegisteredEvent(HalEventData eventData, List<Event> list){
+    private static Event findEvent(HalEventData eventData, List<Event> list){
         for (Event e : list) {
             if (eventData.equals(e.getDeviceData())) {
                 return e;
@@ -235,7 +241,7 @@ public class ControllerManager implements HalSensorReportListener,
             }
         }
         else if(obj instanceof HalEventController) {
-            Event event = findRegisteredEvent((HalEventData) obj, registeredEvents);
+            Event event = findEvent((HalEventData) obj, registeredEvents);
             if(event != null){
                 deregister(event);
                 limboEvents.add(event);
@@ -253,7 +259,7 @@ public class ControllerManager implements HalSensorReportListener,
             }
         }
         else if(obj instanceof HalEventController) {
-            Event event = findRegisteredEvent((HalEventData) obj, limboEvents);
+            Event event = findEvent((HalEventData) obj, limboEvents);
             if(event != null){
                 register(event);
                 limboEvents.remove(event);

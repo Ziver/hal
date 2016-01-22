@@ -23,9 +23,9 @@
                             <input type="hidden" name="id" value="{{.getId()}}">
 
                             <div class="btn-toolbar pull-right">
-                                <button type="submit" class="btn btn-danger btn-xs">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </button>
+                                <input class="toggle-switch"  type="checkbox" name="data"
+                                       data-size="mini" data-on-color="danger"
+                                       {{#.getData()}}checked{{/.getData()}} >
                             </div>
                         </form>
                     </td>
@@ -35,3 +35,11 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(function (){
+        $(".toggle-switch").on("switchChange.bootstrapSwitch", function (event, state) {
+            $(this).closest('form').submit();
+        });
+    });
+</script>

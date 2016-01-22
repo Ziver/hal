@@ -5,6 +5,7 @@ import se.hal.HalContext;
 import se.hal.intf.HalEventData;
 import se.hal.intf.HalHttpPage;
 import se.hal.struct.Event;
+import se.hal.struct.SwitchEventData;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
@@ -39,10 +40,22 @@ public class EventOverviewHttpPage extends HalHttpPage {
             throws Exception{
 
         DBConnection db = HalContext.getDB();
+        int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
+
+        if(request.containsKey("action")){
+            // change event data
+            Event event = Event.getEvent(db, id);
+            if (event instanceof SwitchEventData){
+                if ( ! ((SwitchEventData)event).isOn())
+                    ((SwitchEventData)event).turnOn();
+                else
+                    ((SwitchEventData)event).turnOff();
+            }
+            ControllerManager.getInstance().send(event);
+        }
 
         // Save new input
-        if(request.containsKey("id")){
-            int id = Integer.parseInt(request.get("id"));
+        if(!request.containsKey("action") && id >= 0){
             Event event = Event.getEvent(db, id);
 
             // get history data

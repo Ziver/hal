@@ -1,3 +1,5 @@
+////////////////////////////////////// Definitions
+
 (function(old) {
     $.fn.attr = function() {
         if(arguments.length === 0) {
@@ -17,3 +19,9 @@
         return old.apply(this, arguments);
     };
 })($.fn.attr);
+
+
+///////////////////////////////// Autostart
+$(function(){
+    $(".toggle-switch").bootstrapSwitch();
+});

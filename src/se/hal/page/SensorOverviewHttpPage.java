@@ -6,6 +6,7 @@ import se.hal.intf.HalHttpPage;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import se.hal.struct.SwitchEventData;
+import se.hal.util.AggregateDataListSqlResult;
 import zutil.db.DBConnection;
 import se.hal.util.HistoryDataListSqlResult;
 import se.hal.util.HistoryDataListSqlResult.*;
@@ -50,6 +51,7 @@ public class SensorOverviewHttpPage extends HalHttpPage {
             Templator tmpl = new Templator(FileUtil.find(DETAIL_TEMPLATE));
             tmpl.set("sensor", sensor);
             tmpl.set("history", history);
+            tmpl.set("aggregation", AggregateDataListSqlResult.getHourAggregateData(db, sensor));
             return tmpl;
         }
         else {

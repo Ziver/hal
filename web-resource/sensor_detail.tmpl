@@ -1,5 +1,35 @@
 <h1 class="page-header">Details for <a href="#">{{sensor.getName()}}</a></h1>
 
+<script>
+    $(function(){
+        Morris.Line({
+            element: "chart",
+            data: [
+                { x: (Date.now()-7*24*60*60*1000) },
+                {{#aggregation}}
+                    { x: {{.timestamp}}, data: {{.data}} },
+                {{/aggregation}}
+                { x: Date.now() }
+            ],
+            xkey: 'x',
+            ykeys: ['data'],
+            labels: ['Data'],
+            continuousLine: false,
+            resize: true
+        });
+	});
+</script>
+
+<div class="col-md-12">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">Chart</div>
+        <div class="panel-body">
+            <div id="chart" style="height:350px;"></div>
+        </div>
+    </div>
+</div>
+
+
 <div class="col-md-5">
     <div class="panel panel-default drop-shadow">
         <div class="panel-heading">Configuration</div>

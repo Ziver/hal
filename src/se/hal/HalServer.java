@@ -73,9 +73,6 @@ public class HalServer {
 
 
         // init http server
-        HalAlertManager.getInstance().addAlert(new HalAlert(AlertLevel.ERROR, "one view alert", AlertTTL.ONE_VIEW));
-        HalAlertManager.getInstance().addAlert(new HalAlert(AlertLevel.INFO, "dissmised allert", AlertTTL.DISMISSED));
-
         HalHttpPage.getRootNav().addSubNav(new HalNavigation("sensors", "Sensors"));
         HalHttpPage.getRootNav().addSubNav(new HalNavigation("events", "Events"));
         pages = new HalHttpPage[]{

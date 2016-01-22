@@ -52,7 +52,7 @@ public class EventOverviewHttpPage extends HalHttpPage {
             Event event = Event.getEvent(db, id);
 
             // get history data
-            PreparedStatement stmt = db.getPreparedStatement("SELECT * FROM event_data_raw WHERE event_id == ?");
+            PreparedStatement stmt = db.getPreparedStatement("SELECT * FROM event_data_raw WHERE event_id == ? ORDER BY timestamp DESC");
             stmt.setLong(1, event.getId());
             List<HistoryData> history = DBConnection.exec(stmt, new HistoryDataListSqlResult());
 

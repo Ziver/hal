@@ -59,11 +59,13 @@
             <table class="table table-hover table-condensed">
                 <thead>
                 <th>Type</th>
+                <th>Date</th>
                 <th>Configuration</th>
                 </thead>
                 {{#detectedSensors}}
                 <tr>
                     <td>{{.getClass().getName()}}</td>
+                    <td>{{.getTimestamp()}}</td>
                     <td>{{.}}</td>
                     <td>
                         <div class="btn-toolbar pull-right">
@@ -218,6 +220,7 @@
                 modal.find("input[name=action]").val("create_local_sensor");
                 modal.find("input[name=id]").val(-1);
                 modal.find("input[name=sync]").prop("checked", "false");
+                modal.find("select[name=type]").change(); // Update dynamic inputs
             }
         });
 

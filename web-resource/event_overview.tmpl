@@ -18,7 +18,7 @@
                     <td><a href="?id={{.getId()}}">{{.getName()}}</a></td>
                     <td>{{.getDeviceData().getClass().getSimpleName()}}</td>
                     <td>{{.getDeviceData().getData()}}</td>
-                    <td>1 min ago</td>
+                    <td>{{.getDeviceData().getTimestamp()}}</td>
                     <td>
                         <form method="POST">
                             <input type="hidden" name="action" value="-">

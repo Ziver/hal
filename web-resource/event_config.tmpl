@@ -56,11 +56,13 @@
             <table class="table table-hover table-condensed">
                 <thead>
                 <th>Type</th>
+                <th>Date</th>
                 <th>Configuration</th>
                 </thead>
                 {{#detectedEvents}}
                 <tr>
                     <td>{{.getClass().getName()}}</td>
+                    <td>{{.getTimestamp()}}</td>
                     <td>{{.}}</td>
                     <td>
                         <div class="btn-toolbar pull-right">
@@ -116,6 +118,7 @@
             else{ // create
                 modal.find("input[name=action]").val("create_local_event");
                 modal.find("input[name=id]").val(-1);
+                modal.find("select[name=type]").change(); // Update dynamic inputs
             }
         });
     });

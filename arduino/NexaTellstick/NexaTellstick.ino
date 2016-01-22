@@ -14,10 +14,6 @@ byte rxBuffer[79];
 
 void setup(){
     Serial.begin(9600);
-    pinMode(8, OUTPUT); digitalWrite(8, LOW);
-    pinMode(9, OUTPUT); digitalWrite(9, HIGH);
-    pinMode(6, OUTPUT); digitalWrite(6, LOW);
-    pinMode(3, OUTPUT); digitalWrite(3, HIGH);
 };
 
 void loop(){
@@ -102,6 +98,8 @@ bool handleS(byte* buffer, uint8_t startIndex, uint8_t endIndex, bool debug, uin
         }
         delay(pause);
     }
+    //send confirmation over serial
+    Serial.println(F("+S"));
     return true;
 };
 
@@ -109,7 +107,7 @@ bool handleT(byte* buffer, uint8_t startIndex, uint8_t endIndex, bool debug, uin
     //Parse message received from serial
     uint8_t T_data[72]; //0-188 pulses
     if(endIndex - startIndex < 5){
-        Serial.println("DEBUG: wrong size!");
+        //Serial.println("DEBUG: wrong size!");
         return false;
     }
     uint8_t buff_p = startIndex;
@@ -150,6 +148,8 @@ bool handleT(byte* buffer, uint8_t startIndex, uint8_t endIndex, bool debug, uin
             delay(pause);
         }
     }
+    //send confirmation over serial
+    Serial.println(F("+T"));
     return parseRxBuffer(buffer, buff_p, endIndex, debug, repeat, pause);
 };
 

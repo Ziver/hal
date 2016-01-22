@@ -82,6 +82,8 @@ public class HalServer {
                 new PCOverviewHttpPage(),
                 new PCHeatMapHttpPage(),
                 new SensorConfigHttpPage(),
+
+                new EventOverviewHttpPage(),
                 new EventConfigHttpPage(),
                 new UserConfigHttpPage(),
         };

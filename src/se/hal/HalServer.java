@@ -79,6 +79,7 @@ public class HalServer {
         HalHttpPage.getRootNav().addSubNav(new HalNavigation("sensors", "Sensors"));
         HalHttpPage.getRootNav().addSubNav(new HalNavigation("events", "Events"));
         pages = new HalHttpPage[]{
+                new SensorOverviewHttpPage(),
                 new PCOverviewHttpPage(),
                 new PCHeatMapHttpPage(),
                 new SensorConfigHttpPage(),

@@ -2,23 +2,16 @@ package se.hal.page;
 
 import se.hal.ControllerManager;
 import se.hal.HalContext;
-import se.hal.intf.HalEventData;
 import se.hal.intf.HalHttpPage;
 import se.hal.struct.Event;
 import se.hal.struct.SwitchEventData;
-import se.hal.struct.User;
+import se.hal.util.HistoryDataListSqlResult;
+import se.hal.util.HistoryDataListSqlResult.*;
 import zutil.db.DBConnection;
-import zutil.db.SQLResultHandler;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
-import zutil.ui.Configurator;
-import zutil.ui.Configurator.ConfigurationParam;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -72,27 +65,6 @@ public class EventOverviewHttpPage extends HalHttpPage {
             Templator tmpl = new Templator(FileUtil.find(OVERVIEW_TEMPLATE));
             tmpl.set("events", Event.getLocalEvents(db));
             return tmpl;
-        }
-    }
-
-
-
-    protected static class HistoryData{
-        public long timestamp;
-        public double data;
-    }
-
-    protected class HistoryDataListSqlResult implements SQLResultHandler<List<HistoryData>> {
-        @Override
-        public List<HistoryData> handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
-            ArrayList<HistoryData> list = new ArrayList<HistoryData>();
-            while(result.next()){
-                HistoryData data = new HistoryData();
-                data.timestamp = result.getLong("timestamp");
-                data.data = result.getLong("data");
-                list.add(data);
-            }
-            return list;
         }
     }
 }

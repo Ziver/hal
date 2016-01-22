@@ -1,4 +1,4 @@
-<h1 class="page-header">Details for <a href="#">{{event.getName()}}</a></h1>
+<h1 class="page-header">Details for <a href="#">{{sensor.getName()}}</a></h1>
 
 <div class="col-md-5">
     <div class="panel panel-default drop-shadow">
@@ -8,16 +8,20 @@
                 <thead>
                 <tr>
                     <th class="text-right">Name:</th>
-                    <td>{{event.getName()}}</td>
+                    <td>{{sensor.getName()}}</td>
                 </tr>
                 </thead>
                 <tr>
                     <th class="text-right">Type:</th>
-                    <td>{{event.getDeviceData().getClass().getSimpleName()}}</td>
+                    <td>{{sensor.getDeviceData().getClass().getSimpleName()}}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Public:</th>
+                    <td>{{sensor.isSynced()}}</td>
                 </tr>
                 <tr>
                     <th class="text-right">Owner:</th>
-                    <td>{{event.getUser().getUsername()}}</td>
+                    <td>{{sensor.getUser().getUsername()}}</td>
                 </tr>
             </table>
         </div>

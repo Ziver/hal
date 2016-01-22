@@ -63,7 +63,7 @@
                 <tr>
                     <td>{{.getType()}}</td>
                     <td>{{.getDeviceData().getTimestamp()}}</td>
-                    <td>{{.}}</td>
+                    <td>{{.getDeviceData()}}</td>
                     <td>
                         <div class="btn-toolbar pull-right">
                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
@@ -104,22 +104,22 @@
             var modal = $(this);
             modal.find("input[type=text]").val(""); // Reset all inputs
             if(button.data("id") >= 0){ // edit
-                modal.find("select[name=type]").val(button.data("type"));
-                modal.find("select[name=type]").change(); // Update dynamic inputs
-                $.each(button.attr(), function(name, value) {
-                    if(name.startsWith("data-")) {
-                        name = name.substring(5);
-                        console.log(name, value);
-                        modal.find("input[name="+name+"]").val(value);
-                    }
-                });
                 modal.find("input[name=action]").val("modify_local_event");
             }
             else{ // create
                 modal.find("input[name=action]").val("create_local_event");
                 modal.find("input[name=id]").val(-1);
-                modal.find("select[name=type]").change(); // Update dynamic inputs
             }
+            // Set dynamic data
+            modal.find("select[name=type]").val(button.data("type"));
+            modal.find("select[name=type]").change(); // Update dynamic inputs
+            $.each(button.attr(), function(name, value) {
+                if(name.startsWith("data-")) {
+                    name = name.substring(5);
+                    console.log(name, value);
+                    modal.find("input[name="+name+"]").val(value);
+                }
+            });
         });
     });
 </script>

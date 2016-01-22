@@ -60,6 +60,8 @@ public abstract class AbstractDevice<T> extends DBBean {
     }
     public void setDeviceData(T data) {
         this.deviceData = data;
+        if(data != null)
+            type = data.getClass().getName();
         updateConfigString();
     }
     public void save(DBConnection db) throws SQLException {

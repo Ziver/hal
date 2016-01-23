@@ -234,7 +234,7 @@ public class ControllerManager implements HalSensorReportListener,
 
     /////////////////////////////// GENERAL ///////////////////////////////////
     @Override
-    public void postConfigurationAction(Configurator configurator, Object obj) {
+    public void preConfigurationAction(Configurator configurator, Object obj) {
         if(obj instanceof HalSensorData) {
             Sensor sensor = findSensor((HalSensorData) obj, registeredSensors);
             if(sensor != null){
@@ -252,7 +252,7 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     @Override
-    public void preConfigurationAction(Configurator configurator, Object obj) {
+    public void postConfigurationAction(Configurator configurator, Object obj) {
         if(obj instanceof HalSensorController) {
             Sensor sensor = findSensor((HalSensorData) obj, limboSensors);
             if(sensor != null){

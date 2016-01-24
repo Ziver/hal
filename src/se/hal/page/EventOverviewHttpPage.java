@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class EventOverviewHttpPage extends HalHttpPage {
+    private static final int HISTORY_LIMIT = 200;
     private static final String OVERVIEW_TEMPLATE = "web-resource/event_overview.tmpl";
     private static final String DETAIL_TEMPLATE = "web-resource/event_detail.tmpl";
 
@@ -52,8 +53,10 @@ public class EventOverviewHttpPage extends HalHttpPage {
             Event event = Event.getEvent(db, id);
 
             // get history data
-            PreparedStatement stmt = db.getPreparedStatement("SELECT * FROM event_data_raw WHERE event_id == ? ORDER BY timestamp DESC");
+            PreparedStatement stmt = db.getPreparedStatement(
+                    "SELECT * FROM event_data_raw WHERE event_id == ? ORDER BY timestamp DESC LIMIT ?");
             stmt.setLong(1, event.getId());
+            stmt.setLong(2, HISTORY_LIMIT);
             List<HistoryData> history = DBConnection.exec(stmt, new HistoryDataListSqlResult());
 
             Templator tmpl = new Templator(FileUtil.find(DETAIL_TEMPLATE));

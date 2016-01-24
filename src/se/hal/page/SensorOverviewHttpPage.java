@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SensorOverviewHttpPage extends HalHttpPage {
-    private static final int HISTORY_LIMIT = 1000;
+    private static final int HISTORY_LIMIT = 200;
     private static final String OVERVIEW_TEMPLATE = "web-resource/sensor_overview.tmpl";
     private static final String DETAIL_TEMPLATE = "web-resource/sensor_detail.tmpl";
 
@@ -43,7 +43,8 @@ public class SensorOverviewHttpPage extends HalHttpPage {
             Sensor sensor = Sensor.getSensor(db, id);
 
             // get history data
-            PreparedStatement stmt = db.getPreparedStatement("SELECT * FROM sensor_data_raw WHERE sensor_id == ? ORDER BY timestamp DESC LIMIT ?");
+            PreparedStatement stmt = db.getPreparedStatement(
+                    "SELECT * FROM sensor_data_raw WHERE sensor_id == ? ORDER BY timestamp DESC LIMIT ?");
             stmt.setLong(1, sensor.getId());
             stmt.setLong(2, HISTORY_LIMIT);
             List<HistoryData> history = DBConnection.exec(stmt, new HistoryDataListSqlResult());

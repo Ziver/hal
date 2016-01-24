@@ -62,7 +62,7 @@
                 {{#detectedEvents}}
                 <tr>
                     <td>{{.getType()}}</td>
-                    <td>{{.getDeviceData().getTimestamp()}}</td>
+                    <td><span class="timestamp">{{.getDeviceData().getTimestamp()}}</span></td>
                     <td>{{.getDeviceData()}}</td>
                     <td>
                         <div class="btn-toolbar pull-right">

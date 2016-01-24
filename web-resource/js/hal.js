@@ -1,5 +1,13 @@
-////////////////////////////////////// Definitions
+///////////////////////////////// Autostart
+$(function(){
+    $(".toggle-switch").bootstrapSwitch();
 
+    $(".timestamp").relTimestamp();
+});
+
+////////////////////////////////////// JQuery functions
+
+// $.attr() # returns all attributes of an element
 (function(old) {
     $.fn.attr = function() {
         if(arguments.length === 0) {
@@ -20,8 +28,16 @@
     };
 })($.fn.attr);
 
+$.fn.relTimestamp = function() {
+    return this.each(function() {
+        var timestamp = parseInt($(this).text());
+        var timestampNow = Date.now();
+        var timeDiff = timestampNow - timestamp;
 
-///////////////////////////////// Autostart
-$(function(){
-    $(".toggle-switch").bootstrapSwitch();
-});
+        if(timeDiff < 24 * 60 * 60 * 1000) // less than 24 hours
+            $(this).text(moment(timestamp).fromNow());
+        else
+            $(this).text(moment(timestamp).format("YYYY-MM-DD HH:mm"));
+        return this;
+    });
+};

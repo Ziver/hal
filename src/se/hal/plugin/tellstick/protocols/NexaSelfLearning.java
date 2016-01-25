@@ -116,7 +116,7 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
         enable = (data[0] & 0x10) != 0;
 
         unit = data[0] & 0x0F;
-        unit++;
+        //unit++;
     }
 
 

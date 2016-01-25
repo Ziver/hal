@@ -2,6 +2,7 @@ package se.hal.page;
 
 import se.hal.ControllerManager;
 import se.hal.HalContext;
+import se.hal.intf.HalEventData;
 import se.hal.intf.HalHttpPage;
 import se.hal.struct.Event;
 import se.hal.struct.SwitchEventData;
@@ -39,11 +40,12 @@ public class EventOverviewHttpPage extends HalHttpPage {
         if(request.containsKey("action")){
             // change event data
             Event event = Event.getEvent(db, id);
-            if (event instanceof SwitchEventData){
-                if ( ! ((SwitchEventData)event).isOn())
-                    ((SwitchEventData)event).turnOn();
+            HalEventData eventData = event.getDeviceData();
+            if (eventData instanceof SwitchEventData){
+                if ( request.containsKey("data") && "on".equals(request.get("data")))
+                    ((SwitchEventData)eventData).turnOn();
                 else
-                    ((SwitchEventData)event).turnOff();
+                    ((SwitchEventData)eventData).turnOff();
             }
             ControllerManager.getInstance().send(event);
         }

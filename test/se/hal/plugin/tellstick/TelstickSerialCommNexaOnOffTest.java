@@ -19,9 +19,9 @@ public class TelstickSerialCommNexaOnOffTest {
 
             NexaSelfLearning nexa = new NexaSelfLearning();
             //nexa.setHouse(11772006);
-            nexa.setHouse(15087918);
+            nexa.setHouse(14160770);
             nexa.setGroup(0);
-            nexa.setUnit(0);
+            nexa.setUnit(1);
 
             System.out.println("Up and Running");
             while(true) {

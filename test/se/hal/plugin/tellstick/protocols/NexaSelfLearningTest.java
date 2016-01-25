@@ -48,20 +48,26 @@ public class NexaSelfLearningTest {
 
     @org.junit.Test
     public void decode_ON() throws Exception {
-        NexaSelfLearning nexa = new NexaSelfLearning();
-        nexa.decode(Converter.hexToByte("0x2CE81990"));
+        NexaSelfLearning nexa = decode("0x2CE81990");
 
         assertEquals("House Code", 11772006, nexa.getHouse());
         assertEquals("Unit Code", 1, nexa.getUnit());
         assertTrue("Enabled", nexa.isOn());
+
+
     }
     @org.junit.Test
     public void decode_OFF() throws Exception {
-        NexaSelfLearning nexa = new NexaSelfLearning();
-        nexa.decode(Converter.hexToByte("0x2CE81980"));
+        NexaSelfLearning nexa = decode("0x2CE81980");
 
         assertEquals("House Code", 11772006, nexa.getHouse());
         assertEquals("Unit Code", 1, nexa.getUnit());
         assertFalse("Enabled", nexa.isOn());
+    }
+
+    private NexaSelfLearning decode(String data){
+        NexaSelfLearning nexa = new NexaSelfLearning();
+        nexa.decode(Converter.hexToByte(data));
+        return nexa;
     }
 }

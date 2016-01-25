@@ -226,8 +226,10 @@ public class ControllerManager implements HalSensorReportListener,
 
     public void send(Event event){
         HalEventController controller = getControllerInstance(event.getController());
-        if(controller != null)
+        if(controller != null) {
             controller.send(event.getDeviceData());
+            reportReceived(event.getDeviceData()); // save action to db
+        }
         else
             logger.warning("No controller found for event id: "+ event.getId());
     }

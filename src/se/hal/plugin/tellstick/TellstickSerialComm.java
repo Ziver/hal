@@ -83,8 +83,11 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
         serial.setComPortTimeouts(
                 SerialPort.TIMEOUT_READ_BLOCKING, 0, 0);
 
+        //in  = new InputStreamLogger(serial.getInputStream());
+        //out = new OutputStreamLogger(serial.getOutputStream());
         in  = new InputStreamLogger(serial.getInputStream());
         out = new OutputStreamLogger(serial.getOutputStream());
+
 
         Executors.newSingleThreadExecutor().execute(this);
     }
@@ -166,15 +169,15 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
         write(prot.encode());
         try {
             this.wait();
+            prot.setTimestamp(System.currentTimeMillis());
         } catch (InterruptedException e) {
             logger.log(Level.SEVERE, null, e);
         }
     }
     public void write(String data) {
         try {
-            //for(int i=0; i<data.length();i++)
-            //    out.write(0xFF & data.charAt(i));
-            out.write(data.getBytes(Charset.forName("UTF-8")));
+            for(int i=0; i<data.length();i++)
+                out.write(0xFF & data.charAt(i));
             out.write('\n');
             out.flush();
         } catch (IOException e) {

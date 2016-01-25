@@ -38,7 +38,7 @@
                 <thead>
                 <tr>
                     <th class="text-right">Name:</th>
-                    <td>{{sensor.getName()}}</td>
+                    <th>{{sensor.getName()}}</th>
                 </tr>
                 </thead>
                 <tr>
@@ -51,8 +51,14 @@
                 </tr>
                 <tr>
                     <th class="text-right">Owner:</th>
-                    <td>{{sensor.getUser().getUsername()}}</td>
+                    <td>{{sensor.getUser().getUsername()}} <p></td>
                 </tr>
+                {{#sensor.getDeviceConfig().getConfiguration()}}
+                <tr>
+                    <th class="text-right">{{.getNiceName()}}:</th>
+                    <td>{{.getString()}}</td>
+                </tr>
+                {{/sensor.getDeviceConfig().getConfiguration()}}
             </table>
         </div>
     </div>

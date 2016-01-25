@@ -8,7 +8,7 @@
                 <thead>
                 <tr>
                     <th class="text-right">Name:</th>
-                    <td>{{event.getName()}}</td>
+                    <th>{{event.getName()}}</th>
                 </tr>
                 </thead>
                 <tr>
@@ -17,8 +17,14 @@
                 </tr>
                 <tr>
                     <th class="text-right">Owner:</th>
-                    <td>{{event.getUser().getUsername()}}</td>
+                    <td>{{event.getUser().getUsername()}} <p></td>
                 </tr>
+                {{#event.getDeviceConfig().getConfiguration()}}
+                <tr>
+                    <th class="text-right">{{.getNiceName()}}:</th>
+                    <td>{{.getString()}}</td>
+                </tr>
+                {{/event.getDeviceConfig().getConfiguration()}}
             </table>
         </div>
     </div>

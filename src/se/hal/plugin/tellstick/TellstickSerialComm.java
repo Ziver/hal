@@ -31,6 +31,7 @@ import zutil.log.OutputStreamLogger;
 import zutil.struct.TimedHashSet;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -171,8 +172,9 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
     }
     public void write(String data) {
         try {
-            for(int i=0; i<data.length();i++)
-                out.write(0xFF & data.charAt(i));
+            //for(int i=0; i<data.length();i++)
+            //    out.write(0xFF & data.charAt(i));
+            out.write(data.getBytes(Charset.forName("UTF-8")));
             out.write('\n');
             out.flush();
         } catch (IOException e) {

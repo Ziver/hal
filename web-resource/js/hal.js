@@ -34,7 +34,9 @@ $.fn.relTimestamp = function() {
         var timestampNow = Date.now();
         var timeDiff = timestampNow - timestamp;
 
-        if(timeDiff < 24 * 60 * 60 * 1000) // less than 24 hours
+        if(timeDiff < 10 * 60 * 1000) // less than 10 min
+            $(this).text(moment(timestamp).fromNow());
+        else if(timeDiff < 24 * 60 * 60 * 1000) // less than 24 hours
             $(this).text(moment(timestamp).fromNow() + " ("+moment(timestamp).format("HH:mm")+")");
         else
             $(this).text(moment(timestamp).format("YYYY-MM-DD HH:mm"));

@@ -9,8 +9,12 @@ public class RPiTemperatureSensor implements TemperatureSensorData {
 	@Configurator.Configurable("1-Wire Address")
     private String w1Address = null;
 	
-	private final double data;
-	private final long timestamp;
+	private double data;
+	private long timestamp;
+	
+	public RPiTemperatureSensor(){
+		//need to be empty for the framework to create an instance
+	}
 	
 	public RPiTemperatureSensor(long timestamp, double data) {
 		this.timestamp = timestamp;

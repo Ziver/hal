@@ -11,8 +11,12 @@ public class RPiPowerConsumptionSensor implements PowerConsumptionSensorData {
 	@Configurator.Configurable("GPIO-Pin")
     private int gpioPin = -1;
 	
-	private final double data;
-	private final long timestamp;
+	private double data;
+	private long timestamp;
+	
+	public RPiPowerConsumptionSensor(){
+		//need to be empty for the framework to create an instance
+	}
 	
 	public RPiPowerConsumptionSensor(long timestamp, double data) {
 		this.timestamp = timestamp;

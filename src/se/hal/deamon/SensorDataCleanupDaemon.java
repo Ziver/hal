@@ -35,8 +35,8 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 				cleanupSensor(sensor);
 			}
             logger.fine("Data cleanup done");
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Thread has crashed", e);
 		}
     }
 

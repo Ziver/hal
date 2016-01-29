@@ -117,7 +117,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
 
 			}
 		} catch (SQLException e) {
-            logger.log(Level.SEVERE, null, e);
+			logger.log(Level.SEVERE, "Thread has crashed", e);
 		}
 	}
 

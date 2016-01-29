@@ -36,8 +36,8 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 				aggregateSensor(sensor);
 			}
             logger.fine("Aggregation Done");
-		} catch (SQLException e) {
-            logger.log(Level.SEVERE, null, e);
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Thread has crashed", e);
 		}
     }
     
@@ -47,9 +47,9 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     		logger.fine("aggregating raw data to five minute periods");
 			aggregateRawData(sensor, TimeUtility.FIVE_MINUTES_IN_MS, 5);
 			logger.fine("aggregating five minute periods into hour periods");
-			aggrigateAggregatedData(sensor, TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.HOUR_IN_MS);
+			aggregateAggregatedData(sensor, TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.HOUR_IN_MS);
 			logger.fine("aggregating one hour periods into one day periods");
-			aggrigateAggregatedData(sensor, TimeUtility.HOUR_IN_MS, TimeUtility.DAY_IN_MS);
+			aggregateAggregatedData(sensor, TimeUtility.HOUR_IN_MS, TimeUtility.DAY_IN_MS);
     	//}else{
     	//	logger.fine("The sensor type("+ sensor.getSensorData().getClass().getName() +") is not supported by the aggregation daemon. Ignoring");
     	//}
@@ -97,7 +97,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
      * @param	fromPeriodSizeInMs	The period length in ms to aggregate from
      * @param	toPeriodSizeInMs	The period length in ms to aggregate to
      */
-    private void aggrigateAggregatedData(Sensor sensor, long fromPeriodSizeInMs, long toPeriodSizeInMs){
+    private void aggregateAggregatedData(Sensor sensor, long fromPeriodSizeInMs, long toPeriodSizeInMs){
     	long sensorId = sensor.getId();
     	AggregationMethod aggrMethod = sensor.getAggregationMethod();
     	int expectedSampleCount = (int)Math.ceil((double)toPeriodSizeInMs / (double)fromPeriodSizeInMs);

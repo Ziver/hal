@@ -105,8 +105,6 @@ public class ControllerManager implements HalSensorReportListener,
             Sensor sensor = findSensor(sensorData, registeredSensors);
 
             if (sensor != null) {
-                sensor.setDeviceData(sensorData); // Set the latest data
-
                 PreparedStatement stmt =
                         db.getPreparedStatement("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUES(?, ?, ?)");
                 stmt.setLong(1, sensorData.getTimestamp());
@@ -117,13 +115,14 @@ public class ControllerManager implements HalSensorReportListener,
             }
             else { // unknown sensor
                 logger.finest("Received report from unregistered sensor: "+ sensorData);
-                Sensor detectedSensor = findSensor(sensorData, detectedSensors);
-                if(detectedSensor == null) {
-                    detectedSensor = new Sensor();
-                    detectedSensors.add(detectedSensor);
+                sensor = findSensor(sensorData, detectedSensors);
+                if(sensor == null) {
+                    sensor = new Sensor();
+                    detectedSensors.add(sensor);
                 }
-                detectedSensor.setDeviceData(sensorData);
             }
+            sensor.setDeviceData(sensorData); // Set the latest data
+
         }catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store sensor report", e);
         }
@@ -191,8 +190,6 @@ public class ControllerManager implements HalSensorReportListener,
             Event event = findEvent(eventData, registeredEvents);
 
             if (event != null) {
-                event.setDeviceData(eventData); // Set the latest data
-
                 PreparedStatement stmt =
                         db.getPreparedStatement("INSERT INTO event_data_raw (timestamp, event_id, data) VALUES(?, ?, ?)");
                 stmt.setLong(1, eventData.getTimestamp());
@@ -203,13 +200,14 @@ public class ControllerManager implements HalSensorReportListener,
             }
             else { // unknown sensor
                 logger.info("Received report from unregistered event: "+ eventData);
-                Event detectedEvent = findEvent(eventData, detectedEvents);
-                if(detectedEvent == null) {
-                    detectedEvent = new Event();
-                    detectedEvents.add(detectedEvent);
+                event = findEvent(eventData, detectedEvents);
+                if(event == null) {
+                    event = new Event();
+                    detectedEvents.add(event);
                 }
-                detectedEvent.setDeviceData(eventData);
             }
+            event.setDeviceData(eventData); // Set the latest data
+
         }catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store event report", e);
         }

@@ -42,7 +42,7 @@ public abstract class AbstractDevice<T> extends DBBean {
         return null;
     }
     public T getDeviceData() {
-        if (deviceData == null) {
+        if (deviceData == null || !deviceData.getClass().getName().equals(type)) {
             try {
                 Class c = Class.forName(type);
                 deviceData = (T) c.newInstance();

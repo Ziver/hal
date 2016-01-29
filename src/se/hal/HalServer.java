@@ -12,6 +12,7 @@ import se.hal.page.HalAlertManager.*;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
+import zutil.db.bean.DBBean;
 import zutil.io.file.FileUtil;
 import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
@@ -47,6 +48,7 @@ public class HalServer {
 
 
         // init DB and other configurations
+        DBBean.enableBeanGBC(false); // we don't need gbc for our beans as we would loose the device data
         DBConnection db = HalContext.getDB();
 
         // Init sensors,events and controllers

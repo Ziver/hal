@@ -1,15 +1,70 @@
 #include "archtech.h"
 #include "buffer.h"
 
-bool parseArctechSelfLearning(uint8_t* bufStartP, uint8_t* bufEndP) {    //start points to a "one" buffer byte, end points to a "zero" buffer byte
+/*******************************************************************************
+                      --ARCHTECH PROTOCOL SPECIFICATION--
+
+    ----SIGNAL----
+A signal consists of a PREAMBLE, DATA and an POSTAMBLE.
+Each signal is sent 4 times in a row to increase the delivery success rate.
+
+    ----PREAMBLE----
+send high for 250 microseconds
+send low for 2,500 microseconds
+
+    ----DATA----
+26 bits of transmitter id
+1 bit indicating if the on/off bit is targeting a group
+1 bit indicating "on" or "off"
+4 bits indicating the targeted unit/channel/device
+4 bits indicating a absolute dim level (optional)
+
+Total: 32 or 36 bits depending if absolute dimming is used
+
+Each real bit in the data field is sent over air as a pair of two inverted bits.
+  real bit        bits over air
+     1       =        "01"
+     0       =        "10"
+
+Over air a "1"(one) is sent as:
+send high for 250 microseconds
+send low for 1,250 microseconds
+
+Over air a "0"(zero) is sent as:
+send high for 250 microseconds
+send low for 250 microseconds
+
+    ----POSTAMBLE----
+send high for 250 microseconds
+send low for 10,000 microseconds
+
+*******************************************************************************/
+
+#define ARCHTECH_SHORT_MIN       2
+#define ARCHTECH_SHORT_MAX       7
+#define ARCHTECH_LONG_MIN       17
+#define ARCHTECH_LONG_MAX       23
+
+#define IS_SHORT(b) ( ARCHTECH_SHORT_MIN <= b && b <= ARCHTECH_SHORT_MAX )
+#define IS_LONG(b)  (  ARCHTECH_LONG_MIN <= b && b <= ARCHTECH_LONG_MAX  )
+
+#define IS_ZERO(b1,b2,b3,b4) ( IS_SHORT(b1) && IS_LONG(b2)  && IS_SHORT(b3) && IS_SHORT(b4) )
+#define IS_ONE(b1,b2,b3,b4)  ( IS_SHORT(b1) && IS_SHORT(b2) && IS_SHORT(b3) && IS_LONG(b4)  )
+
+bool parseArctechSelfLearning(uint8_t* bufStartP, uint8_t* bufEndP) {    //start points to a "high" buffer byte, end points to a "low" buffer byte
   uint64_t data = 0;
-  bool dimValuePresent = false;
+  bool dimValuePresent;
 
-  for (uint8_t i = 0; i < 31; ++i) {
-
-    if (calculateBufferPointerDistance(bufStartP, bufEndP) < 4) { //less than 4 more high/low rto read in buffer
-      return false;
-    }
+  uint16_t bitsInBuffer = calculateBufferPointerDistance(bufStartP, bufEndP) / 4;   //each bit is representd by 4 high/low
+  if (bitsInBuffer == 32) {
+    dimValuePresent = false;
+  }else if(bitsInBuffer == 36){
+    dimValuePresent = true;
+  } else {
+    return false;
+  }
+  
+  for (uint8_t i = 0; i < bitsInBuffer-1; ++i) {
 
     uint8_t b1 = *bufStartP;    //no of high
     stepBufferPointer(&bufStartP);
@@ -20,18 +75,10 @@ bool parseArctechSelfLearning(uint8_t* bufStartP, uint8_t* bufEndP) {    //start
     uint8_t b4 = *bufStartP;    //no of low
     stepBufferPointer(&bufStartP);
 
-    //TODO: add support for absolute dim values
-
-    if (ARCHTECH_LOW_LOW <= b1 && b1 <= ARCHTECH_LOW_HIGH &&
-        ARCHTECH_LOW_LOW <= b2 && b2 <= ARCHTECH_LOW_HIGH &&
-        ARCHTECH_LOW_LOW <= b3 && b3 <= ARCHTECH_LOW_HIGH &&
-        ARCHTECH_HIGH_LOW <= b4 && b4 <= ARCHTECH_HIGH_HIGH) {  //"one" is sent over air
+    if (IS_ONE(b1,b2,b3,b4)) {  //"one" is sent over air
       data <<= 1; //shift in a zero
       data |= 0x1;    //add one
-    } else if (ARCHTECH_LOW_LOW <= b1 && b1 <= ARCHTECH_LOW_HIGH &&
-               ARCHTECH_HIGH_LOW <= b2 && b2 <= ARCHTECH_HIGH_HIGH &&
-               ARCHTECH_LOW_LOW <= b3 && b3 <= ARCHTECH_LOW_HIGH &&
-               ARCHTECH_LOW_LOW <= b4 && b4 <= ARCHTECH_LOW_HIGH) { //"zero" is sent over air
+    } else if (IS_ZERO(b1,b2,b3,b4)) { //"zero" is sent over air
       data <<= 1; //shift in a zero
     } else {
       return false;

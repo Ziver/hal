@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import se.hal.plugin.raspberry.RPiController;
 import se.hal.plugin.raspberry.RPiPowerConsumptionSensor;
 import se.hal.plugin.raspberry.RPiSensor;
+import se.hal.plugin.raspberry.RPiUtility;
 import zutil.log.LogUtil;
 
 import com.pi4j.io.gpio.GpioController;
@@ -18,6 +19,7 @@ import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
+import com.pi4j.wiringpi.GpioUtil;
 
 public class RPiInteruptPulseFlankCounter implements Runnable, GpioPinListenerDigital, RPiSensor {
 	private static final int REPORT_TIMEOUT = 60_000;   //one minute
@@ -29,12 +31,17 @@ public class RPiInteruptPulseFlankCounter implements Runnable, GpioPinListenerDi
 	private long nanoSecondsSleep = REPORT_TIMEOUT * 1_000_000L;
 	private volatile Integer impulseCount = 0;
 	private GpioPinDigitalInput irLightSensor;
+	private final int gpioPin;
 	
-	public RPiInteruptPulseFlankCounter(Pin gpioPin, RPiController controller){
+	public RPiInteruptPulseFlankCounter(int gpioPin, RPiController controller){
 		this.controller = controller;
+		this.gpioPin = gpioPin;
 		
 		// setup a thread pool for executing jobs
         this.executorPool = Executors.newCachedThreadPool();
+
+	//Enable non privileged access to the GPIO pins (no sudo required from now)
+	GpioUtil.enableNonPrivilegedAccess();
 
     	// create gpio controller
     	GpioController gpio = null;
@@ -49,7 +56,7 @@ public class RPiInteruptPulseFlankCounter implements Runnable, GpioPinListenerDi
     	}
     	
     	// provision gpio pin as an input pin with its internal pull up resistor enabled
-    	irLightSensor = gpio.provisionDigitalInputPin(gpioPin, PinPullResistance.PULL_UP);
+    	irLightSensor = gpio.provisionDigitalInputPin(RPiUtility.getPin(gpioPin), PinPullResistance.PULL_UP);
 
         // create and register gpio pin listener. May require the program to be run as sudo if the GPIO pin has not been exported
         irLightSensor.addListener(this);
@@ -131,7 +138,7 @@ public class RPiInteruptPulseFlankCounter implements Runnable, GpioPinListenerDi
 			@Override
 			public void run() {
             	logger.log(Level.INFO, "Reporting data. timestamp_end="+timestamp_end+", data="+data);
-            	controller.sendDataReport(new RPiPowerConsumptionSensor(timestamp_end, data));
+            	controller.sendDataReport(new RPiPowerConsumptionSensor(gpioPin, timestamp_end, data));
 			}
 		});
     }

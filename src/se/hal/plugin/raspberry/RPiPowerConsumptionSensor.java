@@ -18,7 +18,8 @@ public class RPiPowerConsumptionSensor implements PowerConsumptionSensorData {
 		//need to be empty for the framework to create an instance
 	}
 	
-	public RPiPowerConsumptionSensor(long timestamp, double data) {
+	public RPiPowerConsumptionSensor(int gpioPin, long timestamp, double data) {
+		this.gpioPin = gpioPin;
 		this.timestamp = timestamp;
 		this.data = data;
 	}
@@ -44,12 +45,16 @@ public class RPiPowerConsumptionSensor implements PowerConsumptionSensorData {
     }
 
     public boolean equals(Object obj){
-    	if(obj instanceof RPiPowerConsumptionSensor)
-    		return obj == this;
-    	return false;
+    	if(!(obj instanceof RPiPowerConsumptionSensor))
+    		return false;
+    	return ((RPiPowerConsumptionSensor)obj).gpioPin == gpioPin;
     }
 
-	public Pin getGpioPin() {
-		return RPiUtility.getPin(gpioPin);
+	public int getGpioPin() {
+		return gpioPin;
 	}
+
+    public String toString(){
+        return "gpioPin:" + gpioPin +", data:" + data;
+    }
 }

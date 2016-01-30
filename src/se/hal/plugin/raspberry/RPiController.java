@@ -31,20 +31,20 @@ public class RPiController implements HalSensorController {
     @Override
     public void register(HalSensorData sensor) {
     	if(sensor instanceof RPiPowerConsumptionSensor){
-    		RPiPowerConsumptionSensor powerConsumprtionSensor = (RPiPowerConsumptionSensor) sensor;
-    		Pin gpioPin = powerConsumprtionSensor.getGpioPin();
-    		if(!pinToSensorMap.containsKey(gpioPin.getName())){
+    		RPiPowerConsumptionSensor powerConsumptionSensor = (RPiPowerConsumptionSensor) sensor;
+    		int gpioPin = powerConsumptionSensor.getGpioPin();
+    		if(!pinToSensorMap.containsKey("GPIO_"+gpioPin)){
     			RPiInteruptPulseFlankCounter impulseCounter = new RPiInteruptPulseFlankCounter(gpioPin, this);
-            	pinToSensorMap.put(gpioPin.getName(), impulseCounter);
+            	pinToSensorMap.put("GPIO_"+gpioPin, impulseCounter);
     		}else{
     			logger.warning("Cannot create a RPiPowerConsumptionSensor on GPIO pin " + gpioPin + " since is already is in use by another sensor.");
     		}
     	} else if(sensor instanceof RPiTemperatureSensor){
     		RPiTemperatureSensor temperatureSensor = (RPiTemperatureSensor) sensor;
     		String w1Address = temperatureSensor.get1WAddress();
-    		if(!pinToSensorMap.containsKey(w1Address)){
+    		if(!pinToSensorMap.containsKey("W1_"+w1Address)){
 	    		RPiDS18B20 ds12b20 = new RPiDS18B20(w1Address, this);
-	        	pinToSensorMap.put(w1Address, ds12b20);
+	        	pinToSensorMap.put("W1_"+w1Address, ds12b20);
     		}else{
     			logger.warning("Cannot create a RPi1WireTemperatureSensor on 1-Wire address " + w1Address + " since is already is in use by another sensor.");
     		}
@@ -57,13 +57,13 @@ public class RPiController implements HalSensorController {
     public void deregister(HalSensorData sensor) {
     	if(sensor instanceof RPiPowerConsumptionSensor){
     		RPiPowerConsumptionSensor powerConsumprtionSensor = (RPiPowerConsumptionSensor) sensor;
-    		RPiSensor sensorToDeregister = pinToSensorMap.remove(powerConsumprtionSensor.getGpioPin().getName());
+    		RPiSensor sensorToDeregister = pinToSensorMap.remove("GPIO_"+powerConsumprtionSensor.getGpioPin());
     		if(sensorToDeregister != null){
     			sensorToDeregister.close();
     		}
     	} else if(sensor instanceof RPiTemperatureSensor){
     		RPiTemperatureSensor temperatureSensor = (RPiTemperatureSensor) sensor;
-    		RPiSensor sensorToDeregister = pinToSensorMap.remove(temperatureSensor.get1WAddress());
+    		RPiSensor sensorToDeregister = pinToSensorMap.remove("W1_"+temperatureSensor.get1WAddress());
     		if(sensorToDeregister != null){
     			sensorToDeregister.close();
     		}

@@ -43,7 +43,7 @@ send low for 10,000 microseconds
 #define ARCHTECH_SHORT_MIN       2
 #define ARCHTECH_SHORT_MAX       7
 #define ARCHTECH_LONG_MIN       17
-#define ARCHTECH_LONG_MAX       23
+#define ARCHTECH_LONG_MAX       27
 
 #define IS_SHORT(b) ( ARCHTECH_SHORT_MIN <= b && b <= ARCHTECH_SHORT_MAX )
 #define IS_LONG(b)  (  ARCHTECH_LONG_MIN <= b && b <= ARCHTECH_LONG_MAX  )
@@ -56,13 +56,21 @@ bool parseArctechSelfLearning(uint8_t* bufStartP, uint8_t* bufEndP) {    //start
   bool dimValuePresent;
 
   uint16_t bitsInBuffer = calculateBufferPointerDistance(bufStartP, bufEndP) / 4;   //each bit is representd by 4 high/low
-  if (bitsInBuffer == 32) {
+  //Serial.print("bits in buffer: "); Serial.print(bitsInBuffer); Serial.print(" - ");
+  if (bitsInBuffer == 33) {
+    //Serial.println("default");
     dimValuePresent = false;
-  }else if(bitsInBuffer == 36){
+  }else if(bitsInBuffer == 37){
+    //Serial.println("with dim");
     dimValuePresent = true;
   } else {
+    //Serial.println("ignore");
     return false;
   }
+
+  //stkip two buffers entries. 
+  stepBufferPointer(&bufStartP);
+  stepBufferPointer(&bufStartP);
   
   for (uint8_t i = 0; i < bitsInBuffer-1; ++i) {
 
@@ -75,12 +83,17 @@ bool parseArctechSelfLearning(uint8_t* bufStartP, uint8_t* bufEndP) {    //start
     uint8_t b4 = *bufStartP;    //no of low
     stepBufferPointer(&bufStartP);
 
+    //Serial.print(b1); Serial.print(", ");Serial.print(b2); Serial.print(", ");Serial.print(b3); Serial.print(", ");Serial.print(b4);
+
     if (IS_ONE(b1,b2,b3,b4)) {  //"one" is sent over air
+      //Serial.println(" --> 1");
       data <<= 1; //shift in a zero
       data |= 0x1;    //add one
     } else if (IS_ZERO(b1,b2,b3,b4)) { //"zero" is sent over air
+      //Serial.println(" --> 0");
       data <<= 1; //shift in a zero
     } else {
+      //Serial.println(" --> CORRUPT");
       return false;
     }
 

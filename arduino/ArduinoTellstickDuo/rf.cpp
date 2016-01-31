@@ -17,8 +17,9 @@ void parseRadioRXBuffer() {
   bool parse = false;
   while (bufferReadP != bufferWriteP) { //stop if the read pointer is pointing to where the writing is currently performed
     uint8_t sampleCount = *bufferReadP;
-  
+    
     if ( (((uintptr_t)bufferReadP) & 0x1) == 1 ) { //buffer pointer is odd (stores highs)
+      //Serial.print("high:"); Serial.println(sampleCount);
       if (prevValue >= SILENCE_LENGTH) {
         startDataP = bufferReadP;   //some new data must start here since this is the first "high" after a silent period
       }
@@ -27,10 +28,13 @@ void parseRadioRXBuffer() {
       parseOregonStream(HIGH, sampleCount);
       
     } else { //buffer pointer is even    (stores lows)
+      //Serial.print("low:"); Serial.println(sampleCount);
       if (sampleCount >= SILENCE_LENGTH) {  //evaluate if it is time to parse the curernt data
         endDataP = bufferReadP;     //this is a silient period and must be the end of a data
-        parse = true;
-        break;
+        if(startDataP != 0){
+          parse = true;
+          break;
+        }
       }
       
       //stream data to stream parsers
@@ -43,6 +47,7 @@ void parseRadioRXBuffer() {
     if (nextBufferReadP == startDataP) { //next pointer will point to startDataP. Data will overflow. Reset the data pointers.
       startDataP = 0;
       endDataP = 0;
+      prevValue = 0;
     }
 
     //advance buffer pointer one step
@@ -63,6 +68,8 @@ void parseRadioRXBuffer() {
   * At this point the startDataP will point to the first high after a silent period
   * and the endDataP will point at the first (low) silent period after the data data start.
   */
+
+  //Serial.print((uintptr_t)startDataP); Serial.print(" - "); Serial.println((uintptr_t)endDataP);
 
   //Let all available parsers parse the data set now.
   parseArctechSelfLearning(startDataP, endDataP);

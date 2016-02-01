@@ -1,0 +1,4 @@
+#ifndef PROTOCOLOREGON_H
+#define PROTOCOLOREGON_H
+
+#endif // PROTOCOLOREGON_H

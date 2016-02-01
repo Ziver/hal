@@ -1,0 +1,14 @@
+#ifndef DEFINITIONS_H
+#define DEFINITIONS_H
+
+//////// PROTOCOLS
+#define PROT_NEXA_SELFLEARNING
+#define PROT_OREGON_SELFLEARNING
+
+/////// HARDWARE
+#define HW_BH1750
+#define HW_DHT11
+#define HW_PHOTOCELL
+
+
+#endif // DEFINITIONS_H

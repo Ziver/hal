@@ -1,0 +1,4 @@
+#ifndef PROTOCOLNEXA_H
+#define PROTOCOLNEXA_H
+
+#endif // PROTOCOLNEXA_H

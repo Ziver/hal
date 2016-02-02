@@ -102,7 +102,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                         	PreparedStatement stmt = db.getPreparedStatement("SELECT * FROM sensor_data_aggr WHERE sensor_id == ? AND sequence_id > ?");
                         	stmt.setLong(1, sensor.getId());
                         	logger.fine("Client requesting sensor data: sensorId: " + req.sensorId + ", offset: " + req.offsetSequenceId + ", " + req.aggregationVersion);
-                        	if(req.aggregationVersion != -1 && req.aggregationVersion != sensor.getAggregationVersion()){
+                        	if(req.aggregationVersion != 0 && req.aggregationVersion != sensor.getAggregationVersion()){
                         		logger.fine("The requested aggregation version does not match the local version: " + sensor.getAggregationVersion() + ". Will re-send all aggregated data.");
                         		stmt.setLong(2, 0);	//0 since we want to re-send all data to the peer
                         	}else{
@@ -165,7 +165,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
 	protected static class SensorDataListDTO extends ArrayList<SensorDataDTO> implements Serializable{
 		private static final long serialVersionUID = -5701618637734020691L;	
 		
-		public long aggregationVersion = -1;
+		public long aggregationVersion = 0;
 	}
 	protected static class SensorDataDTO implements Serializable{
 		private static final long serialVersionUID = 8494331502087736809L;

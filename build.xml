@@ -46,6 +46,12 @@
 		<exec executable="sqlite3">
 			<arg line="hal.db 'DELETE FROM sensor_data_aggr'" />
 		</exec>
+		
+		<!-- update all internal sensors aggregation version to indicate for peers that they need to re-sync all data -->
+		<exec executable="sqlite3">
+			<arg line="hal.db 'UPDATE sensor SET aggr_version = aggr_version+1) WHERE id = (SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)'" />
+		</exec>
+		
 	</target>
 	
 	<!--clean all build paths-->
@@ -58,12 +64,12 @@
 	<!--build product code-->
 	<target name="build" depends="build-dependencies">
 		<mkdir dir="${buildDir}" />
-		<javac srcdir="${srcDir}" destdir="${buildDir}" fork="yes">
+		<javac srcdir="${srcDir}" destdir="${buildDir}" debug="yes" fork="yes">
 			<include name="**/*.java" />
 			<exclude name="se/hal/tts/GoogleTTSClient.java" />
 			<classpath refid="classpath.build" />
 		</javac>
-		<javac srcdir="${testDir}" destdir="${buildDir}" fork="yes">
+		<javac srcdir="${testDir}" destdir="${buildDir}" debug="yes" fork="yes">
 			<include name="**/*.java" />
 			<exclude name="se/hal/test/JarvisSyntersizerTest.java" />
 			<classpath refid="classpath.build" />

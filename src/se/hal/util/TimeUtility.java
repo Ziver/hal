@@ -9,6 +9,7 @@ public class TimeUtility {
     public static final long HOUR_IN_MS = MINUTES_IN_MS * 60;
     public static final long DAY_IN_MS = HOUR_IN_MS * 24;
     public static final long WEEK_IN_MS = DAY_IN_MS * 7;
+	public static final long INFINITY = Long.MAX_VALUE;	//sort of true
     
     public static long getTimestampPeriodStart_UTC(long periodLengthInMs, long timestamp) throws NumberFormatException{
     	if(periodLengthInMs < 0 || timestamp < 0)

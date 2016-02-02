@@ -6,7 +6,6 @@ import se.hal.struct.Sensor;
 import se.hal.util.TimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
-import zutil.db.handler.SimpleSQLResult;
 import zutil.log.LogUtil;
 
 import java.sql.PreparedStatement;
@@ -41,58 +40,12 @@ public class SensorDataCleanupDaemon implements HalDaemon {
     }
 
     public void cleanupSensor(Sensor sensor) {
-    	//if(sensor instanceof PowerConsumptionSensorData){
-    		//logger.fine("The sensor is of type: " + sensor.getDeviceData().getClass().getName()); // this will instantiate the external sensor data
     	if (sensor.getUser() != null) {
-			if (sensor.getUser().isExternal()) {
-				cleanupExternalSensorData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);
-				cleanupExternalSensorData(sensor.getId(), TimeUtility.HOUR_IN_MS, TimeUtility.WEEK_IN_MS);
-			} else {
-				cleanupInternalSensorData(sensor.getId(), TimeUtility.HOUR_IN_MS, TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);
-				cleanupInternalSensorData(sensor.getId(), TimeUtility.DAY_IN_MS, TimeUtility.HOUR_IN_MS, TimeUtility.WEEK_IN_MS);
-			}
+			cleanupSensorData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);	//clear 5-minute data older than a day
+			cleanupSensorData(sensor.getId(), TimeUtility.HOUR_IN_MS, TimeUtility.WEEK_IN_MS);			//clear 1-hour data older than a week
 		}
-    	//}else{
-    	//	logger.fine("The sensor type is not supported by the cleanup deamon. Ignoring");
-    	//}
     }
-    
-    /**
-     * Will clear periods only if it has been aggregated and are too old.
-	 *
-     * @param sensorId
-     * @Param referencePeriodlength Will only clear periods older than the newest period of this length.
-     * @Param clearPeriodlength Will clear periods with this length
-     * @param olderThan Data must be older than this many ms to be cleared from the DB
-     */
-    private void cleanupInternalSensorData(long sensorId, long referencePeriodlength, long clearPeriodlength, long olderThan){
-    	DBConnection db = HalContext.getDB();
-    	PreparedStatement stmt = null;
-    	try {
-    		Long maxDBTimestamp = null; 
-    		
-    		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr"
-    				+" WHERE sensor_id == ? AND timestamp_end-timestamp_start == ?");
-    		stmt.setLong(1, sensorId);
-    		stmt.setLong(2, referencePeriodlength-1);
-    		maxDBTimestamp = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
-    		if(maxDBTimestamp == null)
-    			maxDBTimestamp = 0l;
 
-    		stmt = db.getPreparedStatement("SELECT * FROM sensor_data_aggr"
-    				+" WHERE sensor_id == ? "
-	    				+ "AND timestamp_end < ? "
-	    				+ "AND timestamp_end-timestamp_start == ?"
-	    				+ "AND timestamp_end < ?");
-    		stmt.setLong(1, sensorId);
-    		stmt.setLong(2, maxDBTimestamp);
-    		stmt.setLong(3, clearPeriodlength-1);
-    		stmt.setLong(4, System.currentTimeMillis()-olderThan);
-    		DBConnection.exec(stmt, new AggregateDataDeleter(sensorId));
-		} catch (SQLException e) {
-			logger.log(Level.SEVERE, null, e);
-		}
-    }
     
     /**
      * Will clear periods if they are too old.
@@ -101,7 +54,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
      * @Param clearPeriodlength Will clear periods with this length
      * @param olderThan Data must be older than this many ms to be cleared from the DB
      */
-    private void cleanupExternalSensorData(long sensorId, long clearPeriodlength, long olderThan){
+    private void cleanupSensorData(long sensorId, long clearPeriodlength, long olderThan){
     	DBConnection db = HalContext.getDB();
     	PreparedStatement stmt = null;
     	try {

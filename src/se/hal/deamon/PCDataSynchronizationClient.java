@@ -6,6 +6,7 @@ import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
+import zutil.db.bean.DBBeanSQLResultHandler;
 import zutil.log.LogUtil;
 import zutil.parser.json.JSONParser;
 
@@ -89,9 +90,21 @@ public class PCDataSynchronizationClient implements HalDaemon {
 							SensorDataReqDTO req = new SensorDataReqDTO();
 							req.sensorId = sensor.getExternalId();
 							req.offsetSequenceId = Sensor.getHighestSequenceId(sensor.getId());
+							req.aggregationVersion = sensor.getAggregationVersion();
 							out.writeObject(req);
 
 							SensorDataListDTO dataList = (SensorDataListDTO) in.readObject();
+							if(dataList.aggregationVersion != -1 && dataList.aggregationVersion != sensor.getAggregationVersion()){
+								logger.fine("The peer has modified its aggregated data in such a way that we need to reset the sync and start over on this side. oldAggregationVersion:"+sensor.getAggregationVersion()+" , newAggregationVersion:"+dataList.aggregationVersion);
+								
+								//clear old aggregated data for sensor
+								logger.finer("Deleting all aggregated data for sensor");
+								sensor.clearAggregatedData(db);
+								
+								//save new aggregationVersion
+								sensor.setAggregationVersion(dataList.aggregationVersion);
+								sensor.save(db);
+							}
 							for (SensorDataDTO data : dataList) {
 								PreparedStatement stmt = db.getPreparedStatement("INSERT INTO sensor_data_aggr(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) VALUES(?, ?, ?, ?, ?, ?)");
 								stmt.setLong(1, sensor.getId());
@@ -138,5 +151,6 @@ public class PCDataSynchronizationClient implements HalDaemon {
 		
 		public long sensorId;
 		public long offsetSequenceId; // highest known sequence id
+		public long aggregationVersion = -1;
 	}
 }

@@ -22,7 +22,7 @@ public class Sensor extends AbstractDevice<HalSensorData>{
 	private long external_id = -1;
     /** local sensor= if sensor should be public. external sensor= if sensor should be requested from host **/
     private boolean sync = false;
-
+    private long aggr_version;
 
 
 	public static List<Sensor> getExternalSensors(DBConnection db) throws SQLException{
@@ -61,9 +61,9 @@ public class Sensor extends AbstractDevice<HalSensorData>{
     	stmt.setLong(1, sensorId);
     	Integer id = DBConnection.exec(stmt, new SimpleSQLResult<Integer>());
     	return (id != null ? id : 0);
-   }
+    }
 
-
+    
 
 	public long getExternalId() {
 		return external_id;
@@ -77,6 +77,12 @@ public class Sensor extends AbstractDevice<HalSensorData>{
     public void setSynced(boolean synced) {
         this.sync = synced;
     }
+    public long getAggregationVersion(){
+    	return this.aggr_version;
+    }
+    public void setAggregationVersion(long aggr_version){
+    	this.aggr_version = aggr_version;
+    }
 
 
     public HalSensorData.AggregationMethod getAggregationMethod(){
@@ -85,6 +91,12 @@ public class Sensor extends AbstractDevice<HalSensorData>{
 
 	public Class<? extends HalSensorController> getController(){
 		return getDeviceData().getSensorController();
+	}
+	
+	public void clearAggregatedData(DBConnection db) throws SQLException{
+		PreparedStatement stmt = db.getPreparedStatement( "DELETE FROM sensor_data_aggr WHERE sensor_id == ?" );
+		stmt.setLong(1, getId());
+		DBConnection.exec(stmt);
 	}
 
 }

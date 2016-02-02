@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="" kind="src" path="src"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="lib" path="external/marytts-5.1.2/lib/icu4j-54.1.1.jar"/>
 	<classpathentry kind="lib" path="external/marytts-5.1.2/lib/marytts-client-5.1.2-jar-with-dependencies.jar"/>
@@ -46,5 +46,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/zutil-java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="output" path="lib/java-speech-api-master/bin"/>
+	<classpathentry kind="output" path="build"/>
 </classpath>

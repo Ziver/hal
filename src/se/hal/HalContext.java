@@ -16,6 +16,8 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import se.hal.struct.Sensor;
+
 public class HalContext {
     private static final Logger logger = LogUtil.getLogger();
 
@@ -70,8 +72,8 @@ public class HalContext {
                     referenceDB.exec("SELECT * FROM conf", new PropertiesSQLResult());
             // Check DB version
             logger.info("DB version: "+ dbConf.getProperty(PROPERTY_DB_VERSION));
-            int defaultDBVersion = Integer.parseInt(defaultDBConf.getProperty(PROPERTY_DB_VERSION));
-            int dbVersion = (dbConf.getProperty(PROPERTY_DB_VERSION) != null ?
+            final int defaultDBVersion = Integer.parseInt(defaultDBConf.getProperty(PROPERTY_DB_VERSION));
+            final int dbVersion = (dbConf.getProperty(PROPERTY_DB_VERSION) != null ?
                                 Integer.parseInt(dbConf.getProperty(PROPERTY_DB_VERSION)) :
                                 -1);
             if(defaultDBVersion > dbVersion ) {
@@ -97,22 +99,39 @@ public class HalContext {
                                 logger.fine("Forced upgrade enabled");
 								handler.setForcedDBUpgrade(true);	//set to true if any of the intermediate db version requires it.
 							}
-							if(result.getBoolean("clear_external_aggr_data")){
-                                logger.fine("Clearing external aggregate data");
-								db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
-										+ "(SELECT sensor_id FROM user, sensor WHERE user.external == 1 AND sensor.user_id = user.id)");
-							}
-							if(result.getBoolean("clear_internal_aggr_data")){
-                                logger.fine("Clearing local aggregate data");
-								db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
-										+ "(SELECT sensor_id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)");
-							}
 						}
 						return null;
 					}
 				});
                 
                 handler.upgrade();
+                
+                logger.fine("Performing post-upgrade activities");
+                //read upgrade path preferences from the reference database
+                referenceDB.exec("SELECT * FROM db_version_history"
+                		+ " WHERE db_version <= " + defaultDBVersion
+                		+ " AND db_version > " + dbVersion, 
+                		new SQLResultHandler<Object>() {
+					@Override
+					public Object handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
+						while(result.next()){
+							if(result.getBoolean("clear_external_aggr_data")){
+                                logger.fine("Clearing external aggregate data");
+								db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
+										+ "(SELECT sensor.id FROM user, sensor WHERE user.external == 1 AND sensor.user_id = user.id)");
+							}
+							if(result.getBoolean("clear_internal_aggr_data")){
+                                logger.fine("Clearing local aggregate data");
+								db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
+										+ "(SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)");
+								//update all internal sensors aggregation version to indicate for peers that they need to re-sync all data
+								db.exec("UPDATE sensor SET aggr_version = (aggr_version+1) WHERE id = "
+										+ "(SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)");
+							}
+						}
+						return null;
+					}
+				});
 
                 logger.info("DB upgrade done");
                 dbConf.setProperty(PROPERTY_DB_VERSION, defaultDBConf.getProperty(PROPERTY_DB_VERSION));

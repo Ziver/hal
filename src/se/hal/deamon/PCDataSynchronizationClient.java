@@ -94,7 +94,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
 							out.writeObject(req);
 
 							SensorDataListDTO dataList = (SensorDataListDTO) in.readObject();
-							if(dataList.aggregationVersion != 0 && dataList.aggregationVersion != sensor.getAggregationVersion()){
+							if(dataList.aggregationVersion != sensor.getAggregationVersion()){
 								logger.fine("The peer has modified its aggregated data in such a way that we need to reset the sync and start over on this side. oldAggregationVersion:"+sensor.getAggregationVersion()+" , newAggregationVersion:"+dataList.aggregationVersion);
 								
 								//clear old aggregated data for sensor

@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 
 public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
-    public static final int PROTOCOL_VERSION = 3;
+    public static final int PROTOCOL_VERSION = 4;
 
 
 	public PCDataSynchronizationDaemon() {
@@ -102,7 +102,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                         	PreparedStatement stmt = db.getPreparedStatement("SELECT * FROM sensor_data_aggr WHERE sensor_id == ? AND sequence_id > ?");
                         	stmt.setLong(1, sensor.getId());
                         	logger.fine("Client requesting sensor data: sensorId: " + req.sensorId + ", offset: " + req.offsetSequenceId + ", " + req.aggregationVersion);
-                        	if(req.aggregationVersion != 0 && req.aggregationVersion != sensor.getAggregationVersion()){
+                        	if(req.aggregationVersion != sensor.getAggregationVersion()){
                         		logger.fine("The requested aggregation version does not match the local version: " + sensor.getAggregationVersion() + ". Will re-send all aggregated data.");
                         		stmt.setLong(2, 0);	//0 since we want to re-send all data to the peer
                         	}else{

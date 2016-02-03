@@ -64,12 +64,12 @@
 	<!--build product code-->
 	<target name="build" depends="build-dependencies">
 		<mkdir dir="${buildDir}" />
-		<javac srcdir="${srcDir}" destdir="${buildDir}" debug="yes" fork="yes">
+		<javac srcdir="${srcDir}" destdir="${buildDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
 			<include name="**/*.java" />
 			<exclude name="se/hal/tts/GoogleTTSClient.java" />
 			<classpath refid="classpath.build" />
 		</javac>
-		<javac srcdir="${testDir}" destdir="${buildDir}" debug="yes" fork="yes">
+		<javac srcdir="${testDir}" destdir="${buildDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
 			<include name="**/*.java" />
 			<exclude name="se/hal/test/JarvisSyntersizerTest.java" />
 			<classpath refid="classpath.build" />

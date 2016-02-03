@@ -65,6 +65,8 @@ public class EventConfigHttpPage extends HalHttpPage {
                     configurator.setValues(request);
                     configurator.applyConfiguration();
                     event.save(db);
+                    ControllerManager.getInstance().register(event);
+                    break;
                 case "modify_local_event":
                     event = Event.getEvent(db, id);
                     if(event != null){
@@ -77,8 +79,10 @@ public class EventConfigHttpPage extends HalHttpPage {
                     break;
                 case "remove_local_event":
                     event = Event.getEvent(db, id);
-                    if(event != null)
+                    if(event != null) {
+                        ControllerManager.getInstance().deregister(event);
                         event.delete(db);
+                    }
                     break;
             }
         }

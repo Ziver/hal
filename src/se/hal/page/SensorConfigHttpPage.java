@@ -67,6 +67,8 @@ public class SensorConfigHttpPage extends HalHttpPage {
                     configurator.setValues(request);
                     configurator.applyConfiguration();
                     sensor.save(db);
+                    ControllerManager.getInstance().register(sensor);
+                    break;
                 case "modify_local_sensor":
                     sensor = Sensor.getSensor(db, id);
                     if(sensor != null){
@@ -79,8 +81,10 @@ public class SensorConfigHttpPage extends HalHttpPage {
                     break;
                 case "remove_local_sensor":
                     sensor = Sensor.getSensor(db, id);
-                    if(sensor != null)
+                    if(sensor != null) {
+                        ControllerManager.getInstance().deregister(sensor);
                         sensor.delete(db);
+                    }
                     break;
 
                 // External Users

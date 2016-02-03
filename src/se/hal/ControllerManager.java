@@ -105,13 +105,13 @@ public class ControllerManager implements HalSensorReportListener,
             Sensor sensor = findSensor(sensorData, registeredSensors);
 
             if (sensor != null) {
+                logger.finest("Received report from sensor: "+ sensorData);
                 PreparedStatement stmt =
                         db.getPreparedStatement("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUES(?, ?, ?)");
                 stmt.setLong(1, sensorData.getTimestamp());
                 stmt.setLong(2, sensor.getId());
                 stmt.setDouble(3, sensorData.getData());
                 db.exec(stmt);
-                logger.finest("Received report from sensor: "+ sensorData);
             }
             else { // unknown sensor
                 logger.finest("Received report from unregistered sensor: "+ sensorData);
@@ -190,13 +190,13 @@ public class ControllerManager implements HalSensorReportListener,
             Event event = findEvent(eventData, registeredEvents);
 
             if (event != null) {
+                logger.finest("Received report from event: "+ eventData);
                 PreparedStatement stmt =
                         db.getPreparedStatement("INSERT INTO event_data_raw (timestamp, event_id, data) VALUES(?, ?, ?)");
                 stmt.setLong(1, eventData.getTimestamp());
                 stmt.setLong(2, event.getId());
                 stmt.setDouble(3, eventData.getData());
                 db.exec(stmt);
-                logger.finest("Received report from event: "+ eventData);
             }
             else { // unknown sensor
                 logger.info("Received report from unregistered event: "+ eventData);
@@ -305,7 +305,7 @@ public class ControllerManager implements HalSensorReportListener,
 
         if(size < 0){
             // Remove controller as it has no more registered sensors
-            logger.info("Closing controller as it has no more registered objects: "+controller.getClass().getName());
+            logger.info("Closing controller as it has no more registered devices: "+controller.getClass().getName());
             controllerMap.remove(controller.getClass());
 
             if(controller instanceof HalSensorController)

@@ -38,6 +38,7 @@ public class HalServer {
         LogUtil.setLevel("se.hal", Level.FINEST);
         LogUtil.setFormatter("se.hal", formatter);
         LogUtil.setLevel("zutil", Level.FINEST);
+        LogUtil.setLevel("zutil.db.bean", Level.INFO);
         LogUtil.setFormatter("zutil", formatter);
         LogUtil.setGlobalFormatter(formatter);
 

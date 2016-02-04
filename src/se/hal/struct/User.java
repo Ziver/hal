@@ -41,7 +41,19 @@ public class User extends DBBean{
 	public static User getUser(DBConnection db, int id) throws SQLException {
 		return DBBean.load(db, User.class, id);
 	}
-	
+
+
+	/**
+	 * Will delete this user and all its Sensors
+     */
+	@Override
+	public void delete(DBConnection db) throws SQLException {
+		List<Sensor> sensorList = Sensor.getSensors(db, this);
+        for(Sensor sensor : sensorList){
+            sensor.delete(db);
+        }
+        super.delete(db);
+	}
 
 	
 	public String getUsername() {

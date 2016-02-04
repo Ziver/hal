@@ -63,7 +63,28 @@ public class Sensor extends AbstractDevice<HalSensorData>{
     	return (id != null ? id : 0);
     }
 
-    
+
+    /**
+     * Will delete this Sensor and its aggregate data
+     * (raw data will never be deleted as a safety precaution!)
+     */
+    @Override
+    public void delete(DBConnection db) throws SQLException {
+        clearAggregatedData(db);
+        super.delete(db);
+    }
+
+    /**
+     * Will clear all aggregated data for this Sensor and increment the AggregationVersion
+     */
+    public void clearAggregatedData(DBConnection db) throws SQLException{
+        logger.fine("Clearing all aggregate data for sensor id: "+this.getId());
+        PreparedStatement stmt = db.getPreparedStatement( "DELETE FROM sensor_data_aggr WHERE sensor_id == ?" );
+        stmt.setLong(1, getId());
+        DBConnection.exec(stmt);
+        aggr_version++;
+    }
+
 
 	public long getExternalId() {
 		return external_id;
@@ -84,16 +105,6 @@ public class Sensor extends AbstractDevice<HalSensorData>{
     	this.aggr_version = aggr_version;
     }
 
-
-	/**
-	 * Will clear all aggregated data for this Sensor and increment the AggregationVersion
-     */
-	public void clearAggregatedData(DBConnection db) throws SQLException{
-		PreparedStatement stmt = db.getPreparedStatement( "DELETE FROM sensor_data_aggr WHERE sensor_id == ?" );
-		stmt.setLong(1, getId());
-		DBConnection.exec(stmt);
-		aggr_version++;
-	}
 
 
     public Class<? extends HalSensorController> getController(){

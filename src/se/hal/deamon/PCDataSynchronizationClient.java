@@ -95,10 +95,9 @@ public class PCDataSynchronizationClient implements HalDaemon {
 
 							SensorDataListDTO dataList = (SensorDataListDTO) in.readObject();
 							if(dataList.aggregationVersion != sensor.getAggregationVersion()){
-								logger.fine("The peer has modified its aggregated data in such a way that we need to reset the sync and start over on this side. oldAggregationVersion:"+sensor.getAggregationVersion()+" , newAggregationVersion:"+dataList.aggregationVersion);
+								logger.fine("The peer has modified its aggregated data, clearing aggregate data. oldAggregationVersion:"+sensor.getAggregationVersion()+" , newAggregationVersion:"+dataList.aggregationVersion);
 								
 								//clear old aggregated data for sensor
-								logger.finer("Deleting all aggregated data for sensor");
 								sensor.clearAggregatedData(db);
 								
 								//save new aggregationVersion
@@ -118,7 +117,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
 							logger.fine("Stored " + dataList.size() + " entries for sensor " + sensor.getId() + " with offset "+ req.offsetSequenceId +" from " + user.getUsername());
 						}
                         else
-                            logger.fine("Skipped sensor " + sensor.getId());
+                            logger.fine("Sensor not marked for syncing, skipping sensor id: " + sensor.getId());
 					}
 					out.writeObject(null); // Tell server we are disconnecting
 

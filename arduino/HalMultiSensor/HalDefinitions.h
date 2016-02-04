@@ -1,5 +1,5 @@
-#ifndef DEFINITIONS_H
-#define DEFINITIONS_H
+#ifndef HALDEFINITIONS_H
+#define HALDEFINITIONS_H
 
 //////// PROTOCOLS
 #define PROT_NEXA_SELFLEARNING
@@ -11,4 +11,4 @@
 #define HW_PHOTOCELL
 
 
-#endif // DEFINITIONS_H
+#endif // HALDEFINITIONS_H

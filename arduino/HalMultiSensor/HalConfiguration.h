@@ -1,5 +1,5 @@
-#ifndef CONFIGURATION_H
-#define CONFIGURATION_H
+#ifndef HALCONFIGURATION_H
+#define HALCONFIGURATION_H
 
 #include "Definitions.h"
 
@@ -23,4 +23,4 @@
 #define LIGHT_POL_MULTIPLE 1 // poling in seconds
 
 
-#endif //CONFIGURATION_H
+#endif // HALCONFIGURATION_H

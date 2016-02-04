@@ -67,7 +67,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
      */
     private void aggregateRawData(Sensor sensor, long toPeriodSizeInMs, long ageLimitInMs, int expectedSampleCount){
     	long sensorId = sensor.getId();
-    	AggregationMethod aggrMethod = sensor.getAggregationMethod();
+    	AggregationMethod aggrMethod = sensor.getDeviceData().getAggregationMethod();
     	DBConnection db = HalContext.getDB();
     	PreparedStatement stmt = null;
     	try {

@@ -85,18 +85,18 @@ public class Sensor extends AbstractDevice<HalSensorData>{
     }
 
 
-    public HalSensorData.AggregationMethod getAggregationMethod(){
-        return getDeviceData().getAggregationMethod();
-    }
-
-	public Class<? extends HalSensorController> getController(){
-		return getDeviceData().getSensorController();
-	}
-	
+	/**
+	 * Will clear all aggregated data for this Sensor and increment the AggregationVersion
+     */
 	public void clearAggregatedData(DBConnection db) throws SQLException{
 		PreparedStatement stmt = db.getPreparedStatement( "DELETE FROM sensor_data_aggr WHERE sensor_id == ?" );
 		stmt.setLong(1, getId());
 		DBConnection.exec(stmt);
+		aggr_version++;
 	}
 
+
+    public Class<? extends HalSensorController> getController(){
+        return getDeviceData().getSensorController();
+    }
 }

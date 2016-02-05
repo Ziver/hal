@@ -58,7 +58,9 @@ public class HalContext {
             File dbFile = FileUtil.find(DB_FILE);
             if(dbFile == null){
                 logger.info("Creating new DB...");
-                FileUtil.copy(dbFile, FileUtil.find(DEFAULT_DB_FILE));
+                dbFile = new File(DB_FILE);
+                dbFile.createNewFile();
+                FileUtil.copy(FileUtil.find(DEFAULT_DB_FILE), dbFile);
             }
             db = new DBConnection(DBConnection.DBMS.SQLite, DB_FILE);
 

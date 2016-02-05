@@ -56,17 +56,20 @@ public class HalContext {
 
             // Init DB
             File dbFile = FileUtil.find(DB_FILE);
+            boolean firstTime = false;
             if(dbFile == null){
-                logger.info("Creating new DB...");
-                dbFile = new File(DB_FILE);
-                dbFile.createNewFile();
-                FileUtil.copy(FileUtil.find(DEFAULT_DB_FILE), dbFile);
+            	firstTime = true;
+                logger.info("No database file found, creating new DB...");
             }
             db = new DBConnection(DBConnection.DBMS.SQLite, DB_FILE);
 
-            // Read DB conf
-            dbConf = db.exec("SELECT * FROM conf", new PropertiesSQLResult());
-
+            //Read DB conf
+            if(firstTime){
+            	dbConf = new Properties();
+            	dbConf.put(PROPERTY_DB_VERSION, 0);	 
+            }else{
+                dbConf = db.exec("SELECT * FROM conf", new PropertiesSQLResult());       	
+            }
 
             // Upgrade DB needed?
             DBConnection referenceDB = new DBConnection(DBConnection.DBMS.SQLite, DEFAULT_DB_FILE);
@@ -80,15 +83,19 @@ public class HalContext {
                                 -1);
             if(defaultDBVersion > dbVersion ) {
                 logger.info("Starting DB upgrade...");
-                File backupDB = FileUtil.getNextFile(dbFile);
-                logger.fine("Backing up DB to: "+ backupDB);
-                FileUtil.copy(dbFile, backupDB);
+                if(!firstTime){
+	                File backupDB = FileUtil.getNextFile(dbFile);
+	                logger.fine("Backing up DB to: "+ backupDB);
+	                FileUtil.copy(dbFile, backupDB);
+                }
 
                 logger.fine(String.format("Upgrading DB (from: v%s, to: v%s)...", dbVersion, defaultDBVersion));
                 final DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);
                 handler.addIgnoredTable("db_version_history");
+                handler.addIgnoredTable("sqlite_sequence");	//sqlite internal
                 handler.setTargetDB(db);
                 
+                logger.fine("Performing pre-upgrade activities");
                 //read upgrade path preferences from the reference database
                 referenceDB.exec("SELECT * FROM db_version_history"
                 		+ " WHERE db_version <= " + defaultDBVersion

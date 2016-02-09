@@ -43,6 +43,8 @@ public class SensorDataCleanupDaemon implements HalDaemon {
     	if (sensor.getUser() != null) {
 			cleanupSensorData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);	//clear 5-minute data older than a day
 			cleanupSensorData(sensor.getId(), TimeUtility.HOUR_IN_MS, TimeUtility.WEEK_IN_MS);			//clear 1-hour data older than a week
+			//cleanupSensorData(sensor.getId(), TimeUtility.DAY_IN_MS, TimeUtility.INFINITY);			//clear 1-day data older than infinity
+			//cleanupSensorData(sensor.getId(), TimeUtility.WEEK_IN_MS, TimeUtility.INFINITY);			//clear 1-week data older than infinity
 		}
     }
 

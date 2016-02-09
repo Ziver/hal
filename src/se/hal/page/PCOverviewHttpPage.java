@@ -4,14 +4,12 @@ import se.hal.HalContext;
 import se.hal.intf.HalHttpPage;
 import se.hal.util.AggregateDataListSqlResult;
 import se.hal.util.AggregateDataListSqlResult.*;
-import se.hal.util.TimeUtility;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
 
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +36,7 @@ public class PCOverviewHttpPage extends HalHttpPage {
 		ArrayList<AggregateData> minDataList = new ArrayList<>();
 		ArrayList<AggregateData> hourDataList = new ArrayList<>();
 		ArrayList<AggregateData> dayDataList = new ArrayList<>();
+		ArrayList<AggregateData> weekDataList = new ArrayList<>();
 
 		for(User user : users){
 			List<Sensor> userSensors = Sensor.getSensors(db, user);
@@ -47,6 +46,8 @@ public class PCOverviewHttpPage extends HalHttpPage {
 				hourDataList.addAll(AggregateDataListSqlResult.getHourAggregateData(db, sensor));
 
 				dayDataList.addAll(AggregateDataListSqlResult.getDayAggregateData(db, sensor));
+
+				weekDataList.addAll(AggregateDataListSqlResult.getWeekAggregateData(db, sensor));
 			}
 		}
 
@@ -55,6 +56,7 @@ public class PCOverviewHttpPage extends HalHttpPage {
 		tmpl.set("minData", minDataList);
 		tmpl.set("hourData", hourDataList);
 		tmpl.set("dayData", dayDataList);
+		tmpl.set("weekData", weekDataList);
 		tmpl.set("username", User.getUsers(db));
 
 		return tmpl;

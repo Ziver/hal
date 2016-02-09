@@ -12,6 +12,10 @@
     <H1>All History (kWh/day)</H1>
     <div id="day-power-chart" style="height:450px;"></div>
 </div>
+<div class="row placeholders">
+    <H1>All History (kWh/week)</H1>
+    <div id="week-power-chart" style="height:450px;"></div>
+</div>
 
 <script>
     $(function(){
@@ -37,6 +41,13 @@
 				[{{#dayData}}  
 					{ y: {{.timestamp}}, "{{.username}}": {{.data}} },
 				{{/dayData}}
+				{ y: Date.now() }
+				]
+		);
+		chartData("week-power-chart", 
+				[{{#weekData}}  
+					{ y: {{.timestamp}}, "{{.username}}": {{.data}} },
+				{{/weekData}}
 				{ y: Date.now() }
 				]
 		);

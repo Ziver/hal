@@ -57,6 +57,9 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 		
 		logger.fine("aggregating raw data into one day periods");
 		aggregateRawData(sensor, TimeUtility.DAY_IN_MS, TimeUtility.INFINITY, 60*24);
+		
+		logger.fine("aggregating raw data into one week periods");
+		aggregateRawData(sensor, TimeUtility.WEEK_IN_MS, TimeUtility.INFINITY, 60*24*7);
     }
     
     /**

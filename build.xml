@@ -49,7 +49,7 @@
 		
 		<!-- update all internal sensors aggregation version to indicate for peers that they need to re-sync all data -->
 		<exec executable="sqlite3">
-			<arg line="hal.db 'UPDATE sensor SET aggr_version = aggr_version+1) WHERE id = (SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)'" />
+			<arg line="hal.db 'UPDATE sensor SET aggr_version = (aggr_version+1) WHERE id = (SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)'" />
 		</exec>
 		
 	</target>

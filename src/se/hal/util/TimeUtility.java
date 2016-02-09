@@ -1,6 +1,7 @@
 package se.hal.util;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 public class TimeUtility {
 	public static final long SECOND_IN_MS = 1000;
@@ -12,10 +13,8 @@ public class TimeUtility {
 	public static final long INFINITY = Long.MAX_VALUE;	//sort of true
     
     public static long getTimestampPeriodStart_UTC(long periodLengthInMs, long timestamp) throws NumberFormatException{
-    	if(periodLengthInMs < 0 || timestamp < 0)
-    		throw new NumberFormatException("argument must be positive");
-    	
-    	return timestamp - (timestamp % periodLengthInMs);
+    	//return timestamp - (timestamp % periodLengthInMs);
+		return getTimestampPeriodStart(periodLengthInMs, timestamp, Calendar.getInstance(TimeZone.getTimeZone("UTC")));
     }
     
     /**
@@ -25,10 +24,13 @@ public class TimeUtility {
      * @return
      */
 	public static long getTimestampPeriodStart_LOCAL(long periodLengthInMs, long timestamp) throws NumberFormatException{
+		return getTimestampPeriodStart(periodLengthInMs, timestamp, Calendar.getInstance());
+	}
+	
+	private static long getTimestampPeriodStart(long periodLengthInMs, long timestamp, Calendar cal) throws NumberFormatException{
 		if(periodLengthInMs < 0 || timestamp < 0)
     		throw new NumberFormatException("argument must be positive");
 		
-		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(timestamp);
 		boolean clear = false;
 		

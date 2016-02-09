@@ -31,12 +31,23 @@ public class TimeUtility {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(timestamp);
 		boolean clear = false;
+		
+		int weeks = getWeeksFromTimestamp(periodLengthInMs);
+		if(weeks > 0){
+			int currentWeek = cal.get(Calendar.WEEK_OF_YEAR);
+			cal.set(Calendar.WEEK_OF_YEAR, (currentWeek/weeks)*weeks);
+			clear = true;
+		}
+		
 		int days = getDaysFromTimestamp(periodLengthInMs);
-		if(days > 0){
+		if(days%7 > 0){
 			int currentDay = cal.get(Calendar.DAY_OF_YEAR);
 			cal.set(Calendar.DAY_OF_YEAR, (currentDay/days)*days);
 			clear = true;
+		}else if(clear){
+			cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 		}
+		
 		int hours = getHourOfDayFromTimestamp(periodLengthInMs);
 		if(hours > 0){
 			int currentHour = cal.get(Calendar.HOUR_OF_DAY);
@@ -45,6 +56,7 @@ public class TimeUtility {
 		}else if(clear){
 			cal.set(Calendar.HOUR_OF_DAY, 0);
 		}
+		
 		int minutes = getMinuteOfHourFromTimestamp(periodLengthInMs);
 		if(minutes > 0){
 			int currentMinute = cal.get(Calendar.MINUTE);
@@ -53,6 +65,7 @@ public class TimeUtility {
 		}else if(clear){
 			cal.set(Calendar.MINUTE, 0);
 		}
+		
 		int seconds = getSecondOfMinuteFromTimestamp(periodLengthInMs);
 		if(seconds > 0){
 			int currentSecond = cal.get(Calendar.SECOND);
@@ -61,6 +74,7 @@ public class TimeUtility {
 		}else if(clear){
 			cal.set(Calendar.SECOND, 0);
 		}
+		
 		int milliseconds = getMillisecondInSecondFromTimestamp(periodLengthInMs);
 		if(milliseconds > 0){
 			int currentMillisecond = cal.get(Calendar.MILLISECOND);
@@ -68,6 +82,7 @@ public class TimeUtility {
 		}else if(clear){
 			cal.set(Calendar.MILLISECOND, 0);
 		}
+		
 		return cal.getTimeInMillis();
 	}
 	
@@ -101,12 +116,24 @@ public class TimeUtility {
 		return (int) (ms / DAY_IN_MS);
 	}
 	
+	public static int getWeeksFromTimestamp(long ms) throws NumberFormatException{
+		if(ms < 0)
+    		throw new NumberFormatException("argument must be positive");
+		return (int) (ms / WEEK_IN_MS);
+	}
+	
 	public static String msToString(long ms) throws NumberFormatException{
 		if(ms < 0)
     		throw new NumberFormatException("argument must be positive");
 		String retval = "";
-		int days = getDaysFromTimestamp(ms);
-		retval += days + "days+";
+		int weeks = getWeeksFromTimestamp(ms);
+		if(weeks > 0){
+			retval += weeks + "w+";
+		}
+		int days = getDaysFromTimestamp(ms) % 7;
+		if(days > 0){
+			retval += days + "d+";
+		}
 		int hours = getHourOfDayFromTimestamp(ms);
 		retval += (hours<10?"0"+hours:hours);
 		int minutes = getMinuteOfHourFromTimestamp(ms);

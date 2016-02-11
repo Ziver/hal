@@ -4,11 +4,10 @@ the data to a central location.
 */
 
 
-
-void setup(){
+void setup()
+{
 
 }
-
 
 void loop() {
 

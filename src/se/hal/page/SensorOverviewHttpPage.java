@@ -1,15 +1,14 @@
 package se.hal.page;
 
-import se.hal.ControllerManager;
 import se.hal.HalContext;
+import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 import se.hal.intf.HalHttpPage;
-import se.hal.struct.Event;
 import se.hal.struct.Sensor;
-import se.hal.struct.SwitchEventData;
 import se.hal.util.AggregateDataListSqlResult;
 import zutil.db.DBConnection;
 import se.hal.util.HistoryDataListSqlResult;
 import se.hal.util.HistoryDataListSqlResult.*;
+import se.hal.util.TimeUtility;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
 
@@ -52,7 +51,7 @@ public class SensorOverviewHttpPage extends HalHttpPage {
             Templator tmpl = new Templator(FileUtil.find(DETAIL_TEMPLATE));
             tmpl.set("sensor", sensor);
             tmpl.set("history", history);
-            tmpl.set("aggregation", AggregateDataListSqlResult.getHourAggregateData(db, sensor));
+            tmpl.set("aggregation", AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.hour, TimeUtility.WEEK_IN_MS));
             return tmpl;
         }
         else {

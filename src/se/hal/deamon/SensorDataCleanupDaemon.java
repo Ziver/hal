@@ -1,6 +1,7 @@
 package se.hal.deamon;
 
 import se.hal.HalContext;
+import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
 import se.hal.util.TimeUtility;
@@ -41,10 +42,10 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 
     public void cleanupSensor(Sensor sensor) {
     	if (sensor.getUser() != null) {
-			cleanupSensorData(sensor.getId(), TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS);	//clear 5-minute data older than a day
-			cleanupSensorData(sensor.getId(), TimeUtility.HOUR_IN_MS, TimeUtility.WEEK_IN_MS);			//clear 1-hour data older than a week
-			//cleanupSensorData(sensor.getId(), TimeUtility.DAY_IN_MS, TimeUtility.INFINITY);			//clear 1-day data older than infinity
-			//cleanupSensorData(sensor.getId(), TimeUtility.WEEK_IN_MS, TimeUtility.INFINITY);			//clear 1-week data older than infinity
+			cleanupSensorData(sensor.getId(), AggregationPeriodLength.fiveMinutes, TimeUtility.DAY_IN_MS);	//clear 5-minute data older than a day
+			cleanupSensorData(sensor.getId(), AggregationPeriodLength.hour, TimeUtility.WEEK_IN_MS);			//clear 1-hour data older than a week
+			//cleanupSensorData(sensor.getId(), AggregationPeriodLength.day, TimeUtility.INFINITY);			//clear 1-day data older than infinity
+			//cleanupSensorData(sensor.getId(), AggregationPeriodLength.week, TimeUtility.INFINITY);			//clear 1-week data older than infinity
 		}
     }
 
@@ -56,7 +57,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
      * @Param clearPeriodlength Will clear periods with this length
      * @param olderThan Data must be older than this many ms to be cleared from the DB
      */
-    private void cleanupSensorData(long sensorId, long clearPeriodlength, long olderThan){
+    private void cleanupSensorData(long sensorId, AggregationPeriodLength cleanupPeriodlength, long olderThan){
     	DBConnection db = HalContext.getDB();
     	PreparedStatement stmt = null;
     	try {
@@ -66,7 +67,16 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 	    				+ "AND timestamp_end-timestamp_start == ?"
 	    				+ "AND timestamp_end < ?");
     		stmt.setLong(1, sensorId);
-    		stmt.setLong(2, clearPeriodlength-1);
+    		switch(cleanupPeriodlength){
+				case second: stmt.setLong(2, TimeUtility.SECOND_IN_MS-1); break;
+				case minute: stmt.setLong(2, TimeUtility.MINUTE_IN_MS-1); break; 
+				case fiveMinutes: stmt.setLong(2, TimeUtility.FIVE_MINUTES_IN_MS-1); break;
+				case fifteenMinutes: stmt.setLong(2, TimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
+				case hour: stmt.setLong(2, TimeUtility.HOUR_IN_MS-1); break;
+				case day: stmt.setLong(2, TimeUtility.DAY_IN_MS-1); break;
+				case week: stmt.setLong(2, TimeUtility.WEEK_IN_MS-1); break;
+				default: logger.warning("cleanup period length is not supported."); return;
+			}
     		stmt.setLong(3, System.currentTimeMillis()-olderThan);
     		DBConnection.exec(stmt, new AggregateDataDeleter(sensorId));
 		} catch (SQLException e) {
@@ -91,7 +101,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 					if(sensorId != result.getInt("sensor_id")){
 						throw new IllegalArgumentException("Found entry for aggregation for the wrong sensorId (expecting: "+sensorId+", but was: "+result.getInt("sensor_id")+")");
 					}
-                    logger.finer("Deleting sensor(id: "+ sensorId +") aggregate entry timestamp: "+ result.getLong("timestamp_start") +" - "+ result.getLong("timestamp_end") + " (" + TimeUtility.msToString(result.getLong("timestamp_end")-result.getLong("timestamp_start")) + ")");
+                    logger.finer("Deleting sensor(id: "+ sensorId +") aggregate entry timestamp: "+ result.getLong("timestamp_start") +" - "+ result.getLong("timestamp_end") + " (" + TimeUtility.timeInMsToString(result.getLong("timestamp_end")-result.getLong("timestamp_start")) + ")");
 					preparedDeleteStmt.setInt(1, result.getInt("sensor_id"));
 					preparedDeleteStmt.setLong(2, result.getLong("sequence_id"));
 					preparedDeleteStmt.addBatch();

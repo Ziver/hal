@@ -2,7 +2,6 @@ package se.hal.deamon;
 
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
-import se.hal.intf.HalSensorData;
 import se.hal.struct.Sensor;
 import se.hal.intf.HalSensorData.AggregationMethod;
 import se.hal.util.TimeUtility;
@@ -23,6 +22,18 @@ import java.util.logging.Logger;
 
 public class SensorDataAggregatorDaemon implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
+	
+	public enum AggregationPeriodLength{
+		second,
+		minute,
+		fiveMinutes,
+		fifteenMinutes,
+		hour,
+		day,
+		week,
+		month,
+		year
+	}
 
     public void initiate(ScheduledExecutorService executor){
         executor.scheduleAtFixedRate(this, 0, TimeUtility.FIVE_MINUTES_IN_MS, TimeUnit.MILLISECONDS);
@@ -50,16 +61,16 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 		logger.fine("The sensor is of type: " + sensor.getDeviceData().getClass().getName());
 		
 		logger.fine("aggregating raw data up to a day old into five minute periods");
-		aggregateRawData(sensor, TimeUtility.FIVE_MINUTES_IN_MS, TimeUtility.DAY_IN_MS, 5);
+		aggregateRawData(sensor, AggregationPeriodLength.fiveMinutes, TimeUtility.DAY_IN_MS, 5);
 		
-		logger.fine("aggregating raw data up to a week old into five minute periods");
-		aggregateRawData(sensor, TimeUtility.HOUR_IN_MS, TimeUtility.WEEK_IN_MS, 60);
+		logger.fine("aggregating raw data up to a week old into one hour periods");
+		aggregateRawData(sensor, AggregationPeriodLength.hour, TimeUtility.WEEK_IN_MS, 60);
 		
 		logger.fine("aggregating raw data into one day periods");
-		aggregateRawData(sensor, TimeUtility.DAY_IN_MS, TimeUtility.INFINITY, 60*24);
+		aggregateRawData(sensor, AggregationPeriodLength.day, TimeUtility.INFINITY, 60*24);
 		
 		logger.fine("aggregating raw data into one week periods");
-		aggregateRawData(sensor, TimeUtility.WEEK_IN_MS, TimeUtility.INFINITY, 60*24*7);
+		aggregateRawData(sensor, AggregationPeriodLength.week, TimeUtility.INFINITY, 60*24*7);
     }
     
     /**
@@ -68,7 +79,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
      * @param   ageLimitInMs		Only aggregate up to this age
      * @param	toPeriodSizeInMs	The period length in ms to aggregate to
      */
-    private void aggregateRawData(Sensor sensor, long toPeriodSizeInMs, long ageLimitInMs, int expectedSampleCount){
+    private void aggregateRawData(Sensor sensor, AggregationPeriodLength aggrPeriodLength, long ageLimitInMs, int expectedSampleCount){
     	long sensorId = sensor.getId();
     	AggregationMethod aggrMethod = sensor.getDeviceData().getAggregationMethod();
     	DBConnection db = HalContext.getDB();
@@ -79,12 +90,21 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     				+ " WHERE sensor_id == ?"
     					+ " AND timestamp_end-timestamp_start == ?");
     		stmt.setLong(1, sensorId);
-    		stmt.setLong(2, toPeriodSizeInMs-1);
+    		switch(aggrPeriodLength){
+    			case second: stmt.setLong(2, TimeUtility.SECOND_IN_MS-1); break;
+    			case minute: stmt.setLong(2, TimeUtility.MINUTE_IN_MS-1); break; 
+				case fiveMinutes: stmt.setLong(2, TimeUtility.FIVE_MINUTES_IN_MS-1); break;
+				case fifteenMinutes: stmt.setLong(2, TimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
+				case hour: stmt.setLong(2, TimeUtility.HOUR_IN_MS-1); break;
+				case day: stmt.setLong(2, TimeUtility.DAY_IN_MS-1); break;
+				case week: stmt.setLong(2, TimeUtility.WEEK_IN_MS-1); break;
+				default: logger.warning("aggregation period length is not supported."); return;
+    		}
     		Long maxTimestampFoundForSensor = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
     		if(maxTimestampFoundForSensor == null)
     			maxTimestampFoundForSensor = 0l;
     		
-    		long currentPeriodStartTimestamp = TimeUtility.getTimestampPeriodStart_UTC(toPeriodSizeInMs, System.currentTimeMillis());
+    		long currentPeriodStartTimestamp = TimeUtility.getTimestampPeriodStart_UTC(aggrPeriodLength, System.currentTimeMillis());
     		
     		logger.fine("Calculating periods... (from:"+ maxTimestampFoundForSensor +", to:"+ currentPeriodStartTimestamp +") with expected sample count: " + expectedSampleCount);
     		
@@ -98,7 +118,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     		stmt.setLong(2, maxTimestampFoundForSensor);
     		stmt.setLong(3, currentPeriodStartTimestamp);
     		stmt.setLong(4, System.currentTimeMillis()-ageLimitInMs);
-    		DBConnection.exec(stmt, new DataAggregator(sensorId, toPeriodSizeInMs, expectedSampleCount, aggrMethod));
+    		DBConnection.exec(stmt, new DataAggregator(sensorId, aggrPeriodLength, expectedSampleCount, aggrMethod));
     	} catch (SQLException e) {
             logger.log(Level.SEVERE, null, e);
 		}
@@ -108,14 +128,14 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
      * Internal class for aggregating data to the aggregated DB table
      */
     private class DataAggregator implements SQLResultHandler<Object>{
-    	private long sensorId = -1;
-    	private long aggrTimeInMs = -1;
-    	private int expectedSampleCount = -1;
-    	private AggregationMethod aggrMethod = null;
+    	private final long sensorId;
+    	private final AggregationPeriodLength aggrPeriodLength;
+    	private final int expectedSampleCount;
+    	private final AggregationMethod aggrMethod;
     	
-    	public DataAggregator(long sensorId, long aggrTimeInMs, int expectedSampleCount, AggregationMethod aggrMethod) {
+    	public DataAggregator(long sensorId, AggregationPeriodLength aggrPeriodLength, int expectedSampleCount, AggregationMethod aggrMethod) {
     		this.sensorId = sensorId;
-    		this.aggrTimeInMs = aggrTimeInMs;
+    		this.aggrPeriodLength = aggrPeriodLength;
     		this.expectedSampleCount = expectedSampleCount;
     		this.aggrMethod = aggrMethod;
 		}
@@ -125,8 +145,9 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 			try{
 				HalContext.getDB().getConnection().setAutoCommit(false);
 				
-				long currentPeriodTimestamp = 0;
-				int sum = 0;
+				long currentPeriodTimestampStart = 0;
+				long currentPeriodTimestampEnd = 0;
+				float sum = 0;
 				float confidenceSum = 0;
 				int samples = 0;
 				long highestSequenceId = Sensor.getHighestSequenceId(sensorId);
@@ -137,35 +158,43 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 						throw new IllegalArgumentException("found entry for aggregation for the wrong sensorId (expecting: "+sensorId+", but was: "+result.getInt("sensor_id")+")");
 					}
 					long timestamp = result.getLong("timestamp");
-					long periodTimestamp = TimeUtility.getTimestampPeriodStart_UTC(this.aggrTimeInMs, timestamp);
-					if(currentPeriodTimestamp != 0 && periodTimestamp != currentPeriodTimestamp){
+					long dataPeriodTimestampStart = TimeUtility.getTimestampPeriodStart_UTC(this.aggrPeriodLength, timestamp);
+					long dataPerionTimestampEnd = TimeUtility.getTimestampPeriodEnd_UTC(this.aggrPeriodLength, timestamp);
+					
+					if(currentPeriodTimestampStart != 0 && currentPeriodTimestampEnd != 0 && dataPeriodTimestampStart != currentPeriodTimestampStart){
 						float aggrConfidence = confidenceSum / (float)this.expectedSampleCount;
 						float data = -1;
 						switch(aggrMethod){
 							case SUM: data = sum; break;
 							case AVERAGE: data = sum/samples; break;
 						}
-						logger.finer("Calculated period starting at timestamp: " + currentPeriodTimestamp + ", data: " + sum + ", confidence: " + aggrConfidence + ", samples: " + samples + ", aggrMethod: " + aggrMethod);
+						logger.finer("Calculated period starting at timestamp: " + currentPeriodTimestampStart + ", data: " + sum + ", confidence: " + aggrConfidence + ", samples: " + samples + ", aggrMethod: " + aggrMethod);
 						preparedInsertStmt.setInt(1, result.getInt("sensor_id"));
 						preparedInsertStmt.setLong(2, ++highestSequenceId);
-						preparedInsertStmt.setLong(3, currentPeriodTimestamp);
-						preparedInsertStmt.setLong(4, currentPeriodTimestamp + this.aggrTimeInMs - 1);
+						preparedInsertStmt.setLong(3, currentPeriodTimestampStart);
+						preparedInsertStmt.setLong(4, currentPeriodTimestampEnd);
 						preparedInsertStmt.setFloat(5, data);
 						preparedInsertStmt.setFloat(6, aggrConfidence);
 						preparedInsertStmt.addBatch();
 						
 						// Reset variables
-						currentPeriodTimestamp = periodTimestamp;
+						currentPeriodTimestampStart = dataPeriodTimestampStart;
+						currentPeriodTimestampEnd = dataPerionTimestampEnd;
 						confidenceSum = 0;
 						sum = 0;
 						samples = 0;
 					}
-					if(currentPeriodTimestamp == 0) currentPeriodTimestamp = periodTimestamp;
-					sum += result.getInt("data");
+					
+					if(currentPeriodTimestampStart == 0){
+						currentPeriodTimestampStart = dataPeriodTimestampStart;
+					}
+					if(currentPeriodTimestampEnd == 0){
+						currentPeriodTimestampEnd = dataPerionTimestampEnd;
+					}
+					sum += result.getFloat("data");
 					confidenceSum += result.getFloat("confidence");
 					++samples;
 				}
-
                 DBConnection.execBatch(preparedInsertStmt);
                 HalContext.getDB().getConnection().commit();
 

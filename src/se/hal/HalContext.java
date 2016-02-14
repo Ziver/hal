@@ -147,7 +147,7 @@ public class HalContext {
                 if (localUser == null){
                     logger.info("Creating local user.");
                     localUser = new User();
-                    localUser.setExternal(true);
+                    localUser.setExternal(false);
                     localUser.save(db);
                 }
 

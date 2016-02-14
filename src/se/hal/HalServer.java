@@ -51,7 +51,6 @@ public class HalServer {
 
 
         // init DB and other configurations
-        DBBean.enableBeanGBC(false); // we don't need gbc for our beans as we would loose the device data
         DBConnection db = HalContext.getDB();
 
         // Init sensors,events and controllers

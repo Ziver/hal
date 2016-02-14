@@ -1,5 +1,6 @@
 package se.hal;
 
+import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.db.DBUpgradeHandler;
 import zutil.db.SQLResultHandler;
@@ -141,6 +142,14 @@ public class HalContext {
 						return null;
 					}
 				});
+                // Check if there is a local user
+                User localUser = User.getLocalUser(db);
+                if (localUser == null){
+                    logger.info("Creating local user.");
+                    localUser = new User();
+                    localUser.setExternal(true);
+                    localUser.save(db);
+                }
 
                 logger.info("DB upgrade done");
                 dbConf.setProperty(PROPERTY_DB_VERSION, defaultDBConf.getProperty(PROPERTY_DB_VERSION));

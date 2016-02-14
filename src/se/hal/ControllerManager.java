@@ -291,6 +291,7 @@ public class ControllerManager implements HalSensorReportListener,
                 controllerMap.put(c, controller);
             } catch (Exception e){
                 logger.log(Level.SEVERE, "Unable to instantiate controller: "+c.getName(), e);
+                controller = null;
             }
         }
         return (T)controller;

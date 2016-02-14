@@ -34,6 +34,10 @@ public class UserConfigHttpPage extends HalHttpPage {
             switch(request.get("action")) {
                 // Local User
                 case "modify_local_user":
+                    if (localUser == null) {
+                        localUser = new User();
+                        localUser.setExternal(true);
+                    }
                     localUser.setUsername(request.get("username"));
                     localUser.setAddress(request.get("address"));
                     localUser.save(db);

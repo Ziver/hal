@@ -57,18 +57,13 @@ public class HalContext {
 
             // Init DB
             File dbFile = FileUtil.find(DB_FILE);
-            boolean firstTime = false;
-            if(dbFile == null){
-            	firstTime = true;
-                logger.info("No database file found, creating new DB...");
-            }
             db = new DBConnection(DBConnection.DBMS.SQLite, DB_FILE);
-
-            //Read DB conf
-            if(firstTime){
-            	dbConf = new Properties();
-            }else{
-                dbConf = db.exec("SELECT * FROM conf", new PropertiesSQLResult());       	
+            if(dbFile == null){
+                logger.info("No database file found, creating new DB...");
+                dbConf = new Properties();
+            }
+            else{
+                dbConf = db.exec("SELECT * FROM conf", new PropertiesSQLResult());
             }
 
             // Upgrade DB needed?
@@ -83,7 +78,7 @@ public class HalContext {
             logger.info("DB version: "+ dbVersion);
             if(defaultDBVersion > dbVersion ) {
                 logger.info("Starting DB upgrade...");
-                if(!firstTime){
+                if(dbFile != null){
 	                File backupDB = FileUtil.getNextFile(dbFile);
 	                logger.fine("Backing up DB to: "+ backupDB);
 	                FileUtil.copy(dbFile, backupDB);
@@ -123,28 +118,35 @@ public class HalContext {
                 		new SQLResultHandler<Object>() {
 					@Override
 					public Object handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
+                        boolean clearExternalAggrData = false;
+                        boolean clearInternalAggrData = false;
 						while(result.next()){
-							if(result.getBoolean("clear_external_aggr_data")){
-                                logger.fine("Clearing external aggregate data");
-								db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
-										+ "(SELECT sensor.id FROM user, sensor WHERE user.external == 1 AND sensor.user_id = user.id)");
-							}
-							if(result.getBoolean("clear_internal_aggr_data")){
-                                logger.fine("Clearing local aggregate data");
-								db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
-										+ "(SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)");
-								//update all internal sensors aggregation version to indicate for peers that they need to re-sync all data
-								db.exec("UPDATE sensor SET aggr_version = (aggr_version+1) WHERE id = "
-										+ "(SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)");
-							}
+							if(result.getBoolean("clear_external_aggr_data"))
+                                clearExternalAggrData = true;
+							if(result.getBoolean("clear_internal_aggr_data"))
+                                clearInternalAggrData = true;
 						}
+
+                        if(clearExternalAggrData){
+                            logger.fine("Clearing external aggregate data");
+                            db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
+                                    + "(SELECT sensor.id FROM user, sensor WHERE user.external == 1 AND sensor.user_id = user.id)");
+                        }
+                        if(clearInternalAggrData){
+                            logger.fine("Clearing local aggregate data");
+                            db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
+                                    + "(SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)");
+                            //update all internal sensors aggregation version to indicate for peers that they need to re-sync all data
+                            db.exec("UPDATE sensor SET aggr_version = (aggr_version+1) WHERE id = "
+                                    + "(SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)");
+                        }
 						return null;
 					}
 				});
                 // Check if there is a local user
                 User localUser = User.getLocalUser(db);
                 if (localUser == null){
-                    logger.info("Creating local user.");
+                    logger.fine("Creating local user.");
                     localUser = new User();
                     localUser.setExternal(false);
                     localUser.save(db);

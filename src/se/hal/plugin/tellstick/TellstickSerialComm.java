@@ -25,6 +25,7 @@ package se.hal.plugin.tellstick;
 import com.fazecast.jSerialComm.SerialPort;
 import se.hal.HalContext;
 import se.hal.intf.*;
+import se.hal.struct.AbstractDevice;
 import zutil.log.InputStreamLogger;
 import zutil.log.LogUtil;
 import zutil.log.OutputStreamLogger;
@@ -32,6 +33,7 @@ import zutil.struct.TimedHashSet;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,26 +44,26 @@ import java.util.logging.Logger;
  * SerialPortEventListener to avoid polling.
  */
 public class TellstickSerialComm implements Runnable, HalSensorController, HalEventController {
-    private static final long TRANSMISSION_UNIQUENESS_TTL = 300; // milliseconds
+    private static final long TRANSMISSION_UNIQUENESS_TTL = 1000; // milliseconds
     private static final Logger logger = LogUtil.getLogger();
 
     private SerialPort serial;
     private InputStream in;
     private OutputStream out;
-    private TimedHashSet set; // To check for retransmissions
+    private TimedHashSet set; // To check for duplicate transmissions
 
     private TellstickParser parser;
     private HalSensorReportListener sensorListener;
     private HalEventReportListener eventListener;
 
-    private int registeredObjects;
+    private ArrayList<TellstickProtocol> registeredDevices;
 
 
 
     public TellstickSerialComm() {
         set = new TimedHashSet(TRANSMISSION_UNIQUENESS_TTL);
         parser = new TellstickParser();
-        registeredObjects = 0;
+        registeredDevices = new ArrayList<>();
     }
 
     @Override
@@ -83,8 +85,8 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
         serial.setComPortTimeouts(
                 SerialPort.TIMEOUT_READ_BLOCKING, 0, 0);
 
-        //in  = new InputStreamLogger(serial.getInputStream());
-        //out = new OutputStreamLogger(serial.getOutputStream());
+        //in  = serial.getInputStream();
+        //out = serial.getOutputStream();
         in  = new InputStreamLogger(serial.getInputStream());
         out = new OutputStreamLogger(serial.getOutputStream());
 
@@ -119,18 +121,21 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
                     }
                 }
                 else {
-                    if(!set.contains(data)) {
-                        TellstickProtocol protocol = parser.decode(data);
-                        if(protocol != null) {
-                            if (protocol.getTimestamp() < 0)
-                                protocol.setTimestamp(System.currentTimeMillis());
-                            set.add(data);
+                    TellstickProtocol protocol = parser.decode(data);
+                    if(protocol != null) {
+                        if (protocol.getTimestamp() < 0)
+                            protocol.setTimestamp(System.currentTimeMillis());
+
+                        boolean registered = registeredDevices.contains(protocol);
+                        if(registered && !set.contains(data) || // check for duplicates transmissions of registered devices
+                                !registered && set.contains(data)) { // required duplicate transmissions before reporting unregistered devices
 
                             if (sensorListener != null && protocol instanceof HalSensorData)
                                 sensorListener.reportReceived((HalSensorData) protocol);
                             else if (eventListener != null && protocol instanceof HalEventData)
                                 eventListener.reportReceived((HalEventData) protocol);
                         }
+                        set.add(data);
                     }
                 }
             }
@@ -187,18 +192,30 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
 
 
     @Override
-    public void register(HalEventData event) {++registeredObjects;}
+    public void register(HalEventData event) {
+        if(event instanceof TellstickProtocol)
+            registeredDevices.add((TellstickProtocol) event);
+    }
     @Override
-    public void register(HalSensorData sensor) {++registeredObjects;}
+    public void register(HalSensorData sensor) {
+        if(sensor instanceof TellstickProtocol)
+            registeredDevices.add((TellstickProtocol) sensor);
+    }
 
     @Override
-    public void deregister(HalSensorData sensor) {--registeredObjects;}
+    public void deregister(HalEventData event) {
+        if(event instanceof TellstickProtocol)
+            registeredDevices.remove((TellstickProtocol) event);
+    }
     @Override
-    public void deregister(HalEventData event) {--registeredObjects;}
+    public void deregister(HalSensorData sensor) {
+        if(sensor instanceof TellstickProtocol)
+            registeredDevices.remove((TellstickProtocol) sensor);
+    }
 
     @Override
     public int size() {
-        return registeredObjects;
+        return registeredDevices.size();
     }
 
     @Override

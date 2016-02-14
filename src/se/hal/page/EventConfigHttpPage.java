@@ -53,7 +53,6 @@ public class EventConfigHttpPage extends HalHttpPage {
         if(request.containsKey("action")){
             int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
             Event event;
-            Configurator<HalEventData> configurator;
             switch(request.get("action")) {
                 // Local events
                 case "create_local_event":
@@ -61,9 +60,7 @@ public class EventConfigHttpPage extends HalHttpPage {
                     event.setName(request.get("name"));
                     event.setType(request.get("type"));
                     event.setUser(localUser);
-                    configurator = event.getDeviceConfig();
-                    configurator.setValues(request);
-                    configurator.applyConfiguration();
+                    event.getDeviceConfig().setValues(request).applyConfiguration();
                     event.save(db);
                     ControllerManager.getInstance().register(event);
                     break;

@@ -67,7 +67,6 @@ public class HalContext {
             //Read DB conf
             if(firstTime){
             	dbConf = new Properties();
-            	dbConf.put(PROPERTY_DB_VERSION, 0);	 
             }else{
                 dbConf = db.exec("SELECT * FROM conf", new PropertiesSQLResult());       	
             }
@@ -77,11 +76,11 @@ public class HalContext {
             Properties defaultDBConf =
                     referenceDB.exec("SELECT * FROM conf", new PropertiesSQLResult());
             // Check DB version
-            logger.info("DB version: "+ dbConf.getProperty(PROPERTY_DB_VERSION));
             final int defaultDBVersion = Integer.parseInt(defaultDBConf.getProperty(PROPERTY_DB_VERSION));
             final int dbVersion = (dbConf.getProperty(PROPERTY_DB_VERSION) != null ?
                                 Integer.parseInt(dbConf.getProperty(PROPERTY_DB_VERSION)) :
                                 -1);
+            logger.info("DB version: "+ dbVersion);
             if(defaultDBVersion > dbVersion ) {
                 logger.info("Starting DB upgrade...");
                 if(!firstTime){

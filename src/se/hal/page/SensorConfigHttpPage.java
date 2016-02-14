@@ -54,7 +54,6 @@ public class SensorConfigHttpPage extends HalHttpPage {
             int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
             Sensor sensor;
             User user;
-            Configurator<HalSensorData> configurator;
             switch(request.get("action")) {
                 // Local Sensors
                 case "create_local_sensor":
@@ -63,9 +62,7 @@ public class SensorConfigHttpPage extends HalHttpPage {
                     sensor.setType(request.get("type"));
                     sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
                     sensor.setUser(localUser);
-                    configurator = sensor.getDeviceConfig();
-                    configurator.setValues(request);
-                    configurator.applyConfiguration();
+                    sensor.getDeviceConfig().setValues(request).applyConfiguration();
                     sensor.save(db);
                     ControllerManager.getInstance().register(sensor);
                     break;

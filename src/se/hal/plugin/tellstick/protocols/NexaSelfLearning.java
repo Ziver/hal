@@ -34,7 +34,7 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
     @Configurator.Configurable("House code")
     private int house = 0;
     @Configurator.Configurable("Group code")
-    private int group = 0;
+    private boolean group = false;
     @Configurator.Configurable("Unit code")
     private int unit = 0;
 
@@ -47,6 +47,8 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
 
 
     public String encode(){
+        // Binary 0 => "01"
+        // Binary 1 => "10"
         StringBuilder enc = new StringBuilder();
         enc.append(new char[]{'T', 127, 255, 24, 1});
 
@@ -58,7 +60,10 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
             m.append( (house & (1 << i)) == 0 ? "01" : "10" );
         }
         // Group
-        m.append("01");
+        if (group)
+            m.append("10");
+        else
+            m.append("01");
 
         // On or OFF
         if (enable)
@@ -89,7 +94,6 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
             }
         }
 
-
         enc.append("+");
         return enc.toString();
     }
@@ -110,13 +114,12 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
         house |= (data[1] & 0xFF) << 2;
         house |= (data[0] & 0xC0) >>> 6;
 
-        group = data[0] & 0x20;
-        group >>>= 5;
+        int tmpGroup = data[0] & 0x20; // >>> 5
+        group = tmpGroup != 0;
 
         enable = (data[0] & 0x10) != 0;
 
         unit = data[0] & 0x0F;
-        //unit++;
     }
 
 
@@ -126,10 +129,10 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
     public void setHouse(int house) {
         this.house = house;
     }
-    public int getGroup() {
+    public boolean getGroup() {
         return group;
     }
-    public void setGroup(int group) {
+    public void setGroup(boolean group) {
         this.group = group;
     }
     public int getUnit() {
@@ -162,7 +165,14 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
     public boolean equals(Object obj){
         if(obj instanceof NexaSelfLearning)
             return ((NexaSelfLearning) obj).house == house &&
+                    ((NexaSelfLearning) obj).group == group &&
                     ((NexaSelfLearning)obj).unit == unit;
+        return false;
+    }
+    public boolean equalsGroup(Object obj){
+        if(obj instanceof NexaSelfLearning)
+            return ((NexaSelfLearning) obj).house == house &&
+                    (((NexaSelfLearning) obj).group || group );
         return false;
     }
 

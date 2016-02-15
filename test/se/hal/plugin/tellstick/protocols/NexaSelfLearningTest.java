@@ -51,7 +51,7 @@ public class NexaSelfLearningTest {
         NexaSelfLearning nexa = decode("0x2CE81990");
 
         assertEquals("House Code", 11772006, nexa.getHouse());
-        assertEquals("Unit Code", 1, nexa.getUnit());
+        assertEquals("Unit Code", 0, nexa.getUnit());
         assertTrue("Enabled", nexa.isOn());
 
 
@@ -61,7 +61,7 @@ public class NexaSelfLearningTest {
         NexaSelfLearning nexa = decode("0x2CE81980");
 
         assertEquals("House Code", 11772006, nexa.getHouse());
-        assertEquals("Unit Code", 1, nexa.getUnit());
+        assertEquals("Unit Code", 0, nexa.getUnit());
         assertFalse("Enabled", nexa.isOn());
     }
 

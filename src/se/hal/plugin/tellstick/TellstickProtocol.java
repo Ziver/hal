@@ -65,4 +65,12 @@ public abstract class TellstickProtocol {
 
     public abstract String encode();
     public abstract void decode(byte[] data);
+
+    /**
+     * Protocols should extend this method if it has group functionality.
+     * @return true if this object an the input is in the same group.
+     */
+    public boolean equalsGroup(Object obj){
+        return false;
+    }
 }

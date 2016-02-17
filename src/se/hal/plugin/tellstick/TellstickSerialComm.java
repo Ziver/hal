@@ -85,10 +85,10 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
         serial.setComPortTimeouts(
                 SerialPort.TIMEOUT_READ_BLOCKING, 0, 0);
 
-        //in  = serial.getInputStream();
-        //out = serial.getOutputStream();
-        in  = new InputStreamLogger(serial.getInputStream());
-        out = new OutputStreamLogger(serial.getOutputStream());
+        in  = serial.getInputStream();
+        out = serial.getOutputStream();
+        //in  = new InputStreamLogger(serial.getInputStream());
+        //out = new OutputStreamLogger(serial.getOutputStream());
 
 
         Executors.newSingleThreadExecutor().execute(this);
@@ -130,10 +130,13 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
                         if(registered && !set.contains(data) || // check for duplicates transmissions of registered devices
                                 !registered && set.contains(data)) { // required duplicate transmissions before reporting unregistered devices
 
-                            if (sensorListener != null && protocol instanceof HalSensorData)
-                                sensorListener.reportReceived((HalSensorData) protocol);
-                            else if (eventListener != null && protocol instanceof HalEventData)
-                                eventListener.reportReceived((HalEventData) protocol);
+                            //Check for registered device that are in the same group
+                            for (TellstickProtocol childProtocol : registeredDevices){
+                                if (protocol.equalsGroup(childProtocol) && !protocol.equals(childProtocol))
+                                    reportEvent(protocol);
+                            }
+                            // Report source event
+                            reportEvent(protocol);
                         }
                         set.add(data);
                     }
@@ -142,6 +145,12 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
         } catch (IOException e) {
             logger.log(Level.SEVERE, null, e);
         }
+    }
+    private void reportEvent(TellstickProtocol protocol){
+        if (sensorListener != null && protocol instanceof HalSensorData)
+            sensorListener.reportReceived((HalSensorData) protocol);
+        else if (eventListener != null && protocol instanceof HalEventData)
+            eventListener.reportReceived((HalEventData) protocol);
     }
 
     /**

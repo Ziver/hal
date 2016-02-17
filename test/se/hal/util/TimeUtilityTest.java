@@ -32,11 +32,13 @@ public class TimeUtilityTest {
 	public static Collection<Object[]> data(){
 		return Arrays.asList(new Object[][] {
 			{TimeUtility.WEEK_IN_MS},									//a week after 1970-01-01 00:00:00
-			{694224000000L-1},											//1991-12-31 23:59:59.999 GMT
-			{694224000000L},											//1992-01-01 00:00:00.000 GMT
-			{1456704000000L},											//2016-02-29 00:00:00.000 GMT	(leap day)
-			{1456749808000L},											//2016-02-29 12:43:28.000 GMT	(leap day)
-			{1456790399999L},											//2016-02-29 23:59:59.999 GMT	(leap day)
+			{694223999999L},											//1991-12-31 23:59:59.999 GMT	(last ms of year 1991)
+			{694224000000L},											//1992-01-01 00:00:00.000 GMT   (first ms of year 1992)
+			{1456703999999L},											//2016-02-28 23:59:59.999 GMT	(last ms before a leap day)
+			{1456704000000L},											//2016-02-29 00:00:00.000 GMT	(first ms of a leap day)
+			{1456749808000L},											//2016-02-29 12:43:28.000 GMT	(random time during a leap day)
+			{1456790399999L},											//2016-02-29 23:59:59.999 GMT	(last ms of a leap day)
+			{1456790400000L},											//2016-03-30 00:00:00.000 GMT	(first ms after a leap day)
 			{System.currentTimeMillis()},								//current time
 			{System.currentTimeMillis()+TimeUtility.MINUTE_IN_MS},		//current time + 1m
 			{System.currentTimeMillis()+(2*TimeUtility.MINUTE_IN_MS)},	//current time + 2m
@@ -57,209 +59,209 @@ public class TimeUtilityTest {
 	// Test flooring & ceiling UTC time to the closes year
 	@Test
 	public void testYear_UTC(){
-		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.year, currentTime_UTC);
-		assertEquals("millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
-		assertEquals("second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
-		assertEquals("minute is wrong", 0, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
-		assertEquals("hour is wrong", 0, TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
-		assertEquals("day is wrong", 1, TimeUtility.getDayOfYearFromTimestamp(thisPeriodStartedAt));
-		assertEquals("month is wrong", Calendar.JANUARY, TimeUtility.getMonthOfYearFromTimestamp(thisPeriodStartedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
+		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.YEAR, currentTime_UTC);
+		assertEquals("period start millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start minute is wrong", 0, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start hour is wrong", 0, TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start day is wrong", 1, TimeUtility.getDayOfYearFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start month is wrong", Calendar.JANUARY, TimeUtility.getMonthOfYearFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
 		
-		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.year, currentTime_UTC);
-		assertEquals("millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
-		assertEquals("second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
-		assertEquals("minute is wrong", 59, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
-		assertEquals("hour is wrong", 23, TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
-		assertEquals("day is wrong", 31, TimeUtility.getDayOfMonthFromTimestamp(thisPeriodEndedAt));
-		assertEquals("month is wrong", Calendar.DECEMBER, TimeUtility.getMonthOfYearFromTimestamp(thisPeriodEndedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
+		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.YEAR, currentTime_UTC);
+		assertEquals("period end millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end minute is wrong", 59, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end hour is wrong", 23, TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end day is wrong", 31, TimeUtility.getDayOfMonthFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end month is wrong", Calendar.DECEMBER, TimeUtility.getMonthOfYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
 	}	
 	
 	// Test flooring & ceiling UTC time to the closes month
 	@Test
 	public void testMonth_UTC(){
-		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.month, currentTime_UTC);
-		assertEquals("millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
-		assertEquals("second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
-		assertEquals("minute is wrong", 0, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
-		assertEquals("hour is wrong", 0, TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
-		assertEquals("day is wrong", 1, TimeUtility.getDayOfMonthFromTimestamp(thisPeriodStartedAt));
-		assertEquals("month is wrong", TimeUtility.getMonthOfYearFromTimestamp(currentTime_UTC), TimeUtility.getMonthOfYearFromTimestamp(thisPeriodStartedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
+		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.MONTH, currentTime_UTC);
+		assertEquals("period start millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start minute is wrong", 0, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start hour is wrong", 0, TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start day is wrong", 1, TimeUtility.getDayOfMonthFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start month is wrong", TimeUtility.getMonthOfYearFromTimestamp(currentTime_UTC), TimeUtility.getMonthOfYearFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
 
-		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.month, currentTime_UTC);
-		assertEquals("millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
-		assertEquals("second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
-		assertEquals("minute is wrong", 59, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
-		assertEquals("hour is wrong", 23, TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
+		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.MONTH, currentTime_UTC);
+		assertEquals("period end millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end minute is wrong", 59, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end hour is wrong", 23, TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
 		assertTrue("day of month is less than 28", TimeUtility.getDayOfMonthFromTimestamp(thisPeriodEndedAt) >= 28);
-		assertEquals("month is wrong", TimeUtility.getMonthOfYearFromTimestamp(currentTime_UTC), TimeUtility.getMonthOfYearFromTimestamp(thisPeriodEndedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end month is wrong", TimeUtility.getMonthOfYearFromTimestamp(currentTime_UTC), TimeUtility.getMonthOfYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
 	}	
 		
 	// Test flooring & ceiling UTC time to the closes week
 	@Test
 	public void testWeek_UTC(){
-		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.week, currentTime_UTC);
-		assertEquals("millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
-		assertEquals("second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
-		assertEquals("minute is wrong", 0, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
-		assertEquals("hour is wrong", 0, TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
-		assertEquals("day is wrong", Calendar.MONDAY, TimeUtility.getDayOfWeekFromTimestamp(thisPeriodStartedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
-		assertTrue("year is more than one year off", TimeUtility.getYearFromTimestamp(currentTime_UTC)-TimeUtility.getYearFromTimestamp(thisPeriodStartedAt) <= 1);
+		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.WEEK, currentTime_UTC);
+		assertEquals("period start millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start minute is wrong", 0, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start hour is wrong", 0, TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start day is wrong", Calendar.MONDAY, TimeUtility.getDayOfWeekFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
+		assertTrue("period start year is more than one year off", TimeUtility.getYearFromTimestamp(currentTime_UTC)-TimeUtility.getYearFromTimestamp(thisPeriodStartedAt) <= 1);
 
-		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.week, currentTime_UTC);
-		assertEquals("millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
-		assertEquals("second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
-		assertEquals("minute is wrong", 59, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
-		assertEquals("hour is wrong", 23, TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
-		assertEquals("day is wrong", Calendar.SUNDAY, TimeUtility.getDayOfWeekFromTimestamp(thisPeriodEndedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
-		assertTrue("year is more than one year off", TimeUtility.getYearFromTimestamp(thisPeriodEndedAt)-TimeUtility.getYearFromTimestamp(currentTime_UTC) <= 1);
+		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.WEEK, currentTime_UTC);
+		assertEquals("period end millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end minute is wrong", 59, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end hour is wrong", 23, TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end day is wrong", Calendar.SUNDAY, TimeUtility.getDayOfWeekFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
+		assertTrue("period end year is more than one year off", TimeUtility.getYearFromTimestamp(thisPeriodEndedAt)-TimeUtility.getYearFromTimestamp(currentTime_UTC) <= 1);
 	}	
 	
 	// Test flooring & ceiling UTC time to the closes day
 	@Test
 	public void testDay_UTC(){
-		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.day, currentTime_UTC);
-		assertEquals("millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
-		assertEquals("second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
-		assertEquals("minute is wrong", 0, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
-		assertEquals("hour is wrong", 0, TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
-		assertEquals("day is wrong", TimeUtility.getDayOfYearFromTimestamp(currentTime_UTC), TimeUtility.getDayOfYearFromTimestamp(thisPeriodStartedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
+		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.DAY, currentTime_UTC);
+		assertEquals("period start millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start minute is wrong", 0, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start hour is wrong", 0, TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start day is wrong", TimeUtility.getDayOfYearFromTimestamp(currentTime_UTC), TimeUtility.getDayOfYearFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
 		
-		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.day, currentTime_UTC);
-		assertEquals("millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
-		assertEquals("second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
-		assertEquals("minute is wrong", 59, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
-		assertEquals("hour is wrong", 23, TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
-		assertEquals("day is wrong", TimeUtility.getDayOfYearFromTimestamp(currentTime_UTC), TimeUtility.getDayOfYearFromTimestamp(thisPeriodEndedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
-		assertEquals("month is wrong", TimeUtility.getMonthOfYearFromTimestamp(currentTime_UTC), TimeUtility.getMonthOfYearFromTimestamp(thisPeriodEndedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
+		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.DAY, currentTime_UTC);
+		assertEquals("period end millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end minute is wrong", 59, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end hour is wrong", 23, TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end day is wrong", TimeUtility.getDayOfYearFromTimestamp(currentTime_UTC), TimeUtility.getDayOfYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end month is wrong", TimeUtility.getMonthOfYearFromTimestamp(currentTime_UTC), TimeUtility.getMonthOfYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
 	}
 	
 	// Test flooring & ceiling UTC time to the closes hour
 	@Test
 	public void testHour_UTC(){
-		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.hour, currentTime_UTC);
-		assertEquals("millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
-		assertEquals("second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
-		assertEquals("minute is wrong", 0, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
-		assertEquals("hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
-		assertEquals("day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodStartedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
+		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.HOUR, currentTime_UTC);
+		assertEquals("period start millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start minute is wrong", 0, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
 		
-		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.hour, currentTime_UTC);
-		assertEquals("millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
-		assertEquals("second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
-		assertEquals("minute is wrong", 59, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
-		assertEquals("hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
-		assertEquals("day is wrong", TimeUtility.getDayOfYearFromTimestamp(currentTime_UTC), TimeUtility.getDayOfYearFromTimestamp(thisPeriodEndedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
-		assertEquals("month is wrong", TimeUtility.getMonthOfYearFromTimestamp(currentTime_UTC), TimeUtility.getMonthOfYearFromTimestamp(thisPeriodEndedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
+		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.HOUR, currentTime_UTC);
+		assertEquals("period end millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end minute is wrong", 59, TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end day is wrong", TimeUtility.getDayOfYearFromTimestamp(currentTime_UTC), TimeUtility.getDayOfYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end month is wrong", TimeUtility.getMonthOfYearFromTimestamp(currentTime_UTC), TimeUtility.getMonthOfYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
 	}
 	
 	// Test flooring & ceiling UTC time to the closes 15-minute period
 	@Test
 	public void testFifteenMinute_UTC(){
-		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.fifteenMinutes, currentTime_UTC);		
-		assertEquals("millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
-		assertEquals("second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
+		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.FIFTEEN_MINUTES, currentTime_UTC);		
+		assertEquals("period start millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
 		assertTrue("the period start minute is in the future of the current time", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC) >= TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
 		assertTrue("the period starts more than 5 minutes before the current time", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC)-TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt) <= 14);
 		assertTrue("the period start minute is not a multiple of five", TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt) % 15 == 0);
-		assertEquals("hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
-		assertEquals("day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodStartedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
 
-		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.fifteenMinutes, currentTime_UTC);
-		assertEquals("millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
-		assertEquals("second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
+		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.FIFTEEN_MINUTES, currentTime_UTC);
+		assertEquals("period end millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
 		assertTrue("the period end minute is before of the current time", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC) <= TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
 		assertTrue("the period ends more than 15 minutes after the current time", TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt)-TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC) <= 14);
 		assertTrue("the period end minute(+1) is not a multiple of fifteen", TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt+1) % 15 == 0);
-		assertEquals("hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
-		assertEquals("day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodEndedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
 	}
 	
 	// Test flooring & ceiling UTC time to the closes 5-minute period
 	@Test
 	public void testFiveMinute_UTC(){
-		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.fiveMinutes, currentTime_UTC);		
-		assertEquals("millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
-		assertEquals("second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
+		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.FIVE_MINUTES, currentTime_UTC);		
+		assertEquals("period start millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
 		assertTrue("the period start minute is in the future of the current time", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC) >= TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
 		assertTrue("the period starts more than 5 minutes before the current time", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC)-TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt) <= 4);
 		assertTrue("the period start minute is not a multiple of five", TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt) % 5 == 0);
-		assertEquals("hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
-		assertEquals("day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodStartedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
 
-		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.fiveMinutes, currentTime_UTC);
-		assertEquals("millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
-		assertEquals("second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
+		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.FIVE_MINUTES, currentTime_UTC);
+		assertEquals("period end millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
 		assertTrue("the period end minute is before of the current time", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC) <= TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
 		assertTrue("the period ends more than 5 minutes after the current time", TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt)-TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC) <= 4);
 		assertTrue("the period end minute(+1) is not a multiple of five", TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt+1) % 5 == 0);
-		assertEquals("hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
-		assertEquals("day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodEndedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
 	}
 	
 	// Test flooring & ceiling UTC time to the closes minute
 	@Test
 	public void testMinute_UTC(){
-		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.minute, currentTime_UTC);
-		assertEquals("millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
-		assertEquals("second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
-		assertEquals("minute is wrong", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC), TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
-		assertEquals("hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
-		assertEquals("day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodStartedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
+		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.MINUTE, currentTime_UTC);
+		assertEquals("period start millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start second is wrong", 0, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start minute is wrong", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC), TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
 
-		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.minute, currentTime_UTC);
-		assertEquals("millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
-		assertEquals("second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
-		assertEquals("minute is wrong", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC), TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
-		assertEquals("hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
-		assertEquals("day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodEndedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
+		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.MINUTE, currentTime_UTC);
+		assertEquals("period end millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end second is wrong", 59, TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end minute is wrong", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC), TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
 	}
 	
 	// Test flooring & ceiling UTC time to the closes second
 	@Test
 	public void testSecond_UTC(){
-		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.second, currentTime_UTC);
-		assertEquals("millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
-		assertEquals("second is wrong", TimeUtility.getSecondOfMinuteFromTimestamp(currentTime_UTC), TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
-		assertEquals("minute is wrong", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC), TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
-		assertEquals("hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
-		assertEquals("day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodStartedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
+		long thisPeriodStartedAt = TimeUtility.getTimestampPeriodStart_UTC(AggregationPeriodLength.SECOND, currentTime_UTC);
+		assertEquals("period start millisecond is wrong", 0, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start second is wrong", TimeUtility.getSecondOfMinuteFromTimestamp(currentTime_UTC), TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start minute is wrong", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC), TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodStartedAt));
+		assertEquals("period start year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodStartedAt));
 
-		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.second, currentTime_UTC);
-		assertEquals("millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
-		assertEquals("second is wrong", TimeUtility.getSecondOfMinuteFromTimestamp(currentTime_UTC), TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
-		assertEquals("minute is wrong", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC), TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
-		assertEquals("hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
-		assertEquals("day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodEndedAt));
-		assertEquals("week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
-		assertEquals("year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
+		long thisPeriodEndedAt = TimeUtility.getTimestampPeriodEnd_UTC(AggregationPeriodLength.SECOND, currentTime_UTC);
+		assertEquals("period end millisecond is wrong", 999, TimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end second is wrong", TimeUtility.getSecondOfMinuteFromTimestamp(currentTime_UTC), TimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end minute is wrong", TimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC), TimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end hour is wrong", TimeUtility.getHourOfDayFromTimestamp(currentTime_UTC), TimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end day is wrong", TimeUtility.getDayOfWeekFromTimestamp(currentTime_UTC), TimeUtility.getDayOfWeekFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end week is wrong", TimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), TimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
+		assertEquals("period end year is wrong", TimeUtility.getYearFromTimestamp(currentTime_UTC), TimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
 	}
 	
 	// Test printing converting milliseconds to text

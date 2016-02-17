@@ -19,53 +19,53 @@ public class TimeUtility {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		cal.setTimeInMillis(timestamp);
 		switch(aggrPeriodLength){
-			case year:
+			case YEAR:
 				cal.set(Calendar.DAY_OF_YEAR, 1);
 				cal.set(Calendar.HOUR_OF_DAY, 0);
 				cal.set(Calendar.MINUTE, 0);
 				cal.set(Calendar.SECOND, 0);
 				cal.set(Calendar.MILLISECOND, 0);
 				break;
-			case month:
+			case MONTH:
 				cal.set(Calendar.DAY_OF_MONTH, 1);
 				cal.set(Calendar.HOUR_OF_DAY, 0);
 				cal.set(Calendar.MINUTE, 0);
 				cal.set(Calendar.SECOND, 0);
 				cal.set(Calendar.MILLISECOND, 0);
 				break;
-			case week:
+			case WEEK:
 				cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 				cal.set(Calendar.HOUR_OF_DAY, 0);
 				cal.set(Calendar.MINUTE, 0);
 				cal.set(Calendar.SECOND, 0);
 				cal.set(Calendar.MILLISECOND, 0);
 				break;
-			case day:
+			case DAY:
 				cal.set(Calendar.HOUR_OF_DAY, 0);
 				cal.set(Calendar.MINUTE, 0);
 				cal.set(Calendar.SECOND, 0);
 				cal.set(Calendar.MILLISECOND, 0);
 				break;
-			case hour:
+			case HOUR:
 				cal.set(Calendar.MINUTE, 0);
 				cal.set(Calendar.SECOND, 0);
 				cal.set(Calendar.MILLISECOND, 0);
 				break;
-			case fiveMinutes:
+			case FIVE_MINUTES:
 				cal.set(Calendar.MINUTE, (cal.get(Calendar.MINUTE)/5)*5);
 				cal.set(Calendar.SECOND, 0);
 				cal.set(Calendar.MILLISECOND, 0);
 				break;
-			case fifteenMinutes:
+			case FIFTEEN_MINUTES:
 				cal.set(Calendar.MINUTE, (cal.get(Calendar.MINUTE)/15)*15);
 				cal.set(Calendar.SECOND, 0);
 				cal.set(Calendar.MILLISECOND, 0);
 				break;
-			case minute:
+			case MINUTE:
 				cal.set(Calendar.SECOND, 0);
 				cal.set(Calendar.MILLISECOND, 0);
 				break;
-			case second:
+			case SECOND:
 				cal.set(Calendar.MILLISECOND, 0);
 				break;
 		}
@@ -77,31 +77,31 @@ public class TimeUtility {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		cal.setTimeInMillis(start);
 		switch(aggrPeriodLength){
-			case year:
+			case YEAR:
 				cal.add(Calendar.YEAR, 1);
 				break;
-			case month:
+			case MONTH:
 				cal.add(Calendar.MONTH, 1);
 				break;
-			case week:
+			case WEEK:
 				cal.add(Calendar.WEEK_OF_YEAR, 1);
 				break;
-			case day:
+			case DAY:
 				cal.add(Calendar.DAY_OF_YEAR, 1);
 				break;
-			case hour:
+			case HOUR:
 				cal.add(Calendar.HOUR, 1);
 				break;
-			case fiveMinutes:
+			case FIVE_MINUTES:
 				cal.add(Calendar.MINUTE, 5);
 				break;
-			case fifteenMinutes:
+			case FIFTEEN_MINUTES:
 				cal.add(Calendar.MINUTE, 15);
 				break;
-			case minute:
+			case MINUTE:
 				cal.add(Calendar.MINUTE, 1);
 				break;
-			case second:
+			case SECOND:
 				cal.add(Calendar.SECOND, 1);
 				break;
 		}

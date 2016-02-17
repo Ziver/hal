@@ -42,8 +42,8 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 
     public void cleanupSensor(Sensor sensor) {
     	if (sensor.getUser() != null) {
-			cleanupSensorData(sensor.getId(), AggregationPeriodLength.fiveMinutes, TimeUtility.DAY_IN_MS);	//clear 5-minute data older than a day
-			cleanupSensorData(sensor.getId(), AggregationPeriodLength.hour, TimeUtility.WEEK_IN_MS);			//clear 1-hour data older than a week
+			cleanupSensorData(sensor.getId(), AggregationPeriodLength.FIVE_MINUTES, TimeUtility.DAY_IN_MS);	//clear 5-minute data older than a day
+			cleanupSensorData(sensor.getId(), AggregationPeriodLength.HOUR, TimeUtility.WEEK_IN_MS);			//clear 1-hour data older than a week
 			//cleanupSensorData(sensor.getId(), AggregationPeriodLength.day, TimeUtility.INFINITY);			//clear 1-day data older than infinity
 			//cleanupSensorData(sensor.getId(), AggregationPeriodLength.week, TimeUtility.INFINITY);			//clear 1-week data older than infinity
 		}
@@ -68,13 +68,13 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 	    				+ "AND timestamp_end < ?");
     		stmt.setLong(1, sensorId);
     		switch(cleanupPeriodlength){
-				case second: stmt.setLong(2, TimeUtility.SECOND_IN_MS-1); break;
-				case minute: stmt.setLong(2, TimeUtility.MINUTE_IN_MS-1); break; 
-				case fiveMinutes: stmt.setLong(2, TimeUtility.FIVE_MINUTES_IN_MS-1); break;
-				case fifteenMinutes: stmt.setLong(2, TimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
-				case hour: stmt.setLong(2, TimeUtility.HOUR_IN_MS-1); break;
-				case day: stmt.setLong(2, TimeUtility.DAY_IN_MS-1); break;
-				case week: stmt.setLong(2, TimeUtility.WEEK_IN_MS-1); break;
+				case SECOND: stmt.setLong(2, TimeUtility.SECOND_IN_MS-1); break;
+				case MINUTE: stmt.setLong(2, TimeUtility.MINUTE_IN_MS-1); break; 
+				case FIVE_MINUTES: stmt.setLong(2, TimeUtility.FIVE_MINUTES_IN_MS-1); break;
+				case FIFTEEN_MINUTES: stmt.setLong(2, TimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
+				case HOUR: stmt.setLong(2, TimeUtility.HOUR_IN_MS-1); break;
+				case DAY: stmt.setLong(2, TimeUtility.DAY_IN_MS-1); break;
+				case WEEK: stmt.setLong(2, TimeUtility.WEEK_IN_MS-1); break;
 				default: logger.warning("cleanup period length is not supported."); return;
 			}
     		stmt.setLong(3, System.currentTimeMillis()-olderThan);

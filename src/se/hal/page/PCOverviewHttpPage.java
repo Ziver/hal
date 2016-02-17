@@ -43,13 +43,13 @@ public class PCOverviewHttpPage extends HalHttpPage {
 		for(User user : users){
 			List<Sensor> userSensors = Sensor.getSensors(db, user);
 			for(Sensor sensor : userSensors){
-				minDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.fiveMinutes, TimeUtility.DAY_IN_MS));
+				minDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.FIVE_MINUTES, TimeUtility.DAY_IN_MS));
 
-				hourDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.hour, TimeUtility.WEEK_IN_MS));
+				hourDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.HOUR, TimeUtility.WEEK_IN_MS));
 
-				dayDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.day, TimeUtility.INFINITY));
+				dayDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.DAY, TimeUtility.INFINITY));
 
-				weekDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.week, TimeUtility.INFINITY));
+				weekDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.WEEK, TimeUtility.INFINITY));
 			}
 		}
 

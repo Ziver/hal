@@ -24,15 +24,15 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 	
 	public enum AggregationPeriodLength{
-		second,
-		minute,
-		fiveMinutes,
-		fifteenMinutes,
-		hour,
-		day,
-		week,
-		month,
-		year
+		SECOND,
+		MINUTE,
+		FIVE_MINUTES,
+		FIFTEEN_MINUTES,
+		HOUR,
+		DAY,
+		WEEK,
+		MONTH,
+		YEAR
 	}
 
     public void initiate(ScheduledExecutorService executor){
@@ -61,16 +61,16 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 		logger.fine("The sensor is of type: " + sensor.getDeviceData().getClass().getName());
 		
 		logger.fine("aggregating raw data up to a day old into five minute periods");
-		aggregateRawData(sensor, AggregationPeriodLength.fiveMinutes, TimeUtility.DAY_IN_MS, 5);
+		aggregateRawData(sensor, AggregationPeriodLength.FIVE_MINUTES, TimeUtility.DAY_IN_MS, 5);
 		
 		logger.fine("aggregating raw data up to a week old into one hour periods");
-		aggregateRawData(sensor, AggregationPeriodLength.hour, TimeUtility.WEEK_IN_MS, 60);
+		aggregateRawData(sensor, AggregationPeriodLength.HOUR, TimeUtility.WEEK_IN_MS, 60);
 		
 		logger.fine("aggregating raw data into one day periods");
-		aggregateRawData(sensor, AggregationPeriodLength.day, TimeUtility.INFINITY, 60*24);
+		aggregateRawData(sensor, AggregationPeriodLength.DAY, TimeUtility.INFINITY, 60*24);
 		
 		logger.fine("aggregating raw data into one week periods");
-		aggregateRawData(sensor, AggregationPeriodLength.week, TimeUtility.INFINITY, 60*24*7);
+		aggregateRawData(sensor, AggregationPeriodLength.WEEK, TimeUtility.INFINITY, 60*24*7);
     }
     
     /**
@@ -91,13 +91,13 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     					+ " AND timestamp_end-timestamp_start == ?");
     		stmt.setLong(1, sensorId);
     		switch(aggrPeriodLength){
-    			case second: stmt.setLong(2, TimeUtility.SECOND_IN_MS-1); break;
-    			case minute: stmt.setLong(2, TimeUtility.MINUTE_IN_MS-1); break; 
-				case fiveMinutes: stmt.setLong(2, TimeUtility.FIVE_MINUTES_IN_MS-1); break;
-				case fifteenMinutes: stmt.setLong(2, TimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
-				case hour: stmt.setLong(2, TimeUtility.HOUR_IN_MS-1); break;
-				case day: stmt.setLong(2, TimeUtility.DAY_IN_MS-1); break;
-				case week: stmt.setLong(2, TimeUtility.WEEK_IN_MS-1); break;
+    			case SECOND: stmt.setLong(2, TimeUtility.SECOND_IN_MS-1); break;
+    			case MINUTE: stmt.setLong(2, TimeUtility.MINUTE_IN_MS-1); break; 
+				case FIVE_MINUTES: stmt.setLong(2, TimeUtility.FIVE_MINUTES_IN_MS-1); break;
+				case FIFTEEN_MINUTES: stmt.setLong(2, TimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
+				case HOUR: stmt.setLong(2, TimeUtility.HOUR_IN_MS-1); break;
+				case DAY: stmt.setLong(2, TimeUtility.DAY_IN_MS-1); break;
+				case WEEK: stmt.setLong(2, TimeUtility.WEEK_IN_MS-1); break;
 				default: logger.warning("aggregation period length is not supported."); return;
     		}
     		Long maxTimestampFoundForSensor = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
@@ -112,12 +112,12 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     				+" WHERE sensor_id == ?"
     					+ " AND timestamp > ?"
     					+ " AND timestamp < ? "
-    					+ " AND timestamp > ? "
+    					+ " AND timestamp >= ? "
     				+" ORDER BY timestamp ASC");
     		stmt.setLong(1, sensorId);
     		stmt.setLong(2, maxTimestampFoundForSensor);
     		stmt.setLong(3, currentPeriodStartTimestamp);
-    		stmt.setLong(4, System.currentTimeMillis()-ageLimitInMs);
+    		stmt.setLong(4, TimeUtility.getTimestampPeriodStart_UTC(aggrPeriodLength, System.currentTimeMillis()-ageLimitInMs));
     		DBConnection.exec(stmt, new DataAggregator(sensorId, aggrPeriodLength, expectedSampleCount, aggrMethod));
     	} catch (SQLException e) {
             logger.log(Level.SEVERE, null, e);

@@ -1,7 +1,5 @@
 package se.hal.plugin.raspberry;
 
-import com.pi4j.io.gpio.Pin;
-
 import se.hal.intf.HalSensorController;
 import se.hal.struct.PowerConsumptionSensorData;
 import zutil.ui.Configurator;

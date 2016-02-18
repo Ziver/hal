@@ -188,5 +188,13 @@ public class HalContext {
     public static DBConnection getDB(){
         return db;
     }
+    
+    /**
+     * For testing purposes.
+     * @param db
+     */
+    public static void setDB(DBConnection db){
+    	HalContext.db = db;
+    }
 
 }

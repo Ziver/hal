@@ -45,4 +45,8 @@ public class UTCTimePeriod{
 		return false;
 	}
 	
+	public String toString(){
+		return start + "=>" + end + " (" + UTCTimeUtility.getDateString(start) + "=>" + UTCTimeUtility.getDateString(end) + ")";
+	}
+	
 }

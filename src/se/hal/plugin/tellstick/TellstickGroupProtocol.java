@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2015 Ziver
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Ziver Koc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,46 +28,19 @@ import se.hal.intf.HalEventController;
 import se.hal.intf.HalSensorController;
 
 /**
- * Created by Ziver on 2015-02-18.
+ * Indicates that the implementing class is a protocol that can have group events.
+ * More specifically that on transmission will affect multiple devices.
  */
-public abstract class TellstickProtocol {
+public interface TellstickGroupProtocol {
 
-    private String protocol;
-    private String model;
-    private long timestamp = -1;
+    /**
+     * Protocols should extend this method if it has group functionality.
+     * @return true if this object an the input is in the same group.
+     */
+    public boolean equalsGroup(TellstickProtocol obj);
 
-
-    public TellstickProtocol(String protocol, String model){
-        this.protocol = protocol;
-        this.model = model;
-    }
-
-
-    public String getProtocolName(){
-        return protocol;
-    }
-    public String getModelName(){
-        return model;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-
-    public Class<? extends HalEventController> getEventController() {
-        return TellstickSerialComm.class;
-    }
-    public Class<? extends HalSensorController> getSensorController() {
-        return TellstickSerialComm.class;
-    }
-
-    public abstract String encode();
-    public abstract void decode(byte[] data);
-
-    public abstract boolean equals(Object obj);
-
+    /**
+     * Copy the state data from the group to this object.
+     */
+    public void copyGroupData(TellstickGroupProtocol groupProtocol);
 }

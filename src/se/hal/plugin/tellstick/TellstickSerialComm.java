@@ -131,9 +131,16 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
                                 !registered && set.contains(data)) { // required duplicate transmissions before reporting unregistered devices
 
                             //Check for registered device that are in the same group
-                            for (TellstickProtocol childProtocol : registeredDevices){
-                                if (protocol.equalsGroup(childProtocol) && !protocol.equals(childProtocol))
-                                    reportEvent(protocol);
+                            if(protocol instanceof TellstickGroupProtocol) {
+                                TellstickGroupProtocol groupProtocol = (TellstickGroupProtocol) protocol;
+                                for (TellstickProtocol childProtocol : registeredDevices) {
+                                    if (childProtocol instanceof TellstickGroupProtocol &&
+                                            groupProtocol.equalsGroup(childProtocol) &&
+                                            !protocol.equals(childProtocol)) {
+                                        ((TellstickGroupProtocol) childProtocol).copyGroupData(groupProtocol);
+                                        reportEvent(childProtocol);
+                                    }
+                                }
                             }
                             // Report source event
                             reportEvent(protocol);

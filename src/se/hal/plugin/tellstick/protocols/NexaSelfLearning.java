@@ -22,6 +22,7 @@
 
 package se.hal.plugin.tellstick.protocols;
 
+import se.hal.plugin.tellstick.TellstickGroupProtocol;
 import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.struct.SwitchEventData;
 import zutil.ui.Configurator;
@@ -29,7 +30,7 @@ import zutil.ui.Configurator;
 /**
  * Created by Ziver on 2015-02-18.
  */
-public class NexaSelfLearning extends TellstickProtocol implements SwitchEventData {
+public class NexaSelfLearning extends TellstickProtocol implements SwitchEventData,TellstickGroupProtocol {
 
     @Configurator.Configurable("House code")
     private int house = 0;
@@ -162,6 +163,7 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
                 ";method:"+enable;
     }
 
+    @Override
     public boolean equals(Object obj){
         if(obj instanceof NexaSelfLearning)
             return ((NexaSelfLearning) obj).house == house &&
@@ -169,17 +171,21 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
                     ((NexaSelfLearning)obj).unit == unit;
         return false;
     }
-    public boolean equalsGroup(Object obj){
+    @Override
+    public boolean equalsGroup(TellstickProtocol obj) {
         if(obj instanceof NexaSelfLearning)
             return ((NexaSelfLearning) obj).house == house &&
                     (((NexaSelfLearning) obj).group || group );
         return false;
     }
-
+    @Override
+    public void copyGroupData(TellstickGroupProtocol group) {
+        if(group instanceof NexaSelfLearning)
+            this.enable = ((NexaSelfLearning) group).enable;
+    }
 
     @Override
     public double getData() {
         return (enable ? 1 : 0);
     }
-
 }

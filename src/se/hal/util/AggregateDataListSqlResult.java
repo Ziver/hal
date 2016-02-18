@@ -77,7 +77,7 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
 				list.add(new AggregateData(previousTimestampEnd+1, "null", username));
 			}
 
-			list.add(new AggregateData(timestampStart, ""+ (estimatedData/1000.0), username));	//add this data point to list
+			list.add(new AggregateData(timestampEnd, ""+ (estimatedData/1000.0), username));	//add this data point to list
 
 			//update previous end timestamp
 			previousTimestampEnd = timestampEnd;

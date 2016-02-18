@@ -4,7 +4,8 @@ import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
 import se.hal.intf.HalSensorData.AggregationMethod;
-import se.hal.util.TimeUtility;
+import se.hal.util.UTCTimePeriod;
+import se.hal.util.UTCTimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
@@ -36,7 +37,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 	}
 
     public void initiate(ScheduledExecutorService executor){
-        executor.scheduleAtFixedRate(this, 0, TimeUtility.FIVE_MINUTES_IN_MS, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(this, 0, UTCTimeUtility.FIVE_MINUTES_IN_MS, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -61,16 +62,16 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 		logger.fine("The sensor is of type: " + sensor.getDeviceData().getClass().getName());
 		
 		logger.fine("aggregating raw data up to a day old into five minute periods");
-		aggregateRawData(sensor, AggregationPeriodLength.FIVE_MINUTES, TimeUtility.DAY_IN_MS, 5);
+		aggregateRawData(sensor, AggregationPeriodLength.FIVE_MINUTES, UTCTimeUtility.DAY_IN_MS, 5);
 		
 		logger.fine("aggregating raw data up to a week old into one hour periods");
-		aggregateRawData(sensor, AggregationPeriodLength.HOUR, TimeUtility.WEEK_IN_MS, 60);
+		aggregateRawData(sensor, AggregationPeriodLength.HOUR, UTCTimeUtility.WEEK_IN_MS, 60);
 		
 		logger.fine("aggregating raw data into one day periods");
-		aggregateRawData(sensor, AggregationPeriodLength.DAY, TimeUtility.INFINITY, 60*24);
+		aggregateRawData(sensor, AggregationPeriodLength.DAY, UTCTimeUtility.INFINITY, 60*24);
 		
 		logger.fine("aggregating raw data into one week periods");
-		aggregateRawData(sensor, AggregationPeriodLength.WEEK, TimeUtility.INFINITY, 60*24*7);
+		aggregateRawData(sensor, AggregationPeriodLength.WEEK, UTCTimeUtility.INFINITY, 60*24*7);
     }
     
     /**
@@ -91,33 +92,34 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     					+ " AND timestamp_end-timestamp_start == ?");
     		stmt.setLong(1, sensorId);
     		switch(aggrPeriodLength){
-    			case SECOND: stmt.setLong(2, TimeUtility.SECOND_IN_MS-1); break;
-    			case MINUTE: stmt.setLong(2, TimeUtility.MINUTE_IN_MS-1); break; 
-				case FIVE_MINUTES: stmt.setLong(2, TimeUtility.FIVE_MINUTES_IN_MS-1); break;
-				case FIFTEEN_MINUTES: stmt.setLong(2, TimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
-				case HOUR: stmt.setLong(2, TimeUtility.HOUR_IN_MS-1); break;
-				case DAY: stmt.setLong(2, TimeUtility.DAY_IN_MS-1); break;
-				case WEEK: stmt.setLong(2, TimeUtility.WEEK_IN_MS-1); break;
+    			case SECOND: stmt.setLong(2, UTCTimeUtility.SECOND_IN_MS-1); break;
+    			case MINUTE: stmt.setLong(2, UTCTimeUtility.MINUTE_IN_MS-1); break; 
+				case FIVE_MINUTES: stmt.setLong(2, UTCTimeUtility.FIVE_MINUTES_IN_MS-1); break;
+				case FIFTEEN_MINUTES: stmt.setLong(2, UTCTimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
+				case HOUR: stmt.setLong(2, UTCTimeUtility.HOUR_IN_MS-1); break;
+				case DAY: stmt.setLong(2, UTCTimeUtility.DAY_IN_MS-1); break;
+				case WEEK: stmt.setLong(2, UTCTimeUtility.WEEK_IN_MS-1); break;
 				default: logger.warning("aggregation period length is not supported."); return;
     		}
     		Long maxTimestampFoundForSensor = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
     		if(maxTimestampFoundForSensor == null)
     			maxTimestampFoundForSensor = 0l;
     		
-    		long currentPeriodStartTimestamp = TimeUtility.getTimestampPeriodStart_UTC(aggrPeriodLength, System.currentTimeMillis());
+    		long latestCompletePeriodEndTimestamp = new UTCTimePeriod(System.currentTimeMillis(), aggrPeriodLength).getPreviosPeriod().getEndTimestamp();
+    		long oldestPeriodStartTimestamp = new UTCTimePeriod(System.currentTimeMillis()-ageLimitInMs, aggrPeriodLength).getStartTimestamp();
     		
-    		logger.fine("Calculating periods... (from:"+ maxTimestampFoundForSensor +", to:"+ currentPeriodStartTimestamp +") with expected sample count: " + expectedSampleCount);
+    		logger.fine("Calculating periods... (from:"+ maxTimestampFoundForSensor +", to:"+ latestCompletePeriodEndTimestamp +") with expected sample count: " + expectedSampleCount);
     		
     		stmt = db.getPreparedStatement("SELECT *, 1 AS confidence FROM sensor_data_raw"
     				+" WHERE sensor_id == ?"
     					+ " AND timestamp > ?"
-    					+ " AND timestamp < ? "
+    					+ " AND timestamp <= ? "
     					+ " AND timestamp >= ? "
     				+" ORDER BY timestamp ASC");
     		stmt.setLong(1, sensorId);
     		stmt.setLong(2, maxTimestampFoundForSensor);
-    		stmt.setLong(3, currentPeriodStartTimestamp);
-    		stmt.setLong(4, TimeUtility.getTimestampPeriodStart_UTC(aggrPeriodLength, System.currentTimeMillis()-ageLimitInMs));
+    		stmt.setLong(3, latestCompletePeriodEndTimestamp);
+    		stmt.setLong(4, oldestPeriodStartTimestamp);
     		DBConnection.exec(stmt, new DataAggregator(sensorId, aggrPeriodLength, expectedSampleCount, aggrMethod));
     	} catch (SQLException e) {
             logger.log(Level.SEVERE, null, e);
@@ -145,8 +147,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 			try{
 				HalContext.getDB().getConnection().setAutoCommit(false);
 				
-				long currentPeriodTimestampStart = 0;
-				long currentPeriodTimestampEnd = 0;
+				UTCTimePeriod currentPeriod = null;
 				float sum = 0;
 				float confidenceSum = 0;
 				int samples = 0;
@@ -157,39 +158,34 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 					if(sensorId != result.getInt("sensor_id")){
 						throw new IllegalArgumentException("found entry for aggregation for the wrong sensorId (expecting: "+sensorId+", but was: "+result.getInt("sensor_id")+")");
 					}
-					long timestamp = result.getLong("timestamp");
-					long dataPeriodTimestampStart = TimeUtility.getTimestampPeriodStart_UTC(this.aggrPeriodLength, timestamp);
-					long dataPerionTimestampEnd = TimeUtility.getTimestampPeriodEnd_UTC(this.aggrPeriodLength, timestamp);
 					
-					if(currentPeriodTimestampStart != 0 && currentPeriodTimestampEnd != 0 && dataPeriodTimestampStart != currentPeriodTimestampStart){
+					long timestamp = result.getLong("timestamp");
+					UTCTimePeriod dataPeriod = new UTCTimePeriod(timestamp, this.aggrPeriodLength);
+					
+					if(currentPeriod == null)
+						currentPeriod = dataPeriod;
+
+					if(!dataPeriod.equals(currentPeriod)){
 						float aggrConfidence = confidenceSum / (float)this.expectedSampleCount;
 						float data = -1;
 						switch(aggrMethod){
 							case SUM: data = sum; break;
 							case AVERAGE: data = sum/samples; break;
 						}
-						logger.finer("Calculated period starting at timestamp: " + currentPeriodTimestampStart + ", data: " + sum + ", confidence: " + aggrConfidence + ", samples: " + samples + ", aggrMethod: " + aggrMethod);
+						logger.finer("Calculated period starting at timestamp: " + currentPeriod.getStartTimestamp() + ", data: " + sum + ", confidence: " + aggrConfidence + ", samples: " + samples + ", aggrMethod: " + aggrMethod);
 						preparedInsertStmt.setInt(1, result.getInt("sensor_id"));
 						preparedInsertStmt.setLong(2, ++highestSequenceId);
-						preparedInsertStmt.setLong(3, currentPeriodTimestampStart);
-						preparedInsertStmt.setLong(4, currentPeriodTimestampEnd);
+						preparedInsertStmt.setLong(3, currentPeriod.getStartTimestamp());
+						preparedInsertStmt.setLong(4, currentPeriod.getEndTimestamp());
 						preparedInsertStmt.setFloat(5, data);
 						preparedInsertStmt.setFloat(6, aggrConfidence);
 						preparedInsertStmt.addBatch();
 						
 						// Reset variables
-						currentPeriodTimestampStart = dataPeriodTimestampStart;
-						currentPeriodTimestampEnd = dataPerionTimestampEnd;
+						currentPeriod = dataPeriod;
 						confidenceSum = 0;
 						sum = 0;
 						samples = 0;
-					}
-					
-					if(currentPeriodTimestampStart == 0){
-						currentPeriodTimestampStart = dataPeriodTimestampStart;
-					}
-					if(currentPeriodTimestampEnd == 0){
-						currentPeriodTimestampEnd = dataPerionTimestampEnd;
 					}
 					sum += result.getFloat("data");
 					confidenceSum += result.getFloat("confidence");

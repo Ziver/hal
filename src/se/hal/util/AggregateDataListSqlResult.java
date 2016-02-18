@@ -43,13 +43,13 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
         stmt.setLong(1, sensor.getId());
         stmt.setLong(2, sensor.getUser().getId());
         switch(aggrPeriodLength){
-			case SECOND: stmt.setLong(3, TimeUtility.SECOND_IN_MS-1); break;
-			case MINUTE: stmt.setLong(3, TimeUtility.MINUTE_IN_MS-1); break; 
-			case FIVE_MINUTES: stmt.setLong(3, TimeUtility.FIVE_MINUTES_IN_MS-1); break;
-			case FIFTEEN_MINUTES: stmt.setLong(3, TimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
-			case HOUR: stmt.setLong(3, TimeUtility.HOUR_IN_MS-1); break;
-			case DAY: stmt.setLong(3, TimeUtility.DAY_IN_MS-1); break;
-			case WEEK: stmt.setLong(3, TimeUtility.WEEK_IN_MS-1); break;
+			case SECOND: stmt.setLong(3, UTCTimeUtility.SECOND_IN_MS-1); break;
+			case MINUTE: stmt.setLong(3, UTCTimeUtility.MINUTE_IN_MS-1); break; 
+			case FIVE_MINUTES: stmt.setLong(3, UTCTimeUtility.FIVE_MINUTES_IN_MS-1); break;
+			case FIFTEEN_MINUTES: stmt.setLong(3, UTCTimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
+			case HOUR: stmt.setLong(3, UTCTimeUtility.HOUR_IN_MS-1); break;
+			case DAY: stmt.setLong(3, UTCTimeUtility.DAY_IN_MS-1); break;
+			case WEEK: stmt.setLong(3, UTCTimeUtility.WEEK_IN_MS-1); break;
 			default: throw new IllegalArgumentException("selected aggrPeriodLength is not supported");
 		}
         stmt.setLong(4, (System.currentTimeMillis() - ageLimitInMs) );

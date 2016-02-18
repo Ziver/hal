@@ -4,7 +4,7 @@ import se.hal.HalContext;
 import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
-import se.hal.util.TimeUtility;
+import se.hal.util.UTCTimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 import zutil.log.LogUtil;
@@ -23,7 +23,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
 
     public void initiate(ScheduledExecutorService executor){
-		executor.scheduleAtFixedRate(this, 5000, TimeUtility.FIVE_MINUTES_IN_MS, TimeUnit.MILLISECONDS);
+		executor.scheduleAtFixedRate(this, 5000, UTCTimeUtility.FIVE_MINUTES_IN_MS, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -42,8 +42,8 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 
     public void cleanupSensor(Sensor sensor) {
     	if (sensor.getUser() != null) {
-			cleanupSensorData(sensor.getId(), AggregationPeriodLength.FIVE_MINUTES, TimeUtility.DAY_IN_MS);	//clear 5-minute data older than a day
-			cleanupSensorData(sensor.getId(), AggregationPeriodLength.HOUR, TimeUtility.WEEK_IN_MS);			//clear 1-hour data older than a week
+			cleanupSensorData(sensor.getId(), AggregationPeriodLength.FIVE_MINUTES, UTCTimeUtility.DAY_IN_MS);	//clear 5-minute data older than a day
+			cleanupSensorData(sensor.getId(), AggregationPeriodLength.HOUR, UTCTimeUtility.WEEK_IN_MS);			//clear 1-hour data older than a week
 			//cleanupSensorData(sensor.getId(), AggregationPeriodLength.day, TimeUtility.INFINITY);			//clear 1-day data older than infinity
 			//cleanupSensorData(sensor.getId(), AggregationPeriodLength.week, TimeUtility.INFINITY);			//clear 1-week data older than infinity
 		}
@@ -68,13 +68,13 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 	    				+ "AND timestamp_end < ?");
     		stmt.setLong(1, sensorId);
     		switch(cleanupPeriodlength){
-				case SECOND: stmt.setLong(2, TimeUtility.SECOND_IN_MS-1); break;
-				case MINUTE: stmt.setLong(2, TimeUtility.MINUTE_IN_MS-1); break; 
-				case FIVE_MINUTES: stmt.setLong(2, TimeUtility.FIVE_MINUTES_IN_MS-1); break;
-				case FIFTEEN_MINUTES: stmt.setLong(2, TimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
-				case HOUR: stmt.setLong(2, TimeUtility.HOUR_IN_MS-1); break;
-				case DAY: stmt.setLong(2, TimeUtility.DAY_IN_MS-1); break;
-				case WEEK: stmt.setLong(2, TimeUtility.WEEK_IN_MS-1); break;
+				case SECOND: stmt.setLong(2, UTCTimeUtility.SECOND_IN_MS-1); break;
+				case MINUTE: stmt.setLong(2, UTCTimeUtility.MINUTE_IN_MS-1); break; 
+				case FIVE_MINUTES: stmt.setLong(2, UTCTimeUtility.FIVE_MINUTES_IN_MS-1); break;
+				case FIFTEEN_MINUTES: stmt.setLong(2, UTCTimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
+				case HOUR: stmt.setLong(2, UTCTimeUtility.HOUR_IN_MS-1); break;
+				case DAY: stmt.setLong(2, UTCTimeUtility.DAY_IN_MS-1); break;
+				case WEEK: stmt.setLong(2, UTCTimeUtility.WEEK_IN_MS-1); break;
 				default: logger.warning("cleanup period length is not supported."); return;
 			}
     		stmt.setLong(3, System.currentTimeMillis()-olderThan);
@@ -101,7 +101,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 					if(sensorId != result.getInt("sensor_id")){
 						throw new IllegalArgumentException("Found entry for aggregation for the wrong sensorId (expecting: "+sensorId+", but was: "+result.getInt("sensor_id")+")");
 					}
-                    logger.finer("Deleting sensor(id: "+ sensorId +") aggregate entry timestamp: "+ result.getLong("timestamp_start") +" - "+ result.getLong("timestamp_end") + " (" + TimeUtility.timeInMsToString(result.getLong("timestamp_end")-result.getLong("timestamp_start")) + ")");
+                    logger.finer("Deleting sensor(id: "+ sensorId +") aggregate entry timestamp: "+ result.getLong("timestamp_start") +" - "+ result.getLong("timestamp_end") + " (" + UTCTimeUtility.timeInMsToString(result.getLong("timestamp_end")-result.getLong("timestamp_start")) + ")");
 					preparedDeleteStmt.setInt(1, result.getInt("sensor_id"));
 					preparedDeleteStmt.setLong(2, result.getLong("sequence_id"));
 					preparedDeleteStmt.addBatch();

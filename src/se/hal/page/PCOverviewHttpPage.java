@@ -5,7 +5,7 @@ import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 import se.hal.intf.HalHttpPage;
 import se.hal.util.AggregateDataListSqlResult;
 import se.hal.util.AggregateDataListSqlResult.*;
-import se.hal.util.TimeUtility;
+import se.hal.util.UTCTimeUtility;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
@@ -43,13 +43,13 @@ public class PCOverviewHttpPage extends HalHttpPage {
 		for(User user : users){
 			List<Sensor> userSensors = Sensor.getSensors(db, user);
 			for(Sensor sensor : userSensors){
-				minDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.FIVE_MINUTES, TimeUtility.DAY_IN_MS));
+				minDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.FIVE_MINUTES, UTCTimeUtility.DAY_IN_MS));
 
-				hourDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.HOUR, TimeUtility.WEEK_IN_MS));
+				hourDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.HOUR, UTCTimeUtility.WEEK_IN_MS));
 
-				dayDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.DAY, TimeUtility.INFINITY));
+				dayDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.DAY, UTCTimeUtility.INFINITY));
 
-				weekDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.WEEK, TimeUtility.INFINITY));
+				weekDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.WEEK, UTCTimeUtility.INFINITY));
 			}
 		}
 

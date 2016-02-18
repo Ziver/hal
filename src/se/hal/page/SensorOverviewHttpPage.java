@@ -8,7 +8,7 @@ import se.hal.util.AggregateDataListSqlResult;
 import zutil.db.DBConnection;
 import se.hal.util.HistoryDataListSqlResult;
 import se.hal.util.HistoryDataListSqlResult.*;
-import se.hal.util.TimeUtility;
+import se.hal.util.UTCTimeUtility;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
 
@@ -51,7 +51,7 @@ public class SensorOverviewHttpPage extends HalHttpPage {
             Templator tmpl = new Templator(FileUtil.find(DETAIL_TEMPLATE));
             tmpl.set("sensor", sensor);
             tmpl.set("history", history);
-            tmpl.set("aggregation", AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.HOUR, TimeUtility.WEEK_IN_MS));
+            tmpl.set("aggregation", AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.HOUR, UTCTimeUtility.WEEK_IN_MS));
             return tmpl;
         }
         else {

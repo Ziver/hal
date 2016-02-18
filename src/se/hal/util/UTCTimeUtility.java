@@ -1,11 +1,12 @@
 package se.hal.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
 import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 
-public class TimeUtility {	
+public class UTCTimeUtility {	
 	public static final long SECOND_IN_MS = 1000;
 	public static final long MINUTE_IN_MS = SECOND_IN_MS * 60;
 	public static final long FIVE_MINUTES_IN_MS = MINUTE_IN_MS * 5;
@@ -15,9 +16,10 @@ public class TimeUtility {
     public static final long WEEK_IN_MS = DAY_IN_MS * 7;
 	public static final long INFINITY = Long.MAX_VALUE;	//sort of true
 	
-	public static long getTimestampPeriodStart_UTC(AggregationPeriodLength aggrPeriodLength, long timestamp) throws NumberFormatException{
+	public static long getTimestampPeriodStart(AggregationPeriodLength aggrPeriodLength, long timestamp) throws NumberFormatException{
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		cal.setTimeInMillis(timestamp);
+		cal.setFirstDayOfWeek(Calendar.MONDAY);
 		switch(aggrPeriodLength){
 			case YEAR:
 				cal.set(Calendar.DAY_OF_YEAR, 1);
@@ -72,42 +74,64 @@ public class TimeUtility {
 		return cal.getTimeInMillis();
 	}
 	
-	public static long getTimestampPeriodEnd_UTC(AggregationPeriodLength aggrPeriodLength, long timestamp) throws NumberFormatException{
-		long start = getTimestampPeriodStart_UTC(aggrPeriodLength, timestamp);
+	public static long getTimestampPeriodEnd(AggregationPeriodLength aggrPeriodLength, long timestamp) throws NumberFormatException{
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		cal.setTimeInMillis(start);
+		cal.setTimeInMillis(timestamp);
+		cal.setFirstDayOfWeek(Calendar.MONDAY);
 		switch(aggrPeriodLength){
 			case YEAR:
-				cal.add(Calendar.YEAR, 1);
+				cal.set(Calendar.DAY_OF_YEAR, cal.getActualMaximum(Calendar.DAY_OF_YEAR));
+				cal.set(Calendar.HOUR_OF_DAY, 23);
+				cal.set(Calendar.MINUTE, 59);
+				cal.set(Calendar.SECOND, 59);
+				cal.set(Calendar.MILLISECOND, 1000);
 				break;
 			case MONTH:
-				cal.add(Calendar.MONTH, 1);
+				cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+				cal.set(Calendar.HOUR_OF_DAY, 23);
+				cal.set(Calendar.MINUTE, 59);
+				cal.set(Calendar.SECOND, 59);
+				cal.set(Calendar.MILLISECOND, 1000);
 				break;
 			case WEEK:
-				cal.add(Calendar.WEEK_OF_YEAR, 1);
+				cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+				cal.set(Calendar.HOUR_OF_DAY, 23);
+				cal.set(Calendar.MINUTE, 59);
+				cal.set(Calendar.SECOND, 59);
+				cal.set(Calendar.MILLISECOND, 1000);
 				break;
 			case DAY:
-				cal.add(Calendar.DAY_OF_YEAR, 1);
+				cal.set(Calendar.HOUR_OF_DAY, 23);
+				cal.set(Calendar.MINUTE, 59);
+				cal.set(Calendar.SECOND, 59);
+				cal.set(Calendar.MILLISECOND, 1000);
 				break;
 			case HOUR:
-				cal.add(Calendar.HOUR, 1);
+				cal.set(Calendar.MINUTE, 59);
+				cal.set(Calendar.SECOND, 59);
+				cal.set(Calendar.MILLISECOND, 1000);
 				break;
 			case FIVE_MINUTES:
-				cal.add(Calendar.MINUTE, 5);
+				cal.set(Calendar.MINUTE, 4+(cal.get(Calendar.MINUTE)/5)*5);
+				cal.set(Calendar.SECOND, 59);
+				cal.set(Calendar.MILLISECOND, 1000);
 				break;
 			case FIFTEEN_MINUTES:
-				cal.add(Calendar.MINUTE, 15);
+				cal.set(Calendar.MINUTE, 14+(cal.get(Calendar.MINUTE)/15)*15);
+				cal.set(Calendar.SECOND, 59);
+				cal.set(Calendar.MILLISECOND, 1000);
 				break;
 			case MINUTE:
-				cal.add(Calendar.MINUTE, 1);
+				cal.set(Calendar.SECOND, 59);
+				cal.set(Calendar.MILLISECOND, 1000);
 				break;
 			case SECOND:
-				cal.add(Calendar.SECOND, 1);
+				cal.set(Calendar.MILLISECOND, 1000);
 				break;
 		}
 		return cal.getTimeInMillis()-1;	//subtract one
 	}
-
+	
 	public static int getMillisecondInSecondFromTimestamp(long ms) throws NumberFormatException{
 		if(ms < 0)
     		throw new NumberFormatException("argument must be positive");
@@ -209,6 +233,14 @@ public class TimeUtility {
 		int milliseconds = (int) (ms % SECOND_IN_MS);
 		retval += "." + (milliseconds<100?"0"+(milliseconds<10?"0"+milliseconds:milliseconds):milliseconds);
 		return retval;
+	}
+	
+	public static String getDateString(long timestamp){
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		format.setTimeZone(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		cal.setTimeInMillis(timestamp);
+		return format.format(cal.getTime());
 	}
 	
 }

@@ -1,12 +1,14 @@
 package se.hal.deamon;
 
 import se.hal.HalContext;
-import se.hal.deamon.PCDataSynchronizationDaemon.*;
+import se.hal.deamon.PCDataSynchronizationDaemon.PeerDataRspDTO;
+import se.hal.deamon.PCDataSynchronizationDaemon.SensorDTO;
+import se.hal.deamon.PCDataSynchronizationDaemon.SensorDataDTO;
+import se.hal.deamon.PCDataSynchronizationDaemon.SensorDataListDTO;
 import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
-import zutil.db.bean.DBBeanSQLResultHandler;
 import zutil.log.LogUtil;
 import zutil.parser.json.JSONParser;
 

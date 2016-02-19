@@ -1,7 +1,7 @@
 package se.hal.struct;
 
-import se.hal.intf.HalEventData;
 import se.hal.intf.HalEventController;
+import se.hal.intf.HalEventData;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;

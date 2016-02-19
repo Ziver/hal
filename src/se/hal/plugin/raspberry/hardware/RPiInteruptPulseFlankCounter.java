@@ -1,25 +1,19 @@
 package se.hal.plugin.raspberry.hardware;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.pi4j.io.gpio.*;
+import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
+import com.pi4j.io.gpio.event.GpioPinListenerDigital;
+import com.pi4j.wiringpi.GpioUtil;
 import se.hal.plugin.raspberry.RPiController;
 import se.hal.plugin.raspberry.RPiPowerConsumptionSensor;
 import se.hal.plugin.raspberry.RPiSensor;
 import se.hal.plugin.raspberry.RPiUtility;
 import zutil.log.LogUtil;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.GpioPinDigitalInput;
-import com.pi4j.io.gpio.Pin;
-import com.pi4j.io.gpio.PinPullResistance;
-import com.pi4j.io.gpio.PinState;
-import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
-import com.pi4j.io.gpio.event.GpioPinListenerDigital;
-import com.pi4j.wiringpi.GpioUtil;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RPiInteruptPulseFlankCounter implements Runnable, GpioPinListenerDigital, RPiSensor {
 	private static final int REPORT_TIMEOUT = 60_000;   //one minute

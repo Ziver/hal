@@ -1,10 +1,10 @@
 package se.hal.util;
 
+import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
-
-import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 
 public class UTCTimeUtility {	
 	public static final long SECOND_IN_MS = 1000;

@@ -2,8 +2,8 @@ package se.hal.deamon;
 
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
-import se.hal.struct.Sensor;
 import se.hal.intf.HalSensorData.AggregationMethod;
+import se.hal.struct.Sensor;
 import se.hal.util.UTCTimePeriod;
 import se.hal.util.UTCTimeUtility;
 import zutil.db.DBConnection;

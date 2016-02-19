@@ -1,18 +1,17 @@
 package se.hal.plugin.raspberry.hardware;
 
+import com.pi4j.component.temperature.TemperatureSensor;
+import com.pi4j.io.w1.W1Master;
+import com.pi4j.temperature.TemperatureScale;
+import se.hal.plugin.raspberry.RPiController;
+import se.hal.plugin.raspberry.RPiSensor;
+import se.hal.plugin.raspberry.RPiTemperatureSensor;
+import zutil.log.LogUtil;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-
-import se.hal.plugin.raspberry.RPiTemperatureSensor;
-import se.hal.plugin.raspberry.RPiController;
-import se.hal.plugin.raspberry.RPiSensor;
-import zutil.log.LogUtil;
-
-import com.pi4j.component.temperature.TemperatureSensor;
-import com.pi4j.io.w1.W1Master;
-import com.pi4j.temperature.TemperatureScale;
 
 public class RPiDS18B20 implements RPiSensor, Runnable {	
 	private static final Logger logger = LogUtil.getLogger();

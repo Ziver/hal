@@ -25,14 +25,12 @@ package se.hal.plugin.tellstick;
 import com.fazecast.jSerialComm.SerialPort;
 import se.hal.HalContext;
 import se.hal.intf.*;
-import se.hal.struct.AbstractDevice;
-import zutil.log.InputStreamLogger;
 import zutil.log.LogUtil;
-import zutil.log.OutputStreamLogger;
 import zutil.struct.TimedHashSet;
 
-import java.io.*;
-import java.nio.charset.Charset;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;

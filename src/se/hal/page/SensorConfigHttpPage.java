@@ -3,14 +3,13 @@ package se.hal.page;
 import se.hal.ControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalHttpPage;
-import se.hal.intf.HalSensorData;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
 import zutil.ui.Configurator;
-import zutil.ui.Configurator.*;
+import zutil.ui.Configurator.ConfigurationParam;
 
 import java.util.Map;
 

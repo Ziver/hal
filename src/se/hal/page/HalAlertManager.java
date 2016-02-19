@@ -2,7 +2,7 @@ package se.hal.page;
 
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
-import zutil.net.http.HttpHeaderParser;
+import zutil.net.http.HttpHeader;
 import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
 import zutil.parser.Templator;
@@ -71,7 +71,7 @@ public class HalAlertManager implements HttpPage {
 
     @Override
     public void respond(HttpPrintStream out,
-                        HttpHeaderParser client_info,
+                        HttpHeader headers,
                         Map<String, Object> session,
                         Map<String, String> cookie,
                         Map<String, String> request) throws IOException {

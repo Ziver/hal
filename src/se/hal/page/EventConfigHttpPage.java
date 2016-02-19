@@ -2,7 +2,6 @@ package se.hal.page;
 
 import se.hal.ControllerManager;
 import se.hal.HalContext;
-import se.hal.intf.HalEventData;
 import se.hal.intf.HalHttpPage;
 import se.hal.struct.Event;
 import se.hal.struct.User;

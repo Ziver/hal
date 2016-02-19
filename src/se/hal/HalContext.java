@@ -17,8 +17,6 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import se.hal.struct.Sensor;
-
 public class HalContext {
     private static final Logger logger = LogUtil.getLogger();
 

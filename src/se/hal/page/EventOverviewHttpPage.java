@@ -7,7 +7,7 @@ import se.hal.intf.HalHttpPage;
 import se.hal.struct.Event;
 import se.hal.struct.SwitchEventData;
 import se.hal.util.HistoryDataListSqlResult;
-import se.hal.util.HistoryDataListSqlResult.*;
+import se.hal.util.HistoryDataListSqlResult.HistoryData;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;

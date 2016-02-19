@@ -1,17 +1,15 @@
 package se.hal.plugin.raspberry;
 
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.pi4j.io.gpio.Pin;
-
-import se.hal.intf.HalSensorData;
 import se.hal.intf.HalSensorController;
+import se.hal.intf.HalSensorData;
 import se.hal.intf.HalSensorReportListener;
 import se.hal.plugin.raspberry.hardware.RPiDS18B20;
 import se.hal.plugin.raspberry.hardware.RPiInteruptPulseFlankCounter;
 import zutil.log.LogUtil;
+
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RPiController implements HalSensorController {
 	private static final Logger logger = LogUtil.getLogger();

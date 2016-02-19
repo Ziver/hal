@@ -1,27 +1,23 @@
 package se.hal;
 
 
-import se.hal.deamon.SensorDataAggregatorDaemon;
-import se.hal.deamon.SensorDataCleanupDaemon;
 import se.hal.deamon.PCDataSynchronizationClient;
 import se.hal.deamon.PCDataSynchronizationDaemon;
+import se.hal.deamon.SensorDataAggregatorDaemon;
+import se.hal.deamon.SensorDataCleanupDaemon;
 import se.hal.intf.HalDaemon;
 import se.hal.intf.HalHttpPage;
 import se.hal.page.*;
-import se.hal.page.HalAlertManager.*;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
-import zutil.db.bean.DBBean;
 import zutil.io.file.FileUtil;
-import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
 import zutil.net.http.HttpServer;
 import zutil.net.http.pages.HttpFilePage;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.logging.Level;
 
 /**
  * Created by Ziver on 2015-12-03.

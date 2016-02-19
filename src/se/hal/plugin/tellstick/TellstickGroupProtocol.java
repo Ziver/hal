@@ -24,9 +24,6 @@
 
 package se.hal.plugin.tellstick;
 
-import se.hal.intf.HalEventController;
-import se.hal.intf.HalSensorController;
-
 /**
  * Indicates that the implementing class is a protocol that can have group events.
  * More specifically that on transmission will affect multiple devices.

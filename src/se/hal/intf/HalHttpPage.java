@@ -6,13 +6,12 @@ import se.hal.page.HalNavigation;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
-import zutil.net.http.HttpHeaderParser;
+import zutil.net.http.HttpHeader;
 import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
 import zutil.parser.Templator;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -42,7 +41,7 @@ public abstract class HalHttpPage implements HttpPage{
 
 
     @Override
-    public void respond(HttpPrintStream out, HttpHeaderParser client_info,
+    public void respond(HttpPrintStream out, HttpHeader client_info,
                         Map<String, Object> session, Map<String, String> cookie,
                         Map<String, String> request) throws IOException {
 

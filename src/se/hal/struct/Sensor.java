@@ -1,8 +1,8 @@
 package se.hal.struct;
 
 import se.hal.HalContext;
-import se.hal.intf.HalSensorData;
 import se.hal.intf.HalSensorController;
+import se.hal.intf.HalSensorData;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;

@@ -8,7 +8,8 @@ import zutil.log.LogUtil;
 import zutil.plugin.PluginData;
 import zutil.plugin.PluginManager;
 import zutil.ui.Configurator;
-import zutil.ui.Configurator.*;
+import zutil.ui.Configurator.PostConfigurationActionListener;
+import zutil.ui.Configurator.PreConfigurationActionListener;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

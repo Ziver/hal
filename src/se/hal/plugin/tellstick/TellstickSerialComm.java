@@ -136,6 +136,7 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
                                             groupProtocol.equalsGroup(childProtocol) &&
                                             !protocol.equals(childProtocol)) {
                                         ((TellstickGroupProtocol) childProtocol).copyGroupData(groupProtocol);
+                                        childProtocol.setTimestamp(protocol.getTimestamp());
                                         reportEvent(childProtocol);
                                     }
                                 }

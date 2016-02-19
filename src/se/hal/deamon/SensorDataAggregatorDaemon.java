@@ -110,7 +110,11 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     		long latestCompletePeriodEndTimestamp = new UTCTimePeriod(aggregationStartTime, aggrPeriodLength).getPreviosPeriod().getEndTimestamp();
     		long oldestPeriodStartTimestamp = new UTCTimePeriod(aggregationStartTime-ageLimitInMs, aggrPeriodLength).getStartTimestamp();
     		
-    		logger.fine("evaluating period: "+ maxTimestampFoundForSensor + "=>" + latestCompletePeriodEndTimestamp + " (" + UTCTimeUtility.getDateString(maxTimestampFoundForSensor) + "=>" + UTCTimeUtility.getDateString(latestCompletePeriodEndTimestamp) + ") with expected sample count: " + expectedSampleCount);
+    		if(latestCompletePeriodEndTimestamp == oldestPeriodStartTimestamp){
+    			logger.fine("no new data to evaluate - aggregation is up to date");
+    		}else{
+    			logger.fine("evaluating period: "+ (maxTimestampFoundForSensor+1) + "=>" + latestCompletePeriodEndTimestamp + " (" + UTCTimeUtility.getDateString(maxTimestampFoundForSensor+1) + "=>" + UTCTimeUtility.getDateString(latestCompletePeriodEndTimestamp) + ") with expected sample count: " + expectedSampleCount);
+    		}
     		
     		stmt = db.getPreparedStatement("SELECT *, 1 AS confidence FROM sensor_data_raw"
     				+" WHERE sensor_id == ?"

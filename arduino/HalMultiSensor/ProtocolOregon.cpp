@@ -1,8 +1,8 @@
-#include <Wire.h>
+#include "ProtocolOregon.h"
 
-#define RF_TX_PIN = 10;
-#define RF_DELAY = 512;
-#define RF_DELAY_LONG RF_DELAY*2;
+#define RF_TX_PIN 10
+#define RF_DELAY 512
+#define RF_DELAY_LONG RF_DELAY*2
 #define RF_SEND_HIGH() digitalWrite(RF_TX_PIN, HIGH)
 #define RF_SEND_LOW() digitalWrite(RF_TX_PIN, LOW)
 
@@ -13,18 +13,18 @@ void ProtocolOregon::setup()
   RF_SEND_LOW();
 }
 
-virtual void ProtocolOregon::setTemperature(float temp)
+void ProtocolOregon::setTemperature(float temp)
 {
-    this.temperature = temp;
+    this->temperature = temp;
 }
-virtual void ProtocolOregon::setHumidity(unsigned char humidity)
+void ProtocolOregon::setHumidity(unsigned char humidity)
 {
-    this.humidity = humidity;
+    this->humidity = humidity;
 }
-virtual void ProtocolOregon::setConsumption(unsigned int cons)
+void ProtocolOregon::setConsumption(unsigned int cons)
 {
-    this.temperature = cons;
-    this.humidity = 0;
+    this->temperature = cons;
+    this->humidity = 0;
 }
 
 void ProtocolOregon::send()

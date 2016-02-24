@@ -15,13 +15,13 @@
 // + added references
 //
 
-#include "dht11.h"
+#include "HardwareDHT11.h"
 
 // returnvalues:
 //  0 : OK
 // -1 : checksum error
 // -2 : timeout
-int dht11::read(int pin)
+int HardwareDHT11::read()
 {
 	// BUFFER TO RECEIVE
 	uint8_t bits[5];
@@ -80,6 +80,4 @@ int dht11::read(int pin)
 	if (bits[4] != sum) return -1;
 	return 0;
 }
-//
-// END OF FILE
-//
+

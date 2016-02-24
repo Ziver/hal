@@ -1,8 +1,11 @@
 #ifndef HARDWAREPHOTOCELL_H
 #define HARDWAREPHOTOCELL_H
 
+#include "HalInterfaces.h"
+#include "Interrupt.h"
 
-class HardwarePhotocell : public HardwarePowerConsumption
+
+class HardwarePhotocell : public HardwarePowerConsumption 
 {
 public:
     virtual void setup();
@@ -10,7 +13,8 @@ public:
     virtual void reset();
 
 private:
+    Interrupt* interrupt;
     unsigned int pulse;
-}
+};
 
 #endif // HARDWAREPHOTOCELL_H

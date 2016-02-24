@@ -1,11 +1,14 @@
 #ifndef PROTOCOLOREGON_H
 #define PROTOCOLOREGON_H
 
+#include <Arduino.h>
+#include "HalInterfaces.h"
 
-class ProtocolOregon : public ProtocolTemperature : public ProtocolPower
+
+class ProtocolOregon : public ProtocolTemperature, public ProtocolPowerConsumption
 {
 public:
-    ProtocolOregon(unsigned char address) : address(address){}
+    ProtocolOregon(unsigned char address) : address(address){};
 
     virtual void setup();
     virtual void setTemperature(float temp);
@@ -14,7 +17,7 @@ public:
     virtual void send();
 private:
     unsigned char address;
-    unsigned float temperature;
+    float temperature;
     unsigned char humidity;
 };
 

@@ -15,16 +15,13 @@ based on Christopher Laws, March, 2013 code.
 #include <util/delay.h>
 
 
-BH1750::BH1750() {}
-
-void BH1750::begin(uint8_t mode) {
+void HardwareBH1750::setup() {
   Wire.begin();
-  //write8(mode);
-  configure(mode);
+  configure(BH1750_CONTINUOUS_HIGH_RES_MODE);
 }
 
 
-void BH1750::configure(uint8_t mode) {
+void HardwareBH1750::configure(uint8_t mode) {
     switch (mode) {
         case BH1750_CONTINUOUS_HIGH_RES_MODE:
         case BH1750_CONTINUOUS_HIGH_RES_MODE_2:
@@ -45,8 +42,16 @@ void BH1750::configure(uint8_t mode) {
     }
 }
 
+unsigned int HardwareBH1750::getConsumption()
+{
+    return pulses;
+}
+void HardwareBH1750::reset()
+{
+    pulses = 0;
+}
 
-uint16_t BH1750::readLightLevel(void) {
+unsigned int HardwareBH1750::getLuminosity(void) {
   uint16_t level;
 
   Wire.beginTransmission(BH1750_I2CADDR);
@@ -81,7 +86,7 @@ uint16_t BH1750::readLightLevel(void) {
 /*********************************************************************/
 
 
-void BH1750::write8(uint8_t d) {
+void HardwareBH1750::write8(uint8_t d) {
   Wire.beginTransmission(BH1750_I2CADDR);
 #if (ARDUINO >= 100)
   Wire.write(d);

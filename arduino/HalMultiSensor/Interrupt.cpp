@@ -1,8 +1,11 @@
+#include "Interrupt.h"
 #include <avr/power.h>
 #include <avr/sleep.h>
 
 
-void Interrupt::pinInterrupt()        // here the interrupt is handled after wakeup
+
+
+void pinInterrupt()        // here the interrupt is handled after wakeup
 {
   // execute code here after wake-up before returning to the loop() function
   // timers and code using timers (serial.print and more...) will not work here.
@@ -10,7 +13,12 @@ void Interrupt::pinInterrupt()        // here the interrupt is handled after wak
   // just want the thing to wake up
 }
 
-void Interrupt::setupInterrupt()
+void Interrupt::setupPinInterrupt(int pin)
+{
+
+}
+
+void Interrupt::setupTimerInterrupt(unsigned int milliseconds)
 {
     /*
      * The 5 different modes are:

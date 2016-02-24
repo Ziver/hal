@@ -12,26 +12,26 @@
 // George Hadjikyriacou - Original version
 // see dht.cpp file
 // *** Terry King: Changed include Arduino.h for 1.0x  
-// include core Wiring API and now Arduino
-#if defined(ARDUINO) && ARDUINO >= 100
-  #include "Arduino.h"
-  #else
-  #include "WProgram.h"
-  #endif
-
 #ifndef dht11_h
 #define dht11_h
 
+#include <Arduino.h>
+#include "HalInterfaces.h"
+
 #define DHT11LIB_VERSION "0.3.2"
 
-class dht11
+class HardwareDHT11 : public HardwareTemperature
 {
 public:
-    int read(int pin);
-	int humidity;
-	int temperature;
+    HardwareDHT11(int pin);
+    virtual void setup(){};
+    virtual int getTemperature();
+    virtual int getHumidity();
+    int read();
+
+private:
+    unsigned int pin;
+    float temperature;
+    unsigned char humidity;
 };
 #endif
-//
-// END OF FILE
-//

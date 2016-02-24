@@ -12,16 +12,12 @@ http://rohmfs.rohm.com/en/products/databook/datasheet/ic/sensor/light/bh1750fvi-
 based on Christopher Laws, March, 2013 code.
 
 */
-
 #ifndef HARDWAREBH1750_H
 #define HARDWAREBH1750_H
 
-#if (ARDUINO >= 100)
-#include <Arduino.h>
-#else
-#include <WProgram.h>
-#endif
-#include "Wire.h"
+#include <Wire.h>
+#include "HalInterfaces.h"
+
 
 #define BH1750_DEBUG 0
 
@@ -58,15 +54,17 @@ based on Christopher Laws, March, 2013 code.
 #define BH1750_ONE_TIME_LOW_RES_MODE  0x23
 
 
-class BH1750 {
- public:
-  BH1750();
-  void begin(uint8_t mode = BH1750_CONTINUOUS_HIGH_RES_MODE);
-  void configure(uint8_t mode);
-  uint16_t readLightLevel(void);
+class HardwareBH1750 : public HardwarePowerConsumption, public HardwareLight{
+public:
+    virtual void setup();
+    virtual unsigned int getLuminosity();
+    virtual unsigned int getConsumption();
+    virtual void reset();
 
- private:
-  void write8(uint8_t data);
+    void configure(uint8_t mode);
+private:
+    unsigned int pulses;
+    void write8(uint8_t data);
 
 };
 

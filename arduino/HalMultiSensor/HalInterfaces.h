@@ -1,33 +1,34 @@
 #ifndef HALINTERFACES_H
 #define HALINTERFACES_H
 
-class HardwarePowerConsumption
+class Hardware
 {
 public:
     virtual void setup() = 0;
-    virtual int getConsumption() = 0;
-}
+};
 
-class HardwareTemperature
+class HardwarePowerConsumption : public Hardware
 {
 public:
-    virtual void setup() = 0;
+    // returns number of pulses from power meter
+    virtual int getConsumption() = 0;
+    virtual void reset() = 0;
+};
+
+class HardwareTemperature : public Hardware
+{
+public:
     virtual int getTemperature() = 0;
     virtual int getHumidity() = 0;
-}
+};
 
-class HardwareLight
+class HardwareLight : public Hardware
 {
 public:
     virtual void setup() = 0;
     virtual int getLuminosity() = 0;
-}
+};
 
-class HardwareInterrupt
-{
-public:
-    virtual void interrupt(bool enable) = 0;
-}
 
 
 class Protocol
@@ -35,6 +36,6 @@ class Protocol
 public:
     virtual void setup() = 0;
     virtual void send() = 0;
-}
+};
 
 #endif // HALINTERFACES_H

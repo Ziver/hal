@@ -1,61 +1,90 @@
 #include <Wire.h>
 
-#define TX_PIN = 10;
-const unsigned long TIME = 512;
-#define TWOTIME TIME*2;
-#define SEND_HIGH() digitalWrite(TX_PIN, HIGH)
-#define SEND_LOW() digitalWrite(TX_PIN, LOW)
-byte OregonMessageBuffer[9];
+#define RF_TX_PIN = 10;
+#define RF_DELAY = 512;
+#define RF_DELAY_LONG RF_DELAY*2;
+#define RF_SEND_HIGH() digitalWrite(RF_TX_PIN, HIGH)
+#define RF_SEND_LOW() digitalWrite(RF_TX_PIN, LOW)
 
 
-void setup()
+void ProtocolOregon::setup()
 {
-  pinMode(TX_PIN, OUTPUT);
-  SEND_LOW();
-  byte ID[] = { 0x1A,0x2D  };  //temperature/humidity sensor (THGR2228N)
-  setType(OregonMessageBuffer, ID);
-  setChannel(OregonMessageBuffer, 0x20);
+  pinMode(RF_TX_PIN, OUTPUT);
+  RF_SEND_LOW();
+}
+
+virtual void ProtocolOregon::setTemperature(float temp)
+{
+    this.temperature = temp;
+}
+virtual void ProtocolOregon::setHumidity(unsigned char humidity)
+{
+    this.humidity = humidity;
+}
+virtual void ProtocolOregon::setConsumption(unsigned int cons)
+{
+    this.temperature = cons;
+    this.humidity = 0;
+}
+
+void ProtocolOregon::send()
+{
+    byte buffer[9];
+    setType(buffer, { 0x1A,0x2D  }); //temperature/humidity sensor (THGR2228N)
+    setChannel(buffer, 0x20);
+    setId(buffer, address); //set id of the sensor, BB=187
+    setBatteryLevel(buffer, true); // false : low, true : high
+    setTemperature(buffer, temperature); //org setTemperature(OregonMessageBuffer, 55.5);
+    setHumidity(buffer, humidity);
+    calculateAndSetChecksum(buffer);
+
+    // Send the Message over RF
+    rfSend(buffer, sizeof(buffer));
+    // Send a "pause"
+    RF_SEND_LOW();
+    delayMicroseconds(RF_DELAY_LONG * 8);
+    // Send a copy of the first message. The v2.1 protocol send the message two RF_DELAYs
+    rfSend(buffer, sizeof(buffer));
+    RF_SEND_LOW();
+}
+
+/**
+ * \brief Set the sensor type
+ * \param data Oregon message
+ * \param type Sensor type
+ */
+inline void setType(byte *data, byte* type)
+{
+  data[0] = type[0];
+  data[1] = type[1];
+}
+
+/**
+ * \brief Set the sensor channel
+ * \param data Oregon message
+ * \param channel Sensor channel (0x10, 0x20, 0x30)
+ */
+inline void setChannel(byte *data, byte channel)
+{
+  data[2] = channel;
 }
 
 
-
-void send433(float temperature, byte humidity, byte Identitet)
+inline void setId(byte *data, byte id)
 {
-  setId(OregonMessageBuffer, Identitet); //set id of the sensor, BB=187
-  setBatteryLevel(OregonMessageBuffer, 1); // 0 : low, 1 : high
-  setTemperature(OregonMessageBuffer, temperature); //org setTemperature(OregonMessageBuffer, 55.5);
-  setHumidity(OregonMessageBuffer, humidity);
-  calculateAndSetChecksum(OregonMessageBuffer);
-
-  // Show the Oregon Message
-  for (byte i = 0; i < sizeof(OregonMessageBuffer); ++i) {
-    Serial.print(OregonMessageBuffer[i] >> 4, HEX);
-    Serial.print(OregonMessageBuffer[i] & 0x0F, HEX);
-  }
-  Serial.println();
-
-  // Send the Message over RF
-  sendOregon(OregonMessageBuffer, sizeof(OregonMessageBuffer));
-  // Send a "pause"
-  SEND_LOW();
-  delayMicroseconds(TWOTIME*8);
-  // Send a copie of the first message. The v2.1 protocol send the message two time
-  sendOregon(OregonMessageBuffer, sizeof(OregonMessageBuffer));
-  SEND_LOW();
+  data[3] = id;
 }
 
-inline void setId(byte *data, byte ID)
-{
-  data[3] = ID;
-}
-
-void setBatteryLevel(byte *data, byte level)
+/**
+ * \param   level     false: low, true: high
+ */
+inline void setBatteryLevel(byte *data, bool level)
 {
   if(!level) data[4] = 0x0C;
   else data[4] = 0x00;
 }
 
-void setTemperature(byte *data, float temp)
+inline void setTemperature(byte *data, float temp)
 {
   // Set temperature sign
   if(temp < 0)
@@ -83,13 +112,13 @@ void setTemperature(byte *data, float temp)
   data[4] |= (tempFloat << 4);
 }
 
-void setHumidity(byte* data, byte hum)
+inline void setHumidity(byte* data, byte hum)
 {
   data[7] = (hum/10);
   data[6] |= (hum - data[7]*10) << 4;
 }
 
-void calculateAndSetChecksum(byte* data)
+inline void calculateAndSetChecksum(byte* data)
 {
   int sum = 0;
   for(byte i = 0; i<8;i++)
@@ -108,59 +137,36 @@ void calculateAndSetChecksum(byte* data)
 
 /**
  * \brief Send logical "0" over RF
- * \details azero bit be represented by an off-to-on transition
+ * \details a zero bit be represented by an off-to-on transition
  * \ of the RF signal at the middle of a clock period.
- * \ Remenber, the Oregon v2.1 protocol add an inverted bit first
+ * \ Remember, the Oregon v2.1 protocol adds an inverted bit first
  */
 inline void sendZero(void)
 {
-  SEND_HIGH();
-  delayMicroseconds(TIME);
-  SEND_LOW();
-  delayMicroseconds(TWOTIME);
-  SEND_HIGH();
-  delayMicroseconds(TIME);
+  RF_SEND_HIGH();
+  delayMicroseconds(RF_DELAY);
+  RF_SEND_LOW();
+  delayMicroseconds(RF_DELAY_LONG);
+  RF_SEND_HIGH();
+  delayMicroseconds(RF_DELAY);
 }
 
 /**
  * \brief Send logical "1" over RF
  * \details a one bit be represented by an on-to-off transition
  * \ of the RF signal at the middle of a clock period.
- * \ Remenber, the Oregon v2.1 protocol add an inverted bit first
+ * \ Remember, the Oregon v2.1 protocol add an inverted bit first
  */
 inline void sendOne(void)
 {
-  SEND_LOW();
-  delayMicroseconds(TIME);
-  SEND_HIGH();
-  delayMicroseconds(TWOTIME);
-  SEND_LOW();
-  delayMicroseconds(TIME);
+  RF_SEND_LOW();
+  delayMicroseconds(RF_DELAY);
+  RF_SEND_HIGH();
+  delayMicroseconds(RF_DELAY_LONG);
+  RF_SEND_LOW();
+  delayMicroseconds(RF_DELAY);
 }
 
-/**
- * \brief Send a bits quarter (4 bits = MSB from 8 bits value) over RF
- * \param data Data to send
- */
-inline void sendQuarterMSB(const byte data)
-{
-  (bitRead(data, 4)) ? sendOne() : sendZero();
-  (bitRead(data, 5)) ? sendOne() : sendZero();
-  (bitRead(data, 6)) ? sendOne() : sendZero();
-  (bitRead(data, 7)) ? sendOne() : sendZero();
-}
-
-/**
- * \brief Send a bits quarter (4 bits = LSB from 8 bits value) over RF
- * \param data Data to send
- */
-inline void sendQuarterLSB(const byte data)
-{
-  (bitRead(data, 0)) ? sendOne() : sendZero();
-  (bitRead(data, 1)) ? sendOne() : sendZero();
-  (bitRead(data, 2)) ? sendOne() : sendZero();
-  (bitRead(data, 3)) ? sendOne() : sendZero();
-}
 
 /******************************************************************/
 /******************************************************************/
@@ -169,14 +175,20 @@ inline void sendQuarterLSB(const byte data)
 /**
  * \brief Send a buffer over RF
  * \param data Data to send
- * \param size size of data to send
+ * \param length size of data array
  */
-void sendData(byte *data, byte size)
+void sendData(byte *data, byte length)
 {
-  for(byte i = 0; i < size; ++i)
+  for(byte i = 0; i < length; ++i)
   {
-    sendQuarterLSB(data[i]);
-    sendQuarterMSB(data[i]);
+    (bitRead(data[i], 0)) ? sendOne() : sendZero();
+    (bitRead(data[i], 1)) ? sendOne() : sendZero();
+    (bitRead(data[i], 2)) ? sendOne() : sendZero();
+    (bitRead(data[i], 3)) ? sendOne() : sendZero();
+    (bitRead(data[i], 4)) ? sendOne() : sendZero();
+    (bitRead(data[i], 5)) ? sendOne() : sendZero();
+    (bitRead(data[i], 6)) ? sendOne() : sendZero();
+    (bitRead(data[i], 7)) ? sendOne() : sendZero();
   }
 }
 
@@ -184,67 +196,15 @@ void sendData(byte *data, byte size)
  * \brief Send an Oregon message
  * \param data The Oregon message
  */
-void sendOregon(byte *data, byte size)
+void rfSend(byte *data, byte size)
 {
-  sendPreamble();
-  //sendSync();
-  sendData(data, size);
-  sendPostamble();
+    // Send preamble
+    sendData({ 0xFF,0xFF }, 2);
+    // Send sync nibble
+    //sendQuarterLSB(0xA); // It is not use in this version since the sync nibble is include in the Oregon message to send.
+    // Send data
+    sendData(data, size);
+    // Send postamble
+    sendData({ 0x00 }, 1);
 }
 
-/**
- * \brief Send preamble
- * \details The preamble consists of 16 "1" bits
- */
-inline void sendPreamble(void)
-{
-  byte PREAMBLE[]={
-    0xFF,0xFF   };
-  sendData(PREAMBLE, 2);
-}
-
-/**
- * \brief Send postamble
- * \details The postamble consists of 8 "0" bits
- */
-inline void sendPostamble(void)
-{
-  byte POSTAMBLE[]={
-    0x00   };
-  sendData(POSTAMBLE, 1);
-}
-
-/**
- * \brief Send sync nibble
- * \details The sync is 0xA. It is not use in this version since the sync nibble
- * \ is include in the Oregon message to send.
- */
-inline void sendSync(void)
-{
-  sendQuarterLSB(0xA);
-}
-
-/******************************************************************/
-/******************************************************************/
-/******************************************************************/
-
-/**
- * \brief Set the sensor type
- * \param data Oregon message
- * \param type Sensor type
- */
-inline void setType(byte *data, byte* type)
-{
-  data[0] = type[0];
-  data[1] = type[1];
-}
-
-/**
- * \brief Set the sensor channel
- * \param data Oregon message
- * \param channel Sensor channel (0x10, 0x20, 0x30)
- */
-inline void setChannel(byte *data, byte channel)
-{
-  data[2] = channel;
-}

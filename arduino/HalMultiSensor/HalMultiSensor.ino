@@ -10,14 +10,49 @@ unsigned int timerMultiplier = 0;
 
 // Sensors
 HardwarePowerConsumption powerSensor;
-HardwareTemperature temperatureSensor;
+HardwareTemperature tempSensor;
 HardwareLight lightSensor;
 
 // Protocols
 HardwarePowerConsumption powerProtocol;
-HardwareTemperature temperatureProtocol;
+HardwareTemperature tempProtocol;
 HardwareLight lightProtocol;
 
+
+
+void timerInterrupt();
+
+void setup()
+{
+    timerMultipleMAX = POWER_TIMER_MULTIPLIER * TEMPERATURE_TIMER_MULTIPLIER * LIGHT_TIMER_MULTIPLIER; // Find a lowest common denominator
+    pinInterrupt = InterruptUtil(timerInterrupt);
+    pinInterrupt.setupTimerInterrupt(60*1000); // one minute scheduled interrupt
+    
+    // Setup Sensors and protocols
+    #ifdef POWERCON_ENABLED
+    powerSensor = POWERCON_HARDWARE;
+    powerSensor.setup();
+    powerProtocol = POWERCON_PROTOCOL;
+    powerProtocol.setup();
+    #endif
+
+    #ifdef TEMPERATURE_ENABLED
+    tempSensor = TEMPERATURE_HARDWARE;
+    tempSensor.setup();
+    tempProtocol = TEMPERATURE_PROTOCOL;
+    tempProtocol.setup();
+    #endif
+
+    #ifdef LIGHT_ENABLED
+    lightSensor = LIGHT_HARDWARE;
+    lightSensor.setup();
+    lightProtocol = LIGHT_PROTOCOL;
+    lightProtocol.setup();
+    #endif
+}
+
+
+void loop() {}
 
 
 void timerInterrupt()
@@ -27,27 +62,30 @@ void timerInterrupt()
         timerMultiplier = 1;
 
     // Send power consumption
-    #ifndef POWERCON_ENABLED
-    unsigned int consumption = powerSensor.getConsumption();
-    powerSensor.reset();
-    powerProtocol.setConsumption(consumption);
-    powerProtocol.send();
+    #ifdef POWERCON_ENABLED
+    if(timerMultiplier == POWER_TIMER_MULTIPLIER)
+    {
+        unsigned int consumption = powerSensor.getConsumption();
+        powerSensor.reset();
+        powerProtocol.setConsumption(consumption);
+        powerProtocol.send();
+    }
     #endif
 
     // Handle temperature sensor
-    #ifndef TEMPERATURE_ENABLED
+    #ifdef TEMPERATURE_ENABLED
     if(timerMultiplier == TEMPERATURE_TIMER_MULTIPLIER)
     {
-        unsigned int temperature = temperatureSensor.getTemperature();
-        unsigned int humidity = temperatureSensor.getHumidity();
-        temperatureProtocol.setTemperature(temperature);
-        temperatureProtocol.setHumidity(humidity);
-        temperatureProtocol.send();
+        unsigned int temperature = tempSensor.getTemperature();
+        unsigned int humidity = tempSensor.getHumidity();
+        tempProtocol.setTemperature(temperature);
+        tempProtocol.setHumidity(humidity);
+        tempProtocol.send();
     }
     #endif
 
     // Handle light sensor
-    #ifndef TEMPERATURE_ENABLED
+    #ifdef TEMPERATURE_ENABLED
     if(timerMultiplier == LIGHT_TIMER_MULTIPLIER)
     {
         unsigned int lumen = lightSensor.getLuminosity();
@@ -57,14 +95,4 @@ void timerInterrupt()
     #endif
 
 }
-
-void setup()
-{
-    timerMultipleMAX = LIGHT_TIMER_MULTIPLIER * TEMPERATURE_TIMER_MULTIPLIER; // Find a lowest common denominator
-    pinInterrupt = InterruptUtil(timerInterrupt);
-    pinInterrupt.setupTimerInterrupt(60*1000); // one minute scheduled interrupt
-}
-
-
-void loop() {}
 

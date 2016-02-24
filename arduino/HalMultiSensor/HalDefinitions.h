@@ -1,14 +1,14 @@
 #ifndef HALDEFINITIONS_H
 #define HALDEFINITIONS_H
 
-//////// PROTOCOLS
-#define PROT_NEXA_SELFLEARNING
-#define PROT_OREGON_SELFLEARNING
-
 /////// HARDWARE
-#define HW_BH1750
-#define HW_DHT11
-#define HW_PHOTOCELL
+#include "HardwareBH1750.h"
+#include "HardwareDHT11.h"
+#include "HardwarePhotocell.h"
+
+//////// PROTOCOLS
+#include "ProtocolNexa.h"
+#include "ProtocolOregon.h"
 
 
 #endif // HALDEFINITIONS_H

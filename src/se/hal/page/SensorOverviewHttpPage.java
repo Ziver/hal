@@ -18,8 +18,8 @@ import java.util.Map;
 
 public class SensorOverviewHttpPage extends HalHttpPage {
     private static final int HISTORY_LIMIT = 200;
-    private static final String OVERVIEW_TEMPLATE = "web-resource/sensor_overview.tmpl";
-    private static final String DETAIL_TEMPLATE = "web-resource/sensor_detail.tmpl";
+    private static final String OVERVIEW_TEMPLATE = "resource/web/sensor_overview.tmpl";
+    private static final String DETAIL_TEMPLATE = "resource/web/sensor_detail.tmpl";
 
 
     public SensorOverviewHttpPage(){

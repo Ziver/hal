@@ -14,7 +14,7 @@ import zutil.ui.Configurator.ConfigurationParam;
 import java.util.Map;
 
 public class EventConfigHttpPage extends HalHttpPage {
-    private static final String TEMPLATE = "web-resource/event_config.tmpl";
+    private static final String TEMPLATE = "resource/web/event_config.tmpl";
 
     private class EventDataParams{
         public Class clazz;

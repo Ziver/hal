@@ -14,7 +14,7 @@ import zutil.ui.Configurator.ConfigurationParam;
 import java.util.Map;
 
 public class SensorConfigHttpPage extends HalHttpPage {
-    private static final String TEMPLATE = "web-resource/sensor_config.tmpl";
+    private static final String TEMPLATE = "resource/web/sensor_config.tmpl";
 
     private class SensorDataParams{
         public Class clazz;

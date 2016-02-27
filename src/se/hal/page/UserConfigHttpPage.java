@@ -10,7 +10,7 @@ import zutil.parser.Templator;
 import java.util.Map;
 
 public class UserConfigHttpPage extends HalHttpPage {
-    private static final String TEMPLATE = "web-resource/user_config.tmpl";
+    private static final String TEMPLATE = "resource/web/user_config.tmpl";
 
 
     public UserConfigHttpPage() {

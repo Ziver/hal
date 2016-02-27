@@ -7,7 +7,7 @@ import zutil.parser.Templator;
 import java.util.Map;
 
 public class PCHeatMapHttpPage extends HalHttpPage {
-	private static final String TEMPLATE = "web-resource/pc_heatmap.tmpl";
+	private static final String TEMPLATE = "resource/web/pc_heatmap.tmpl";
 
 
 	public PCHeatMapHttpPage() {

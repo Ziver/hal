@@ -73,7 +73,7 @@
         <copy file="${gitRoot}/logging.properties" todir="${releaseDir}" />
         <copy file="${gitRoot}/run.sh" todir="${releaseDir}" />
         <copydir src="${libDir}" dest="${releaseDir}/lib" excludes="junit-*.jar" />
-        <copydir src="${gitRoot}/web-resource" dest="${releaseDir}/web-resource" />
+        <copydir src="resource/web" dest="${releaseDir}/resource/web" />
         <jar destfile="${releaseDir}/hal.jar" basedir="${buildDir}" />
     </target>
 

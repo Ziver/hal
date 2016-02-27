@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class HalAlertManager implements HttpPage {
     private static final Logger logger = LogUtil.getLogger();
-    private static final String TMPL_PATH = "web-resource/main_alerts.tmpl";
+    private static final String TMPL_PATH = "resource/web/main_alerts.tmpl";
     private static final String PAGE_NAME = "alert";
     private static HalAlertManager instance;
 

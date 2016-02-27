@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PCOverviewHttpPage extends HalHttpPage {
-	private static final String TEMPLATE = "web-resource/pc_overview.tmpl";
+	private static final String TEMPLATE = "resource/web/pc_overview.tmpl";
 
 	public PCOverviewHttpPage() {
 		super("Power;Challenge", "pc_overview");

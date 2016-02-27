@@ -18,8 +18,8 @@ import java.util.Map;
 
 public class EventOverviewHttpPage extends HalHttpPage {
     private static final int HISTORY_LIMIT = 200;
-    private static final String OVERVIEW_TEMPLATE = "web-resource/event_overview.tmpl";
-    private static final String DETAIL_TEMPLATE = "web-resource/event_detail.tmpl";
+    private static final String OVERVIEW_TEMPLATE = "resource/web/event_overview.tmpl";
+    private static final String DETAIL_TEMPLATE = "resource/web/event_detail.tmpl";
 
 
     public EventOverviewHttpPage(){

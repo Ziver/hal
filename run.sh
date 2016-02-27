@@ -4,7 +4,7 @@
 
 #ant clean
 ant build
-screen -S hal -L -d -m ant run-main-server
+screen -S hal -L -d -m ant run
 
 echo "-----------------"
 screen -list

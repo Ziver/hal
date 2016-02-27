@@ -84,6 +84,10 @@
 			<include name="**/*.java" />
 			<exclude name="se/hal/tts/GoogleTTSClient.java" />
 		</javac>
+        <copy todir="${buildDir}">
+            <fileset dir="${srcDir}"
+                     excludes="**/*.java" />
+        </copy>
 	</target>
 	
 	<target name="build-dependencies">
@@ -98,6 +102,10 @@
             <include name="**/*.java" />
             <exclude name="se/hal/test/JarvisSyntersizerTest.java" />
         </javac>
+        <copy todir="${buildTestDir}">
+            <fileset dir="${testDir}"
+                     excludes="**/*.java" />
+        </copy>
     </target>
 
 

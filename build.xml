@@ -1,39 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Hal" >
-	
+
 	<!-- ________________________ PROPERTIES AND SETTINGS ________________________ -->
-	
+
 	<!--common properties-->
 	<property name="gitRoot" value="." />
 	<property name="srcDir" value="${gitRoot}/src" />
 	<property name="testDir" value="${gitRoot}/test" />
 	<property name="libDir" value="${gitRoot}/lib" />
-    <property name="buildRoot" value="${gitRoot}/build" />
+	<property name="buildRoot" value="${gitRoot}/build" />
 	<property name="buildDir" value="${buildRoot}/production" />
-    <property name="buildTestDir" value="${buildRoot}/test" />
-    <property name="releaseDir" value="${buildRoot}/release" />
-    <property name="reportsDir" value="${buildRoot}/reports" />
-	
+	<property name="buildTestDir" value="${buildRoot}/test" />
+	<property name="releaseDir" value="${buildRoot}/release" />
+	<property name="reportsDir" value="${buildRoot}/reports" />
+
 	<!--define standard arduments for javac-->
 	<presetdef name="javac">
 		<javac includeantruntime="false" />
 	</presetdef>
-	
+
 	<!-- ________________________ CLASSPATHS ________________________ -->
-	
+
 	<!--classpath included when building-->
 	<path id="classpath.build">
 		<pathelement location="${libDir}/*" />
 		<pathelement location="${buildDir}" />
 	</path>
 
-    <path id="classpath.test">
-        <pathelement location="${libDir}/junit-4.12.jar" />
+	<path id="classpath.test">
 		<pathelement location="${buildTestDir}" />
-        <!--include libraries used for building-->
-        <path refid="classpath.build"/>
-    </path>
-	
+		<!--include libraries used for building-->
+		<path refid="classpath.build"/>
+	</path>
+
 	<!-- ________________________ EXECUTION TARGETS ________________________ -->
 
 	<target name="run" depends="">
@@ -45,19 +44,20 @@
 		</java>
 	</target>
 
-    <target name="test" depends="build-test">
-        <mkdir dir="${reportsDir}" />
-        <junit printsummary="yes" haltonfailure="false">
-            <classpath refid="classpath.test" />
-            <formatter type="xml" /> <!-- to file -->
+	<target name="test" depends="build-test">
+		<mkdir dir="${reportsDir}" />
+		<junit printsummary="yes" haltonfailure="false" fork="true">
+			<classpath refid="classpath.test" />
+			<formatter type="plain" usefile="false" /> <!-- to screen -->
+			<formatter type="xml" /> <!-- to file -->
 
-            <batchtest todir="${reportsDir}">
-                <fileset dir="${buildTestDir}" includes="**/*Test*.class" />
-            </batchtest>
-        </junit>
-    </target>
+			<batchtest todir="${reportsDir}">
+				<fileset dir="${buildTestDir}" includes="**/*Test*.class" />
+			</batchtest>
+		</junit>
+	</target>
 
-    <!-- ________________________ BUILD TARGETS ________________________ -->
+	<!-- ________________________ BUILD TARGETS ________________________ -->
 
 	<!--clean all build paths-->
 	<target name="clean">
@@ -67,49 +67,50 @@
 	</target>
 
 	<!--build product code-->
-    <target name="release" depends="build">
-        <copy file="${gitRoot}/hal.conf.example" todir="${releaseDir}" />
-        <copy file="${gitRoot}/hal-default.db" todir="${releaseDir}" />
-        <copy file="${gitRoot}/logging.properties" todir="${releaseDir}" />
-        <copy file="${gitRoot}/run.sh" todir="${releaseDir}" />
-        <copydir src="${libDir}" dest="${releaseDir}/lib" excludes="junit-*.jar" />
-        <copydir src="resource/web" dest="${releaseDir}/resource/web" />
-        <jar destfile="${releaseDir}/hal.jar" basedir="${buildDir}" />
-    </target>
+	<target name="release" depends="build">
+		<copy file="${gitRoot}/hal.conf.example" todir="${releaseDir}" />
+		<copy file="${gitRoot}/hal-default.db" todir="${releaseDir}" />
+		<copy file="${gitRoot}/logging.properties" todir="${releaseDir}" />
+		<copy file="${gitRoot}/run.sh" todir="${releaseDir}" />
+		<copydir src="${libDir}" dest="${releaseDir}/lib"
+				 excludes="junit-*.jar,hamcrest-*.jar" />
+		<copydir src="resource/web" dest="${releaseDir}/resource/web" />
+		<jar destfile="${releaseDir}/hal.jar" basedir="${buildDir}" />
+	</target>
 
 	<target name="build" depends="build-dependencies">
 		<mkdir dir="${buildDir}" />
 		<javac srcdir="${srcDir}" destdir="${buildDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
-            <classpath refid="classpath.build" />
+			<classpath refid="classpath.build" />
 			<include name="**/*.java" />
 			<exclude name="se/hal/tts/GoogleTTSClient.java" />
 		</javac>
-        <copy todir="${buildDir}">
-            <fileset dir="${srcDir}"
-                     excludes="**/*.java" />
-        </copy>
+		<copy todir="${buildDir}">
+			<fileset dir="${srcDir}"
+					 excludes="**/*.java" />
+		</copy>
 	</target>
-	
+
 	<target name="build-dependencies">
 		<mkdir dir="${buildDir}" />
 		<get src="http://repo.koc.se/zutil-java.git/blob/master/Zutil.jar" dest="${libDir}" verbose="true" usetimestamp="true"/>
 	</target>
 
-    <target name="build-test" depends="build">
-        <mkdir dir="${buildTestDir}" />
-        <javac srcdir="${testDir}" destdir="${buildTestDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
-            <classpath refid="classpath.test" />
-            <include name="**/*.java" />
-            <exclude name="se/hal/test/JarvisSyntersizerTest.java" />
-        </javac>
-        <copy todir="${buildTestDir}">
-            <fileset dir="${testDir}"
-                     excludes="**/*.java" />
-        </copy>
-    </target>
+	<target name="build-test" depends="build">
+		<mkdir dir="${buildTestDir}" />
+		<javac srcdir="${testDir}" destdir="${buildTestDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
+			<classpath refid="classpath.test" />
+			<include name="**/*.java" />
+			<exclude name="se/hal/test/JarvisSyntersizerTest.java" />
+		</javac>
+		<copy todir="${buildTestDir}">
+			<fileset dir="${testDir}"
+					 excludes="**/*.java" />
+		</copy>
+	</target>
 
 
-    <!-- ________________________ UTILITY TARGETS ________________________ -->
+	<!-- ________________________ UTILITY TARGETS ________________________ -->
 
 	<target name="clear-aggr-data-from-db" depends="">
 		<exec executable="sqlite3">
@@ -121,5 +122,5 @@
 			<arg line="hal.db 'UPDATE sensor SET aggr_version = (aggr_version+1) WHERE id = (SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)'" />
 		</exec>
 	</target>
-		
+
 </project>

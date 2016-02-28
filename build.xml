@@ -23,7 +23,9 @@
 
 	<!--classpath included when building-->
 	<path id="classpath.build">
-		<pathelement location="${libDir}/*" />
+        <fileset dir="${libDir}">
+            <include name="**/*.jar"/>
+        </fileset>
 		<pathelement location="${buildDir}" />
 	</path>
 

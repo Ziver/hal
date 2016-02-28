@@ -53,7 +53,7 @@
 			<formatter type="plain" usefile="false" /> <!-- to screen -->
 			<formatter type="xml" /> <!-- to file -->
 
-			<batchtest todir="${reportsDir}">
+			<batchtest todir="${reportsDir}" skipNonTests="true">
 				<fileset dir="${buildTestDir}" includes="**/*Test*.class" />
 			</batchtest>
 		</junit>

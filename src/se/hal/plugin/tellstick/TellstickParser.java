@@ -24,7 +24,7 @@ package se.hal.plugin.tellstick;
 
 import se.hal.plugin.tellstick.protocols.NexaSelfLearning;
 import se.hal.plugin.tellstick.protocols.Oregon0x1A2D;
-import zutil.converters.Converter;
+import zutil.converter.Converter;
 import zutil.log.LogUtil;
 
 import java.util.HashMap;

@@ -22,7 +22,7 @@
 
 package se.hal.plugin.tellstick.protocols;
 
-import zutil.converters.Converter;
+import zutil.converter.Converter;
 
 import static org.junit.Assert.*;
 

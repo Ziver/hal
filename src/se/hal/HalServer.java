@@ -14,7 +14,7 @@ import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
 import zutil.net.http.HttpServer;
-import zutil.net.http.pages.HttpFilePage;
+import zutil.net.http.page.HttpFilePage;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

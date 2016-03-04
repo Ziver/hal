@@ -55,9 +55,7 @@ public class TimeUtilityTest {
 	@Test
 	public void testYear_UTC(){		
 		System.out.println("Testing year with timestamp " + currentTime_UTC + "   " + UTCTimeUtility.getDateString(currentTime_UTC));
-		Calendar tmpCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		tmpCal.setTimeInMillis(currentTime_UTC);
-		
+
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.YEAR, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.YEAR, currentTime_UTC);
 		
@@ -100,7 +98,7 @@ public class TimeUtilityTest {
 		System.out.println("Testing month with timestamp " + currentTime_UTC + "   " + UTCTimeUtility.getDateString(currentTime_UTC));
 		Calendar tmpCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		tmpCal.setTimeInMillis(currentTime_UTC);
-		
+
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.MONTH, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.MONTH, currentTime_UTC);
 		
@@ -141,15 +139,13 @@ public class TimeUtilityTest {
 	@Test
 	public void testWeek_UTC(){
 		System.out.println("Testing week with timestamp " + currentTime_UTC + "   " + UTCTimeUtility.getDateString(currentTime_UTC));
-		Calendar tmpCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		tmpCal.setTimeInMillis(currentTime_UTC);
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.WEEK, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.WEEK, currentTime_UTC);
 		
 		//verify period start is correct
 		System.out.println("	week start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
-		assertTrue("perdiod start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
+		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
 		assertEquals("period start millisecond is wrong", 0, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
 		assertEquals("period start second is wrong", 0, UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
 		assertEquals("period start minute is wrong", 0, UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
@@ -160,13 +156,14 @@ public class TimeUtilityTest {
 
 		//verify period end is correct
 		System.out.println("	week end timestamp = " + thisPeriodEndedAt + "   " + UTCTimeUtility.getDateString(thisPeriodEndedAt));
-		assertTrue("perdiod end is not ater current time", thisPeriodEndedAt >= currentTime_UTC);
+		assertTrue("period end is not after current time", thisPeriodEndedAt >= currentTime_UTC);
 		assertEquals("period end millisecond is wrong", 999, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end second is wrong", 59, UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end minute is wrong", 59, UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end hour is wrong", 23, UTCTimeUtility.getHourOfDayFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end day is wrong", Calendar.SUNDAY, UTCTimeUtility.getDayOfWeekFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end week is wrong", UTCTimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC), UTCTimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
+		System.out.println(UTCTimeUtility.getWeekOfYearFromTimestamp(currentTime_UTC) +" - " +UTCTimeUtility.getWeekOfYearFromTimestamp(thisPeriodEndedAt));
 		assertTrue("period end year is more than one year off", UTCTimeUtility.getYearFromTimestamp(thisPeriodEndedAt)-UTCTimeUtility.getYearFromTimestamp(currentTime_UTC) <= 1);
 
 		//verify that start and end values are reasonable
@@ -184,15 +181,13 @@ public class TimeUtilityTest {
 	@Test
 	public void testDay_UTC(){
 		System.out.println("Testing day with timestamp " + currentTime_UTC + "   " + UTCTimeUtility.getDateString(currentTime_UTC));
-		Calendar tmpCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		tmpCal.setTimeInMillis(currentTime_UTC);
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.DAY, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.DAY, currentTime_UTC);
 		
 		//verify period start is correct
 		System.out.println("	day start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
-		assertTrue("perdiod start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
+		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
 		assertEquals("period start millisecond is wrong", 0, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
 		assertEquals("period start second is wrong", 0, UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
 		assertEquals("period start minute is wrong", 0, UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
@@ -203,7 +198,7 @@ public class TimeUtilityTest {
 
 		//verify period end is correct
 		System.out.println("	day end timestamp = " + thisPeriodEndedAt + "   " + UTCTimeUtility.getDateString(thisPeriodEndedAt));
-		assertTrue("perdiod end is not ater current time", thisPeriodEndedAt >= currentTime_UTC);
+		assertTrue("period end is not after current time", thisPeriodEndedAt >= currentTime_UTC);
 		assertEquals("period end millisecond is wrong", 999, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end second is wrong", 59, UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end minute is wrong", 59, UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
@@ -228,15 +223,13 @@ public class TimeUtilityTest {
 	@Test
 	public void testHour_UTC(){
 		System.out.println("Testing hour with timestamp " + currentTime_UTC + "   " + UTCTimeUtility.getDateString(currentTime_UTC));
-		Calendar tmpCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		tmpCal.setTimeInMillis(currentTime_UTC);
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.HOUR, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.HOUR, currentTime_UTC);
 		
 		//verify period start is correct
 		System.out.println("	hour start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
-		assertTrue("perdiod start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
+		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
 		assertEquals("period start millisecond is wrong", 0, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
 		assertEquals("period start second is wrong", 0, UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
 		assertEquals("period start minute is wrong", 0, UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
@@ -247,7 +240,7 @@ public class TimeUtilityTest {
 
 		//verify period end is correct
 		System.out.println("	hour end timestamp = " + thisPeriodEndedAt + "   " + UTCTimeUtility.getDateString(thisPeriodEndedAt));
-		assertTrue("perdiod end is not ater current time", thisPeriodEndedAt >= currentTime_UTC);
+		assertTrue("period end is not after current time", thisPeriodEndedAt >= currentTime_UTC);
 		assertEquals("period end millisecond is wrong", 999, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end second is wrong", 59, UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end minute is wrong", 59, UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
@@ -272,15 +265,13 @@ public class TimeUtilityTest {
 	@Test
 	public void testFifteenMinute_UTC(){
 		System.out.println("Testing 15-min with timestamp " + currentTime_UTC + "   " + UTCTimeUtility.getDateString(currentTime_UTC));
-		Calendar tmpCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		tmpCal.setTimeInMillis(currentTime_UTC);
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.FIFTEEN_MINUTES, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.FIFTEEN_MINUTES, currentTime_UTC);
 		
 		//verify period start is correct
 		System.out.println("	15-min start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
-		assertTrue("perdiod start is not before current time", thisPeriodStartedAt <= currentTime_UTC);		
+		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
 		assertEquals("period start millisecond is wrong", 0, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
 		assertEquals("period start second is wrong", 0, UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
 		assertTrue("the period start minute is in the future of the current time", UTCTimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC) >= UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
@@ -293,7 +284,7 @@ public class TimeUtilityTest {
 
 		//verify period end is correct
 		System.out.println("	15-min end timestamp = " + thisPeriodEndedAt + "   " + UTCTimeUtility.getDateString(thisPeriodEndedAt));
-		assertTrue("perdiod end is not ater current time", thisPeriodEndedAt >= currentTime_UTC);
+		assertTrue("period end is not after current time", thisPeriodEndedAt >= currentTime_UTC);
 		assertEquals("period end millisecond is wrong", 999, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end second is wrong", 59, UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
 		assertTrue("the period end minute is before of the current time", UTCTimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC) <= UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
@@ -319,15 +310,13 @@ public class TimeUtilityTest {
 	@Test
 	public void testFiveMinute_UTC(){
 		System.out.println("Testing 5-min with timestamp " + currentTime_UTC + "   " + UTCTimeUtility.getDateString(currentTime_UTC));
-		Calendar tmpCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		tmpCal.setTimeInMillis(currentTime_UTC);
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.FIVE_MINUTES, currentTime_UTC);	
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.FIVE_MINUTES, currentTime_UTC);
 		
 		//verify period start is correct
 		System.out.println("	5-min start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
-		assertTrue("perdiod start is not before current time", thisPeriodStartedAt <= currentTime_UTC);	
+		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
 		assertEquals("period start millisecond is wrong", 0, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
 		assertEquals("period start second is wrong", 0, UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
 		assertTrue("the period start minute is in the future of the current time", UTCTimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC) >= UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
@@ -340,7 +329,7 @@ public class TimeUtilityTest {
 
 		//verify period end is correct
 		System.out.println("	5-min end timestamp = " + thisPeriodEndedAt + "   " + UTCTimeUtility.getDateString(thisPeriodEndedAt));
-		assertTrue("perdiod end is not ater current time", thisPeriodEndedAt >= currentTime_UTC);
+		assertTrue("period end is not after current time", thisPeriodEndedAt >= currentTime_UTC);
 		assertEquals("period end millisecond is wrong", 999, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end second is wrong", 59, UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
 		assertTrue("the period end minute is before of the current time", UTCTimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC) <= UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
@@ -366,15 +355,13 @@ public class TimeUtilityTest {
 	@Test
 	public void testMinute_UTC(){
 		System.out.println("Testing minute with timestamp " + currentTime_UTC + "   " + UTCTimeUtility.getDateString(currentTime_UTC));
-		Calendar tmpCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		tmpCal.setTimeInMillis(currentTime_UTC);
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.MINUTE, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.MINUTE, currentTime_UTC);
 		
 		//verify period start is correct
 		System.out.println("	minute start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
-		assertTrue("perdiod start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
+		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
 		assertEquals("period start millisecond is wrong", 0, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
 		assertEquals("period start second is wrong", 0, UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
 		assertEquals("period start minute is wrong", UTCTimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC), UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
@@ -385,7 +372,7 @@ public class TimeUtilityTest {
 
 		//verify period end is correct
 		System.out.println("	minute end timestamp = " + thisPeriodEndedAt + "   " + UTCTimeUtility.getDateString(thisPeriodEndedAt));
-		assertTrue("perdiod end is not ater current time", thisPeriodEndedAt >= currentTime_UTC);
+		assertTrue("period end is not after current time", thisPeriodEndedAt >= currentTime_UTC);
 		assertEquals("period end millisecond is wrong", 999, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end second is wrong", 59, UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end minute is wrong", UTCTimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC), UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));
@@ -409,15 +396,13 @@ public class TimeUtilityTest {
 	@Test
 	public void testSecond_UTC(){
 		System.out.println("Testing second with timestamp " + currentTime_UTC + "   " + UTCTimeUtility.getDateString(currentTime_UTC));
-		Calendar tmpCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		tmpCal.setTimeInMillis(currentTime_UTC);
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.SECOND, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.SECOND, currentTime_UTC);
 		
 		//verify period start is correct
 		System.out.println("	second start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
-		assertTrue("perdiod start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
+		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
 		assertEquals("period start millisecond is wrong", 0, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodStartedAt));
 		assertEquals("period start second is wrong", UTCTimeUtility.getSecondOfMinuteFromTimestamp(currentTime_UTC), UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodStartedAt));
 		assertEquals("period start minute is wrong", UTCTimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC), UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodStartedAt));
@@ -428,7 +413,7 @@ public class TimeUtilityTest {
 
 		//verify period end is correct
 		System.out.println("	second end timestamp = " + thisPeriodEndedAt + "   " + UTCTimeUtility.getDateString(thisPeriodEndedAt));
-		assertTrue("perdiod end is not ater current time", thisPeriodEndedAt >= currentTime_UTC);
+		assertTrue("period end is not after current time", thisPeriodEndedAt >= currentTime_UTC);
 		assertEquals("period end millisecond is wrong", 999, UTCTimeUtility.getMillisecondInSecondFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end second is wrong", UTCTimeUtility.getSecondOfMinuteFromTimestamp(currentTime_UTC), UTCTimeUtility.getSecondOfMinuteFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end minute is wrong", UTCTimeUtility.getMinuteOfHourFromTimestamp(currentTime_UTC), UTCTimeUtility.getMinuteOfHourFromTimestamp(thisPeriodEndedAt));

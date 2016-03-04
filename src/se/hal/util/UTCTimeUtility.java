@@ -4,9 +4,13 @@ import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
-public class UTCTimeUtility {	
+public class UTCTimeUtility {
+	public static final TimeZone TIMEZONE = TimeZone.getTimeZone("UTC");
+	public static final Locale LOCALE = new Locale("sv","SE");
+
 	public static final long SECOND_IN_MS = 1000;
 	public static final long MINUTE_IN_MS = SECOND_IN_MS * 60;
 	public static final long FIVE_MINUTES_IN_MS = MINUTE_IN_MS * 5;
@@ -17,7 +21,7 @@ public class UTCTimeUtility {
 	public static final long INFINITY = Long.MAX_VALUE;	//sort of true
 	
 	public static long getTimestampPeriodStart(AggregationPeriodLength aggrPeriodLength, long timestamp) throws NumberFormatException{
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(timestamp);
 		cal.setFirstDayOfWeek(Calendar.MONDAY);
 		switch(aggrPeriodLength){
@@ -75,7 +79,7 @@ public class UTCTimeUtility {
 	}
 	
 	public static long getTimestampPeriodEnd(AggregationPeriodLength aggrPeriodLength, long timestamp) throws NumberFormatException{
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(timestamp);
 		cal.setFirstDayOfWeek(Calendar.MONDAY);
 		switch(aggrPeriodLength){
@@ -135,7 +139,7 @@ public class UTCTimeUtility {
 	public static int getMillisecondInSecondFromTimestamp(long ms) throws NumberFormatException{
 		if(ms < 0)
     		throw new NumberFormatException("argument must be positive");
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(ms);
 		return cal.get(Calendar.MILLISECOND);
 	}
@@ -143,7 +147,7 @@ public class UTCTimeUtility {
 	public static int getSecondOfMinuteFromTimestamp(long ms) throws NumberFormatException{
 		if(ms < 0)
     		throw new NumberFormatException("argument must be positive");
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(ms);
 		return cal.get(Calendar.SECOND);
 	}
@@ -151,7 +155,7 @@ public class UTCTimeUtility {
 	public static int getMinuteOfHourFromTimestamp(long ms) throws NumberFormatException{
 		if(ms < 0)
     		throw new NumberFormatException("argument must be positive");
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(ms);
 		return cal.get(Calendar.MINUTE);
 	}
@@ -159,7 +163,7 @@ public class UTCTimeUtility {
 	public static int getHourOfDayFromTimestamp(long ms) throws NumberFormatException{
 		if(ms < 0)
     		throw new NumberFormatException("argument must be positive");
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(ms);
 		return cal.get(Calendar.HOUR_OF_DAY);
 	}
@@ -167,7 +171,7 @@ public class UTCTimeUtility {
 	public static int getDayOfWeekFromTimestamp(long ms) throws NumberFormatException{
 		if(ms < 0)
     		throw new NumberFormatException("argument must be positive");
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(ms);
 		return cal.get(Calendar.DAY_OF_WEEK);
 	}
@@ -175,7 +179,7 @@ public class UTCTimeUtility {
 	public static int getDayOfMonthFromTimestamp(long ms) throws NumberFormatException{
 		if(ms < 0)
     		throw new NumberFormatException("argument must be positive");
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(ms);
 		return cal.get(Calendar.DAY_OF_MONTH);
 	}
@@ -183,7 +187,7 @@ public class UTCTimeUtility {
 	public static int getDayOfYearFromTimestamp(long ms) throws NumberFormatException{
 		if(ms < 0)
     		throw new NumberFormatException("argument must be positive");
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(ms);
 		return cal.get(Calendar.DAY_OF_YEAR);
 	}
@@ -191,7 +195,7 @@ public class UTCTimeUtility {
 	public static int getWeekOfYearFromTimestamp(long ms) throws NumberFormatException{
 		if(ms < 0)
     		throw new NumberFormatException("argument must be positive");
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(ms);
 		return cal.get(Calendar.WEEK_OF_YEAR);
 	}	
@@ -199,7 +203,7 @@ public class UTCTimeUtility {
 	public static int getMonthOfYearFromTimestamp(long ms) throws NumberFormatException{
 		if(ms < 0)
     		throw new NumberFormatException("argument must be positive");
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(ms);
 		return cal.get(Calendar.MONTH);
 	}
@@ -207,7 +211,7 @@ public class UTCTimeUtility {
 	public static int getYearFromTimestamp(long ms) throws NumberFormatException{
 		if(ms < 0)
     		throw new NumberFormatException("argument must be positive");
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(ms);
 		return cal.get(Calendar.YEAR);
 	}	
@@ -237,8 +241,8 @@ public class UTCTimeUtility {
 	
 	public static String getDateString(long timestamp){
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-		format.setTimeZone(TimeZone.getTimeZone("UTC"));
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		format.setTimeZone(TIMEZONE);
+		Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
 		cal.setTimeInMillis(timestamp);
 		return format.format(cal.getTime());
 	}

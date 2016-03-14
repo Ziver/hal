@@ -37,7 +37,7 @@
 
 	<!-- ________________________ EXECUTION TARGETS ________________________ -->
 
-	<target name="run" depends="">
+	<target name="run" depends="release">
 		<java fork="true" failonerror="true" classname="se.hal.HalServer">
 			<classpath>
 				<pathelement path="${buildDir}/hal.jar"/>	<!--wildcard may not be platform independent, ok?-->

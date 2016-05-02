@@ -1,21 +1,28 @@
 #ifndef INTERRUPT_H
 #define INTERRUPT_H
 
-#include <Arduino.h>
-
 
 typedef void (*InterruptFunction) ();
 
 class Interrupt
 {
 public:
-    Interrupt(InterruptFunction callback) : callback(callback) {};
+    static void wakeUp();
+    static void sleep();
+    static void setupPinInterrupt(int pin);
+    static void setupTimerInterrupt(unsigned int milliseconds);
 
-    //static void sleep(int milliseconds);
-    void setupPinInterrupt(int pin);
-    void setupTimerInterrupt(unsigned int milliseconds);
+    static void setCallback(InterruptFunction callback){ Interrupt::callback = callback;}
+    static InterruptFunction getCallback(){ return Interrupt::callback;}
+
 private:
-    InterruptFunction callback;
+    static InterruptFunction callback;
+    static bool wakeUpNow;
+
+    Interrupt() {};
+    Interrupt(Interrupt const&);
+    void operator=(Interrupt const&);
 };
+
 
 #endif // INTERRUPT_H

@@ -1,24 +1,39 @@
 #include "Interrupt.h"
+#include <Arduino.h>
 #include <avr/power.h>
 #include <avr/sleep.h>
+#include <avr/wdt.h>
 
 
+void emptyFunc(){}
+InterruptFunction Interrupt::callback = emptyFunc;
+bool Interrupt::wakeUpNow = false;
 
 
-void __Interrupt_pinInterrupt__()        // the interrupt is handled here after wakeup
+void __interruptHandler__()        // the interrupt is handled here after wakeup
 {
   // execute code here after wake-up before returning to the loop() function
   // timers and code using timers (serial.print and more...) will not work here.
-  // we don't really need to execute any special functions here, since we
-  // just want the thing to wake up
+
+    noInterrupts(); // disable all interrupts
+    (Interrupt::getCallback()) ();
+    interrupts(); // enable all interrupts
 }
 
-void Interrupt::setupPinInterrupt(int pin)
+ISR(Timer1_COMPA_vect) // timer compare interrupt service routine
 {
-
+    __interruptHandler__();
 }
 
-void Interrupt::setupTimerInterrupt(unsigned int milliseconds)
+ISR(WDT_vect) { }
+
+
+void Interrupt::wakeUp()
+{
+    wakeUpNow = true;
+}
+
+void Interrupt::sleep()
 {
     /*
      * The 5 different modes are:
@@ -33,9 +48,32 @@ void Interrupt::setupTimerInterrupt(unsigned int milliseconds)
      * sleep mode: SLEEP_MODE_PWR_DOWN
      */
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);   // sleep mode is set here
+    wakeUpNow = false;
 
-    sleep_enable();          // enables the sleep bit in the mcucr register
-                             // so sleep is possible. just a safety pin
+    sleep_enable();         // enables the sleep bit in the mcucr register
+                            // so sleep is possible. just a safety pin
+    /*
+    power_adc_disable();
+    power_spi_disable();
+    power_timer0_disable();
+    power_timer1_disable();
+    power_timer2_disable();
+    power_twi_disable();
+    */
+    while( ! Interrupt::wakeUpNow)
+    {
+        sleep_mode();           // here the device is actually put to sleep!!
+                 // THE PROGRAM CONTINUES FROM HERE AFTER WAKING UP
+    }
+    sleep_disable();        // first thing after waking from sleep:
+                            // disable sleep...
+
+    power_all_enable();     // during normal running time.
+}
+
+void Interrupt::setupPinInterrupt(int pin)
+{
+    noInterrupts(); // disable all interrupts
 
     /* Now it is time to enable an interrupt.
      * In the function call attachInterrupt(A, B, C)
@@ -49,22 +87,37 @@ void Interrupt::setupTimerInterrupt(unsigned int milliseconds)
      *
      * In all but the IDLE sleep modes only LOW can be used.
      */
-    attachInterrupt(0,__Interrupt_pinInterrupt__, LOW);
-    /*
-    power_adc_disable();
-    power_spi_disable();
-    power_timer0_disable();
-    power_timer1_disable();
-    power_timer2_disable();
-    power_twi_disable();
-    */
-    sleep_mode();            // here the device is actually put to sleep!!
-                             // THE PROGRAM CONTINUES FROM HERE AFTER WAKING UP
+    attachInterrupt(pin, __interruptHandler__, LOW);
 
-    sleep_disable();         // first thing after waking from sleep:
-                             // disable sleep...
-    detachInterrupt(0);      // disables interrupt 0 on pin 2 so the
+    //detachInterrupt(0);      // disables interrupt 0 on pin 2 so the
                              // wakeUpNow code will not be executed
-                             // during normal running time.
-    power_all_enable();
+
+    interrupts(); // enable all interrupts
 }
+
+void Interrupt::setupTimerInterrupt(unsigned int milliseconds)
+{
+    noInterrupts(); // disable all interrupts
+
+    // initialize Timer1
+    TCCR1A = 0;
+    TCCR1B = 0;
+
+    /* Clock Select Bit Description
+     *  CS12    CS11    CS10    Description
+     *  0       0       0       No clock source (Stop timer)
+     *  0       0       1       clk/1 (No prescaling)
+     *  0       1       0       clk/8
+     *  0       1       1       clk/64
+     *  1       0       0       clk/256
+     *  1       0       1       clk/1024
+     *  1       1       0       External clock source on T1 pin. Clock on falling edge.
+     *  1       1       1       External clock source on T1 pin. Clock on rising edge.
+     */
+    TCCR1B |= (1 << CS12); // 256 prescaler
+    TCNT1 = 34286; // preload timer 65536-16MHz/256/2Hz
+    TIMSK1 |= (1 << TOIE1); // enable timer overflow interrupt
+
+    interrupts(); // enable all interrupts
+}
+

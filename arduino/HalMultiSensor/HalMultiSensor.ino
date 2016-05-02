@@ -37,8 +37,8 @@ void timerInterruptFunc();
 void setup()
 {
     timerMultiplierMAX = POWER_TIMER_MULTIPLIER * TEMPERATURE_TIMER_MULTIPLIER * LIGHT_TIMER_MULTIPLIER; // Find a lowest common denominator
-    interrupt = new Interrupt(timerInterruptFunc);
-    interrupt->setupTimerInterrupt(60*1000); // one minute scheduled interrupt
+    Interrupt::setCallback(timerInterruptFunc);
+    Interrupt::setupTimerInterrupt(60*1000); // one minute scheduled interrupt
     
     // Setup Sensors and protocols
     #ifdef POWERCON_ENABLED
@@ -64,15 +64,15 @@ void setup()
 }
 
 
-void loop() {}
-
-
 void timerInterruptFunc()
 {
     ++timerMultiplier;
     if (timerMultiplier > timerMultiplierMAX)
         timerMultiplier = 1;
+}
 
+void loop()
+{
     // Send power consumption
     #ifdef POWERCON_ENABLED
     if(timerMultiplier == POWER_TIMER_MULTIPLIER)

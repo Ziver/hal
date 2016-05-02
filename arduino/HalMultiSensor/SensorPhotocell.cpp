@@ -1,16 +1,10 @@
 #include "SensorPhotocell.h"
-
-
-void pinInterrupt()
-{
-    //++pulse;
-}
+#include <Arduino.h>
 
 
 void SensorPhotocell::setup()
 {
-    interrupt = new Interrupt(pinInterrupt);
-    interrupt->setupPinInterrupt(PC2); //PC3
+    Interrupt::setupPinInterrupt(PC2); //PC3
 }
 
 unsigned int SensorPhotocell::getConsumption()

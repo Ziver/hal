@@ -19,6 +19,19 @@ private:
     unsigned char address;
     float temperature;
     unsigned char humidity;
+
+    void setType(byte *data, byte b1, byte b2);
+    void setChannel(byte *data, byte channel);
+    void setId(byte *data, byte id);
+    void setBatteryLevel(byte *data, bool level);
+    void setTemperature(byte *data, float temp);
+    void setHumidity(byte* data, byte hum);
+    void calculateAndSetChecksum(byte* data);
+
+    void sendZero(void);
+    void sendOne(void);
+    void sendData(byte *data, byte length);
+    void rfSend(byte *data, byte size);
 };
 
 #endif // PROTOCOLOREGON_H

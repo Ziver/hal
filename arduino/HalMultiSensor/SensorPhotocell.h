@@ -1,11 +1,11 @@
-#ifndef HARDWAREPHOTOCELL_H
-#define HARDWAREPHOTOCELL_H
+#ifndef SensorPhotocell_H
+#define SensorPhotocell_H
 
 #include "HalInterfaces.h"
 #include "Interrupt.h"
 
 
-class HardwarePhotocell : public HardwarePowerConsumption 
+class SensorPhotocell : public SensorPowerConsumption
 {
 public:
     virtual void setup();
@@ -17,4 +17,4 @@ private:
     unsigned int pulse;
 };
 
-#endif // HARDWAREPHOTOCELL_H
+#endif // SensorPhotocell_H

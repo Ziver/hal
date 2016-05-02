@@ -21,9 +21,9 @@ unsigned int timerMultiplierMAX;
 unsigned int timerMultiplier = 0;
 
 // Sensors
-HardwarePowerConsumption* powerSensor;
-HardwareTemperature* tempSensor;
-HardwareLight* lightSensor;
+SensorPowerConsumption* powerSensor;
+SensorTemperature* tempSensor;
+SensorLight* lightSensor;
 
 // Protocols
 ProtocolPowerConsumption* powerProtocol;
@@ -42,21 +42,21 @@ void setup()
     
     // Setup Sensors and protocols
     #ifdef POWERCON_ENABLED
-    powerSensor = new POWERCON_HARDWARE;
+    powerSensor = new POWERCON_SENSOR;
     powerSensor->setup();
     powerProtocol = new POWERCON_PROTOCOL;
     powerProtocol->setup();
     #endif
 
     #ifdef TEMPERATURE_ENABLED
-    tempSensor = new TEMPERATURE_HARDWARE;
+    tempSensor = new TEMPERATURE_SENSOR;
     tempSensor->setup();
     tempProtocol = new TEMPERATURE_PROTOCOL;
     tempProtocol->setup();
     #endif
 
     #ifdef LIGHT_ENABLED
-    lightSensor = new LIGHT_HARDWARE;
+    lightSensor = new LIGHT_SENSOR;
     lightSensor->setup();
     lightProtocol = new LIGHT_PROTOCOL;
     lightProtocol->setup();

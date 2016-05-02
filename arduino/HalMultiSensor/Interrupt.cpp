@@ -5,7 +5,7 @@
 
 
 
-void pinInterrupt()        // here the interrupt is handled after wakeup
+void __Interrupt_pinInterrupt__()        // the interrupt is handled here after wakeup
 {
   // execute code here after wake-up before returning to the loop() function
   // timers and code using timers (serial.print and more...) will not work here.
@@ -49,7 +49,7 @@ void Interrupt::setupTimerInterrupt(unsigned int milliseconds)
      *
      * In all but the IDLE sleep modes only LOW can be used.
      */
-    attachInterrupt(0,pinInterrupt, LOW);
+    attachInterrupt(0,__Interrupt_pinInterrupt__, LOW);
     /*
     power_adc_disable();
     power_spi_disable();

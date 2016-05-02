@@ -1,4 +1,4 @@
-#include "HardwarePhotocell.h"
+#include "SensorPhotocell.h"
 
 
 void pinInterrupt()
@@ -7,18 +7,18 @@ void pinInterrupt()
 }
 
 
-void HardwarePhotocell::setup()
+void SensorPhotocell::setup()
 {
     interrupt = new Interrupt(pinInterrupt);
     interrupt->setupPinInterrupt(PC2); //PC3
 }
 
-unsigned int HardwarePhotocell::getConsumption()
+unsigned int SensorPhotocell::getConsumption()
 {
     return pulse;
 }
 
-void HardwarePhotocell::reset()
+void SensorPhotocell::reset()
 {
     pulse = 0;
 }

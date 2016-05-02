@@ -16,7 +16,6 @@ public:
     void setupTimerInterrupt(unsigned int milliseconds);
 private:
     InterruptFunction callback;
-
 };
 
 #endif // INTERRUPT_H

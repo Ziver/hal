@@ -15,13 +15,29 @@
 // + added references
 //
 
-#include "HardwareDHT11.h"
+#include "SensorDHT11.h"
+
+
+SensorDHT11::SensorDHT11(int pin)
+{
+    this->pin = pin;
+}
+
+void SensorDHT11::setup(){}
+int SensorDHT11::getTemperature()
+{
+    return temperature;
+}
+int SensorDHT11::getHumidity()
+{
+    return humidity;
+}
 
 // returnvalues:
 //  0 : OK
 // -1 : checksum error
 // -2 : timeout
-int HardwareDHT11::read()
+int SensorDHT11::read()
 {
 	// BUFFER TO RECEIVE
 	uint8_t bits[5];

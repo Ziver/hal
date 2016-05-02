@@ -12,8 +12,8 @@ http://rohmfs.rohm.com/en/products/databook/datasheet/ic/sensor/light/bh1750fvi-
 based on Christopher Laws, March, 2013 code.
 
 */
-#ifndef HARDWAREBH1750_H
-#define HARDWAREBH1750_H
+#ifndef SensorBH1750_H
+#define SensorBH1750_H
 
 #include <Wire.h>
 #include "HalInterfaces.h"
@@ -54,7 +54,7 @@ based on Christopher Laws, March, 2013 code.
 #define BH1750_ONE_TIME_LOW_RES_MODE  0x23
 
 
-class HardwareBH1750 : public HardwarePowerConsumption, public HardwareLight{
+class SensorBH1750 : public SensorPowerConsumption, public SensorLight{
 public:
     virtual void setup();
     virtual unsigned int getLuminosity();
@@ -68,5 +68,5 @@ private:
 
 };
 
-#endif // HARDWAREBH1750_H
+#endif // SensorBH1750_H
 

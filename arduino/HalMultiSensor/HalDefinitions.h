@@ -1,10 +1,10 @@
 #ifndef HALDEFINITIONS_H
 #define HALDEFINITIONS_H
 
-/////// HARDWARE
-#include "HardwareBH1750.h"
-#include "HardwareDHT11.h"
-#include "HardwarePhotocell.h"
+/////// SENSORS
+#include "SensorBH1750.h"
+#include "SensorDHT11.h"
+#include "SensorPhotocell.h"
 
 //////// PROTOCOLS
 #include "ProtocolNexa.h"

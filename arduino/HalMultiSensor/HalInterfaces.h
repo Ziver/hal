@@ -2,13 +2,13 @@
 #define HALINTERFACES_H
 
 
-class Hardware
+class Sensor
 {
 public:
     virtual void setup() = 0;
 };
 
-class HardwarePowerConsumption : public Hardware
+class SensorPowerConsumption : public Sensor
 {
 public:
     // returns number of pulses from power meter
@@ -16,14 +16,14 @@ public:
     virtual void reset() = 0;
 };
 
-class HardwareTemperature : public Hardware
+class SensorTemperature : public Sensor
 {
 public:
     virtual int getTemperature() = 0;
     virtual int getHumidity() = 0;
 };
 
-class HardwareLight : public Hardware
+class SensorLight : public Sensor
 {
 public:
     virtual void setup() = 0;

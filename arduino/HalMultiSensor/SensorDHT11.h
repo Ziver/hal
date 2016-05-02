@@ -20,11 +20,11 @@
 
 #define DHT11LIB_VERSION "0.3.2"
 
-class HardwareDHT11 : public HardwareTemperature
+class SensorDHT11 : public SensorTemperature
 {
 public:
-    HardwareDHT11(int pin);
-    virtual void setup(){};
+    SensorDHT11(int pin);
+    virtual void setup();
     virtual int getTemperature();
     virtual int getHumidity();
     int read();

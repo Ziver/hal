@@ -10,6 +10,7 @@ public:
     static void wakeUp();
     static void sleep();
     static void setupPinInterrupt(int pin);
+    static void setupWatchDogInterrupt(unsigned int milliseconds);
     static void setupTimerInterrupt(unsigned int milliseconds);
 
     static void setCallback(InterruptFunction callback){ Interrupt::callback = callback;}

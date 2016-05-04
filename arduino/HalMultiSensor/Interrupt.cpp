@@ -30,6 +30,7 @@ ISR(WDT_vect) { }
 
 void Interrupt::wakeUp()
 {
+
     wakeUpNow = true;
 }
 
@@ -93,6 +94,44 @@ void Interrupt::setupPinInterrupt(int pin)
                              // wakeUpNow code will not be executed
 
     interrupts(); // enable all interrupts
+}
+
+void Interrupt::setupWatchDogInterrupt(unsigned int milliseconds)
+{
+    noInterrupts();
+
+    wdt_reset();
+    MCUSR &= ~(1 << WDRF);  // reset status flag
+
+    /* WDCE = Watchdog Change Enable
+     *
+     * WDTON(1)  WDE  WDIE  Mode
+     * 1         0    0     Stopped
+     * 1         0    1     Interrupt
+     * 1         1    0     Reset
+     * 1         1    1     Interrupt first, reset on second trigger
+     * 0         x    x     Reset
+     */
+    WDTCSR = 0x00;
+    WDTCSR |= (1 << WDCE) | (1 << WDIE);
+    /* WDP3 WDP2 WDP1 WDP0  Number of cycles  Typical Time-out time (VCC = 5.0V)
+     * 0    0    0    0     2K (2048)         16 ms
+     * 0    0    0    1     4K (4096)         32 ms
+     * 0    0    1    0     8K (8192)         64 ms
+     * 0    0    1    1     16K (16384)       0.125 s
+     * 0    1    0    0     32K (32768)       0.25 s
+     * 0    1    0    1     64K (65536)       0.5 s
+     * 0    1    1    0     128K (131072)     1.0 s
+     * 0    1    1    1     256K (262144)     2.0 s
+     * 1    0    0    0     512K (524288)     4.0 s
+     * 1    0    0    1     1024K (1048576)   8.0 s
+     */
+    WDTCSR = (1<< WDP0) | (1 << WDP1) | (1 << WDP2); // set the prescalar = 7
+
+
+    //wdt_disable();
+
+    interrupts();
 }
 
 void Interrupt::setupTimerInterrupt(unsigned int milliseconds)

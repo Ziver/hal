@@ -3,7 +3,7 @@
 #include <avr/power.h>
 #include <avr/sleep.h>
 #include <avr/wdt.h>
-
+#include "HalInterfaces.h"
 
 void emptyFunc(){}
 InterruptFunction Interrupt::callback = emptyFunc;
@@ -18,19 +18,26 @@ void __interruptHandler__()        // the interrupt is handled here after wakeup
     noInterrupts(); // disable all interrupts
     (Interrupt::getCallback()) ();
     interrupts(); // enable all interrupts
+    Interrupt::wakeUp();
+
 }
 
 ISR(Timer1_COMPA_vect) // timer compare interrupt service routine
 {
+    //DEBUG("Timer1e Interrupt");
     __interruptHandler__();
 }
 
-ISR(WDT_vect) { }
+ISR(WDT_vect)
+{
+    //DEBUG("WDT Interrupt");
+    //wdt_disable();
+    __interruptHandler__();
+}
 
 
 void Interrupt::wakeUp()
 {
-
     wakeUpNow = true;
 }
 
@@ -61,15 +68,16 @@ void Interrupt::sleep()
     power_timer2_disable();
     power_twi_disable();
     */
-    while( ! Interrupt::wakeUpNow)
-    {
+    //while( ! Interrupt::wakeUpNow)
+    //{
+        wdt_reset();
         sleep_mode();           // here the device is actually put to sleep!!
                  // THE PROGRAM CONTINUES FROM HERE AFTER WAKING UP
-    }
+    //}
     sleep_disable();        // first thing after waking from sleep:
                             // disable sleep...
 
-    power_all_enable();     // during normal running time.
+    //power_all_enable();     // during normal running time.
 }
 
 void Interrupt::setupPinInterrupt(int pin)
@@ -112,8 +120,7 @@ void Interrupt::setupWatchDogInterrupt(unsigned int milliseconds)
      * 1         1    1     Interrupt first, reset on second trigger
      * 0         x    x     Reset
      */
-    WDTCSR = 0x00;
-    WDTCSR |= (1 << WDCE) | (1 << WDIE);
+    WDTCSR = (1 << WDCE) | (1<<WDE); // enable configuration
     /* WDP3 WDP2 WDP1 WDP0  Number of cycles  Typical Time-out time (VCC = 5.0V)
      * 0    0    0    0     2K (2048)         16 ms
      * 0    0    0    1     4K (4096)         32 ms
@@ -126,8 +133,7 @@ void Interrupt::setupWatchDogInterrupt(unsigned int milliseconds)
      * 1    0    0    0     512K (524288)     4.0 s
      * 1    0    0    1     1024K (1048576)   8.0 s
      */
-    WDTCSR = (1<< WDP0) | (1 << WDP1) | (1 << WDP2); // set the prescalar = 7
-
+    WDTCSR = (1 << WDIE) | (1 << WDP3) | (1 << WDP0);
 
     //wdt_disable();
 
@@ -155,7 +161,7 @@ void Interrupt::setupTimerInterrupt(unsigned int milliseconds)
      */
     TCCR1B |= (1 << CS12); // 256 prescaler
     TCNT1 = 34286; // preload timer 65536-16MHz/256/2Hz
-    TIMSK1 |= (1 << TOIE1); // enable timer overflow interrupt
+    //TODO: TIMSK1 |= (1 << TOIE1); // enable timer overflow interrupt
 
     interrupts(); // enable all interrupts
 }

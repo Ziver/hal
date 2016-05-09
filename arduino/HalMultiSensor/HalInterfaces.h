@@ -1,6 +1,22 @@
 #ifndef HALINTERFACES_H
 #define HALINTERFACES_H
 
+#include "HalConfiguration.h"
+
+#ifdef ENABLE_DEBUG
+    #define DEBUG(msg) \
+        Serial.println(msg); \
+        Serial.flush();
+    #define DEBUGF(msg, ...) \
+        static char buffer[80];\
+        snprintf(buffer, sizeof(buffer), msg, __VA_ARGS__);\
+        Serial.println(buffer);\
+        Serial.flush();
+#else
+    #define DEBUG(msg)
+    #define DEBUGF(msg, ...)
+#endif
+
 
 class Sensor
 {

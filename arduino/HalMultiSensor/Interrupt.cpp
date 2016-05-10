@@ -22,20 +22,6 @@ void __interruptHandler__()        // the interrupt is handled here after wakeup
 
 }
 
-ISR(Timer1_COMPA_vect) // timer compare interrupt service routine
-{
-    //DEBUG("Timer1e Interrupt");
-    __interruptHandler__();
-}
-
-ISR(WDT_vect)
-{
-    //DEBUG("WDT Interrupt");
-    //wdt_disable();
-    __interruptHandler__();
-}
-
-
 void Interrupt::wakeUp()
 {
     wakeUpNow = true;
@@ -68,12 +54,11 @@ void Interrupt::sleep()
     power_timer2_disable();
     power_twi_disable();
     */
-    //while( ! Interrupt::wakeUpNow)
-    //{
-        wdt_reset();
+    while( ! Interrupt::wakeUpNow)
+    {
         sleep_mode();           // here the device is actually put to sleep!!
                  // THE PROGRAM CONTINUES FROM HERE AFTER WAKING UP
-    //}
+    }
     sleep_disable();        // first thing after waking from sleep:
                             // disable sleep...
 
@@ -96,7 +81,7 @@ void Interrupt::setupPinInterrupt(int pin)
      *
      * In all but the IDLE sleep modes only LOW can be used.
      */
-    attachInterrupt(pin, __interruptHandler__, LOW);
+    attachInterrupt((pin == PIND2 ? 0 : 1), __interruptHandler__, LOW);
 
     //detachInterrupt(0);      // disables interrupt 0 on pin 2 so the
                              // wakeUpNow code will not be executed
@@ -104,9 +89,70 @@ void Interrupt::setupPinInterrupt(int pin)
     interrupts(); // enable all interrupts
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Watchdog timer
+unsigned int wdtTime;
+long wdtTimeLeft;
+void __setWatchDogInterrupt();
+
+ISR(WDT_vect)
+{
+    //DEBUG("WDT Interrupt");
+    wdt_disable();
+    if (wdtTimeLeft < 0)
+    {
+        DEBUG("WDT interrupt");
+        Interrupt::wakeUp();
+        __interruptHandler__();
+        wdtTimeLeft = wdtTime;
+    }
+    __setWatchDogInterrupt();
+}
+
 void Interrupt::setupWatchDogInterrupt(unsigned int milliseconds)
 {
+    wdtTimeLeft = wdtTime = milliseconds;
+    __setWatchDogInterrupt();
+}
+
+void __setWatchDogInterrupt()
+{
     noInterrupts();
+
+    unsigned short duration;
+
+    if (8000 <= wdtTimeLeft){
+        wdtTimeLeft -= 8000;
+        duration = (1 << WDP3) | (1 << WDP0);
+    } else if (4000 <= wdtTimeLeft){
+       wdtTimeLeft -= 4000;
+       duration = (1 << WDP3);
+    } else if (2000 <= wdtTimeLeft){
+       wdtTimeLeft -= 2000;
+       duration = (1 << WDP2) | (1 << WDP1) | (1 << WDP0);
+    } else if (1000 <= wdtTimeLeft){
+       wdtTimeLeft -= 1000;
+       duration = (1 << WDP2) | (1 << WDP1);
+    } else if (500 <= wdtTimeLeft){
+       wdtTimeLeft -= 500;
+       duration = (1 << WDP2) | (1 << WDP0);
+    } else if (256 <= wdtTimeLeft){
+       wdtTimeLeft -= 256;
+       duration = (1 << WDP2);
+    } else if (128 <= wdtTimeLeft){
+       wdtTimeLeft -= 128;
+       duration = (1 << WDP1) | (1 << WDP0);
+    } else if (64 <= wdtTimeLeft){
+       wdtTimeLeft -= 64;
+       duration = (1 << WDP1);
+    } else if (32 <= wdtTimeLeft){
+       wdtTimeLeft -= 32;
+       duration = (1 << WDP0);
+    } else { //(16 <= wdtTimeLeft){
+       wdtTimeLeft -= 16;
+       duration = 0;
+    }
+    //DEBUGF("WDT t -= %u", wdtTimeLeft);
 
     wdt_reset();
     MCUSR &= ~(1 << WDRF);  // reset status flag
@@ -133,13 +179,25 @@ void Interrupt::setupWatchDogInterrupt(unsigned int milliseconds)
      * 1    0    0    0     512K (524288)     4.0 s
      * 1    0    0    1     1024K (1048576)   8.0 s
      */
-    WDTCSR = (1 << WDIE) | (1 << WDP3) | (1 << WDP0);
+    WDTCSR = (1 << WDIE) | duration;
+    //WDTCSR = (1 << WDIE) | (1 << WDP3) | (1 << WDP0);
 
     //wdt_disable();
 
     interrupts();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+// Timer 1
+/*
+ISR(Timer1_COMPA_vect) // timer compare interrupt service routine
+{
+    //DEBUG("Timer1e Interrupt");
+    __interruptHandler__();
+}
+*/
+/*
 void Interrupt::setupTimerInterrupt(unsigned int milliseconds)
 {
     noInterrupts(); // disable all interrupts
@@ -159,10 +217,10 @@ void Interrupt::setupTimerInterrupt(unsigned int milliseconds)
      *  1       1       0       External clock source on T1 pin. Clock on falling edge.
      *  1       1       1       External clock source on T1 pin. Clock on rising edge.
      */
-    TCCR1B |= (1 << CS12); // 256 prescaler
+/*    TCCR1B |= (1 << CS12); // 256 prescaler
     TCNT1 = 34286; // preload timer 65536-16MHz/256/2Hz
     //TODO: TIMSK1 |= (1 << TOIE1); // enable timer overflow interrupt
 
     interrupts(); // enable all interrupts
 }
-
+*/

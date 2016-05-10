@@ -9,11 +9,10 @@ class SensorPhotocell : public SensorPowerConsumption
 {
 public:
     virtual void setup();
-    virtual unsigned int getConsumption();
+    virtual void read(PowerData& data);
     virtual void reset();
 
 private:
-    Interrupt* interrupt;
     unsigned int pulse;
 };
 

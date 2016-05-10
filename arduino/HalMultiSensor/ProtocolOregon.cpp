@@ -1,35 +1,29 @@
 #include "ProtocolOregon.h"
 
-#define RF_TX_PIN 10
 #define RF_DELAY 512
 #define RF_DELAY_LONG RF_DELAY*2
-#define RF_SEND_HIGH() digitalWrite(RF_TX_PIN, HIGH)
-#define RF_SEND_LOW() digitalWrite(RF_TX_PIN, LOW)
+#define RF_SEND_HIGH() digitalWrite(txPin, HIGH)
+#define RF_SEND_LOW() digitalWrite(txPin, LOW)
 
 
 void ProtocolOregon::setup()
 {
-  pinMode(RF_TX_PIN, OUTPUT);
+  pinMode(txPin, OUTPUT);
   RF_SEND_LOW();
 }
 
-void ProtocolOregon::setTemperature(float temp)
+
+void ProtocolOregon::send(const PowerData& data)
 {
-    this->temperature = temp;
-}
-void ProtocolOregon::setHumidity(unsigned char humidity)
-{
-    this->humidity = humidity;
-}
-void ProtocolOregon::setConsumption(unsigned int cons)
-{
-    this->temperature = cons;
-    this->humidity = 0;
+    send(data.consumption, 0);
 }
 
+void ProtocolOregon::send(const TemperatureData& data)
+{
+    send(data.temperature, data.humidity);
+}
 
-
-void ProtocolOregon::send()
+void ProtocolOregon::send(float temperature, short humidity)
 {
     byte buffer[9];
     setType(buffer, 0x1A,0x2D); //temperature/humidity sensor (THGR2228N)

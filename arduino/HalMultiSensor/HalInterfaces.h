@@ -3,7 +3,11 @@
 
 #include "HalConfiguration.h"
 
+// Utility functions
+
 #ifdef ENABLE_DEBUG
+    #include <Arduino.h>
+
     #define DEBUG(msg) \
         Serial.println(msg); \
         Serial.flush();
@@ -18,60 +22,81 @@
 #endif
 
 
+inline void pulse(short pin, short count)
+{
+    while (--count >= 0)
+    {
+        digitalWrite(INDICATOR_PIN, HIGH);
+        delay(150);
+        digitalWrite(INDICATOR_PIN, LOW);
+        if (count != 0) delay(200);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////
+// INTERFACES
+
 class Sensor
 {
 public:
     virtual void setup() = 0;
 };
-
-class SensorPowerConsumption : public Sensor
-{
-public:
-    // returns number of pulses from power meter
-    virtual unsigned int getConsumption() = 0;
-    virtual void reset() = 0;
-};
-
-class SensorTemperature : public Sensor
-{
-public:
-    virtual int getTemperature() = 0;
-    virtual int getHumidity() = 0;
-};
-
-class SensorLight : public Sensor
-{
-public:
-    virtual void setup() = 0;
-    virtual unsigned int getLuminosity() = 0;
-};
-
-
-
 class Protocol
 {
 public:
     virtual void setup() = 0;
-    virtual void send() = 0;
 };
 
+
+
+struct PowerData
+{
+    unsigned int consumption;
+};
+class SensorPowerConsumption : public Sensor
+{
+public:
+    // returns number of pulses from power meter
+    virtual void read(PowerData& data) = 0;
+};
 class ProtocolPowerConsumption : public Protocol
 {
 public:
-    virtual void setConsumption(unsigned int cons) = 0;
+    virtual void send(const PowerData& data) = 0;
 };
 
+
+struct TemperatureData
+{
+    float temperature;
+    short humidity;
+};
+class SensorTemperature : public Sensor
+{
+public:
+    virtual void read(TemperatureData& data) = 0;
+};
 class ProtocolTemperature : public Protocol
 {
 public:
-    virtual void setTemperature(float temp) = 0;
-    virtual void setHumidity(unsigned char humidity) = 0;
+    virtual void send(const TemperatureData& data) = 0;
 };
 
+
+struct LightData
+{
+    unsigned int lumen;
+};
+class SensorLight : public Sensor
+{
+public:
+    virtual void read(LightData& data) = 0;
+};
 class ProtocolLight : public Protocol
 {
 public:
-    virtual void setLuminosity(int lumen) = 0;
+    virtual void send(const LightData& data) = 0;
 };
+
 
 #endif // HALINTERFACES_H

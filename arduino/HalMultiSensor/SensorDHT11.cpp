@@ -13,39 +13,21 @@
 // + added comments
 // + removed all non DHT11 specific code
 // + added references
+// Refactored by Ziver Koc
 //
 
 #include "SensorDHT11.h"
 
 
-SensorDHT11::SensorDHT11(int pin)
-{
-    this->pin = pin;
-}
-
 void SensorDHT11::setup(){}
-int SensorDHT11::getTemperature()
-{
-    return temperature;
-}
-int SensorDHT11::getHumidity()
-{
-    return humidity;
-}
 
-// returnvalues:
-//  0 : OK
-// -1 : checksum error
-// -2 : timeout
-int SensorDHT11::read()
+
+void SensorDHT11::read(TemperatureData& data)
 {
 	// BUFFER TO RECEIVE
-	uint8_t bits[5];
+	uint8_t bits[5] = {0};
 	uint8_t cnt = 7;
 	uint8_t idx = 0;
-
-	// EMPTY BUFFER
-	for (int i=0; i< 5; i++) bits[i] = 0;
 
 	// REQUEST SAMPLE
 	pinMode(pin, OUTPUT);
@@ -58,24 +40,40 @@ int SensorDHT11::read()
 	// ACKNOWLEDGE or TIMEOUT
 	unsigned int loopCnt = 10000;
 	while(digitalRead(pin) == LOW)
-		if (loopCnt-- == 0) return -2;
+		if (loopCnt-- == 0)
+		{
+		    DEBUG("DHT11 timeout");
+		    return;;
+		}
 
 	loopCnt = 10000;
 	while(digitalRead(pin) == HIGH)
-		if (loopCnt-- == 0) return -2;
+		if (loopCnt-- == 0)
+        {
+            DEBUG("DHT11 timeout");
+            return;;
+        }
 
 	// READ OUTPUT - 40 BITS => 5 BYTES or TIMEOUT
 	for (int i=0; i<40; i++)
 	{
 		loopCnt = 10000;
 		while(digitalRead(pin) == LOW)
-			if (loopCnt-- == 0) return -2;
+			if (loopCnt-- == 0)
+			{
+                DEBUG("DHT11 timeout");
+                return;;
+            }
 
 		unsigned long t = micros();
 
 		loopCnt = 10000;
 		while(digitalRead(pin) == HIGH)
-			if (loopCnt-- == 0) return -2;
+			if (loopCnt-- == 0)
+            {
+                DEBUG("DHT11 timeout");
+                return;;
+            }
 
 		if ((micros() - t) > 40) bits[idx] |= (1 << cnt);
 		if (cnt == 0)   // next byte?
@@ -86,14 +84,14 @@ int SensorDHT11::read()
 		else cnt--;
 	}
 
-	// WRITE TO RIGHT VARS
+
+	uint8_t sum = bits[0] + bits[2];
+	if (bits[4] != sum)
+        DEBUG("DHT11 checksum error");
+
+    // WRITE TO RIGHT VARS
         // as bits[1] and bits[3] are allways zero they are omitted in formulas.
-	humidity    = bits[0]; 
-	temperature = bits[2]; 
-
-	uint8_t sum = bits[0] + bits[2];  
-
-	if (bits[4] != sum) return -1;
-	return 0;
+    data.temperature = bits[2];
+    data.humidity    = bits[0];
 }
 

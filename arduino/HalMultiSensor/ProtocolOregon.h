@@ -8,18 +8,17 @@
 class ProtocolOregon : public ProtocolTemperature, public ProtocolPowerConsumption
 {
 public:
-    ProtocolOregon(unsigned char address) : address(address){};
+    ProtocolOregon(short pin, unsigned char address) : txPin(pin), address(address){};
 
     virtual void setup();
-    virtual void setTemperature(float temp);
-    virtual void setHumidity(unsigned char humidity);
-    virtual void setConsumption(unsigned int cons); //Power
-    virtual void send();
-private:
-    unsigned char address;
-    float temperature;
-    unsigned char humidity;
+    virtual void send(const TemperatureData& data);
+    virtual void send(const PowerData& data);
 
+private:
+    short txPin;
+    unsigned char address;
+
+    void send(float temperature, short humidity);
     void setType(byte *data, byte b1, byte b2);
     void setChannel(byte *data, byte channel);
     void setId(byte *data, byte id);

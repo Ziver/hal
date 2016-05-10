@@ -15,6 +15,40 @@ based on Christopher Laws, March, 2013 code.
 #include <util/delay.h>
 
 
+#define BH1750_I2CADDR 0x23
+
+// No active state
+#define BH1750_POWER_DOWN 0x00
+
+// Waiting for measurement command
+#define BH1750_POWER_ON 0x01
+
+// Reset data register value - not accepted in POWER_DOWN mode
+#define BH1750_RESET 0x07
+
+// Start measurement at 1lx resolution. Measurement time is approx 120ms.
+#define BH1750_CONTINUOUS_HIGH_RES_MODE  0x10
+
+// Start measurement at 0.5lx resolution. Measurement time is approx 120ms.
+#define BH1750_CONTINUOUS_HIGH_RES_MODE_2  0x11
+
+// Start measurement at 4lx resolution. Measurement time is approx 16ms.
+#define BH1750_CONTINUOUS_LOW_RES_MODE  0x13
+
+// Start measurement at 1lx resolution. Measurement time is approx 120ms.
+// Device is automatically set to Power Down after measurement.
+#define BH1750_ONE_TIME_HIGH_RES_MODE  0x20
+
+// Start measurement at 0.5lx resolution. Measurement time is approx 120ms.
+// Device is automatically set to Power Down after measurement.
+#define BH1750_ONE_TIME_HIGH_RES_MODE_2  0x21
+
+// Start measurement at 1lx resolution. Measurement time is approx 120ms.
+// Device is automatically set to Power Down after measurement.
+#define BH1750_ONE_TIME_LOW_RES_MODE  0x23
+
+
+
 void SensorBH1750::setup() {
   Wire.begin();
   configure(BH1750_CONTINUOUS_HIGH_RES_MODE);
@@ -30,69 +64,34 @@ void SensorBH1750::configure(uint8_t mode) {
         case BH1750_ONE_TIME_HIGH_RES_MODE_2:
         case BH1750_ONE_TIME_LOW_RES_MODE:
             // apply a valid mode change
-            write8(mode);
+            Wire.beginTransmission(BH1750_I2CADDR);
+            Wire.write(mode);
+            Wire.endTransmission();
             _delay_ms(10);
             break;
         default:
             // Invalid measurement mode
-            #if BH1750_DEBUG == 1
-            Serial.println("Invalid measurement mode");
-            #endif
+            DEBUG("Invalid measurement mode");
             break;
     }
 }
 
-unsigned int SensorBH1750::getConsumption()
+void SensorBH1750::read(PowerData& data)
 {
-    return pulses;
-}
-void SensorBH1750::reset()
-{
+    data.consumption = pulses;
     pulses = 0;
 }
 
-unsigned int SensorBH1750::getLuminosity(void) {
+void SensorBH1750::read(LightData& data) {
   uint16_t level;
 
   Wire.beginTransmission(BH1750_I2CADDR);
   Wire.requestFrom(BH1750_I2CADDR, 2);
-#if (ARDUINO >= 100)
   level = Wire.read();
   level <<= 8;
   level |= Wire.read();
-#else
-  level = Wire.receive();
-  level <<= 8;
-  level |= Wire.receive();
-#endif
   Wire.endTransmission();
 
-#if BH1750_DEBUG == 1
-  Serial.print("Raw light level: ");
-  Serial.println(level);
-#endif
-
-  level = level/1.2; // convert to lux
-
-#if BH1750_DEBUG == 1
-  Serial.print("Light level: ");
-  Serial.println(level);
-#endif
-  return level;
-}
-
-
-
-/*********************************************************************/
-
-
-void SensorBH1750::write8(uint8_t d) {
-  Wire.beginTransmission(BH1750_I2CADDR);
-#if (ARDUINO >= 100)
-  Wire.write(d);
-#else
-  Wire.send(d);
-#endif
-  Wire.endTransmission();
+  data.lumen = level/1.2; // convert to lux
 }
 

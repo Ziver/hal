@@ -3,7 +3,6 @@ A interrupt based sensor device that reads multiple sensors and transmits
 the data to a central location.
 */
 #include <Arduino.h>
-#include <Wire.h>
 
 #include "HalConfiguration.h"
 #include "HalInterfaces.h"
@@ -34,6 +33,7 @@ void setup()
     #ifdef ENABLE_DEBUG
     Serial.begin(9600);
     #endif
+    pinMode(INDICATOR_PIN, OUTPUT);
 
     // Setup Sensors and protocols
     #ifdef POWERCON_ENABLED
@@ -64,6 +64,8 @@ void setup()
     Interrupt::setCallback(timerInterruptFunc);
     Interrupt::setupWatchDogInterrupt(TIMER_MILLISECOND); // one minute scheduled interrupt
 
+
+    pulse(INDICATOR_PIN, 3);
     DEBUG("Ready");
 }
 
@@ -77,17 +79,17 @@ void timerInterruptFunc()
 
 void loop()
 {
+    digitalWrite(INDICATOR_PIN, HIGH);
     noInterrupts();
 
     // Send power consumption
     #ifdef POWERCON_ENABLED
     if(timerMultiplier == POWER_TIMER_MULTIPLIER)
     {
-        unsigned int consumption = powerSensor->getConsumption();
-        DEBUGF("Read POWERCON_SENSOR= consumption:%d", consumption);
-        powerSensor->reset();
-        powerProtocol->setConsumption(consumption);
-        powerProtocol->send();
+        static PowerData powerData;
+        powerSensor->read(powerData); // not needed, only here for future use
+        DEBUGF("Read POWERCON_SENSOR= consumption:%d", powerData.consumption);
+        powerProtocol->send(powerData);
     }
     #endif
 
@@ -95,12 +97,10 @@ void loop()
     #ifdef TEMPERATURE_ENABLED
     if(timerMultiplier == TEMPERATURE_TIMER_MULTIPLIER)
     {
-        unsigned int temperature = tempSensor->getTemperature();
-        unsigned int humidity = tempSensor->getHumidity();
-        DEBUGF("Read TEMPERATURE_SENSOR= temperature:%d, humidity:%d", temperature, humidity);
-        tempProtocol->setTemperature(temperature);
-        tempProtocol->setHumidity(humidity);
-        tempProtocol->send();
+        static TemperatureData tempData;
+        tempSensor->read(tempData);
+        DEBUGF("Read TEMPERATURE_SENSOR= temperature:%d, humidity:%d", tempData.temperature, tempData.humidity);
+        tempProtocol->send(tempData);
     }
     #endif
 
@@ -108,14 +108,15 @@ void loop()
     #ifdef LIGHT_ENABLED
     if(timerMultiplier == LIGHT_TIMER_MULTIPLIER)
     {
-        unsigned int lumen = lightSensor->getLuminosity();
-        DEBUG("Read LIGHT_SENSOR= lumen:%d", lumen);
-        lightProtocol->setLuminosity(lumen);
-        lightProtocol->send();
+        static LightData lightData;
+        lightSensor->read(lightData);
+        DEBUG("Read LIGHT_SENSOR= lumen:%d", lightData.lumen);
+        lightProtocol->send(lightData);
     }
     #endif
 
     interrupts();
+    digitalWrite(INDICATOR_PIN, LOW);
 
     DEBUG("Sleeping");
     Interrupt::sleep();

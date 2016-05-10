@@ -7,9 +7,9 @@ void SensorPhotocell::setup()
     Interrupt::setupPinInterrupt(PC2); //PC3
 }
 
-unsigned int SensorPhotocell::getConsumption()
+void SensorPhotocell::read(PowerData& data)
 {
-    return pulse;
+    data.consumption = pulse;
 }
 
 void SensorPhotocell::reset()

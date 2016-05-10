@@ -74,10 +74,9 @@ public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionS
     }
 
     public String toString(){
-        return "protocol:oregon;model:0x1A2D;" +
-                "address:"+address+
-                ";temperature:"+temperature+
-                ";humidity:"+humidity;
+        return "address:"+address+
+                ", temperature:"+temperature+
+                ", humidity:"+humidity;
     }
 
 

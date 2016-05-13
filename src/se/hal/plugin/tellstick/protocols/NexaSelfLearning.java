@@ -25,21 +25,35 @@ package se.hal.plugin.tellstick.protocols;
 import se.hal.plugin.tellstick.TellstickGroupProtocol;
 import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.struct.SwitchEventData;
+import zutil.ByteUtil;
+import zutil.parser.binary.BinaryStruct;
+import zutil.parser.binary.BinaryStructInputStream;
+import zutil.parser.binary.BinaryStructOutputStream;
 import zutil.ui.Configurator;
+
+import java.io.IOException;
 
 /**
  * Created by Ziver on 2015-02-18.
  */
-public class NexaSelfLearning extends TellstickProtocol implements SwitchEventData,TellstickGroupProtocol {
+public class NexaSelfLearning extends TellstickProtocol
+        implements SwitchEventData,TellstickGroupProtocol,BinaryStruct {
 
+    @BinaryField(index=1, length=26)
     @Configurator.Configurable("House code")
     private int house = 0;
+
+    @BinaryField(index=2, length=1)
     @Configurator.Configurable("Group code")
     private boolean group = false;
+
+    @BinaryField(index=3, length=1)
+    private boolean enable = false;
+
+    @BinaryField(index=4, length=4)
     @Configurator.Configurable("Unit code")
     private int unit = 0;
 
-    private boolean enable = false;
 
 
     public NexaSelfLearning() {
@@ -48,12 +62,12 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
 
 
     public String encode(){
+        /*
         // Binary 0 => "01"
         // Binary 1 => "10"
         StringBuilder enc = new StringBuilder();
         enc.append(new char[]{'T', 127, 255, 24, 1});
 
-        enc.append((char)132);
 
         // House
         StringBuilder m = new StringBuilder();
@@ -97,6 +111,31 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
 
         enc.append("+");
         return enc.toString();
+*/
+
+        try {
+            StringBuilder enc = new StringBuilder();
+            enc.append(new char[]{'T', 127, 255, 24, 1});
+            enc.append((char)132); // length
+
+            enc.append((char)0b0000_1001); // preamble
+            byte[] data = BinaryStructOutputStream.serialize(this);
+            for (byte b : data){
+                for (int i=7; i>=0; --i){
+                    if (ByteUtil.getBits(b, i, 1) == 0)
+                        enc.append((char) 0b1010_1000); // 0b1010_1000
+                    else // 1
+                        enc.append((char) 0b1000_1010); // 0b1000_1010
+                }
+            }
+
+            enc.append("+");
+            return enc.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 
     public void decode(byte[] data){
@@ -109,18 +148,7 @@ public class NexaSelfLearning extends TellstickProtocol implements SwitchEventDa
         // 0x2CE81990 - 00101100_11101000_00011001_10 0 1 0000 - ON
         // 0x2CE81980 - 00101100_11101000_00011001_10 0 0 0000 - OFF
 
-        house = 0;
-        house |= (data[3] & 0xFF) << 18;
-        house |= (data[2] & 0xFF) << 10;
-        house |= (data[1] & 0xFF) << 2;
-        house |= (data[0] & 0xC0) >>> 6;
-
-        int tmpGroup = data[0] & 0x20; // >>> 5
-        group = tmpGroup != 0;
-
-        enable = (data[0] & 0x10) != 0;
-
-        unit = data[0] & 0x0F;
+        BinaryStructInputStream.read(this, data);
     }
 
 

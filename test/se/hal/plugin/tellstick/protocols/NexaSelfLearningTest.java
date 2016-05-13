@@ -22,7 +22,10 @@
 
 package se.hal.plugin.tellstick.protocols;
 
+import zutil.ByteUtil;
 import zutil.converter.Converter;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.*;
 
@@ -31,18 +34,30 @@ public class NexaSelfLearningTest {
     @org.junit.Test
     public void testEncode() throws Exception {
         NexaSelfLearning nexa = new NexaSelfLearning();
-        nexa.setHouse(11772006);
-        nexa.setUnit(3);
+        nexa.setHouse(11_772_006);
+        nexa.setUnit(0);
         nexa.turnOn();
 
-        assertArrayEquals(
-                new char[]{
-                        84, 127, 255, 24, 1, 132, 154, 138, 136, 170,
-                        136, 168, 170, 138, 136, 168, 168, 170, 136, 170,
-                        138, 138, 138, 138, 138, 136, 168, 170, 138, 136,
-                        168, 170, 138, 136, 170, 138, 136, 168, 170, 43},
-                nexa.encode().toCharArray()
-        );
+        byte[] expected = Converter.toBytes(new char[]{
+                        84, // T
+                        127, 255, 24, 1, 132, // timings
+
+                        9, // preamble
+                        168, 168, 138, 168, 138, 138, 168, 168, 138, 138,
+                        138, 168, 138, 168, 168, 168, 168, 168, 168, 138,
+                        138, 168, 168, 138, 138, 168, 168, 138, 168, 168,
+                        168, 168,
+
+                        /*154, 138, 136, 170, 136, 168, 170, 138, 136, 168,
+                        168, 170, 136, 170, 138, 138, 138, 138, 138, 136,
+                        168, 170, 138, 136, 168, 170, 138, 136, 170, 138,
+                        136, 168, 170,*/
+                        43}); // +
+        byte[] actual = nexa.encode().getBytes(StandardCharsets.ISO_8859_1);
+
+        System.out.println("Expected: "+Converter.toHexString(expected).toUpperCase());
+        System.out.println("Actual  : "+Converter.toHexString(actual).toUpperCase());
+        assertArrayEquals(expected, actual);
     }
 
 

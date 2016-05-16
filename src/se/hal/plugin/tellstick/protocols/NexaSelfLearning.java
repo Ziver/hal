@@ -62,57 +62,6 @@ public class NexaSelfLearning extends TellstickProtocol
 
 
     public String encode(){
-        /*
-        // Binary 0 => "01"
-        // Binary 1 => "10"
-        StringBuilder enc = new StringBuilder();
-        enc.append(new char[]{'T', 127, 255, 24, 1});
-
-
-        // House
-        StringBuilder m = new StringBuilder();
-        for (int i = 25; i >= 0; --i) {
-            m.append( (house & (1 << i)) == 0 ? "01" : "10" );
-        }
-        // Group
-        if (group)
-            m.append("10");
-        else
-            m.append("01");
-
-        // On or OFF
-        if (enable)
-            m.append("10");
-        else
-            m.append("01");
-
-        // Unit
-        for (int i = 3; i >= 0; --i) {
-            m.append( (unit & (1 << i)) == 0 ? "01" : "10" );
-        }
-
-        // The number of data is odd add this to make it even
-        m.append("0");
-        //01011001101001011010100110010101010101101001011010 01 01 1001011010 0
-
-        char code = 9;  // b1001, startcode
-        for (int i = 0; i < m.length(); ++i) {
-            code <<= 4;
-            if (m.charAt(i) == '1') {
-                code |= 0x08;  // b1000
-            } else {
-                code |= 0x0A;  // b1010
-            }
-            if (i % 2 == 0) {
-                enc.append(code);
-                code = 0x00;
-            }
-        }
-
-        enc.append("+");
-        return enc.toString();
-*/
-
         try {
             StringBuilder enc = new StringBuilder();
             enc.append(new char[]{'T', 127, 255, 24, 1});
@@ -150,6 +99,7 @@ public class NexaSelfLearning extends TellstickProtocol
 
         BinaryStructInputStream.read(this, data);
     }
+
 
 
     public int getHouse() {

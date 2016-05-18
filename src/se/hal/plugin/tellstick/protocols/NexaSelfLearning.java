@@ -63,11 +63,13 @@ public class NexaSelfLearning extends TellstickProtocol
 
     public String encode(){
         try {
-            StringBuilder enc = new StringBuilder();
-            enc.append(new char[]{'T', 127, 255, 24, 1});
-            enc.append((char)132); // length
+            // T[t0][t1][t2][t3][length][d1]..[dn]+
+            StringBuilder enc = new StringBuilder(90); // Tellstick supports max 74 bytes
+            enc.append(new char[]{'T', 127, 255, 24, 0});
+            enc.append((char)0); // length
 
-            enc.append((char)0b0000_1001); // preamble
+            enc.append((char)0b1111_1001); // preamble
+            int length = 4;
             byte[] data = BinaryStructOutputStream.serialize(this);
             for (byte b : data){
                 for (int i=7; i>=0; --i){
@@ -75,8 +77,10 @@ public class NexaSelfLearning extends TellstickProtocol
                         enc.append((char) 0b1010_1000); // 0b1010_1000
                     else // 1
                         enc.append((char) 0b1000_1010); // 0b1000_1010
+                    length += 4;
                 }
             }
+            enc.setCharAt(5, (char)length); // Set calculated length
 
             enc.append("+");
             return enc.toString();

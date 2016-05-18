@@ -51,7 +51,7 @@ based on Christopher Laws, March, 2013 code.
 
 void SensorBH1750::setup() {
   Wire.begin();
-  configure(BH1750_CONTINUOUS_HIGH_RES_MODE);
+  configure(BH1750_ONE_TIME_HIGH_RES_MODE);
 }
 
 

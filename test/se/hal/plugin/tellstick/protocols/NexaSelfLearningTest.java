@@ -40,9 +40,10 @@ public class NexaSelfLearningTest {
 
         byte[] expected = Converter.toBytes(new char[]{
                         84, // T
-                        127, 255, 24, 1, 132, // timings
+                        127, 255, 24, 0, // timings
+                        132, // length
 
-                        9, // preamble
+                        0xF9, // preamble
                         168, 168, 138, 168, 138, 138, 168, 168, 138, 138,
                         138, 168, 138, 168, 168, 168, 168, 168, 168, 138,
                         138, 168, 168, 138, 138, 168, 168, 138, 168, 168,

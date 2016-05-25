@@ -48,7 +48,7 @@ public class TelstickSerialCommTest {
                     }
                 }
             });
-            comm.connect("COM5");
+            comm.initialize("COM5");
             //comm.connect("/dev/ttyUSB1");
 
             logger.info("Up and Running");

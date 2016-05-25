@@ -31,14 +31,6 @@ public class HalServer {
     public static void main(String[] args) throws Exception {
         // init logging
         LogUtil.readConfiguration("logging.properties");
-        /*CompactLogFormatter formatter = new CompactLogFormatter();
-        LogUtil.setLevel("se.hal", Level.FINEST);
-        LogUtil.setFormatter("se.hal", formatter);
-        LogUtil.setLevel("zutil.db.bean", Level.INFO);
-        LogUtil.setLevel("zutil.net.http.pages", Level.INFO);
-        LogUtil.setLevel("zutil", Level.FINEST);
-        LogUtil.setFormatter("zutil", formatter);
-        LogUtil.setGlobalFormatter(formatter);*/
 
         // init Managers
         HalContext.initialize();

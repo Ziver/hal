@@ -5,6 +5,11 @@ package se.hal.intf;
  */
 public interface HalSensorController {
 
+    /**
+     * The framework might create dummy objects so any type of
+     * resource initialization should be handled in this method
+     * and not in the constructor.
+     */
     void initialize() throws Exception;
 
     /**

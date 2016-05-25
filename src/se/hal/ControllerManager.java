@@ -28,7 +28,7 @@ public class ControllerManager implements HalSensorReportListener,
     private static ControllerManager instance;
 
 
-    /** All available sensor plugins **/
+    /** All isAvailable sensor plugins **/
     private List<Class<?>> availableSensors = new ArrayList<>();
     /** List of all registered sensors **/
     private List<Sensor> registeredSensors = new ArrayList<>();
@@ -38,7 +38,7 @@ public class ControllerManager implements HalSensorReportListener,
     private List<Sensor> limboSensors = new LinkedList<>();
 
 
-    /** All available event plugins **/
+    /** All isAvailable event plugins **/
     private List<Class<?>> availableEvents = new ArrayList<>();
     /** List of all registered events **/
     private List<Event> registeredEvents = new ArrayList<>();
@@ -61,7 +61,7 @@ public class ControllerManager implements HalSensorReportListener,
             return;
         }
         if(!availableSensors.contains(sensor.getDeviceData().getClass())) {
-            logger.warning("Sensor data plugin not available: "+ sensor.getDeviceData().getClass());
+            logger.warning("Sensor data plugin not isAvailable: "+ sensor.getDeviceData().getClass());
             return;
         }
 
@@ -146,7 +146,7 @@ public class ControllerManager implements HalSensorReportListener,
             return;
         }
         if(!availableEvents.contains(event.getDeviceData().getClass())) {
-            logger.warning("Sensor data plugin not available: "+ event.getDeviceData().getClass());
+            logger.warning("Sensor data plugin not isAvailable: "+ event.getDeviceData().getClass());
             return;
         }
 
@@ -234,6 +234,11 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     /////////////////////////////// GENERAL ///////////////////////////////////
+    public void initializeScannableControllers(){
+
+    }
+
+
     @Override
     public void preConfigurationAction(Configurator configurator, Object obj) {
         if(obj instanceof HalSensorData) {
@@ -276,9 +281,15 @@ public class ControllerManager implements HalSensorReportListener,
             controller = controllerMap.get(c);
         else {
             // Instantiate controller
-            logger.info("Instantiating new controller: " + c.getName());
             try {
                 controller = c.newInstance();
+                if (controller instanceof HalAutoScannableController &&
+                        ! ((HalAutoScannableController)controller).isAvailable()) {
+                    logger.warning("Controller not available: "+c.getName());
+                    return null;
+                }
+                logger.info("Instantiating new controller: " + c.getName());
+
                 if(controller instanceof HalSensorController) {
                     ((HalSensorController) controller).setListener(this);
                     ((HalSensorController) controller).initialize();
@@ -292,13 +303,16 @@ public class ControllerManager implements HalSensorReportListener,
                 controllerMap.put(c, controller);
             } catch (Exception e){
                 logger.log(Level.SEVERE, "Unable to instantiate controller: "+c.getName(), e);
-                controller = null;
+                return null;
             }
         }
         return (T)controller;
     }
 
     private void removeControllerIfEmpty(Object controller){
+        if (controller instanceof HalAutoScannableController)
+            return; // Don't do anything if controller is scannable
+
         int size = Integer.MAX_VALUE;
         if(controller instanceof HalSensorController)
             size = ((HalSensorController) controller).size();
@@ -334,6 +348,11 @@ public class ControllerManager implements HalSensorReportListener,
             pluginIt = plugin.getClassIterator(HalEventData.class);
             while (pluginIt.hasNext()){
                 manager.availableEvents.add(pluginIt.next());
+            }
+
+            pluginIt = plugin.getClassIterator(HalAutoScannableController.class);
+            while (pluginIt.hasNext()){
+                manager.getControllerInstance(pluginIt.next()); // Instantiate controller
             }
         }
         instance = manager;

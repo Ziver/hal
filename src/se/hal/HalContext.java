@@ -53,6 +53,11 @@ public class HalContext {
             }
             else logger.info("No hal.conf file found");
 
+            if (FileUtil.find(DEFAULT_DB_FILE) == null){
+                logger.severe("Unable to find default DB: "+DEFAULT_DB_FILE);
+                System.exit(1);
+            }
+
             // Init DB
             File dbFile = FileUtil.find(DB_FILE);
             db = new DBConnection(DBConnection.DBMS.SQLite, DB_FILE);

@@ -2,4 +2,6 @@ http_port=8080
 sync_port=6666
 
 # Plugin configurations
-tellstick.com_port=COM5
+#tellstick.com_port=COM5
+#nutups.host=
+#nutups.port=

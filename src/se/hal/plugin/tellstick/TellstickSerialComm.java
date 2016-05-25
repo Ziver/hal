@@ -41,7 +41,8 @@ import java.util.logging.Logger;
  * This version of the TwoWaySerialComm example makes use of the
  * SerialPortEventListener to avoid polling.
  */
-public class TellstickSerialComm implements Runnable, HalSensorController, HalEventController {
+public class TellstickSerialComm implements Runnable,
+        HalSensorController, HalEventController, HalAutoScannableController {
     private static final long TRANSMISSION_UNIQUENESS_TTL = 1000; // milliseconds
     private static final Logger logger = LogUtil.getLogger();
 
@@ -65,16 +66,20 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
     }
 
     @Override
+    public boolean isAvailable() {
+        return HalContext.getStringProperty("tellstick.com_port") != null;
+    }
+    @Override
     public void initialize() throws Exception {
         // Read properties
         String port = HalContext.getStringProperty("tellstick.com_port");
         if (port == null)
             port = "COM1"; // defaults
 
-        connect(port);
+        initialize(port);
     }
 
-    public void connect(String portName) throws Exception {
+    public void initialize(String portName) throws Exception {
         logger.info("Connecting to com port... ("+ portName +")");
         serial = SerialPort.getCommPort(portName);
         serial.setBaudRate(9600);
@@ -85,9 +90,6 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
 
         in  = serial.getInputStream();
         out = serial.getOutputStream();
-        //in  = new InputStreamLogger(serial.getInputStream());
-        //out = new OutputStreamLogger(serial.getOutputStream());
-
 
         Executors.newSingleThreadExecutor().execute(this);
     }
@@ -241,4 +243,5 @@ public class TellstickSerialComm implements Runnable, HalSensorController, HalEv
     public void setListener(HalSensorReportListener listener) {
         sensorListener = listener;
     }
+
 }

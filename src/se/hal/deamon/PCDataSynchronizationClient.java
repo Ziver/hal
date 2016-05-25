@@ -140,7 +140,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
 	///////////////  DTO ///////////////////////
 
     /**
-     * Request Peer information and available sensors
+     * Request Peer information and isAvailable sensors
      */
     protected static class PeerDataReqDTO implements Serializable{}
 

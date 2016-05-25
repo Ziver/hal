@@ -2,6 +2,8 @@
 	"version": 1.0,
 	"name": "Tellstick",
 	"interfaces": [
+		{"se.hal.intf.HalAutoScannableController": "se.hal.plugin.tellstick.TellstickSerialComm"},
+
 		{"se.hal.intf.HalSensorData": "se.hal.plugin.tellstick.protocols.Oregon0x1A2D"},
 		{"se.hal.intf.HalEventData":  "se.hal.plugin.tellstick.protocols.NexaSelfLearning"}
 	]

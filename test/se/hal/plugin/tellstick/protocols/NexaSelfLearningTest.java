@@ -41,18 +41,15 @@ public class NexaSelfLearningTest {
         byte[] expected = Converter.toBytes(new char[]{
                         84, // T
                         127, 255, 24, 0, // timings
-                        132, // length
+                        134, // length
 
                         0xF9, // preamble
                         168, 168, 138, 168, 138, 138, 168, 168, 138, 138,
                         138, 168, 138, 168, 168, 168, 168, 168, 168, 138,
                         138, 168, 168, 138, 138, 168, 168, 138, 168, 168,
                         168, 168,
+                        0x00, // postemble
 
-                        /*154, 138, 136, 170, 136, 168, 170, 138, 136, 168,
-                        168, 170, 136, 170, 138, 138, 138, 138, 138, 136,
-                        168, 170, 138, 136, 168, 170, 138, 136, 170, 138,
-                        136, 168, 170,*/
                         43}); // +
         byte[] actual = nexa.encode().getBytes(StandardCharsets.ISO_8859_1);
 
@@ -69,9 +66,8 @@ public class NexaSelfLearningTest {
         assertEquals("House Code", 11772006, nexa.getHouse());
         assertEquals("Unit Code", 0, nexa.getUnit());
         assertTrue("Enabled", nexa.isOn());
-
-
     }
+
     @org.junit.Test
     public void decode_OFF() throws Exception {
         NexaSelfLearning nexa = decode("0x2CE81980");

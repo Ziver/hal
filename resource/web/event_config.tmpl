@@ -113,11 +113,13 @@
             // Set dynamic data
             modal.find("select[name=type]").val(button.data("type"));
             modal.find("select[name=type]").change(); // Update dynamic inputs
-            $.each(button.attr(), function(name, value) {
-                if(name.startsWith("data-")) {
-                    name = name.substring(5);
-                    console.log(name, value);
-                    modal.find("input[name="+name+"]").val(value);
+            $.each(button.attr(), function(fieldName, value) {
+                if(fieldName.startsWith("data-")) {
+                    fieldName = fieldName.substring(5);
+                    // case insensitive search
+                    modal.find("input").filter(function() {
+                           return this.name.toLowerCase() == fieldName;
+                    }).val(value);
                 }
             });
         });

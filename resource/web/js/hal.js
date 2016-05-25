@@ -28,6 +28,7 @@ $(function(){
     };
 })($.fn.attr);
 
+// converts all timestamps to human readable time and date
 $.fn.relTimestamp = function() {
     return this.each(function() {
         var timestamp = parseInt($(this).text());

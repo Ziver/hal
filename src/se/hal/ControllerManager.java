@@ -115,7 +115,8 @@ public class ControllerManager implements HalSensorReportListener,
                 db.exec(stmt);
             }
             else { // unknown sensor
-                logger.finest("Received report from unregistered sensor: "+ sensorData);
+                logger.finest("Received report from unregistered sensor" +
+                        "("+sensorData.getClass().getSimpleName()+"): "+ sensorData);
                 sensor = findSensor(sensorData, detectedSensors);
                 if(sensor == null) {
                     sensor = new Sensor();
@@ -200,7 +201,8 @@ public class ControllerManager implements HalSensorReportListener,
                 db.exec(stmt);
             }
             else { // unknown sensor
-                logger.info("Received report from unregistered event: "+ eventData);
+                logger.info("Received report from unregistered event" +
+                        "("+eventData.getClass().getSimpleName()+"): "+ eventData);
                 event = findEvent(eventData, detectedEvents);
                 if(event == null) {
                     event = new Event();

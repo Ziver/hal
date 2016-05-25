@@ -43,11 +43,14 @@ public class NutUpsDevice implements PowerConsumptionSensorData{
         return false;
     }
 
-
+    public String toString(){
+        return "id: "+deviceId +
+                ", consumption: "+consumption;
+    }
 
     @Override
     public AggregationMethod getAggregationMethod() {
-        return AggregationMethod.SUM;
+        return AggregationMethod.AVERAGE;
     }
     @Override
     public Class<? extends HalSensorController> getSensorController() {

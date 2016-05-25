@@ -5,16 +5,20 @@ import se.hal.intf.HalAutoScannableController;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
 import se.hal.intf.HalSensorReportListener;
+import zutil.log.LogUtil;
 import zutil.osal.app.linux.NutUPSClient;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Ziver on 2016-05-25.
  */
 public class NutUpsController implements HalSensorController, HalAutoScannableController, Runnable{
+    public static Logger logger = LogUtil.getLogger();
     private static final int SYNC_INTERVAL = 60 * 1000;
 
     private NutUPSClient client;
@@ -49,10 +53,14 @@ public class NutUpsController implements HalSensorController, HalAutoScannableCo
 
     @Override
     public void run() {
-        if(client != null && listener != null){
-            for (NutUPSClient.UPSDevice ups : client.getUPSList()){
-                listener.reportReceived(new NutUpsDevice(ups));
+        try {
+            if (client != null && listener != null) {
+                for (NutUPSClient.UPSDevice ups : client.getUPSList()) {
+                    listener.reportReceived(new NutUpsDevice(ups));
+                }
             }
+        } catch (Exception e){
+            logger.log(Level.SEVERE, "NutUps thread crashed", e);
         }
     }
 

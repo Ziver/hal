@@ -5,7 +5,7 @@
         Morris.Line({
             element: "chart",
             data: [
-                { x: (Date.now()-7*24*60*60*1000) },
+                { x: (Date.now()-24*60*60*1000) },
                 {{#aggregation}}
                     { x: {{.timestamp}}, data: {{.data}} },
                 {{/aggregation}}

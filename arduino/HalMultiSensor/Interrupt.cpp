@@ -6,25 +6,15 @@
 #include "HalInterfaces.h"
 
 void emptyFunc(){}
-InterruptFunction Interrupt::callback = emptyFunc;
 bool Interrupt::wakeUpNow = false;
+InterruptFunction Interrupt::pinCallback = emptyFunc;
+InterruptFunction Interrupt::wdtCallback = emptyFunc;
 
 
-void __interruptHandler__()        // the interrupt is handled here after wakeup
+void Interrupt::handlePinInterrupt()        // the interrupt is handled here after wakeup
 {
-  // execute code here after wake-up before returning to the loop() function
-  // timers and code using timers (serial.print and more...) will not work here.
-
-    noInterrupts(); // disable all interrupts
-    (Interrupt::getCallback()) ();
-    interrupts(); // enable all interrupts
-    Interrupt::wakeUp();
-
-}
-
-void Interrupt::wakeUp()
-{
-    wakeUpNow = true;
+    (*Interrupt::pinCallback) ();
+    //Interrupt::wakeUp();
 }
 
 void Interrupt::sleep()
@@ -81,7 +71,7 @@ void Interrupt::setupPinInterrupt(int pin)
      *
      * In all but the IDLE sleep modes only LOW can be used.
      */
-    attachInterrupt((pin == PIND2 ? 0 : 1), __interruptHandler__, LOW);
+    attachInterrupt((pin == PIND2 ? 0 : 1), Interrupt::handlePinInterrupt, LOW);
 
     //detachInterrupt(0);      // disables interrupt 0 on pin 2 so the
                              // wakeUpNow code will not be executed
@@ -93,9 +83,9 @@ void Interrupt::setupPinInterrupt(int pin)
 // Watchdog timer
 unsigned int wdtTime;
 long wdtTimeLeft;
-void __setWatchDogInterrupt();
 
-ISR(WDT_vect)
+
+void Interrupt::handleWatchDogInterrupt()
 {
     //DEBUG("WDT Interrupt");
     wdt_disable();
@@ -103,19 +93,24 @@ ISR(WDT_vect)
     {
         DEBUG("WDT interrupt");
         Interrupt::wakeUp();
-        __interruptHandler__();
+        (*Interrupt::wdtCallback) ();
         wdtTimeLeft = wdtTime;
     }
-    __setWatchDogInterrupt();
+    setupWatchDogInterrupt();
+}
+
+ISR(WDT_vect)
+{
+    Interrupt::handleWatchDogInterrupt();
 }
 
 void Interrupt::setupWatchDogInterrupt(unsigned int milliseconds)
 {
     wdtTimeLeft = wdtTime = milliseconds;
-    __setWatchDogInterrupt();
+    setupWatchDogInterrupt();
 }
 
-void __setWatchDogInterrupt()
+void Interrupt::setupWatchDogInterrupt()
 {
     noInterrupts();
 
@@ -194,7 +189,7 @@ void __setWatchDogInterrupt()
 ISR(Timer1_COMPA_vect) // timer compare interrupt service routine
 {
     //DEBUG("Timer1e Interrupt");
-    __interruptHandler__();
+    __pinInterruptHandler__();
 }
 */
 /*

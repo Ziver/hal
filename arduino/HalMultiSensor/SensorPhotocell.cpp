@@ -9,7 +9,7 @@ void SensorPhotocell::interruptHandler()
 
 void SensorPhotocell::setup()
 {
-    Interrupt::setCallback(SensorPhotocell::interruptHandler);
+    Interrupt::setPinCallback(SensorPhotocell::interruptHandler);
     Interrupt::setupPinInterrupt(PC2); //PC3
 }
 

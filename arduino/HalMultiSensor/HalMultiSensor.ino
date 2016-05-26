@@ -61,7 +61,7 @@ void setup()
     #endif
 
     DEBUG("Setup INTERRUPT");
-    Interrupt::setCallback(timerInterruptFunc);
+    Interrupt::setWatchDogCallback(timerInterruptFunc);
     Interrupt::setupWatchDogInterrupt(TIMER_MILLISECOND); // one minute scheduled interrupt
 
 

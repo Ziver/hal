@@ -51,7 +51,8 @@ public class SensorOverviewHttpPage extends HalHttpPage {
             Templator tmpl = new Templator(FileUtil.find(DETAIL_TEMPLATE));
             tmpl.set("sensor", sensor);
             tmpl.set("history", history);
-            tmpl.set("aggregation", AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.HOUR, UTCTimeUtility.WEEK_IN_MS));
+            tmpl.set("aggregation",
+                    AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.FIVE_MINUTES, UTCTimeUtility.DAY_IN_MS));
             return tmpl;
         }
         else {

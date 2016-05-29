@@ -3,7 +3,7 @@
 
 /////// SENSORS
 #include "SensorBH1750.h"
-#include "SensorDHT11.h"
+#include "SensorDHT.h"
 #include "SensorPhotocell.h"
 
 //////// PROTOCOLS

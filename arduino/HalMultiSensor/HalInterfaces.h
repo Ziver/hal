@@ -69,7 +69,7 @@ public:
 struct TemperatureData
 {
     float temperature;
-    short humidity;
+    float humidity;
 };
 class SensorTemperature : public Sensor
 {

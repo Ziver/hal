@@ -70,19 +70,25 @@ public class PCDataSynchronizationClient implements HalDaemon {
                     user.save(db);
 
                     for(SensorDTO sensorDTO : peerData.sensors){
-                        Sensor sensor = Sensor.getExternalSensor(db, user, sensorDTO.sensorId);
-                        if(sensor == null) { // new sensor
-                            sensor = new Sensor();
-                            logger.fine("Created new external sensor with external_id: "+ sensorDTO.sensorId);
-                        }
-                        else
-                            logger.fine("Updating external sensor with id: "+ sensor.getId() +" and external_id: "+ sensor.getExternalId());
-                        sensor.setExternalId(sensorDTO.sensorId);
-                        sensor.setName(sensorDTO.name);
-                        sensor.setType(sensorDTO.type);
-                        sensor.getDeviceConfig().setValues(JSONParser.read(sensorDTO.config)).applyConfiguration();
-						sensor.setUser(user);
-                        sensor.save(db);
+						try { // We might not have the sensor plugin installed
+							Sensor sensor = Sensor.getExternalSensor(db, user, sensorDTO.sensorId);
+							if(sensor == null) { // new sensor
+								sensor = new Sensor();
+								logger.fine("Created new external sensor with external_id: "+ sensorDTO.sensorId);
+							}
+							else
+								logger.fine("Updating external sensor with id: "+ sensor.getId() +" and external_id: "+ sensor.getExternalId());
+							sensor.setExternalId(sensorDTO.sensorId);
+							sensor.setName(sensorDTO.name);
+							sensor.setType(sensorDTO.type);
+							sensor.setUser(user);
+
+							sensor.getDeviceConfig().setValues(JSONParser.read(sensorDTO.config)).applyConfiguration();
+							sensor.save(db);
+						} catch (Exception e){
+							logger.warning("Unable to register external sensor: " +
+									"name="+sensorDTO.name+", type="+ sensorDTO.type);
+						}
                     }
 
                     // Request sensor data

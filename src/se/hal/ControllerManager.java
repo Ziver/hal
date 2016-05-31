@@ -106,7 +106,7 @@ public class ControllerManager implements HalSensorReportListener,
             Sensor sensor = findSensor(sensorData, registeredSensors);
 
             if (sensor != null) {
-                logger.finest("Received report from sensor: "+ sensorData);
+                logger.finest("Received report from sensor("+sensorData.getClass().getSimpleName()+"): "+ sensorData);
                 PreparedStatement stmt =
                         db.getPreparedStatement("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUES(?, ?, ?)");
                 stmt.setLong(1, sensorData.getTimestamp());
@@ -192,7 +192,7 @@ public class ControllerManager implements HalSensorReportListener,
             Event event = findEvent(eventData, registeredEvents);
 
             if (event != null) {
-                logger.finest("Received report from event: "+ eventData);
+                logger.finest("Received report from event("+eventData.getClass().getSimpleName()+"): "+ eventData);
                 PreparedStatement stmt =
                         db.getPreparedStatement("INSERT INTO event_data_raw (timestamp, event_id, data) VALUES(?, ?, ?)");
                 stmt.setLong(1, eventData.getTimestamp());

@@ -60,7 +60,7 @@ void setup()
     lightProtocol->setup();
     #endif
 
-    DEBUG("Setup INTERRUPT");
+    DEBUG("Setup SLEEP_INTERRUPT");
     Interrupt::setWatchDogCallback(timerInterruptFunc);
     Interrupt::setupWatchDogInterrupt(TIMER_MILLISECOND); // one minute scheduled interrupt
 
@@ -80,7 +80,7 @@ void timerInterruptFunc()
 void loop()
 {
     digitalWrite(INDICATOR_PIN, HIGH);
-    noInterrupts();
+    //noInterrupts();
 
     // Send power consumption
     #ifdef POWERCON_ENABLED
@@ -115,7 +115,7 @@ void loop()
     }
     #endif
 
-    interrupts();
+    //interrupts();
     digitalWrite(INDICATOR_PIN, LOW);
 
     DEBUG("Sleeping");

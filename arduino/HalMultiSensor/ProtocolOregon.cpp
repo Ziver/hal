@@ -49,7 +49,7 @@ void ProtocolOregon::send(float temperature, short humidity)
  * \param data Oregon message
  * \param type Sensor type
  */
-inline void ProtocolOregon::setType(byte *data, byte b1, byte b2)
+inline void ProtocolOregon::setType(byte data[], byte b1, byte b2)
 {
   data[0] = b1;
   data[1] = b2;
@@ -60,13 +60,13 @@ inline void ProtocolOregon::setType(byte *data, byte b1, byte b2)
  * \param data Oregon message
  * \param channel Sensor channel (0x10, 0x20, 0x30)
  */
-inline void ProtocolOregon::setChannel(byte *data, byte channel)
+inline void ProtocolOregon::setChannel(byte data[], byte channel)
 {
   data[2] = channel;
 }
 
 
-inline void ProtocolOregon::setId(byte *data, byte id)
+inline void ProtocolOregon::setId(byte data[], byte id)
 {
   data[3] = id;
 }
@@ -74,13 +74,13 @@ inline void ProtocolOregon::setId(byte *data, byte id)
 /**
  * \param   level     false: low, true: high
  */
-inline void ProtocolOregon::setBatteryLevel(byte *data, bool level)
+inline void ProtocolOregon::setBatteryLevel(byte data[], bool level)
 {
   if(!level) data[4] = 0x0C;
   else data[4] = 0x00;
 }
 
-inline void ProtocolOregon::setTemperature(byte *data, float temp)
+inline void ProtocolOregon::setTemperature(byte data[], float temp)
 {
   // Set temperature sign
   if(temp < 0)
@@ -108,13 +108,13 @@ inline void ProtocolOregon::setTemperature(byte *data, float temp)
   data[4] |= (tempFloat << 4);
 }
 
-inline void ProtocolOregon::setHumidity(byte* data, byte hum)
+inline void ProtocolOregon::setHumidity(byte data[], byte hum)
 {
   data[7] = (hum/10);
   data[6] |= (hum - data[7]*10) << 4;
 }
 
-inline void ProtocolOregon::calculateAndSetChecksum(byte* data)
+inline void ProtocolOregon::calculateAndSetChecksum(byte data[])
 {
   int sum = 0;
   for(byte i = 0; i<8;i++)
@@ -173,9 +173,9 @@ inline void ProtocolOregon::sendOne(void)
  * \param data Data to send
  * \param length size of data array
  */
-void ProtocolOregon::sendData(byte *data, byte length)
+void ProtocolOregon::sendData(byte data[], byte length)
 {
-  for(byte i = 0; i < length; ++i)
+  for (byte i=0; i<length; ++i)
   {
     (bitRead(data[i], 0)) ? sendOne() : sendZero();
     (bitRead(data[i], 1)) ? sendOne() : sendZero();
@@ -192,7 +192,7 @@ void ProtocolOregon::sendData(byte *data, byte length)
  * \brief Send an Oregon message
  * \param data The Oregon message
  */
-void ProtocolOregon::rfSend(byte *data, byte size)
+void ProtocolOregon::rfSend(byte data[], byte size)
 {
     // Send preamble
     byte preamble[] = { 0xFF,0xFF };

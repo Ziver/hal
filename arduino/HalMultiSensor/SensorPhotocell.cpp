@@ -1,9 +1,14 @@
 #include "SensorPhotocell.h"
 #include <Arduino.h>
 
+unsigned int SensorPhotocell::pulse = 0;
+
 void SensorPhotocell::interruptHandler()
 {
+    digitalWrite(INDICATOR_PIN, HIGH);
+    DEBUG("PHCELL: INTERRUPT");
     ++pulse;
+    digitalWrite(INDICATOR_PIN, LOW);
 }
 
 

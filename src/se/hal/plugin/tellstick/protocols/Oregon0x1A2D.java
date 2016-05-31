@@ -2,12 +2,16 @@ package se.hal.plugin.tellstick.protocols;
 
 import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.struct.PowerConsumptionSensorData;
+import zutil.log.LogUtil;
 import zutil.ui.Configurator;
+
+import java.util.logging.Logger;
 
 /**
  * Created by Ziver on 2015-11-19.
  */
 public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionSensorData {
+    private static final Logger logger = LogUtil.getLogger();
 
     @Configurator.Configurable("Address")
     private int address = 0;
@@ -29,34 +33,26 @@ public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionS
     public void decode(byte[] data) {
         //class:sensor;protocol:oregon;model:0x1A2D;data:20BA000000002700;
 
-        // checksum2 not used yet
-        // int checksum2 = data[0];
-        int checksum1 = data[1];
+        // int channel = (data[0] >> 4) & 0x7; // channel not used
+        address = data[1] & 0xFF;
+        int temp3 = (data[2] >> 4) & 0xF;
+        int temp1 = (data[3] >> 4) & 0xF;
+        int temp2 = data[3] & 0xF;
+        int hum2 = (data[4] >> 4) & 0xF;
+        boolean negative = (data[4] & (1 << 3)) > 0;
+        int hum1 = data[5] & 0xF;
+        int checksum = data[6];
 
-        int checksum = ((data[2] >> 4) & 0xF) + (data[2] & 0xF);
-        int hum1 = data[2] & 0xF;
+        int calcChecksum = ((data[5] >> 4) & 0xF) + (data[5] & 0xF);
+        calcChecksum += ((data[4] >> 4) & 0xF) + (data[4] & 0xF);
+        calcChecksum += ((data[3] >> 4) & 0xF) + (data[3] & 0xF);
+        calcChecksum += ((data[2] >> 4) & 0xF) + (data[2] & 0xF);
+        calcChecksum += ((data[1] >> 4) & 0xF) + (data[1] & 0xF);
+        calcChecksum += ((data[0] >> 4) & 0xF) + (data[0] & 0xF);
+        calcChecksum += 0x1 + 0xA + 0x2 + 0xD - 0xA;
 
-        checksum += ((data[3] >> 4) & 0xF) + (data[3] & 0xF);
-        boolean negative = (data[3] & (1 << 3)) > 0;
-        int hum2 = (data[3] >> 4) & 0xF;
-
-        checksum += ((data[4] >> 4) & 0xF) + (data[4] & 0xF);
-        int temp2 = data[4] & 0xF;
-        int temp1 = (data[4] >> 4) & 0xF;
-
-        checksum += ((data[5] >> 4) & 0xF) + (data[5] & 0xF);
-        int temp3 = (data[5] >> 4) & 0xF;
-
-        checksum += ((data[6] >> 4) & 0xF) + (data[6] & 0xF);
-        address = data[6] & 0xFF;
-
-        checksum += ((data[7] >> 4) & 0xF) + (data[7] & 0xF);
-        // channel not used
-        // uint8_t channel = (data[7] >> 4) & 0x7;
-
-        checksum += 0x1 + 0xA + 0x2 + 0xD - 0xA;
-
-        if (checksum != checksum1) {
+        if (calcChecksum != checksum) {
+            logger.fine("Checksum failed, address: "+address);
             return;
         }
 

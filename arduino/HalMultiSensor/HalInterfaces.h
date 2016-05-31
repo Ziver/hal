@@ -1,13 +1,12 @@
 #ifndef HALINTERFACES_H
 #define HALINTERFACES_H
 
+#include <Arduino.h>
 #include "HalConfiguration.h"
 
 // Utility functions
 
 #ifdef ENABLE_DEBUG
-    #include <Arduino.h>
-
     #define DEBUG(msg) \
         Serial.println(msg); \
         Serial.flush();

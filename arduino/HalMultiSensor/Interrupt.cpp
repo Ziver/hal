@@ -71,7 +71,7 @@ void Interrupt::setupPinInterrupt(int pin)
      *
      * In all but the IDLE sleep modes only LOW can be used.
      */
-    attachInterrupt((pin == PIND2 ? 0 : 1), Interrupt::handlePinInterrupt, LOW);
+    attachInterrupt((pin == PIND2 ? 0 : 1), Interrupt::handlePinInterrupt, RISING);
 
     //detachInterrupt(0);      // disables interrupt 0 on pin 2 so the
                              // wakeUpNow code will not be executed

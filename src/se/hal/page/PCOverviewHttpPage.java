@@ -34,7 +34,7 @@ public class PCOverviewHttpPage extends HalHttpPage {
 		DBConnection db = HalContext.getDB();
 
 		List<User> users = User.getUsers(db);
-
+		ArrayList<Sensor> sensors = new ArrayList<>();
 		ArrayList<AggregateData> minDataList = new ArrayList<>();
 		ArrayList<AggregateData> hourDataList = new ArrayList<>();
 		ArrayList<AggregateData> dayDataList = new ArrayList<>();
@@ -43,6 +43,7 @@ public class PCOverviewHttpPage extends HalHttpPage {
 		for(User user : users){
 			List<Sensor> userSensors = Sensor.getSensors(db, user);
 			for(Sensor sensor : userSensors){
+                sensors.add(sensor);
 				minDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.FIVE_MINUTES, UTCTimeUtility.DAY_IN_MS));
 
 				hourDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.HOUR, UTCTimeUtility.WEEK_IN_MS));
@@ -55,11 +56,12 @@ public class PCOverviewHttpPage extends HalHttpPage {
 
 
 		Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
+        tmpl.set("users", User.getUsers(db));
+        tmpl.set("sensors", sensors);
 		tmpl.set("minData", minDataList);
 		tmpl.set("hourData", hourDataList);
 		tmpl.set("dayData", dayDataList);
 		tmpl.set("weekData", weekDataList);
-		tmpl.set("username", User.getUsers(db));
 
 		return tmpl;
 	}

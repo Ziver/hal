@@ -2,19 +2,19 @@
 
 <div class="row placeholders">
     <H1>Last 24 hours (kWh/5min)</H1>
-    <div id="min-power-chart" style="height:450px;"></div>
+    <div id="min-power-chart" style="height:350px;"></div>
 </div>
 <div class="row placeholders">
     <H1>Last Week (kWh/h)</H1>
-    <div id="hour-power-chart" style="height:450px;"></div>
+    <div id="hour-power-chart" style="height:350px;"></div>
 </div>
 <div class="row placeholders">
     <H1>All History (kWh/day)</H1>
-    <div id="day-power-chart" style="height:450px;"></div>
+    <div id="day-power-chart" style="height:350px;"></div>
 </div>
 <div class="row placeholders">
     <H1>All History (kWh/week)</H1>
-    <div id="week-power-chart" style="height:450px;"></div>
+    <div id="week-power-chart" style="height:350px;"></div>
 </div>
 
 <script>
@@ -23,7 +23,7 @@
 				[
 				{ y: (Date.now()-24*60*60*1000) },
 				{{#minData}}  
-					{ y: {{.timestamp}}, "{{.username}}": {{.data}} },
+					{ y: {{.timestamp}}, "{{.id}}": {{.data}} },
 				{{/minData}}
 				{ y: Date.now() }
 				]
@@ -32,34 +32,34 @@
 				[
 				{ y: (Date.now()-7*24*60*60*1000) },
 				{{#hourData}}  
-					{ y: {{.timestamp}}, "{{.username}}": {{.data}} },
+					{ y: {{.timestamp}}, "{{.id}}": {{.data}} },
 				{{/hourData}}
 				{ y: Date.now() }
 				]
 		);
 		chartData("day-power-chart", 
 				[{{#dayData}}  
-					{ y: {{.timestamp}}, "{{.username}}": {{.data}} },
+					{ y: {{.timestamp}}, "{{.id}}": {{.data}} },
 				{{/dayData}}
 				{ y: Date.now() }
 				]
 		);
 		chartData("week-power-chart", 
 				[{{#weekData}}  
-					{ y: {{.timestamp}}, "{{.username}}": {{.data}} },
+					{ y: {{.timestamp}}, "{{.id}}": {{.data}} },
 				{{/weekData}}
 				{ y: Date.now() }
 				]
 		);
 	});
-    var userArray = [ {{#username}} "{{.getUsername()}}", {{/username}} ];
+
     function chartData(elementId, data){
         Morris.Line({
               element: elementId,
               data: data,
               xkey: 'y',
-              ykeys: userArray,
-              labels: userArray,
+              ykeys: [ {{#sensors}} "{{.getId()}}", {{/sensors}} ],
+              labels: [ {{#sensors}} "{{.getUser().getUsername()}}: {{.getName()}}", {{/sensors}} ],
               continuousLine: false,
               pointSize: 1,
               postUnits: 'kWh',

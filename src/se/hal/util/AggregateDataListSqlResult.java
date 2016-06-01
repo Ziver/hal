@@ -15,10 +15,13 @@ import java.util.List;
 public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<AggregateDataListSqlResult.AggregateData>> {
 
 	public static class AggregateData {
+        public int id;
 		public long timestamp;
 		public String data;
 		public String username;
-		public AggregateData(long time, String data, String uname) {
+
+		public AggregateData(int id, long time, String data, String uname) {
+            this.id = id;
 			this.timestamp = time;
 			this.data = data;
 			this.username = uname;
@@ -28,10 +31,8 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
     public static List<AggregateData> getAggregateDataForPeriod(DBConnection db, Sensor sensor, AggregationPeriodLength aggrPeriodLength, long ageLimitInMs) throws SQLException {
     	PreparedStatement stmt = db.getPreparedStatement(
                 "SELECT user.username as username,"
-                        + " sensor_data_aggr.timestamp_start as timestamp_start,"
-                        + " sensor_data_aggr.timestamp_end as timestamp_end,"
-                        + " sensor_data_aggr.data as data,"
-                        + " sensor_data_aggr.confidence as confidence "
+                        + " sensor.*,"
+                        + " sensor_data_aggr.*"
                         + " FROM sensor_data_aggr, user, sensor"
                         + " WHERE sensor.id = sensor_data_aggr.sensor_id"
                         + " AND sensor.id = ?"
@@ -63,6 +64,7 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
 		long previousTimestampEnd = -1;
 		while(result.next()){
 
+            int id = result.getInt("id");
 			long timestampStart = result.getLong("timestamp_start");
 			long timestampEnd = result.getLong("timestamp_end");
 			String username = result.getString("username");
@@ -74,10 +76,10 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
 
 			//add null data point to list if one or more periods of data is missing before this
 			if(previousTimestampEnd != -1 && previousTimestampEnd+1 < timestampStart){
-				list.add(new AggregateData(previousTimestampEnd+1, "null", username));
+				list.add(new AggregateData(id, previousTimestampEnd+1, "null", username));
 			}
 
-			list.add(new AggregateData(timestampEnd, ""+ (estimatedData/1000.0), username));	//add this data point to list
+			list.add(new AggregateData(id, timestampEnd, ""+ (estimatedData/1000.0), username));	//add this data point to list
 
 			//update previous end timestamp
 			previousTimestampEnd = timestampEnd;

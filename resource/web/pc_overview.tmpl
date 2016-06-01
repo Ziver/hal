@@ -21,34 +21,34 @@
     $(function(){
 		chartData("min-power-chart", 
 				[
-				{ y: (Date.now()-24*60*60*1000) },
+				{ time: (Date.now()-24*60*60*1000) },
 				{{#minData}}  
-					{ y: {{.timestamp}}, "{{.id}}": {{.data}} },
+					{ time: {{.timestamp}}, "{{.id}}": {{.data}} },
 				{{/minData}}
-				{ y: Date.now() }
+				{ time: Date.now() }
 				]
 		);
 		chartData("hour-power-chart", 
 				[
-				{ y: (Date.now()-7*24*60*60*1000) },
+				{ time: (Date.now()-7*24*60*60*1000) },
 				{{#hourData}}  
-					{ y: {{.timestamp}}, "{{.id}}": {{.data}} },
+					{ time: {{.timestamp}}, "{{.id}}": {{.data}} },
 				{{/hourData}}
-				{ y: Date.now() }
+				{ time: Date.now() }
 				]
 		);
 		chartData("day-power-chart", 
 				[{{#dayData}}  
-					{ y: {{.timestamp}}, "{{.id}}": {{.data}} },
+					{ time: {{.timestamp}}, "{{.id}}": {{.data}} },
 				{{/dayData}}
-				{ y: Date.now() }
+				{ time: Date.now() }
 				]
 		);
 		chartData("week-power-chart", 
 				[{{#weekData}}  
-					{ y: {{.timestamp}}, "{{.id}}": {{.data}} },
+					{ time: {{.timestamp}}, "{{.id}}": {{.data}} },
 				{{/weekData}}
-				{ y: Date.now() }
+				{ time: Date.now() }
 				]
 		);
 	});
@@ -57,7 +57,7 @@
         Morris.Line({
               element: elementId,
               data: data,
-              xkey: 'y',
+              xkey: 'time',
               ykeys: [ {{#sensors}} "{{.getId()}}", {{/sensors}} ],
               labels: [ {{#sensors}} "{{.getUser().getUsername()}}: {{.getName()}}", {{/sensors}} ],
               continuousLine: false,

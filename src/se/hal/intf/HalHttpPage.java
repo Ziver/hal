@@ -9,7 +9,9 @@ import zutil.io.file.FileUtil;
 import zutil.net.http.HttpHeader;
 import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
+import zutil.parser.DataNode;
 import zutil.parser.Templator;
+import zutil.parser.json.JSONWriter;
 
 import java.io.IOException;
 import java.util.Map;
@@ -46,17 +48,26 @@ public abstract class HalHttpPage implements HttpPage{
                         Map<String, String> request) throws IOException {
 
         try {
-            DBConnection db = HalContext.getDB();
+            if(this instanceof HalJsonPage &&
+                    (("application/json").equals(client_info.getHeader("ContentType")) ||
+                    request.containsKey("json"))){
+                out.setHeader("Content-Type", "application/json");
+                JSONWriter writer = new JSONWriter(out);
+                writer.write(((HalJsonPage)this).jsonResponse(session,cookie, request));
+                writer.close();
+            }
+            else{
+                DBConnection db = HalContext.getDB();
 
-            Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
-            tmpl.set("user", User.getLocalUser(db));
-            tmpl.set("nav", nav.getNavBreadcrumb().get(1));
-            tmpl.set("rootNav", rootNav);
-            tmpl.set("userNav", userNav);
-            tmpl.set("alerts", HalAlertManager.getInstance().generateAlerts());
-            tmpl.set("content", httpRespond(session, cookie, request));
-            out.print(tmpl.compile());
-
+                Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
+                tmpl.set("user", User.getLocalUser(db));
+                tmpl.set("nav", nav.getNavBreadcrumb().get(1));
+                tmpl.set("rootNav", rootNav);
+                tmpl.set("userNav", userNav);
+                tmpl.set("alerts", HalAlertManager.getInstance().generateAlerts());
+                tmpl.set("content", httpRespond(session, cookie, request));
+                out.print(tmpl.compile());
+            }
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -76,4 +87,13 @@ public abstract class HalHttpPage implements HttpPage{
             Map<String, String> cookie,
             Map<String, String> request)
                 throws Exception;
+
+
+    public interface HalJsonPage{
+        DataNode jsonResponse(
+                Map<String, Object> session,
+                Map<String, String> cookie,
+                Map<String, String> request)
+                    throws Exception;
+    }
 }

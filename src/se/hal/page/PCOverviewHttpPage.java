@@ -41,26 +41,11 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
         ArrayList<AggregateData> hourDataList = new ArrayList<>();
         ArrayList<AggregateData> dayDataList = new ArrayList<>();
         ArrayList<AggregateData> weekDataList = new ArrayList<>();
-
         List<Sensor> sensors = getSensorList(db);
-        for (Sensor sensor : sensors) {
-            minDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.FIVE_MINUTES, UTCTimeUtility.DAY_IN_MS));
-
-            hourDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.HOUR, UTCTimeUtility.WEEK_IN_MS));
-
-            dayDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.DAY, UTCTimeUtility.INFINITY));
-
-            weekDataList.addAll(AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.WEEK, UTCTimeUtility.INFINITY));
-        }
-
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("users", User.getUsers(db));
         tmpl.set("sensors", sensors);
-        tmpl.set("minData", minDataList);
-        tmpl.set("hourData", hourDataList);
-        tmpl.set("dayData", dayDataList);
-        tmpl.set("weekData", weekDataList);
 
         return tmpl;
     }
@@ -75,33 +60,40 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
         DBConnection db = HalContext.getDB();
         List<Sensor> sensors = getSensorList(db);
 
-        if (request.get("data").contains("minute")) {
+        if (request.containsKey("data")) {
             DataNode node = new DataNode(DataNode.DataType.List);
-            for (Sensor sensor : sensors)
-                addAggregateDataToDataNode(node,
-                        AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.FIVE_MINUTES, UTCTimeUtility.DAY_IN_MS));
-            root.set("minuteData", node);
-        }
-        if (request.get("data").contains("hour")) {
-            DataNode node = new DataNode(DataNode.DataType.List);
-            for (Sensor sensor : sensors)
-                addAggregateDataToDataNode(node,
-                        AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.HOUR, UTCTimeUtility.WEEK_IN_MS));
-            root.set("minuteData", node);
-        }
-        if (request.get("data").contains("day")) {
-            DataNode node = new DataNode(DataNode.DataType.List);
-            for (Sensor sensor : sensors)
-                addAggregateDataToDataNode(node,
-                        AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.DAY, UTCTimeUtility.INFINITY));
-            root.set("minuteData", node);
-        }
-        if (request.get("data").contains("week")) {
-            DataNode node = new DataNode(DataNode.DataType.List);
-            for (Sensor sensor : sensors)
-                addAggregateDataToDataNode(node,
-                        AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.WEEK, UTCTimeUtility.INFINITY));
-            root.set("minuteData", node);
+            if (request.get("data").equals("minute")) {
+                DataNode nowTime = new DataNode(DataNode.DataType.Map);
+                nowTime.set("time", System.currentTimeMillis()-24*60*60*1000);
+                node.add(nowTime);
+                for (Sensor sensor : sensors)
+                    addAggregateDataToDataNode(node,
+                            AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.FIVE_MINUTES, UTCTimeUtility.DAY_IN_MS));
+            }
+            else if (request.get("data").equals("hour")) {
+                DataNode nowTime = new DataNode(DataNode.DataType.Map);
+                nowTime.set("time", System.currentTimeMillis()-7*24*60*60*1000);
+                node.add(nowTime);
+                for (Sensor sensor : sensors)
+                    addAggregateDataToDataNode(node,
+                            AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.HOUR, UTCTimeUtility.WEEK_IN_MS));
+            }
+            else if (request.get("data").equals("day")) {
+                for (Sensor sensor : sensors)
+                    addAggregateDataToDataNode(node,
+                            AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.DAY, UTCTimeUtility.INFINITY));
+            }
+            else if (request.get("data").equals("week")) {
+                for (Sensor sensor : sensors)
+                    addAggregateDataToDataNode(node,
+                            AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.WEEK, UTCTimeUtility.INFINITY));
+            }
+
+            DataNode nowTime = new DataNode(DataNode.DataType.Map);
+            nowTime.set("time", System.currentTimeMillis());
+            node.add(nowTime);
+
+            root.set("data", node);
         }
 
         return root;
@@ -111,7 +103,10 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
         for (AggregateDataListSqlResult.AggregateData data : dataList) {
             DataNode dataNode = new DataNode(DataNode.DataType.Map);
             dataNode.set("time", data.timestamp);
-            dataNode.set("" + data.id, data.data);
+            if (data.data == Float.NaN)
+                dataNode.set("" + data.id, (String)null);
+            else
+                dataNode.set("" + data.id, data.data);
             root.add(dataNode);
         }
     }
@@ -122,7 +117,8 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
     private List<Sensor> getSensorList(DBConnection db) throws SQLException {
         List<Sensor> sensors = new ArrayList<>();
         for (Sensor sensor : Sensor.getSensors(db)) {
-            if (sensor instanceof PowerConsumptionSensorData)
+            if (sensor.getDeviceData() != null &&
+                    sensor.getDeviceData() instanceof PowerConsumptionSensorData)
                 sensors.add(sensor);
         }
         return sensors;

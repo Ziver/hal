@@ -2,70 +2,53 @@
 
 <div class="row placeholders">
     <H1>Last 24 hours (kWh/5min)</H1>
-    <div id="min-power-chart" style="height:350px;"></div>
+    <div id="minute-power-chart" style="height:450px;"></div>
 </div>
 <div class="row placeholders">
     <H1>Last Week (kWh/h)</H1>
-    <div id="hour-power-chart" style="height:350px;"></div>
+    <div id="hour-power-chart" style="height:450px;"></div>
 </div>
 <div class="row placeholders">
     <H1>All History (kWh/day)</H1>
-    <div id="day-power-chart" style="height:350px;"></div>
+    <div id="day-power-chart" style="height:450px;"></div>
 </div>
 <div class="row placeholders">
     <H1>All History (kWh/week)</H1>
-    <div id="week-power-chart" style="height:350px;"></div>
+    <div id="week-power-chart" style="height:450px;"></div>
 </div>
 
 <script>
+
     $(function(){
-		chartData("min-power-chart", 
-				[
-				{ time: (Date.now()-24*60*60*1000) },
-				{{#minData}}  
-					{ time: {{.timestamp}}, "{{.id}}": {{.data}} },
-				{{/minData}}
-				{ time: Date.now() }
-				]
-		);
-		chartData("hour-power-chart", 
-				[
-				{ time: (Date.now()-7*24*60*60*1000) },
-				{{#hourData}}  
-					{ time: {{.timestamp}}, "{{.id}}": {{.data}} },
-				{{/hourData}}
-				{ time: Date.now() }
-				]
-		);
-		chartData("day-power-chart", 
-				[{{#dayData}}  
-					{ time: {{.timestamp}}, "{{.id}}": {{.data}} },
-				{{/dayData}}
-				{ time: Date.now() }
-				]
-		);
-		chartData("week-power-chart", 
-				[{{#weekData}}  
-					{ time: {{.timestamp}}, "{{.id}}": {{.data}} },
-				{{/weekData}}
-				{ time: Date.now() }
-				]
-		);
+		initChart("minute-power-chart", "?json&data=minute", 5*60*1000);
+		initChart("hour-power-chart", "?json&data=hour", 60*60*1000);
+		initChart("day-power-chart", "?json&data=day", -1);
+		initChart("week-power-chart", "?json&data=week", -1);
+
 	});
 
-    function chartData(elementId, data){
-        Morris.Line({
+    function initChart(elementId, url, time){
+        var chart = Morris.Line({
               element: elementId,
-              data: data,
+              data: [{time:0}],
               xkey: 'time',
-              ykeys: [ {{#sensors}} "{{.getId()}}", {{/sensors}} ],
+              ykeys: [ {{#sensors}} {{.getId()}}, {{/sensors}} ],
               labels: [ {{#sensors}} "{{.getUser().getUsername()}}: {{.getName()}}", {{/sensors}} ],
               continuousLine: false,
               pointSize: 1,
               postUnits: 'kWh',
               resize: true,
               hideHover: 'auto',
-            });
+        });
+        updateChart(chart, url, time);
+    }
+
+    function updateChart(chart, url, time){
+        $.getJSON(url, function(json){
+            chart.setData(json.data);
+        });
+        if(time > 0)
+            setTimeout(function(){ updateChart(chart, url, time); }, time);
     }
 </script>
 

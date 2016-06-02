@@ -17,10 +17,10 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
 	public static class AggregateData {
         public int id;
 		public long timestamp;
-		public String data;
+		public float data;
 		public String username;
 
-		public AggregateData(int id, long time, String data, String uname) {
+		public AggregateData(int id, long time, float data, String uname) {
             this.id = id;
 			this.timestamp = time;
 			this.data = data;
@@ -76,10 +76,10 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
 
 			//add null data point to list if one or more periods of data is missing before this
 			if(previousTimestampEnd != -1 && previousTimestampEnd+1 < timestampStart){
-				list.add(new AggregateData(id, previousTimestampEnd+1, "null", username));
+				list.add(new AggregateData(id, previousTimestampEnd+1, Float.NaN, username));
 			}
 
-			list.add(new AggregateData(id, timestampEnd, ""+ (estimatedData/1000.0), username));	//add this data point to list
+			list.add(new AggregateData(id, timestampEnd, (estimatedData/1000f), username));	//add this data point to list
 
 			//update previous end timestamp
 			previousTimestampEnd = timestampEnd;

@@ -37,10 +37,6 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
         DBConnection db = HalContext.getDB();
 
         List<User> users = User.getUsers(db);
-        ArrayList<AggregateData> minDataList = new ArrayList<>();
-        ArrayList<AggregateData> hourDataList = new ArrayList<>();
-        ArrayList<AggregateData> dayDataList = new ArrayList<>();
-        ArrayList<AggregateData> weekDataList = new ArrayList<>();
         List<Sensor> sensors = getSensorList(db);
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
@@ -103,7 +99,7 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
         for (AggregateDataListSqlResult.AggregateData data : dataList) {
             DataNode dataNode = new DataNode(DataNode.DataType.Map);
             dataNode.set("time", data.timestamp);
-            if (data.data == Float.NaN)
+            if (Float.isNaN(data.data))
                 dataNode.set("" + data.id, (String)null);
             else
                 dataNode.set("" + data.id, data.data);

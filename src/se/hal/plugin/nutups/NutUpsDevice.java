@@ -14,7 +14,7 @@ public class NutUpsDevice implements PowerConsumptionSensorData{
     @Configurator.Configurable("UPS id")
     private String deviceId;
     private long timestamp;
-    private int consumption;
+    private double consumption;
 
 
     public NutUpsDevice(){}
@@ -22,7 +22,7 @@ public class NutUpsDevice implements PowerConsumptionSensorData{
     protected NutUpsDevice(NutUPSClient.UPSDevice ups){
         this.deviceId = ups.getId();
         this.timestamp = System.currentTimeMillis();
-        this.consumption = ups.getPowerUsage();
+        this.consumption = ups.getPowerUsage() * 1/60.0; // convert watt min to watt hour
     }
 
 
@@ -50,7 +50,7 @@ public class NutUpsDevice implements PowerConsumptionSensorData{
 
     @Override
     public AggregationMethod getAggregationMethod() {
-        return AggregationMethod.AVERAGE;
+        return AggregationMethod.SUM;
     }
     @Override
     public Class<? extends HalSensorController> getSensorController() {

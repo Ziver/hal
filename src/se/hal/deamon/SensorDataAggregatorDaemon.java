@@ -80,7 +80,6 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
      * Aggregate data from the raw DB table to the aggregated table
      * @param	sensor				The sensor for to aggregate data
      * @param   ageLimitInMs		Only aggregate up to this age
-     * @param	toPeriodSizeInMs	The period length in ms to aggregate to
      */
     private void aggregateRawData(Sensor sensor, AggregationPeriodLength aggrPeriodLength, long ageLimitInMs, int expectedSampleCount, long aggregationStartTime){
     	long sensorId = sensor.getId();

@@ -11,7 +11,7 @@ import java.util.List;
 public class HistoryDataListSqlResult implements SQLResultHandler<List<HistoryDataListSqlResult.HistoryData>> {
         public static class HistoryData{
             public long timestamp;
-            public double data;
+            public float data;
         }
         
         @Override
@@ -20,7 +20,7 @@ public class HistoryDataListSqlResult implements SQLResultHandler<List<HistoryDa
             while(result.next()){
                 HistoryData data = new HistoryData();
                 data.timestamp = result.getLong("timestamp");
-                data.data = result.getLong("data");
+                data.data = result.getFloat("data");
                 list.add(data);
             }
             return list;

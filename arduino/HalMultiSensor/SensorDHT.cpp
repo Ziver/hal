@@ -12,6 +12,10 @@ void SensorDHT::setup()
 {
     // set up the pins!
     pinMode(_pin, INPUT_PULLUP);
+    #ifdef __AVR
+        _bit = digitalPinToBitMask(_pin);
+        _port = digitalPinToPort(_pin);
+    #endif
     _maxcycles = microsecondsToClockCycles(1000);  // 1 millisecond timeout for
                                                    // reading pulses from DHT sensor.
 }
@@ -86,10 +90,12 @@ void SensorDHT::read(TemperatureData& retData)
         // for ~80 microseconds again.
         if (expectPulse(LOW) == 0) {
             DEBUG("DHT:Timeout waiting for start signal low pulse.");
+            interrupts();
             return;
         }
         if (expectPulse(HIGH) == 0) {
             DEBUG("DHT:Timeout waiting for start signal high pulse.");
+            interrupts();
             return;
         }
 

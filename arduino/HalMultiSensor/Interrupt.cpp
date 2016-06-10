@@ -81,21 +81,24 @@ void Interrupt::setupPinInterrupt(int pin)
 
 //////////////////////////////////////////////////////////////////////////
 // Watchdog timer
-unsigned int wdtTime;
-long wdtTimeLeft;
+uint16_t wdtTime;
+int32_t wdtTimeLeft;
 
 
 void Interrupt::handleWatchDogInterrupt()
 {
-    //DEBUG("WDT Interrupt");
     wdt_disable();
-    if (wdtTimeLeft < 0)
+    if (wdtTime <= 0)
+        return;
+    DEBUGF("WDT interrupt, time=%d, timeLeft=%d", wdtTime, wdtTimeLeft);
+
+    if (wdtTimeLeft <= 0)
     {
-        DEBUG("WDT interrupt");
         Interrupt::wakeUp();
         (*Interrupt::wdtCallback) ();
         wdtTimeLeft = wdtTime;
     }
+
     setupWatchDogInterrupt();
 }
 
@@ -104,7 +107,7 @@ ISR(WDT_vect)
     Interrupt::handleWatchDogInterrupt();
 }
 
-void Interrupt::setupWatchDogInterrupt(unsigned int milliseconds)
+void Interrupt::setupWatchDogInterrupt(uint16_t milliseconds)
 {
     wdtTimeLeft = wdtTime = milliseconds;
     setupWatchDogInterrupt();
@@ -112,6 +115,11 @@ void Interrupt::setupWatchDogInterrupt(unsigned int milliseconds)
 
 void Interrupt::setupWatchDogInterrupt()
 {
+    if (wdtTime <= 0){
+        wdt_disable();
+        return;
+    }
+
     noInterrupts();
 
     unsigned short duration;
@@ -147,7 +155,6 @@ void Interrupt::setupWatchDogInterrupt()
        wdtTimeLeft -= 16;
        duration = 0;
     }
-    //DEBUGF("WDT t -= %u", wdtTimeLeft);
 
     wdt_reset();
     MCUSR &= ~(1 << WDRF);  // reset status flag
@@ -176,8 +183,6 @@ void Interrupt::setupWatchDogInterrupt()
      */
     WDTCSR = (1 << WDIE) | duration;
     //WDTCSR = (1 << WDIE) | (1 << WDP3) | (1 << WDP0);
-
-    //wdt_disable();
 
     interrupts();
 }

@@ -99,7 +99,7 @@ void loop()
     {
         static TemperatureData tempData;
         tempSensor->read(tempData);
-        DEBUGF("Read TEMPERATURE_SENSOR= temperature:%d, humidity:%d", tempData.temperature, tempData.humidity);
+        DEBUGF("Read TEMPERATURE_SENSOR= temperature:%d, humidity:%d", (int)tempData.temperature, (int)tempData.humidity);
         tempProtocol->send(tempData);
     }
     #endif

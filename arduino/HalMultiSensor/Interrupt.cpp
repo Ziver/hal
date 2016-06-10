@@ -90,7 +90,7 @@ void Interrupt::handleWatchDogInterrupt()
     wdt_disable();
     if (wdtTime <= 0)
         return;
-    DEBUGF("WDT interrupt, time=%d, timeLeft=%d", wdtTime, wdtTimeLeft);
+    DEBUGF("WDT interrupt, time=%u, timeLeft=%ld", wdtTime, wdtTimeLeft);
 
     if (wdtTimeLeft <= 0)
     {

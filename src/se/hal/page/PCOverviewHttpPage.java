@@ -99,7 +99,7 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
         for (AggregateDataListSqlResult.AggregateData data : dataList) {
             DataNode dataNode = new DataNode(DataNode.DataType.Map);
             dataNode.set("time", data.timestamp);
-            if (Float.isNaN(data.data))
+            if (data.data == null || Float.isNaN(data.data))
                 dataNode.set("" + data.id, (String)null);
             else
                 dataNode.set("" + data.id, data.data);

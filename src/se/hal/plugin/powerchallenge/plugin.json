@@ -1,0 +1,11 @@
+{
+	"version": 1.0,
+	"name": "Power;Challenge",
+	"interfaces": [
+		{"se.hal.intf.HalHttpPage": "se.hal.page.PCOverviewHttpPage"},
+		{"se.hal.intf.HalHttpPage": "se.hal.page.PCHeatMapHttpPage"},
+
+        {"se.hal.intf.HalDaemon": "se.hal.deamon.PCDataSynchronizationClient"},
+        {"se.hal.intf.HalDaemon": "se.hal.deamon.PCDataSynchronizationDaemon"}
+	]
+}

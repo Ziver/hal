@@ -29,7 +29,7 @@ public class ControllerManager implements HalSensorReportListener,
 
 
     /** All isAvailable sensor plugins **/
-    private List<Class<?>> availableSensors = new ArrayList<>();
+    private List<Class<? extends HalSensorData>> availableSensors = new ArrayList<>();
     /** List of all registered sensors **/
     private List<Sensor> registeredSensors = new ArrayList<>();
     /** List of auto detected sensors **/
@@ -39,7 +39,7 @@ public class ControllerManager implements HalSensorReportListener,
 
 
     /** All isAvailable event plugins **/
-    private List<Class<?>> availableEvents = new ArrayList<>();
+    private List<Class<? extends HalEventData>> availableEvents = new ArrayList<>();
     /** List of all registered events **/
     private List<Event> registeredEvents = new ArrayList<>();
     /** List of auto detected events **/
@@ -91,7 +91,7 @@ public class ControllerManager implements HalSensorReportListener,
         }
     }
 
-    public List<Class<?>> getAvailableSensors(){
+    public List<Class<? extends HalSensorData>> getAvailableSensors(){
         return availableSensors;
     }
 
@@ -177,7 +177,7 @@ public class ControllerManager implements HalSensorReportListener,
         }
     }
 
-    public List<Class<?>> getAvailableEvents(){
+    public List<Class<? extends HalEventData>> getAvailableEvents(){
         return availableEvents;
     }
 
@@ -336,27 +336,25 @@ public class ControllerManager implements HalSensorReportListener,
 
 
 
-    public static void initialize(){
+    public static void initialize(PluginManager pluginManager){
         ControllerManager manager = new ControllerManager();
-        PluginManager pluginManager = new PluginManager("./");
-        Iterator<PluginData> it = pluginManager.iterator();
-        while (it.hasNext()){
-            PluginData plugin = it.next();
-            Iterator<Class<?>> pluginIt = plugin.getClassIterator(HalSensorData.class);
-            while (pluginIt.hasNext()){
-                manager.availableSensors.add(pluginIt.next());
-            }
 
-            pluginIt = plugin.getClassIterator(HalEventData.class);
-            while (pluginIt.hasNext()){
-                manager.availableEvents.add(pluginIt.next());
-            }
-
-            pluginIt = plugin.getClassIterator(HalAutoScannableController.class);
-            while (pluginIt.hasNext()){
-                manager.getControllerInstance(pluginIt.next()); // Instantiate controller
-            }
+        for (Iterator<Class<? extends HalSensorData>> it=pluginManager.getClassIterator(HalSensorData.class);
+                it.hasNext(); ){
+            manager.availableSensors.add(it.next());
         }
+
+        for (Iterator<Class<? extends HalEventData>> it=pluginManager.getClassIterator(HalEventData.class);
+                it.hasNext(); ){
+            manager.availableEvents.add(it.next());
+        }
+
+        for (Iterator<Class<? extends HalAutoScannableController>> it=
+                    pluginManager.getClassIterator(HalAutoScannableController.class);
+                it.hasNext(); ){
+            manager.getControllerInstance(it.next()); // Instantiate controller
+        }
+
         instance = manager;
     }
 

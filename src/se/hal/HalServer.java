@@ -16,7 +16,9 @@ import zutil.log.LogUtil;
 import zutil.net.http.HttpServer;
 import zutil.net.http.page.HttpFilePage;
 import zutil.net.http.page.HttpRedirectPage;
+import zutil.plugin.PluginManager;
 
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -25,8 +27,8 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class HalServer {
 	
-    private static HalDaemon[] daemons;
-    private static HalHttpPage[] pages;
+    private static List<HalDaemon> daemons;
+    private static List<HalHttpPage> pages;
 
 
     public static void main(String[] args) throws Exception {
@@ -34,8 +36,9 @@ public class HalServer {
         LogUtil.readConfiguration("logging.properties");
 
         // init Managers
+        PluginManager pluginManager = new PluginManager("./");
         HalContext.initialize();
-        ControllerManager.initialize();
+        ControllerManager.initialize(pluginManager);
         HalAlertManager.initialize();
 
 
@@ -52,13 +55,15 @@ public class HalServer {
 
 
         // init daemons
-        daemons = new HalDaemon[]{
+        daemons = new ArrayList<>();
+        daemons.addAll(Arrays.asList(new HalDaemon[]{
                 new SensorDataAggregatorDaemon(),
                 new SensorDataCleanupDaemon(),
-
-                new PCDataSynchronizationDaemon(),
-                new PCDataSynchronizationClient(),
-        };
+        }));
+        for (Iterator<HalDaemon> it=pluginManager.getObjectIterator(HalDaemon.class);
+                it.hasNext(); ){
+            daemons.add(it.next());
+        }
         // We set only one thread for easier troubleshooting
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         for(HalDaemon daemon : daemons){
@@ -69,20 +74,23 @@ public class HalServer {
         // init http server
         HalHttpPage.getRootNav().createSubNav("Sensors");
         HalHttpPage.getRootNav().createSubNav("Events").setWeight(100);
-        pages = new HalHttpPage[]{
+        pages = new ArrayList<>();
+        pages.addAll(Arrays.asList(new HalHttpPage[]{
                 new SensorOverviewHttpPage(),
                 new SensorConfigHttpPage(),
-
-                new PCOverviewHttpPage(),
-                new PCHeatMapHttpPage(),
 
                 new EventOverviewHttpPage(),
                 new EventConfigHttpPage(),
                 new UserConfigHttpPage(),
-        };
+        }));
+        for (Iterator<HalHttpPage> it=pluginManager.getObjectIterator(HalHttpPage.class);
+                it.hasNext(); ){
+            pages.add(it.next());
+        }
+
         HttpServer http = new HttpServer(HalContext.getIntegerProperty("http_port"));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("resource/web/")));
-        http.setPage("/", new HttpRedirectPage("/"+pages[0].getId()));
+        http.setPage("/", new HttpRedirectPage("/"+pages.get(0).getId()));
         http.setPage(HalAlertManager.getInstance().getUrl(), HalAlertManager.getInstance());
         for(HalHttpPage page : pages){
             http.setPage(page.getId(), page);

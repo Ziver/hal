@@ -15,6 +15,7 @@ import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
 import zutil.net.http.HttpServer;
 import zutil.net.http.page.HttpFilePage;
+import zutil.net.http.page.HttpRedirectPage;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -53,9 +54,10 @@ public class HalServer {
         // init daemons
         daemons = new HalDaemon[]{
                 new SensorDataAggregatorDaemon(),
+                new SensorDataCleanupDaemon(),
+
                 new PCDataSynchronizationDaemon(),
                 new PCDataSynchronizationClient(),
-                new SensorDataCleanupDaemon()
         };
         // We set only one thread for easier troubleshooting
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
@@ -65,13 +67,14 @@ public class HalServer {
 
 
         // init http server
-        HalHttpPage.getRootNav().addSubNav(new HalNavigation("sensors", "Sensors"));
-        HalHttpPage.getRootNav().addSubNav(new HalNavigation("events", "Events"));
+        HalHttpPage.getRootNav().createSubNav("Sensors");
+        HalHttpPage.getRootNav().createSubNav("Events").setWeight(100);
         pages = new HalHttpPage[]{
                 new SensorOverviewHttpPage(),
+                new SensorConfigHttpPage(),
+
                 new PCOverviewHttpPage(),
                 new PCHeatMapHttpPage(),
-                new SensorConfigHttpPage(),
 
                 new EventOverviewHttpPage(),
                 new EventConfigHttpPage(),
@@ -79,7 +82,7 @@ public class HalServer {
         };
         HttpServer http = new HttpServer(HalContext.getIntegerProperty("http_port"));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("resource/web/")));
-        http.setPage("/", pages[0]);
+        http.setPage("/", new HttpRedirectPage("/"+pages[0].getId()));
         http.setPage(HalAlertManager.getInstance().getUrl(), HalAlertManager.getInstance());
         for(HalHttpPage page : pages){
             http.setPage(page.getId(), page);

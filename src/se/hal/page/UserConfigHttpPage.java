@@ -14,8 +14,8 @@ public class UserConfigHttpPage extends HalHttpPage {
 
 
     public UserConfigHttpPage() {
-        super("Profile", "user_profile");
-        super.getUserNav().addSubNav(super.getNav());
+        super("user_profile");
+        super.getUserNav().createSubNav(this.getId(), "Profile");
     }
 
     @Override

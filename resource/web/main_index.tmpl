@@ -41,17 +41,20 @@
             </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            {{#rootNav}}
             <ul class="nav navbar-nav navbar-left">
-                <li class="dropdown">
+                {{#rootNav}}
+                <li class="dropdown {{#.isActive()}}active{{/.isActive()}}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{.getName()}}</a>
                     <ul class="dropdown-menu">
-                        {{#.getSubNavs()}}<li><a href="{{.getURL()}}">{{.getName()}}</a></li>
+                        {{#.getSubNavs()}}
+                        <li {{#.isActive()}}class="active"{{/.isActive()}}>
+                            <a href="{{.getURL()}}">{{.getName()}}</a>
+                        </li>
                         {{/.getSubNavs()}}
                     </ul>
                 </li>
+                {{/rootNav}}
             </ul>
-            {{/rootNav}}
 
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
@@ -66,7 +69,10 @@
                             </div>
                         </li>
                         <li class="divider"></li>
-                        {{#userNav}}<li><a href="{{.getURL()}}">{{.getName()}}</a></li>
+                        {{#userNav}}
+                        <li {{#.isActive()}}class="active"{{/.isActive()}}>
+                            <a href="{{.getURL()}}">{{.getName()}}</a>
+                        </li>
                         {{/userNav}}
                     </ul>
                 </li>
@@ -79,9 +85,11 @@
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
             <ul id="sub-navbar" class="nav nav-sidebar">
-                <!-- <li class="active"><a href="/">Overview</a></li> -->
-                {{#nav}}<li><a href="{{.getURL()}}">{{.getName()}}</a></li>
-                {{/nav}}
+                {{#subNav}}
+                <li {{#.isActive()}}class="active"{{/.isActive()}}>
+                    <a href="{{.getURL()}}">{{.getName()}}</a>
+                </li>
+                {{/subNav}}
             </ul>
         </div>
 

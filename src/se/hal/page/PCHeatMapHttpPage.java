@@ -11,8 +11,8 @@ public class PCHeatMapHttpPage extends HalHttpPage {
 
 
 	public PCHeatMapHttpPage() {
-		super("Heatmap", "pc_heatmap");
-        super.getRootNav().getSubNav("sensors").addSubNav(super.getNav());
+		super("pc_heatmap");
+        super.getRootNav().createSubNav("Sensors").createSubNav(this.getId(), "Heatmap").setWeight(60);
 	}
 
 	@Override

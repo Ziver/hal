@@ -24,8 +24,8 @@ public class EventConfigHttpPage extends HalHttpPage {
 
 
     public EventConfigHttpPage() {
-        super("Configuration", "event_config");
-        super.getRootNav().getSubNav("events").addSubNav(super.getNav());
+        super("event_config");
+        super.getRootNav().createSubNav("Events").createSubNav(this.getId(), "Configuration").setWeight(100);
 
         eventConfigurations = new EventDataParams[
                 ControllerManager.getInstance().getAvailableEvents().size()];

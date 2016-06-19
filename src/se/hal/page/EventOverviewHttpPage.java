@@ -23,8 +23,8 @@ public class EventOverviewHttpPage extends HalHttpPage {
 
 
     public EventOverviewHttpPage(){
-        super("Overview", "event_overview");
-        super.getRootNav().getSubNav("events").addSubNav(super.getNav());
+        super("event_overview");
+        super.getRootNav().createSubNav("Events").createSubNav(this.getId(), "Overview");
     }
 
     @Override

@@ -2,7 +2,6 @@ package se.hal.intf;
 
 import se.hal.HalContext;
 import se.hal.page.HalAlertManager;
-import se.hal.page.HalNavigation;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -12,8 +11,10 @@ import zutil.net.http.HttpPrintStream;
 import zutil.parser.DataNode;
 import zutil.parser.Templator;
 import zutil.parser.json.JSONWriter;
+import zutil.ui.Navigation;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,35 +22,28 @@ import java.util.Map;
  */
 public abstract class HalHttpPage implements HttpPage{
     private static final String TEMPLATE = "resource/web/main_index.tmpl";
-    private static HalNavigation rootNav = new HalNavigation();
-    private static HalNavigation userNav = new HalNavigation();
+    private static Navigation rootNav = Navigation.createRootNav();
+    private static Navigation userNav = Navigation.createRootNav();
 
-    private HalNavigation nav;
+    private String pageId;
 
-
-    public HalHttpPage(String name, String id){
-        this.nav = new HalNavigation(id, name);
+    public HalHttpPage(String id){
+        this.pageId = id;
     }
 
-    public String getName(){
-        return nav.getName();
-    }
     public String getId(){
-        return nav.getId();
-    }
-    public HalNavigation getNav(){
-        return nav;
+        return pageId;
     }
 
 
     @Override
-    public void respond(HttpPrintStream out, HttpHeader client_info,
+    public void respond(HttpPrintStream out, HttpHeader header,
                         Map<String, Object> session, Map<String, String> cookie,
                         Map<String, String> request) throws IOException {
 
         try {
             if(this instanceof HalJsonPage &&
-                    (("application/json").equals(client_info.getHeader("ContentType")) ||
+                    (("application/json").equals(header.getHeader("ContentType")) ||
                     request.containsKey("json"))){
                 out.setHeader("Content-Type", "application/json");
                 JSONWriter writer = new JSONWriter(out);
@@ -61,9 +55,11 @@ public abstract class HalHttpPage implements HttpPage{
 
                 Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
                 tmpl.set("user", User.getLocalUser(db));
-                tmpl.set("nav", nav.getNavBreadcrumb().get(1));
-                tmpl.set("rootNav", rootNav);
-                tmpl.set("userNav", userNav);
+                List<Navigation> breadcrumb = Navigation.getBreadcrumb(Navigation.getPagedNavigation(header));
+                if(!breadcrumb.isEmpty())
+                    tmpl.set("subNav", breadcrumb.get(1).createPagedNavInstance(header).getSubNavs());
+                tmpl.set("rootNav", rootNav.createPagedNavInstance(header).getSubNavs());
+                tmpl.set("userNav", userNav.createPagedNavInstance(header).getSubNavs());
                 tmpl.set("alerts", HalAlertManager.getInstance().generateAlerts());
                 tmpl.set("content", httpRespond(session, cookie, request));
                 out.print(tmpl.compile());
@@ -74,10 +70,10 @@ public abstract class HalHttpPage implements HttpPage{
     }
 
 
-    public static HalNavigation getRootNav(){
+    public static Navigation getRootNav(){
         return rootNav;
     }
-    public static HalNavigation getUserNav(){
+    public static Navigation getUserNav(){
         return userNav;
     }
 

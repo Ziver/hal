@@ -23,8 +23,8 @@ public class SensorOverviewHttpPage extends HalHttpPage {
 
 
     public SensorOverviewHttpPage(){
-        super("Overview", "sensor_overview");
-        super.getRootNav().getSubNav("sensors").addSubNav(super.getNav());
+        super("sensor_overview");
+        super.getRootNav().createSubNav("Sensors").createSubNav(this.getId(), "Overview");
     }
 
     @Override

@@ -23,8 +23,8 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
     private static final String TEMPLATE = "resource/web/pc_overview.tmpl";
 
     public PCOverviewHttpPage() {
-        super("Power;Challenge", "pc_overview");
-        super.getRootNav().getSubNav("sensors").addSubNav(super.getNav());
+        super("pc_overview");
+        super.getRootNav().createSubNav("Sensors").createSubNav(this.getId(), "Power;Challenge").setWeight(50);
     }
 
     @Override

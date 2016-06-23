@@ -26,9 +26,11 @@ public abstract class HalHttpPage implements HttpPage{
     private static Navigation userNav = Navigation.createRootNav();
 
     private String pageId;
+    private boolean showSubNav;
 
     public HalHttpPage(String id){
         this.pageId = id;
+        this.showSubNav = true;
     }
 
     public String getId(){
@@ -55,9 +57,12 @@ public abstract class HalHttpPage implements HttpPage{
 
                 Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
                 tmpl.set("user", User.getLocalUser(db));
-                List<Navigation> breadcrumb = Navigation.getBreadcrumb(Navigation.getPagedNavigation(header));
-                if(!breadcrumb.isEmpty())
-                    tmpl.set("subNav", breadcrumb.get(1).createPagedNavInstance(header).getSubNavs());
+                tmpl.set("showSubNav", showSubNav);
+                if (showSubNav) {
+                    List<Navigation> breadcrumb = Navigation.getBreadcrumb(Navigation.getPagedNavigation(header));
+                    if (!breadcrumb.isEmpty())
+                        tmpl.set("subNav", breadcrumb.get(1).createPagedNavInstance(header).getSubNavs());
+                }
                 tmpl.set("rootNav", rootNav.createPagedNavInstance(header).getSubNavs());
                 tmpl.set("userNav", userNav.createPagedNavInstance(header).getSubNavs());
                 tmpl.set("alerts", HalAlertManager.getInstance().generateAlerts());
@@ -69,6 +74,12 @@ public abstract class HalHttpPage implements HttpPage{
         }
     }
 
+    /**
+     * Sets if the subnavigation should be shown on the page
+     */
+    protected void showSubNav(boolean show) {
+        this.showSubNav = show;
+    }
 
     public static Navigation getRootNav(){
         return rootNav;
@@ -83,6 +94,7 @@ public abstract class HalHttpPage implements HttpPage{
             Map<String, String> cookie,
             Map<String, String> request)
                 throws Exception;
+
 
 
     public interface HalJsonPage{

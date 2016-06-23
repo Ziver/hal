@@ -76,6 +76,8 @@ public class HalServer {
         HalHttpPage.getRootNav().createSubNav("Events").setWeight(100);
         pages = new ArrayList<>();
         pages.addAll(Arrays.asList(new HalHttpPage[]{
+                new MapHttpPage(),
+
                 new SensorOverviewHttpPage(),
                 new SensorConfigHttpPage(),
 

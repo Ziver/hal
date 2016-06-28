@@ -1,12 +1,51 @@
 
-
-
-<svg width="100%" width="500" viewBox="0 0 1000 500">
-    <!-- Map -->
-    <image x="0" y="0" width="1000" height="500"
-           xlink:href="/img/floorplan.jpg" />
-
+<svg id="map" width="100%" width="500" viewBox="0 0 1000 500">
+    <!-- Background Map -->
+    <image x="0" y="0" width="100%" height="100%" xlink:href="/img/floorplan.jpg" />
 
     <!-- debug stuff -->
     <rect width="100%" height="100%" style="fill-opacity:0;stroke-width:5;stroke:rgb(0,0,0)" />
+
+    <!-- Sensor devices-->
+    <image class="draggable" x="0" y="0" width="46" height="46" xlink:href="/img/temperature.png" />
+
+    <!-- Event devices -->
+    <image class="draggable" x="0" y="0" width="46" height="46" xlink:href="/img/lightbulb_01.svg" />
+    <image class="draggable" x="0" y="0" width="46" height="46" xlink:href="/img/lightbulb_02.svg" />
 </svg>
+
+
+<script src="js/interact.js"></script>
+<script>
+    var rootMatrix;
+    $(function(){
+        rootMatrix = document.getElementById("map").getScreenCTM();
+        interact(".draggable").draggable({
+            inertia: true,
+            restrict: {
+                restriction: "parent",
+                elementRect: { left: 0, right: 0, top: 0, bottom: 0 },
+            },
+            onmove: dragMoveListener,
+            onend:  dragEndListener,
+        });
+    });
+
+    function dragMoveListener (event) {
+        var target = event.target;
+        // keep the dragged position in the data-x/data-y attributes
+        var x = (parseFloat(target.getAttribute('x')) || 0) + event.dx / rootMatrix.a;
+        var y = (parseFloat(target.getAttribute('y')) || 0) + event.dy / rootMatrix.d;
+
+        // update the position attributes
+        target.setAttribute('x', x);
+        target.setAttribute('y', y);
+    }
+    function dragEndListener (event) {
+        // Save drag
+    }
+</script>
+
+<center>
+Icons downloaded from <a href="http://icons8.com">icons8.com</a>
+</center>

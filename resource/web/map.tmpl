@@ -7,11 +7,14 @@
     <rect width="100%" height="100%" style="fill-opacity:0;stroke-width:5;stroke:rgb(0,0,0)" />
 
     <!-- Sensor devices-->
-    <image class="draggable" x="0" y="0" width="46" height="46" xlink:href="/img/temperature.png" />
+    {{#sensors}}
+    <image id="sensor{{.getId()}}" class="draggable sensor" x="0" y="0" width="46" height="46" xlink:href="/img/temperature.png" />
+    {{/sensors}}
 
     <!-- Event devices -->
-    <image class="draggable" x="0" y="0" width="46" height="46" xlink:href="/img/lightbulb_01.svg" />
-    <image class="draggable" x="0" y="0" width="46" height="46" xlink:href="/img/lightbulb_02.svg" />
+    {{#events}}
+    <image  id="event{{.getId()}}" class="draggable event" x="0" y="0" width="46" height="46" xlink:href="/img/lightbulb.svg" />
+    {{/events}}
 </svg>
 
 

@@ -30,6 +30,13 @@ public abstract class AbstractDevice<T> extends DBBean {
     @DBColumn("user_id")
     private User user;
 
+    // UI variables
+    @DBColumn("map_x")
+    private double x;
+    @DBColumn("map_y")
+    private double y;
+
+
 
     public Configurator<T> getDeviceConfig() {
         T obj = getDeviceData();
@@ -101,4 +108,18 @@ public abstract class AbstractDevice<T> extends DBBean {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public double getX() {
+        return x;
+    }
+    public void setX(double x) {
+        this.x = x;
+    }
+    public double getY() {
+        return y;
+    }
+    public void setY(double y) {
+        this.y = y;
+    }
+
 }

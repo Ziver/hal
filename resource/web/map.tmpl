@@ -1,3 +1,4 @@
+
 <style>
     .view-mode {
         display: block;
@@ -42,8 +43,8 @@
 </div>
 
 
-<script src="js/svg.min.js"></script>
-<script src="js/svg.draggable.min.js"></script>
+<script src="js/svg.js"></script>
+<script src="js/svg.draggable.js"></script>
 <script>
     var svg;
     var editModeEnabled = false;
@@ -62,7 +63,7 @@
             editMode(true);
         });
         $("#button-save").click(function() {
-            //saveMap();
+            saveMap();
             editMode(false);
             drawMap();
         });
@@ -92,20 +93,53 @@
     }
 
     function drawMap(){
-        ////////////////  Init
         // Get map data
+        $.getJSON("?json&action=getdata", function(json){
+            // reset map
+            svg.clear();
 
-        // reset map
-        svg.clear();
+            ////////////////  Draw
+            // Background
+            svg.image("/img/floorplan.jpg", "100%", "100%").x(0).y(0).addClass("floorplan");
 
-        ////////////////  Draw
-        // Background
-        svg.image("?floorplan", "100%", "100%").x(0).y(0).addClass("floorplan");
+            // Sensors
+            $.each(json.sensors, function(i, sensor) {
+                var device = svg.image("/img/temperature.png").addClass("draggable").addClass("sensor");
+                device.x(sensor.x);
+                device.y(sensor.y);
+                device.attr("device-id", sensor.id);
+            });
+            // Events
+            $.each(json.events, function(i, event) {
+                var device = svg.image("/img/lightbulb.svg").addClass("draggable").addClass("event");
+                device.x(event.x);
+                device.y(event.y);
+                device.attr("device-id", event.id);
+            });
+        });
+    }
 
-        // Sensors
-        svg.image("/img/temperature.png").x(150).y(150).addClass("draggable").addClass("sensor");
-        // Events
-        svg.image("/img/lightbulb.svg").x(100).y(100).addClass("draggable").addClass("event");
+    function saveMap(){
+        svg.select(".sensor").each(function(){
+            saveDevice(this, "sensor");
+        });
+        svg.select(".event").each(function(){
+            saveDevice(this, "event");
+        });
+    }
+    function saveDevice(element, type){
+        $.ajax({
+            async: false,
+            dataType: "json",
+            url: "?json",
+            data: {
+                action: "save",
+                id: element.attr("device-id"),
+                type: type,
+                x: element.x(),
+                y: element.y()
+            },
+        });
     }
 </script>
 

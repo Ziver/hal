@@ -1,4 +1,3 @@
-
 <style>
     .view-mode {
         display: block;
@@ -43,8 +42,10 @@
 </div>
 
 
-<script src="js/svg.js"></script>
-<script src="js/svg.draggable.js"></script>
+<script src="js/svg.min.js"></script>
+<script src="js/svg.draggable.min.js"></script>
+<script src="js/jquery.filer.min.js"></script>
+<link href="css/jquery.filer.css" rel="stylesheet">
 <script>
     var svg;
     var editModeEnabled = false;
@@ -70,6 +71,36 @@
         $("#button-cancel").click(function() {
             editMode(false);
             drawMap();
+        });
+
+        // BG Upload
+        $("#button-bg").click(function() {
+            // Reset modal
+            //$('#bg-file-input').parent().show();
+            //$('#bg-file-progress').parent().hide();
+        });
+        $('#bg-file-input').filer({
+            limit: 1,
+            extensions: ['jpg','png','svg','gif'],
+            maxSize: 3, // in MB
+            uploadFile: {
+                url: "",
+                type: 'POST',
+                enctype: 'multipart/form-data',
+                beforeSend: function(){
+                    $('#bg-file-input').parent().hide();
+                    $('#bg-file-progress').parent().show();
+                },
+                success: function(data, el){
+
+                },
+                error: function(el){
+                    $("bg-upload-progress").addClass("progress-bar-danger");
+                },
+                onProgress: function(t){
+                    $("bg-upload-progress").css("width", t+"%");
+                },
+            }
         });
     });
 
@@ -143,3 +174,30 @@
     }
 </script>
 
+
+<!------------------ MODALS ---------------------->
+<div class="modal fade" id="bgUploadModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Upload Background Image</h4>
+            </div>
+            <div class="modal-body">
+                <center>
+                    <div class="input-group">
+                        <input type="file" name="files[]" multiple="multiple" id="bg-file-input">
+                    </div>
+                    <div class="progress">
+                        <div id="bg-file-progress" class="progress-bar progress-bar-striped active" style="width: 45%"></div>
+                    </div>
+                </center>
+            </div>
+            <div class="modal-footer">
+                <button type="reset" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

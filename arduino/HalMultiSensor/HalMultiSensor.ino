@@ -109,7 +109,7 @@ void loop()
     {
         static LightData lightData;
         lightSensor->read(lightData);
-        DEBUG("Read LIGHT_SENSOR= lumen:%d", lightData.lumen);
+        DEBUGF("Read LIGHT_SENSOR= lumen:%d", lightData.lumen);
         lightProtocol->send(lightData);
     }
     #endif

@@ -5,10 +5,9 @@
 #include "HalInterfaces.h"
 
 
-class SensorBH1750 : public SensorPowerConsumption, public SensorLight{
+class SensorBH1750 : public SensorLight{
 public:
     virtual void setup();
-    virtual void read(PowerData& data);
     virtual void read(LightData& data);
 
 private:

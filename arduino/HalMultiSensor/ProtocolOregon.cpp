@@ -23,6 +23,13 @@ void ProtocolOregon::send(const TemperatureData& data)
     send(data.temperature, data.humidity);
 }
 
+void ProtocolOregon::send(const LightData& data)
+{
+    send(data.lumen, 0);
+}
+
+
+
 void ProtocolOregon::send(float temperature, short humidity)
 {
     byte buffer[9];

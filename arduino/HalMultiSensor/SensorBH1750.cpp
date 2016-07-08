@@ -76,11 +76,6 @@ void SensorBH1750::configure(uint8_t mode) {
     }
 }
 
-void SensorBH1750::read(PowerData& data)
-{
-    data.consumption = pulses;
-    pulses = 0;
-}
 
 void SensorBH1750::read(LightData& data) {
   uint16_t level;

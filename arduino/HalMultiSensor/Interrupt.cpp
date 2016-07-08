@@ -1,5 +1,4 @@
 #include "Interrupt.h"
-#include <Arduino.h>
 #include <avr/power.h>
 #include <avr/sleep.h>
 #include <avr/wdt.h>
@@ -107,7 +106,7 @@ ISR(WDT_vect)
     Interrupt::handleWatchDogInterrupt();
 }
 
-void Interrupt::setupWatchDogInterrupt(uint16_t milliseconds)
+void Interrupt::setupWatchDogInterrupt(int32_t milliseconds)
 {
     wdtTimeLeft = wdtTime = milliseconds;
     setupWatchDogInterrupt();

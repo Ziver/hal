@@ -1,6 +1,7 @@
 #ifndef INTERRUPT_H
 #define INTERRUPT_H
 
+#include <Arduino.h>
 
 typedef void (*InterruptFunction) ();
 
@@ -10,7 +11,7 @@ public:
     static void wakeUp() { wakeUpNow = true; };
     static void sleep();
     static void setupPinInterrupt(int pin);
-    static void setupWatchDogInterrupt(unsigned int milliseconds);
+    static void setupWatchDogInterrupt(int32_t milliseconds);
     //static void setupTimerInterrupt(unsigned int milliseconds);
 
     static void setPinCallback(InterruptFunction callback){ Interrupt::pinCallback = callback;}

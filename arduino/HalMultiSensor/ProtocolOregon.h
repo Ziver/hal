@@ -5,7 +5,7 @@
 #include "HalInterfaces.h"
 
 
-class ProtocolOregon : public ProtocolTemperature, public ProtocolPowerConsumption
+class ProtocolOregon : public ProtocolTemperature, public ProtocolPowerConsumption, public ProtocolLight
 {
 public:
     ProtocolOregon(short pin, unsigned char address) : txPin(pin), address(address){};
@@ -13,6 +13,7 @@ public:
     virtual void setup();
     virtual void send(const TemperatureData& data);
     virtual void send(const PowerData& data);
+    virtual void send(const LightData& data);
 
 private:
     short txPin;

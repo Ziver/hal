@@ -11,6 +11,7 @@ import se.hal.util.AggregateDataListSqlResult.AggregateData;
 import se.hal.util.UTCTimeUtility;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
+import zutil.net.http.HttpHeader;
 import zutil.parser.DataNode;
 import zutil.parser.Templator;
 
@@ -29,6 +30,7 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
 
     @Override
     public Templator httpRespond(
+            HttpHeader header,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request)
@@ -48,6 +50,7 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
 
     @Override
     public DataNode jsonResponse(
+            HttpHeader header,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request) throws Exception {

@@ -156,8 +156,7 @@ public class HalContext {
                 }
 
                 logger.info("DB upgrade done");
-                dbConf.setProperty(PROPERTY_DB_VERSION, defaultDBConf.getProperty(PROPERTY_DB_VERSION));
-                storeProperties();
+                setProperty(PROPERTY_DB_VERSION, defaultDBConf.getProperty(PROPERTY_DB_VERSION));
             }
             referenceDB.close();
         } catch (Exception e){
@@ -177,15 +176,12 @@ public class HalContext {
     public static int getIntegerProperty(String key){
         return Integer.parseInt(getStringProperty(key));
     }
-    public synchronized static void storeProperties() throws SQLException {
-        logger.fine("Saving conf to DB...");
+    public static void setProperty(String key, String value) throws SQLException {
         PreparedStatement stmt = db.getPreparedStatement("REPLACE INTO conf (key, value) VALUES (?, ?)");
-        for(Object key : dbConf.keySet()){
-            stmt.setObject(1, key);
-            stmt.setObject(2, dbConf.get(key));
-            stmt.addBatch();
-        }
-        DBConnection.execBatch(stmt);
+        stmt.setObject(1, key);
+        stmt.setObject(2, value);
+        DBConnection.exec(stmt);
+        dbConf.setProperty(key, value);
     }
 
     public static DBConnection getDB(){

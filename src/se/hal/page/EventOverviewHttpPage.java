@@ -10,6 +10,7 @@ import se.hal.util.HistoryDataListSqlResult;
 import se.hal.util.HistoryDataListSqlResult.HistoryData;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
+import zutil.net.http.HttpHeader;
 import zutil.parser.Templator;
 
 import java.sql.PreparedStatement;
@@ -29,6 +30,7 @@ public class EventOverviewHttpPage extends HalHttpPage {
 
     @Override
     public Templator httpRespond(
+            HttpHeader header,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request)

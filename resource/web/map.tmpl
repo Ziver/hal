@@ -21,7 +21,7 @@
     </a>
     <div class="edit-mode btn-toolbar">
         <div class="btn-group-vertical">
-            <button type="button" class="btn btn-sm btn-default" title="Change Background Image">
+            <button id="button-bg-edit" type="button" class="btn btn-sm btn-default" title="Change Background Image">
                 <span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
             </button>
             <br />
@@ -74,10 +74,11 @@
         });
 
         // BG Upload
-        $("#button-bg").click(function() {
+        $("#button-bg-edit").click(function() {
             // Reset modal
-            //$('#bg-file-input').parent().show();
-            //$('#bg-file-progress').parent().hide();
+            $('#bg-file-input').parent().show();
+            $('#bg-file-progress').parent().hide();
+            $('#bgUploadModal').modal('show');
         });
         $('#bg-file-input').filer({
             limit: 1,
@@ -92,13 +93,14 @@
                     $('#bg-file-progress').parent().show();
                 },
                 success: function(data, el){
-
+                    $('#bgUploadModal').modal('hide');
+                    drawMap();
                 },
                 error: function(el){
-                    $("bg-upload-progress").addClass("progress-bar-danger");
+                    $("#bg-upload-progress").addClass("progress-bar-danger");
                 },
                 onProgress: function(t){
-                    $("bg-upload-progress").css("width", t+"%");
+                    $("#bg-upload-progress").css("width", t+"%");
                 },
             }
         });
@@ -188,10 +190,10 @@
             <div class="modal-body">
                 <center>
                     <div class="input-group">
-                        <input type="file" name="files[]" multiple="multiple" id="bg-file-input">
+                        <input type="file" name="bg-file" id="bg-file-input">
                     </div>
                     <div class="progress">
-                        <div id="bg-file-progress" class="progress-bar progress-bar-striped active" style="width: 45%"></div>
+                        <div id="bg-file-progress" class="progress-bar progress-bar-striped active" style="width: 1%"></div>
                     </div>
                 </center>
             </div>

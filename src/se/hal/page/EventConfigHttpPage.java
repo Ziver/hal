@@ -7,6 +7,7 @@ import se.hal.struct.Event;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
+import zutil.net.http.HttpHeader;
 import zutil.parser.Templator;
 import zutil.ui.Configurator;
 import zutil.ui.Configurator.ConfigurationParam;
@@ -40,6 +41,7 @@ public class EventConfigHttpPage extends HalHttpPage {
 
     @Override
     public Templator httpRespond(
+            HttpHeader header,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request)

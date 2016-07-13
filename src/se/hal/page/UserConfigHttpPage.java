@@ -5,6 +5,7 @@ import se.hal.intf.HalHttpPage;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
+import zutil.net.http.HttpHeader;
 import zutil.parser.Templator;
 
 import java.util.Map;
@@ -20,6 +21,7 @@ public class UserConfigHttpPage extends HalHttpPage {
 
     @Override
     public Templator httpRespond(
+            HttpHeader header,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request)

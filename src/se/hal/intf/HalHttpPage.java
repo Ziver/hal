@@ -49,7 +49,7 @@ public abstract class HalHttpPage implements HttpPage{
                     request.containsKey("json"))){
                 out.setHeader("Content-Type", "application/json");
                 JSONWriter writer = new JSONWriter(out);
-                writer.write(((HalJsonPage)this).jsonResponse(header, session,cookie, request));
+                writer.write(((HalJsonPage)this).jsonResponse(session,cookie, request));
                 writer.close();
             }
             else{
@@ -66,7 +66,7 @@ public abstract class HalHttpPage implements HttpPage{
                 tmpl.set("rootNav", rootNav.createPagedNavInstance(header).getSubNavs());
                 tmpl.set("userNav", userNav.createPagedNavInstance(header).getSubNavs());
                 tmpl.set("alerts", HalAlertManager.getInstance().generateAlerts());
-                tmpl.set("content", httpRespond(header, session, cookie, request));
+                tmpl.set("content", httpRespond(session, cookie, request));
                 out.print(tmpl.compile());
             }
         } catch (Exception e) {
@@ -90,7 +90,6 @@ public abstract class HalHttpPage implements HttpPage{
 
 
     public abstract Templator httpRespond(
-            HttpHeader header,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request)
@@ -100,7 +99,6 @@ public abstract class HalHttpPage implements HttpPage{
 
     public interface HalJsonPage{
         DataNode jsonResponse(
-                HttpHeader header,
                 Map<String, Object> session,
                 Map<String, String> cookie,
                 Map<String, String> request)

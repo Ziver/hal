@@ -30,7 +30,6 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
 
     @Override
     public Templator httpRespond(
-            HttpHeader header,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request)
@@ -50,7 +49,6 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
 
     @Override
     public DataNode jsonResponse(
-            HttpHeader header,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request) throws Exception {

@@ -8,6 +8,7 @@ import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.net.http.HttpHeader;
+import zutil.net.http.HttpPrintStream;
 import zutil.net.http.multipart.MultipartField;
 import zutil.net.http.multipart.MultipartFileField;
 import zutil.net.http.multipart.MultipartParser;
@@ -16,6 +17,7 @@ import zutil.parser.Base64Encoder;
 import zutil.parser.DataNode;
 import zutil.parser.Templator;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
@@ -23,7 +25,7 @@ import java.util.Map;
 /**
  * Created by Ziver on 2016-06-23.
  */
-public class MapHttpPage extends HalHttpPage implements HalHttpPage.HalJsonPage{
+public class MapHttpPage extends HalHttpPage implements HalHttpPage.HalJsonPage {
     private static final String TEMPLATE = "resource/web/map.tmpl";
 
     private String bgType;
@@ -36,36 +38,46 @@ public class MapHttpPage extends HalHttpPage implements HalHttpPage.HalJsonPage{
         super.showSubNav(false);
     }
 
-
     @Override
-    public Templator httpRespond(HttpHeader header,
-                                 Map<String, Object> session,
-                                 Map<String, String> cookie,
-                                 Map<String, String> request) throws Exception {
-        if ("POST".equals(header.getRequestType())){
+    public void respond(HttpPrintStream out, HttpHeader header,
+                        Map<String, Object> session, Map<String, String> cookie,
+                        Map<String, String> request) throws IOException {
+
+        if ("POST".equals(header.getRequestType())) {
             MultipartParser multipart = new MultipartParser(header);
             Iterator<MultipartField> it = multipart.iterator();
             MultipartField field;
-            while ((field = it.next()) != null){
-                if (field instanceof MultipartFileField){
-                    MultipartFileField file = (MultipartFileField)field;
+            while ((field = it.next()) != null) {
+                if (field instanceof MultipartFileField) {
+                    MultipartFileField file = (MultipartFileField) field;
                     String ext = FileUtil.getFileExtension(file.getFilename());
                     if (ext.equals("jpg") || ext.equals("png") || ext.equals("svg") || ext.equals("gif")) {
-                        saveBgImage(ext, file.getContent());
-                        loadBgImage();
+                        try {
+                            saveBgImage(ext, file.getContent());
+                            out.println("Upload successful: " + file.getFilename());
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                            out.println("Upload error: " + e.getMessage());
+                        }
+                        bgImage = null; // reload image from db
                     }
                 }
             }
-            return null;
-        }
-
-
-        if (request.containsKey("bgimage")){
+        } else if (request.containsKey("bgimage")) {
             if (bgImage == null)
                 loadBgImage();
-            // send bg image;
+            out.setHeader("Content-Type", "image/"+bgType);
+            out.setHeader("Content-Length", ""+bgImage.length);
+            out.write(bgImage);
+        } else { // Run default Hal behaviour
+            super.respond(out, header, session, cookie, request);
         }
+    }
 
+    @Override
+    public Templator httpRespond(Map<String, Object> session,
+                                 Map<String, String> cookie,
+                                 Map<String, String> request) throws Exception {
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         return tmpl;
@@ -73,16 +85,14 @@ public class MapHttpPage extends HalHttpPage implements HalHttpPage.HalJsonPage{
 
 
     @Override
-    public DataNode jsonResponse(HttpHeader header,
-                                 Map<String, Object> session,
+    public DataNode jsonResponse(Map<String, Object> session,
                                  Map<String, String> cookie,
                                  Map<String, String> request) throws Exception {
         DBConnection db = HalContext.getDB();
         DataNode root = new DataNode(DataNode.DataType.Map);
-        if ("getdata".equals(request.get("action"))){
+        if ("getdata".equals(request.get("action"))) {
             getDeviceNode(db, root);
-        }
-        else if ("save".equals(request.get("action"))){
+        } else if ("save".equals(request.get("action"))) {
             int id = Integer.parseInt(request.get("id"));
             AbstractDevice device = null;
             if ("sensor".equals(request.get("type")))
@@ -115,7 +125,8 @@ public class MapHttpPage extends HalHttpPage implements HalHttpPage.HalJsonPage{
         }
         root.set("events", eventsNode);
     }
-    private DataNode getDeviceNode(AbstractDevice device){
+
+    private DataNode getDeviceNode(AbstractDevice device) {
         DataNode deviceNode = new DataNode(DataNode.DataType.Map);
         deviceNode.set("id", device.getId());
         deviceNode.set("name", device.getName());
@@ -125,7 +136,7 @@ public class MapHttpPage extends HalHttpPage implements HalHttpPage.HalJsonPage{
     }
 
 
-    private void loadBgImage(){
+    private void loadBgImage() {
         String property = HalContext.getStringProperty("map_bgimage");
         if (property != null) {
             String[] split = property.split(",", 2);
@@ -133,7 +144,8 @@ public class MapHttpPage extends HalHttpPage implements HalHttpPage.HalJsonPage{
             bgImage = Base64Decoder.decodeToByte(split[1]);
         }
     }
+
     private void saveBgImage(String type, byte[] data) throws SQLException {
-        HalContext.setProperty("map_bgimage", type+","+ Base64Encoder.encode(data));
+        HalContext.setProperty("map_bgimage", type + "," + Base64Encoder.encode(data));
     }
 }

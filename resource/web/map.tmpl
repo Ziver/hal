@@ -77,6 +77,8 @@
         $("#button-bg-edit").click(function() {
             // Reset modal
             $('#bg-file-input').parent().show();
+            if ($("#file_input").prop("jFiler") != null)
+                $("#file_input").prop("jFiler").reset();
             $('#bg-file-progress').parent().hide();
             $('#bgUploadModal').modal('show');
         });
@@ -97,10 +99,10 @@
                     drawMap();
                 },
                 error: function(el){
-                    $("#bg-upload-progress").addClass("progress-bar-danger");
+                    $("#bg-file-progress").addClass("progress-bar-danger");
                 },
                 onProgress: function(t){
-                    $("#bg-upload-progress").css("width", t+"%");
+                    $("#bg-file-progress").css("width", t+"%");
                 },
             }
         });
@@ -133,7 +135,7 @@
 
             ////////////////  Draw
             // Background
-            svg.image("/img/floorplan.jpg", "100%", "100%").x(0).y(0).addClass("floorplan");
+            svg.image("?bgimage", "100%", "100%").x(0).y(0).addClass("bg-image");
 
             // Sensors
             $.each(json.sensors, function(i, sensor) {

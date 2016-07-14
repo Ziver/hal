@@ -41,7 +41,6 @@ public class SensorConfigHttpPage extends HalHttpPage {
 
     @Override
     public Templator httpRespond(
-            HttpHeader header,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request)

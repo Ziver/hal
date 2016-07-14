@@ -21,7 +21,6 @@ public class UserConfigHttpPage extends HalHttpPage {
 
     @Override
     public Templator httpRespond(
-            HttpHeader header,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request)

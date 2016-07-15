@@ -44,10 +44,7 @@ public class MapHttpPage extends HalHttpPage implements HalHttpPage.HalJsonPage 
                         Map<String, String> request) throws IOException {
 
         if ("POST".equals(header.getRequestType())) {
-            MultipartParser multipart = new MultipartParser(header);
-            Iterator<MultipartField> it = multipart.iterator();
-            MultipartField field;
-            while ((field = it.next()) != null) {
+            for (MultipartField field : new MultipartParser(header)) {
                 if (field instanceof MultipartFileField) {
                     MultipartFileField file = (MultipartFileField) field;
                     String ext = FileUtil.getFileExtension(file.getFilename());

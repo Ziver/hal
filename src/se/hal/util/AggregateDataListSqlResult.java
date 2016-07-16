@@ -84,7 +84,7 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
 
 			// Only add nulls if the report interval is smaller than the aggregated interval
 			if (sensor.getDeviceData() == null ||
-                    timestampStart-timestampEnd > sensor.getDeviceData().getDataInterval()) {
+                    timestampEnd-timestampStart > sensor.getDeviceData().getDataInterval()) {
 				// Add null data point to list if one or more periods of data is missing before this
 				if (previousTimestampEnd != -1 && previousTimestampEnd + 1 < timestampStart) {
 					list.add(new AggregateData(id, previousTimestampEnd + 1, null /*Float.NaN*/, username));

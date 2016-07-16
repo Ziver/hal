@@ -23,13 +23,11 @@
 package se.hal.intf;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ezivkoc
- * Date: 2013-12-17
- * Time: 13:40
+ * @author Ziver
  */
 public interface HalTextToSpeach {
-    public void initTTS();
 
-    public void speak(String msg);
+    void initTTS();
+
+    void speak(String msg);
 }

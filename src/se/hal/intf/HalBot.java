@@ -27,7 +27,7 @@ package se.hal.intf;
  */
 public interface HalBot {
 
-    public void initialize();
+    void initialize();
 
-    public String respond(String question);
+    String respond(String question);
 }

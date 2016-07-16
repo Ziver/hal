@@ -66,6 +66,4 @@ public abstract class TellstickProtocol {
     public abstract String encode();
     public abstract void decode(byte[] data);
 
-    public abstract boolean equals(Object obj);
-
 }

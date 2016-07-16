@@ -1,5 +1,6 @@
 package se.hal.plugin.tellstick.protocols;
 
+import se.hal.intf.HalSensorData;
 import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.struct.PowerConsumptionSensorData;
 import zutil.log.LogUtil;
@@ -15,14 +16,18 @@ public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionS
 
     @Configurator.Configurable("Address")
     private int address = 0;
+    @Configurator.Configurable("Report Interval(ms)")
+    private int interval = 60*1000; // default 1 min
 
     private double temperature = 0;
     private double humidity = 0;
 
 
+
     public Oregon0x1A2D(){
         super("oregon", "0x1A2D");
     }
+
 
     @Override
     public String encode() {
@@ -63,7 +68,7 @@ public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionS
 
     }
 
-    public boolean equals(Object obj){
+    public boolean equals(HalSensorData obj){
         if(! (obj instanceof Oregon0x1A2D))
             return false;
         return ((Oregon0x1A2D)obj).address == this.address;
@@ -88,6 +93,11 @@ public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionS
     @Override
     public double getData() {
         return temperature;
+    }
+
+    @Override
+    public long getDataInterval() {
+        return interval;
     }
 
     @Override

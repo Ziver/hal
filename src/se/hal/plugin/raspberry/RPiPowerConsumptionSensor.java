@@ -1,6 +1,7 @@
 package se.hal.plugin.raspberry;
 
 import se.hal.intf.HalSensorController;
+import se.hal.intf.HalSensorData;
 import se.hal.struct.PowerConsumptionSensorData;
 import zutil.ui.Configurator;
 
@@ -33,6 +34,11 @@ public class RPiPowerConsumptionSensor implements PowerConsumptionSensorData {
     }
 
     @Override
+    public long getDataInterval(){
+        return 60*1000; // 1 min
+    }
+
+    @Override
     public AggregationMethod getAggregationMethod() {
         return AggregationMethod.SUM;
     }
@@ -42,7 +48,7 @@ public class RPiPowerConsumptionSensor implements PowerConsumptionSensorData {
         return RPiController.class;
     }
 
-    public boolean equals(Object obj){
+    public boolean equals(HalSensorData obj){
     	if(!(obj instanceof RPiPowerConsumptionSensor))
     		return false;
     	return ((RPiPowerConsumptionSensor)obj).gpioPin == gpioPin;

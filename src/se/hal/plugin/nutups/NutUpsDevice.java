@@ -37,7 +37,12 @@ public class NutUpsDevice implements PowerConsumptionSensorData{
     }
 
     @Override
-    public boolean equals(Object obj){
+    public long getDataInterval(){
+        return 60*1000; // 1 min
+    }
+
+    @Override
+    public boolean equals(HalSensorData obj){
         if (obj instanceof NutUpsDevice)
             return deviceId != null && deviceId.equals(((NutUpsDevice)obj).deviceId);
         return false;

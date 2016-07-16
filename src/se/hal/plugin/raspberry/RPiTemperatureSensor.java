@@ -1,6 +1,7 @@
 package se.hal.plugin.raspberry;
 
 import se.hal.intf.HalSensorController;
+import se.hal.intf.HalSensorData;
 import se.hal.struct.TemperatureSensorData;
 import zutil.ui.Configurator;
 
@@ -32,6 +33,11 @@ public class RPiTemperatureSensor implements TemperatureSensorData {
     }
 
     @Override
+    public long getDataInterval() {
+        return 10*60*1000; // 10 min
+    }
+
+    @Override
     public AggregationMethod getAggregationMethod() {
         return AggregationMethod.AVERAGE;
     }
@@ -41,7 +47,7 @@ public class RPiTemperatureSensor implements TemperatureSensorData {
         return RPiController.class;
     }
 
-    public boolean equals(Object obj){
+    public boolean equals(HalSensorData obj){
     	if(obj instanceof RPiTemperatureSensor)
     		return obj == this;
     	return false;

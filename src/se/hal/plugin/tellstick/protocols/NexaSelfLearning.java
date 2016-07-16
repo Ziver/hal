@@ -22,6 +22,7 @@
 
 package se.hal.plugin.tellstick.protocols;
 
+import se.hal.intf.HalEventData;
 import se.hal.plugin.tellstick.TellstickGroupProtocol;
 import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.struct.SwitchEventData;
@@ -147,7 +148,7 @@ public class NexaSelfLearning extends TellstickProtocol
     }
 
     @Override
-    public boolean equals(Object obj){
+    public boolean equals(HalEventData obj){
         if(obj instanceof NexaSelfLearning)
             return ((NexaSelfLearning) obj).house == house &&
                     ((NexaSelfLearning) obj).group == group &&

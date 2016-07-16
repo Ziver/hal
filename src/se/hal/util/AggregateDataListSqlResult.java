@@ -54,15 +54,23 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
 			default: throw new IllegalArgumentException("selected aggrPeriodLength is not supported");
 		}
         stmt.setLong(4, (System.currentTimeMillis() - ageLimitInMs) );
-        return DBConnection.exec(stmt , new AggregateDataListSqlResult());
+        return DBConnection.exec(stmt , new AggregateDataListSqlResult(sensor));
     }
+
+
+    private Sensor sensor;
+
+    private AggregateDataListSqlResult(Sensor sensor){
+    	this.sensor = sensor;
+	}
+
 
 
 	@Override
 	public ArrayList<AggregateData> handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
 		ArrayList<AggregateData> list = new ArrayList<>();
 		long previousTimestampEnd = -1;
-		while(result.next()){
+		while (result.next()){
 
             int id = result.getInt("id");
 			long timestampStart = result.getLong("timestamp_start");
@@ -70,18 +78,22 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
 			String username = result.getString("username");
 			float confidence = result.getFloat("confidence");
 
-			//Calculate the data point
+			// Calculate the data point
 			float data = result.getFloat("data");	//the "raw" recorded data
 			float estimatedData = data/confidence;	//estimate the "real" value of the data by looking at the confidence value
 
-			//add null data point to list if one or more periods of data is missing before this
-			if(previousTimestampEnd != -1 && previousTimestampEnd+1 < timestampStart){
-				list.add(new AggregateData(id, previousTimestampEnd+1, null /*Float.NaN*/, username));
+			// Only add nulls if the report interval is smaller than the aggregated interval
+			if (sensor.getDeviceData() == null ||
+                    timestampStart-timestampEnd > sensor.getDeviceData().getDataInterval()) {
+				// Add null data point to list if one or more periods of data is missing before this
+				if (previousTimestampEnd != -1 && previousTimestampEnd + 1 < timestampStart) {
+					list.add(new AggregateData(id, previousTimestampEnd + 1, null /*Float.NaN*/, username));
+				}
 			}
 
 			list.add(new AggregateData(id, timestampEnd, (estimatedData/1000f), username));	//add this data point to list
 
-			//update previous end timestamp
+			// Update previous end timestamp
 			previousTimestampEnd = timestampEnd;
 		}
 		return list;

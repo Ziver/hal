@@ -63,9 +63,13 @@ public class MapHttpPage extends HalHttpPage implements HalHttpPage.HalJsonPage 
         } else if (request.containsKey("bgimage")) {
             if (bgImage == null)
                 loadBgImage();
-            out.setHeader("Content-Type", "image/"+bgType);
-            out.setHeader("Content-Length", ""+bgImage.length);
-            out.write(bgImage);
+            if (bgImage == null)
+                out.setStatusCode(404);
+            else {
+                out.setHeader("Content-Type", "image/" + bgType);
+                out.setHeader("Content-Length", "" + bgImage.length);
+                out.write(bgImage);
+            }
         } else { // Run default Hal behaviour
             super.respond(out, header, session, cookie, request);
         }

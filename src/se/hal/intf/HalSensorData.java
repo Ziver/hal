@@ -14,13 +14,26 @@ public interface HalSensorData {
 
     double getData();
 
+
+    /**
+     * @return the intended data reporting interval in milliseconds.
+     */
+    long getDataInterval();
+
+    /**
+     * @return which aggregation method that should be used to aggregate the reported data.
+     */
     AggregationMethod getAggregationMethod();
 
+
+    /**
+     * @return the Controller class where SensorData should be registered on
+     */
     Class<? extends HalSensorController> getSensorController();
 
     /**
-     * This method needs to be implemented.
-     * NOTE: it should not compare data and timestamp, only static or unique data for the event type.
+     * NOTE: it should only static or unique data for the sensor type.
+     * This method is used to associate reported data with registered sensors
      */
-    boolean equals(Object obj);
+    boolean equals(HalSensorData obj);
 }

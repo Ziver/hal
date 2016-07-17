@@ -43,6 +43,7 @@
 
 
 <script src="js/svg.min.js"></script>
+<script src="js/svg.title.js"></script>
 <script src="js/svg.draggable.min.js"></script>
 <script src="js/jquery.filer.min.js"></script>
 <link href="css/jquery.filer.css" rel="stylesheet">
@@ -139,17 +140,22 @@
 
             // Sensors
             $.each(json.sensors, function(i, sensor) {
-                var device = svg.image("/img/temperature.png").addClass("draggable").addClass("sensor");
-                device.x(sensor.x);
-                device.y(sensor.y);
-                device.attr("device-id", sensor.id);
+                var group = svg.group();
+                group.image("/img/temperature.png")
+                    .addClass("draggable").addClass("sensor")
+                    .x(sensor.x).y(sensor.y)
+                    .attr("device-id", sensor.id)
+                group.title(sensor.name);
             });
             // Events
             $.each(json.events, function(i, event) {
-                var device = svg.image("/img/lightbulb.svg").addClass("draggable").addClass("event");
-                device.x(event.x);
-                device.y(event.y);
-                device.attr("device-id", event.id);
+                var group = svg.group();
+                svg.image("/img/lightbulb.svg")
+                    .addClass("draggable").addClass("event")
+                    device.x(event.x)
+                    device.y(event.y)
+                    device.attr("device-id", event.id)
+                device.title(event.name);
             });
         });
     }

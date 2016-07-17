@@ -40,7 +40,17 @@
 	<target name="run" depends="release">
 		<java fork="true" failonerror="true" classname="se.hal.HalServer">
 			<classpath>
-				<pathelement path="${releaseDir}/hal.jar"/>	<!--wildcard may not be platform independent, ok?-->
+				<pathelement path="${releaseDir}/hal.jar"/>
+				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
+			</classpath>
+		</java>
+	</target>
+
+	<target name="remote-debug" depends="release">
+		<java fork="true" failonerror="true" classname="se.hal.HalServer">
+            <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005" />
+			<classpath>
+				<pathelement path="${releaseDir}/hal.jar"/>
 				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
 			</classpath>
 		</java>

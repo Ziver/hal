@@ -150,12 +150,11 @@
             // Events
             $.each(json.events, function(i, event) {
                 var group = svg.group();
-                svg.image("/img/lightbulb.svg")
+                group.image("/img/lightbulb.svg")
                     .addClass("draggable").addClass("event")
-                    device.x(event.x)
-                    device.y(event.y)
-                    device.attr("device-id", event.id)
-                device.title(event.name);
+                    .x(event.x).y(event.y)
+                    .attr("device-id", event.id)
+                group.title(event.name);
             });
         });
     }

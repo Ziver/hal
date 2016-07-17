@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 /**
  * This class manages all SensorController and EventController objects
  */
+@SuppressWarnings("RedundantCast")
 public class ControllerManager implements HalSensorReportListener,
         HalEventReportListener,
         PreConfigurationActionListener,
@@ -132,7 +133,8 @@ public class ControllerManager implements HalSensorReportListener,
 
     private static Sensor findSensor(HalSensorData sensorData, List<Sensor> list){
         for (Sensor s : list) {
-            if (sensorData.equals(s.getDeviceData())) {
+            // We need to cast otherwise we will use Object.equal
+            if (sensorData.equals((HalSensorData)s.getDeviceData())) {
                 return s;
             }
         }
@@ -218,7 +220,8 @@ public class ControllerManager implements HalSensorReportListener,
 
     private static Event findEvent(HalEventData eventData, List<Event> list){
         for (Event e : list) {
-            if (eventData.equals(e.getDeviceData())) {
+            // We need to cast otherwise we will use Object.equal
+            if (eventData.equals((HalEventData) e.getDeviceData())) {
                 return e;
             }
         }

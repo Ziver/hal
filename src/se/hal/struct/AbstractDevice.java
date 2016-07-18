@@ -54,23 +54,31 @@ public abstract class AbstractDevice<T> extends DBBean {
                 Class c = Class.forName(type);
                 deviceData = (T) c.newInstance();
 
-                if (config != null && !config.isEmpty()) {
-                    Configurator<T> configurator = getDeviceConfig();
-                    configurator.setValues(JSONParser.read(config));
-                    configurator.applyConfiguration();
-                }
+                applyConfig();
             } catch (Exception e) {
-                logger.log(Level.SEVERE, "Unable to read device data", e);
+                logger.log(Level.SEVERE, "Unable instantiate DeviceData: "+type, e);
             }
         }
         return deviceData;
     }
+
+    /**
+     * Will replace the current DeviceData.
+     * And the current config will be applied on the new DeviceData.
+     * DeviceData will be reset if the input is set as null.
+     */
     public void setDeviceData(T data) {
-        this.deviceData = data;
-        if(data != null)
+        if(data != null) {
+            deviceData = data;
             type = data.getClass().getName();
-        updateConfigString();
+            applyConfig();
+        } else {
+            deviceData = null;
+            type = null;
+            config = null;
+        }
     }
+
     public void save(DBConnection db) throws SQLException {
         if (deviceData != null)
             updateConfigString();
@@ -78,9 +86,24 @@ public abstract class AbstractDevice<T> extends DBBean {
             this.config = null;
         super.save(db);
     }
+
+    /**
+     * Will update the config String that will be stored in DB.
+     */
     protected void updateConfigString() {
         Configurator<T> configurator = getDeviceConfig();
         this.config = JSONWriter.toString(configurator.getValuesAsNode());
+    }
+    /**
+     * This method will configure the current DeviceData with the
+     * configuration from the config String.
+     */
+    protected void applyConfig(){
+        if (config != null && !config.isEmpty()) {
+            Configurator<T> configurator = getDeviceConfig();
+            configurator.setValues(JSONParser.read(config));
+            configurator.applyConfiguration();
+        }
     }
 
 
@@ -92,12 +115,22 @@ public abstract class AbstractDevice<T> extends DBBean {
         this.name = name;
     }
 
+    /**
+     * @return a String containing the class name of the DeviceData
+     */
     public String getType() {
         return type;
     }
+
+    /**
+     * Will set the DeviceData class type. This method will
+     * reset set the current DeviceData if the input type is
+     * null or a different type from the current DeviceData class.
+     */
     public void setType(String type) {
         if (this.type == null || !this.type.equals(type)) {
             this.type = type;
+            this.config = null;
             this.deviceData = null; // invalidate current sensor data object
         }
     }

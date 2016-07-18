@@ -29,7 +29,7 @@ public class ControllerManager implements HalSensorReportListener,
     private static ControllerManager instance;
 
 
-    /** All isAvailable sensor plugins **/
+    /** All available sensor plugins **/
     private List<Class<? extends HalSensorData>> availableSensors = new ArrayList<>();
     /** List of all registered sensors **/
     private List<Sensor> registeredSensors = new ArrayList<>();
@@ -39,7 +39,7 @@ public class ControllerManager implements HalSensorReportListener,
     private List<Sensor> limboSensors = new LinkedList<>();
 
 
-    /** All isAvailable event plugins **/
+    /** All available event plugins **/
     private List<Class<? extends HalEventData>> availableEvents = new ArrayList<>();
     /** List of all registered events **/
     private List<Event> registeredEvents = new ArrayList<>();
@@ -62,7 +62,7 @@ public class ControllerManager implements HalSensorReportListener,
             return;
         }
         if(!availableSensors.contains(sensor.getDeviceData().getClass())) {
-            logger.warning("Sensor data plugin not isAvailable: "+ sensor.getDeviceData().getClass());
+            logger.warning("Sensor data plugin not available: "+ sensor.getDeviceData().getClass());
             return;
         }
 
@@ -82,13 +82,15 @@ public class ControllerManager implements HalSensorReportListener,
             return;
         }
 
-        logger.info("Deregistering sensor(id: "+ sensor.getId() +"): "+ sensor.getDeviceData().getClass());
         Class<? extends HalSensorController> c = sensor.getController();
         HalSensorController controller = (HalSensorController) controllerMap.get(c);;
         if (controller != null) {
+            logger.info("Deregistering sensor(id: "+ sensor.getId() +"): "+ sensor.getDeviceData().getClass());
             controller.deregister(sensor.getDeviceData());
             registeredSensors.remove(sensor);
             removeControllerIfEmpty(controller);
+        } else {
+            logger.warning("Controller not instantiated:"+ sensor.getController());
         }
     }
 
@@ -133,8 +135,7 @@ public class ControllerManager implements HalSensorReportListener,
 
     private static Sensor findSensor(HalSensorData sensorData, List<Sensor> list){
         for (Sensor s : list) {
-            // We need to cast otherwise we will use Object.equal
-            if (sensorData.equals((HalSensorData)s.getDeviceData())) {
+            if (sensorData.equals(s.getDeviceData())) {
                 return s;
             }
         }
@@ -145,11 +146,11 @@ public class ControllerManager implements HalSensorReportListener,
 
     public void register(Event event) {
         if(event.getDeviceData() == null) {
-            logger.warning("Sensor data is null: "+ event);
+            logger.warning("Event data is null: "+ event);
             return;
         }
         if(!availableEvents.contains(event.getDeviceData().getClass())) {
-            logger.warning("Sensor data plugin not isAvailable: "+ event.getDeviceData().getClass());
+            logger.warning("Event data plugin not available: "+ event.getDeviceData().getClass());
             return;
         }
 
@@ -165,17 +166,19 @@ public class ControllerManager implements HalSensorReportListener,
 
     public void deregister(Event event){
         if(event.getDeviceData() == null) {
-            logger.warning("Sensor data is null: "+ event);
+            logger.warning("Event data is null: "+ event);
             return;
         }
 
-        logger.info("Deregistering event(id: "+ event.getId() +"): "+ event.getDeviceData().getClass());
         Class<? extends HalEventController> c = event.getController();
         HalEventController controller = (HalEventController) controllerMap.get(c);
         if (controller != null) {
+            logger.info("Deregistering event(id: "+ event.getId() +"): "+ event.getDeviceData().getClass());
             controller.deregister(event.getDeviceData());
             registeredEvents.remove(event);
             removeControllerIfEmpty(controller);
+        } else {
+            logger.warning("Controller not instantiated: "+ event.getController());
         }
     }
 
@@ -220,8 +223,7 @@ public class ControllerManager implements HalSensorReportListener,
 
     private static Event findEvent(HalEventData eventData, List<Event> list){
         for (Event e : list) {
-            // We need to cast otherwise we will use Object.equal
-            if (eventData.equals((HalEventData) e.getDeviceData())) {
+            if (eventData.equals(e.getDeviceData())) {
                 return e;
             }
         }
@@ -253,7 +255,7 @@ public class ControllerManager implements HalSensorReportListener,
                 limboSensors.add(sensor);
             }
         }
-        else if(obj instanceof HalEventController) {
+        else if(obj instanceof HalEventData) {
             Event event = findEvent((HalEventData) obj, registeredEvents);
             if(event != null){
                 deregister(event);
@@ -264,14 +266,14 @@ public class ControllerManager implements HalSensorReportListener,
 
     @Override
     public void postConfigurationAction(Configurator configurator, Object obj) {
-        if(obj instanceof HalSensorController) {
+        if(obj instanceof HalSensorData) {
             Sensor sensor = findSensor((HalSensorData) obj, limboSensors);
             if(sensor != null){
                 register(sensor);
                 limboSensors.remove(sensor);
             }
         }
-        else if(obj instanceof HalEventController) {
+        else if(obj instanceof HalEventData) {
             Event event = findEvent((HalEventData) obj, limboEvents);
             if(event != null){
                 register(event);

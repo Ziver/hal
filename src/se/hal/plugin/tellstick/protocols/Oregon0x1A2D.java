@@ -68,6 +68,7 @@ public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionS
 
     }
 
+    @Override
     public boolean equals(HalSensorData obj){
         if(! (obj instanceof Oregon0x1A2D))
             return false;

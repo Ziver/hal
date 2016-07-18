@@ -47,6 +47,7 @@ public class RPiTemperatureSensor implements TemperatureSensorData {
         return RPiController.class;
     }
 
+    @Override
     public boolean equals(HalSensorData obj){
     	if(obj instanceof RPiTemperatureSensor)
     		return obj == this;

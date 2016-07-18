@@ -82,13 +82,15 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
 			float data = result.getFloat("data");	//the "raw" recorded data
 			float estimatedData = data/confidence;	//estimate the "real" value of the data by looking at the confidence value
 
-			// Only add nulls if the report interval is smaller than the aggregated interval
-			if (sensor.getDeviceData() == null ||
-                    timestampEnd-timestampStart > sensor.getDeviceData().getDataInterval()) {
-				// Add null data point to list if one or more periods of data is missing before this
-				if (previousTimestampEnd != -1 && previousTimestampEnd + 1 < timestampStart) {
-					list.add(new AggregateData(id, previousTimestampEnd + 1, null /*Float.NaN*/, username));
-				}
+            // Add null data point to list if one or more periods of data is missing before this
+			if (previousTimestampEnd != -1 && sensor.getDeviceData() != null){
+                boolean shortInterval = timestampEnd-timestampStart < sensor.getDeviceData().getDataInterval();
+                long distance = timestampStart - (previousTimestampEnd + 1);
+				if (// Only add nulls if the report interval is smaller than the aggregated interval
+                        !shortInterval && distance > 0 ||
+                        // Only add nulls if space between aggr is larger than sensor report interval
+                        shortInterval && distance > sensor.getDeviceData().getDataInterval())
+					 list.add(new AggregateData(id, previousTimestampEnd + 1, null /*Float.NaN*/, username));
 			}
 
 			list.add(new AggregateData(id, timestampEnd, (estimatedData/1000f), username));	//add this data point to list

@@ -32,21 +32,21 @@ public class ControllerManager implements HalSensorReportListener,
     /** All available sensor plugins **/
     private List<Class<? extends HalSensorData>> availableSensors = new ArrayList<>();
     /** List of all registered sensors **/
-    private List<Sensor> registeredSensors = new ArrayList<>();
+    private List<Sensor> registeredSensors = Collections.synchronizedList(new ArrayList<Sensor>());
     /** List of auto detected sensors **/
-    private List<Sensor> detectedSensors = new ArrayList<>();
+    private List<Sensor> detectedSensors = Collections.synchronizedList(new ArrayList<Sensor>());
     /** List of sensors that are currently being reconfigured **/
-    private List<Sensor> limboSensors = new LinkedList<>();
+    private List<Sensor> limboSensors = Collections.synchronizedList(new LinkedList<Sensor>());
 
 
     /** All available event plugins **/
     private List<Class<? extends HalEventData>> availableEvents = new ArrayList<>();
     /** List of all registered events **/
-    private List<Event> registeredEvents = new ArrayList<>();
+    private List<Event> registeredEvents = Collections.synchronizedList(new ArrayList<Event>());
     /** List of auto detected events **/
-    private List<Event> detectedEvents = new ArrayList<>();
+    private List<Event> detectedEvents = Collections.synchronizedList(new ArrayList<Event>());
     /** List of all registered events **/
-    private List<Event> limboEvents = new LinkedList<>();
+    private List<Event> limboEvents = Collections.synchronizedList(new LinkedList<Event>());
 
 
     /** A map of all instantiated controllers **/
@@ -134,7 +134,8 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     private static Sensor findSensor(HalSensorData sensorData, List<Sensor> list){
-        for (Sensor s : list) {
+        for (int i=0; i<list.size(); ++i) { // Don't use foreach for concurrency reasons
+            Sensor s = list.get(i);
             if (sensorData.equals(s.getDeviceData())) {
                 return s;
             }
@@ -222,7 +223,8 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     private static Event findEvent(HalEventData eventData, List<Event> list){
-        for (Event e : list) {
+        for (int i=0; i<list.size(); ++i) { // Don't use foreach for concurrency reasons
+            Event e = list.get(i);
             if (eventData.equals(e.getDeviceData())) {
                 return e;
             }
@@ -241,10 +243,6 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     /////////////////////////////// GENERAL ///////////////////////////////////
-    public void initializeScannableControllers(){
-
-    }
-
 
     @Override
     public void preConfigurationAction(Configurator configurator, Object obj) {

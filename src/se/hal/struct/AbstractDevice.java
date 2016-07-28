@@ -71,7 +71,7 @@ public abstract class AbstractDevice<T> extends DBBean {
         if(data != null) {
             deviceData = data;
             type = data.getClass().getName();
-            applyConfig();
+            applyConfig(); // TODO: this is a bit clunky, should probably be solved in another way
         } else {
             deviceData = null;
             type = null;

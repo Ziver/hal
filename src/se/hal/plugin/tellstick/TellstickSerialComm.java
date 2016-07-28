@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,14 +57,14 @@ public class TellstickSerialComm implements Runnable,
     private HalSensorReportListener sensorListener;
     private HalEventReportListener eventListener;
 
-    private ArrayList<TellstickProtocol> registeredDevices;
+    private List<TellstickProtocol> registeredDevices;
 
 
 
     public TellstickSerialComm() {
         set = new TimedHashSet(TRANSMISSION_UNIQUENESS_TTL);
         parser = new TellstickParser();
-        registeredDevices = new ArrayList<>();
+        registeredDevices = Collections.synchronizedList(new ArrayList<TellstickProtocol>());
     }
 
     @Override
@@ -133,7 +135,8 @@ public class TellstickSerialComm implements Runnable,
                             //Check for registered device that are in the same group
                             if(protocol instanceof TellstickGroupProtocol) {
                                 TellstickGroupProtocol groupProtocol = (TellstickGroupProtocol) protocol;
-                                for (TellstickProtocol childProtocol : registeredDevices) {
+                                for (int i=0; i<registeredDevices.size(); ++i) { // Don't use foreach for concurrency reasons
+                                    TellstickProtocol childProtocol = registeredDevices.get(i);
                                     if (childProtocol instanceof TellstickGroupProtocol &&
                                             groupProtocol.equalsGroup(childProtocol) &&
                                             !protocol.equals(childProtocol)) {

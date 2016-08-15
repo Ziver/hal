@@ -148,7 +148,7 @@ public class NexaSelfLearning extends TellstickProtocol
     }
 
     @Override
-    public boolean equals(HalEventData obj){
+    public boolean equals(Object obj){
         if(obj instanceof NexaSelfLearning)
             return ((NexaSelfLearning) obj).house == house &&
                     ((NexaSelfLearning) obj).group == group &&

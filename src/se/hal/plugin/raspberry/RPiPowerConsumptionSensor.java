@@ -49,7 +49,7 @@ public class RPiPowerConsumptionSensor implements PowerConsumptionSensorData {
     }
 
     @Override
-    public boolean equals(HalSensorData obj){
+    public boolean equals(Object obj){
     	if(!(obj instanceof RPiPowerConsumptionSensor))
     		return false;
     	return ((RPiPowerConsumptionSensor)obj).gpioPin == gpioPin;

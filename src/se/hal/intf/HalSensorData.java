@@ -35,5 +35,5 @@ public interface HalSensorData {
      * NOTE: it should only static or unique data for the sensor type.
      * This method is used to associate reported data with registered sensors
      */
-    boolean equals(HalSensorData obj);
+    boolean equals(Object obj);
 }

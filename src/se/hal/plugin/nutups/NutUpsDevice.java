@@ -42,7 +42,7 @@ public class NutUpsDevice implements PowerConsumptionSensorData{
     }
 
     @Override
-    public boolean equals(HalSensorData obj){
+    public boolean equals(Object obj){
         if (obj instanceof NutUpsDevice)
             return deviceId != null && deviceId.equals(((NutUpsDevice)obj).deviceId);
         return false;

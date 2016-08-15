@@ -15,6 +15,6 @@ public interface HalEventData {
      * This method needs to be implemented.
      * NOTE: it should not compare data and timestamp, only static or unique data for the event type.
      */
-    boolean equals(HalEventData obj);
+    boolean equals(Object obj);
 
 }

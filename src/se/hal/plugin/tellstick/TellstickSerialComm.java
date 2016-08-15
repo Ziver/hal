@@ -53,7 +53,7 @@ public class TellstickSerialComm implements Runnable,
     private OutputStream out;
     private TimedHashSet set; // To check for duplicate transmissions
 
-    private TellstickParser parser;
+    protected TellstickParser parser;
     private HalSensorReportListener sensorListener;
     private HalEventReportListener eventListener;
 
@@ -115,43 +115,8 @@ public class TellstickSerialComm implements Runnable,
     public void run() {
         try {
             String data;
-
             while (in != null && (data = readLine()) != null) {
-                if ((data.startsWith("+S") || data.startsWith("+T"))) {
-                    synchronized (this) {
-                        this.notifyAll();
-                    }
-                }
-                else {
-                    TellstickProtocol protocol = parser.decode(data);
-                    if(protocol != null) {
-                        if (protocol.getTimestamp() < 0)
-                            protocol.setTimestamp(System.currentTimeMillis());
-
-                        boolean registered = registeredDevices.contains(protocol);
-                        if(registered && !set.contains(data) || // check for duplicates transmissions of registered devices
-                                !registered && set.contains(data)) { // required duplicate transmissions before reporting unregistered devices
-
-                            //Check for registered device that are in the same group
-                            if(protocol instanceof TellstickGroupProtocol) {
-                                TellstickGroupProtocol groupProtocol = (TellstickGroupProtocol) protocol;
-                                for (int i=0; i<registeredDevices.size(); ++i) { // Don't use foreach for concurrency reasons
-                                    TellstickProtocol childProtocol = registeredDevices.get(i);
-                                    if (childProtocol instanceof TellstickGroupProtocol &&
-                                            groupProtocol.equalsGroup(childProtocol) &&
-                                            !protocol.equals(childProtocol)) {
-                                        ((TellstickGroupProtocol) childProtocol).copyGroupData(groupProtocol);
-                                        childProtocol.setTimestamp(protocol.getTimestamp());
-                                        reportEvent(childProtocol);
-                                    }
-                                }
-                            }
-                            // Report source event
-                            reportEvent(protocol);
-                        }
-                        set.add(data);
-                    }
-                }
+                handleLine(data);
             }
         } catch (IOException e) {
             logger.log(Level.SEVERE, null, e);
@@ -165,7 +130,7 @@ public class TellstickSerialComm implements Runnable,
     }
 
     /**
-     * There seems to be an issue with read(...) methods only read() is working
+     * There seems to be an issue with read(...) methods, only read() is working
      */
     private String readLine() throws IOException {
         StringBuilder str = new StringBuilder(50);
@@ -183,6 +148,36 @@ public class TellstickSerialComm implements Runnable,
         }
         return str.toString();
     }
+    protected void handleLine(String data){
+        TellstickProtocol protocol = parser.decode(data);
+        if(protocol != null) {
+            if (protocol.getTimestamp() < 0)
+                protocol.setTimestamp(System.currentTimeMillis());
+
+            boolean registered = registeredDevices.contains(protocol);
+            if(registered && !set.contains(data) || // check for duplicates transmissions of registered devices
+                    !registered && set.contains(data)) { // required duplicate transmissions before reporting unregistered devices
+
+                //Check for registered device that are in the same group
+                if(protocol instanceof TellstickGroupProtocol) {
+                    TellstickGroupProtocol groupProtocol = (TellstickGroupProtocol) protocol;
+                    for (int i=0; i<registeredDevices.size(); ++i) { // Don't use foreach for concurrency reasons
+                        TellstickProtocol childProtocol = registeredDevices.get(i);
+                        if (childProtocol instanceof TellstickGroupProtocol &&
+                                groupProtocol.equalsGroup(childProtocol) &&
+                                !protocol.equals(childProtocol)) {
+                            ((TellstickGroupProtocol) childProtocol).copyGroupData(groupProtocol);
+                            childProtocol.setTimestamp(protocol.getTimestamp());
+                            reportEvent(childProtocol);
+                        }
+                    }
+                }
+                // Report source event
+                reportEvent(protocol);
+            }
+            set.add(data);
+        }
+    }
 
 
     @Override
@@ -192,14 +187,10 @@ public class TellstickSerialComm implements Runnable,
     }
     public synchronized void write(TellstickProtocol prot) {
         write(prot.encode());
-        try {
-            this.wait();
-            prot.setTimestamp(System.currentTimeMillis());
-        } catch (InterruptedException e) {
-            logger.log(Level.SEVERE, null, e);
-        }
+        parser.waitSendConformation();
+        prot.setTimestamp(System.currentTimeMillis());
     }
-    public void write(String data) {
+    private void write(String data) {
         try {
             for(int i=0; i<data.length();i++)
                 out.write(0xFF & data.charAt(i));

@@ -33,6 +33,8 @@ import java.util.logging.Logger;
 
 /**
  * Created by Ziver on 2015-02-18.
+ *
+ * Protocol Specification: http://developer.telldus.com/doxygen/TellStick.html
  */
 public class TellstickParser {
     private static final Logger logger = LogUtil.getLogger();
@@ -42,6 +44,9 @@ public class TellstickParser {
         registerProtocol(NexaSelfLearning.class);
         registerProtocol(Oregon0x1A2D.class);
     }
+
+    private int firmwareVersion = -1;
+
 
 
     public TellstickProtocol decode(String data) {
@@ -72,6 +77,12 @@ public class TellstickParser {
             }
         } else if (data.startsWith("+S") || data.startsWith("+T")) {
             // This is confirmation of send commands
+            synchronized (this) {
+                this.notifyAll();
+            }
+        } else if (data.startsWith("+V")) {
+            if (data.length() > 2)
+                firmwareVersion = Integer.parseInt(data.substring(2));
         }else {
             logger.severe("Unknown prefix: " + data);
         }
@@ -79,12 +90,24 @@ public class TellstickParser {
         return null;
     }
 
+    public void waitSendConformation(){
+        try {
+            this.wait();
+        } catch (InterruptedException e) {
+            logger.log(Level.SEVERE, null, e);
+        }
+    }
+
+
+    public int getFirmwareVersion() {
+        return firmwareVersion;
+    }
 
 
     public static void registerProtocol(Class<? extends TellstickProtocol> protClass) {
         try {
             if (protocolMap == null)
-                protocolMap = new HashMap<String, Class<? extends TellstickProtocol>>();
+                protocolMap = new HashMap<>();
             TellstickProtocol tmp = protClass.newInstance();
             protocolMap.put(
                     tmp.getProtocolName() + "-" + tmp.getModelName(),

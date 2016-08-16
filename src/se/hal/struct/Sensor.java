@@ -108,6 +108,6 @@ public class Sensor extends AbstractDevice<HalSensorData>{
 
 
     public Class<? extends HalSensorController> getController(){
-        return getDeviceData().getSensorController();
+        return getDeviceConfig().getSensorController();
     }
 }

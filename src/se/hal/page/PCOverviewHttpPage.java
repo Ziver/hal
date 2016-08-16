@@ -11,7 +11,6 @@ import se.hal.util.AggregateDataListSqlResult.AggregateData;
 import se.hal.util.UTCTimeUtility;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
-import zutil.net.http.HttpHeader;
 import zutil.parser.DataNode;
 import zutil.parser.Templator;
 
@@ -114,8 +113,8 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
     private List<Sensor> getSensorList(DBConnection db) throws SQLException {
         List<Sensor> sensors = new ArrayList<>();
         for (Sensor sensor : Sensor.getSensors(db)) {
-            if (sensor.getDeviceData() != null &&
-                    sensor.getDeviceData() instanceof PowerConsumptionSensorData)
+            if (sensor.getDeviceConfig() != null &&
+                    sensor.getDeviceConfig() instanceof PowerConsumptionSensorData)
                 sensors.add(sensor);
         }
         return sensors;

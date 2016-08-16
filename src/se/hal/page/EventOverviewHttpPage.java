@@ -10,7 +10,6 @@ import se.hal.util.HistoryDataListSqlResult;
 import se.hal.util.HistoryDataListSqlResult.HistoryData;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
-import zutil.net.http.HttpHeader;
 import zutil.parser.Templator;
 
 import java.sql.PreparedStatement;
@@ -41,7 +40,7 @@ public class EventOverviewHttpPage extends HalHttpPage {
         if(request.containsKey("action")){
             // change event data
             Event event = Event.getEvent(db, id);
-            HalEventData eventData = event.getDeviceData();
+            HalEventData eventData = event.getDeviceConfig();
             if (eventData instanceof SwitchEventData){
                 if ( request.containsKey("data") && "on".equals(request.get("data")))
                     ((SwitchEventData)eventData).turnOn();

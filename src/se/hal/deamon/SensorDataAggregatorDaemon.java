@@ -55,11 +55,11 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     }
     
     public void aggregateSensor(Sensor sensor) {
-    	if(sensor.getDeviceData() == null){
+    	if(sensor.getDeviceConfig() == null){
     		logger.fine("The sensor type is not supported - ignoring it");
     		return;
     	}
-		logger.fine("The sensor is of type: " + sensor.getDeviceData().getClass().getName());
+		logger.fine("The sensor is of type: " + sensor.getDeviceConfig().getClass().getName());
 		
 		long aggregationStartTime = System.currentTimeMillis();
 		
@@ -83,7 +83,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
      */
     private void aggregateRawData(Sensor sensor, AggregationPeriodLength aggrPeriodLength, long ageLimitInMs, int expectedSampleCount, long aggregationStartTime){
     	long sensorId = sensor.getId();
-    	AggregationMethod aggrMethod = sensor.getDeviceData().getAggregationMethod();
+    	AggregationMethod aggrMethod = sensor.getDeviceConfig().getAggregationMethod();
     	DBConnection db = HalContext.getDB();
     	PreparedStatement stmt = null;
     	try {

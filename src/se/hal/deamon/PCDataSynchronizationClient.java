@@ -83,7 +83,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
 							sensor.setType(sensorDTO.type);
 							sensor.setUser(user);
 
-							sensor.getDeviceConfig().setValues(JSONParser.read(sensorDTO.config)).applyConfiguration();
+							sensor.getDeviceConfigurator().setValues(JSONParser.read(sensorDTO.config)).applyConfiguration();
 							sensor.save(db);
 						} catch (Exception e){
 							logger.warning("Unable to register external sensor: " +

@@ -19,7 +19,6 @@ import zutil.parser.Templator;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -113,7 +112,7 @@ public class MapHttpPage extends HalHttpPage implements HalHttpPage.HalJsonPage 
         DataNode sensorsNode = new DataNode(DataNode.DataType.List);
         for (Sensor sensor : Sensor.getLocalSensors(db)) {
             DataNode sensorNode = getDeviceNode(sensor);
-            sensorNode.set("data", sensor.getDeviceData().getData());
+            sensorNode.set("data", sensor.getDeviceConfig().getData());
             sensorsNode.add(sensorNode);
         }
         root.set("sensors", sensorsNode);
@@ -121,7 +120,7 @@ public class MapHttpPage extends HalHttpPage implements HalHttpPage.HalJsonPage 
         DataNode eventsNode = new DataNode(DataNode.DataType.List);
         for (Event event : Event.getLocalEvents(db)) {
             DataNode eventNode = getDeviceNode(event);
-            eventNode.set("data", event.getDeviceData().getData());
+            eventNode.set("data", event.getDeviceConfig().getData());
             eventsNode.add(eventNode);
         }
         root.set("events", eventsNode);

@@ -90,7 +90,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                                 dto.sensorId = sensor.getId();
                                 dto.name = sensor.getName();
                                 dto.type = sensor.getType();
-                                dto.config = JSONWriter.toString(sensor.getDeviceConfig().getValuesAsNode());
+                                dto.config = JSONWriter.toString(sensor.getDeviceConfigurator().getValuesAsNode());
                                 rsp.sensors.add(dto);
                             }
                         }

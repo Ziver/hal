@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by ezivkoc on 2016-01-15.
+ * Created by Ziver on 2016-01-15.
  */
 public abstract class AbstractDevice<T> extends DBBean {
     private static final Logger logger = LogUtil.getLogger();
@@ -21,10 +21,12 @@ public abstract class AbstractDevice<T> extends DBBean {
     // Sensor specific data
     private String name;
     private String type;
-    private String config; // only used to store the deviceData configuration in DB
+    private String config; // only used to store the deviceConfig configuration in DB
 
-    // Sensor specific data
-    private transient T deviceData;
+    /** Sensor specific configuration **/
+    private transient T deviceConfig;
+    /** latest device data received **/
+    private transient Object latestDeviceData;
 
     // User configuration
     @DBColumn("user_id")
@@ -38,8 +40,8 @@ public abstract class AbstractDevice<T> extends DBBean {
 
 
 
-    public Configurator<T> getDeviceConfig() {
-        T obj = getDeviceData();
+    public Configurator<T> getDeviceConfigurator() {
+        T obj = getDeviceConfig();
         if (obj != null) {
             Configurator<T> configurator = new Configurator<>(obj);
             configurator.setPreConfigurationListener(ControllerManager.getInstance());
@@ -48,18 +50,18 @@ public abstract class AbstractDevice<T> extends DBBean {
         }
         return null;
     }
-    public T getDeviceData() {
-        if (deviceData == null || !deviceData.getClass().getName().equals(type)) {
+    public T getDeviceConfig() {
+        if (deviceConfig == null || !deviceConfig.getClass().getName().equals(type)) {
             try {
                 Class c = Class.forName(type);
-                deviceData = (T) c.newInstance();
+                deviceConfig = (T) c.newInstance();
 
                 applyConfig();
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "Unable instantiate DeviceData: "+type, e);
             }
         }
-        return deviceData;
+        return deviceConfig;
     }
 
     /**
@@ -67,20 +69,20 @@ public abstract class AbstractDevice<T> extends DBBean {
      * And the current config will be applied on the new DeviceData.
      * DeviceData will be reset if the input is set as null.
      */
-    public void setDeviceData(T data) {
+    public void setDeviceConfig(T data) {
         if(data != null) {
-            deviceData = data;
+            deviceConfig = data;
             type = data.getClass().getName();
             applyConfig(); // TODO: this is a bit clunky, should probably be solved in another way
         } else {
-            deviceData = null;
+            deviceConfig = null;
             type = null;
             config = null;
         }
     }
 
     public void save(DBConnection db) throws SQLException {
-        if (deviceData != null)
+        if (deviceConfig != null)
             updateConfigString();
         else
             this.config = null;
@@ -91,7 +93,7 @@ public abstract class AbstractDevice<T> extends DBBean {
      * Will update the config String that will be stored in DB.
      */
     protected void updateConfigString() {
-        Configurator<T> configurator = getDeviceConfig();
+        Configurator<T> configurator = getDeviceConfigurator();
         this.config = JSONWriter.toString(configurator.getValuesAsNode());
     }
     /**
@@ -100,7 +102,7 @@ public abstract class AbstractDevice<T> extends DBBean {
      */
     protected void applyConfig(){
         if (config != null && !config.isEmpty()) {
-            Configurator<T> configurator = getDeviceConfig();
+            Configurator<T> configurator = getDeviceConfigurator();
             configurator.setValues(JSONParser.read(config));
             configurator.applyConfiguration();
         }
@@ -131,7 +133,7 @@ public abstract class AbstractDevice<T> extends DBBean {
         if (this.type == null || !this.type.equals(type)) {
             this.type = type;
             this.config = null;
-            this.deviceData = null; // invalidate current sensor data object
+            this.deviceConfig = null; // invalidate current sensor data object
         }
     }
 

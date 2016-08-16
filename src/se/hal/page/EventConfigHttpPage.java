@@ -7,7 +7,6 @@ import se.hal.struct.Event;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
-import zutil.net.http.HttpHeader;
 import zutil.parser.Templator;
 import zutil.ui.Configurator;
 import zutil.ui.Configurator.ConfigurationParam;
@@ -60,7 +59,7 @@ public class EventConfigHttpPage extends HalHttpPage {
                     event.setName(request.get("name"));
                     event.setType(request.get("type"));
                     event.setUser(localUser);
-                    event.getDeviceConfig().setValues(request).applyConfiguration();
+                    event.getDeviceConfigurator().setValues(request).applyConfiguration();
                     event.save(db);
                     ControllerManager.getInstance().register(event);
                     break;
@@ -70,7 +69,7 @@ public class EventConfigHttpPage extends HalHttpPage {
                         event.setName(request.get("name"));
                         event.setType(request.get("type"));
                         event.setUser(localUser);
-                        event.getDeviceConfig().setValues(request).applyConfiguration();
+                        event.getDeviceConfigurator().setValues(request).applyConfiguration();
                         event.save(db);
                     }
                     break;

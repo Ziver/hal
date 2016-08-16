@@ -7,7 +7,6 @@ import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
-import zutil.net.http.HttpHeader;
 import zutil.parser.Templator;
 import zutil.ui.Configurator;
 import zutil.ui.Configurator.ConfigurationParam;
@@ -62,7 +61,7 @@ public class SensorConfigHttpPage extends HalHttpPage {
                     sensor.setType(request.get("type"));
                     sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
                     sensor.setUser(localUser);
-                    sensor.getDeviceConfig().setValues(request).applyConfiguration();
+                    sensor.getDeviceConfigurator().setValues(request).applyConfiguration();
                     sensor.save(db);
                     ControllerManager.getInstance().register(sensor);
                     break;
@@ -72,7 +71,7 @@ public class SensorConfigHttpPage extends HalHttpPage {
                         sensor.setName(request.get("name"));
                         sensor.setType(request.get("type"));
                         sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
-                        sensor.getDeviceConfig().setValues(request).applyConfiguration();
+                        sensor.getDeviceConfigurator().setValues(request).applyConfiguration();
                         sensor.save(db);
                     }
                     break;

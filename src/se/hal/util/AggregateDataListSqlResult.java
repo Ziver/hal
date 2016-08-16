@@ -83,13 +83,13 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
 			float estimatedData = data/confidence;	//estimate the "real" value of the data by looking at the confidence value
 
             // Add null data point to list if one or more periods of data is missing before this
-			if (previousTimestampEnd != -1 && sensor.getDeviceData() != null){
-                boolean shortInterval = timestampEnd-timestampStart < sensor.getDeviceData().getDataInterval();
+			if (previousTimestampEnd != -1 && sensor.getDeviceConfig() != null){
+                boolean shortInterval = timestampEnd-timestampStart < sensor.getDeviceConfig().getDataInterval();
                 long distance = timestampStart - (previousTimestampEnd + 1);
 				if (// Only add nulls if the report interval is smaller than the aggregated interval
                         !shortInterval && distance > 0 ||
                         // Only add nulls if space between aggr is larger than sensor report interval
-                        shortInterval && distance > sensor.getDeviceData().getDataInterval())
+                        shortInterval && distance > sensor.getDeviceConfig().getDataInterval())
 					 list.add(new AggregateData(id, previousTimestampEnd + 1, null /*Float.NaN*/, username));
 			}
 

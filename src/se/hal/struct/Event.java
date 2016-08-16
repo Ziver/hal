@@ -32,6 +32,6 @@ public class Event extends AbstractDevice<HalEventData>{
 
 
     public Class<? extends HalEventController> getController(){
-        return getDeviceData().getEventController();
+        return getDeviceConfig().getEventController();
     }
 }

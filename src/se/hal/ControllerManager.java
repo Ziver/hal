@@ -5,7 +5,6 @@ import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
-import zutil.plugin.PluginData;
 import zutil.plugin.PluginManager;
 import zutil.ui.Configurator;
 import zutil.ui.Configurator.PostConfigurationActionListener;
@@ -57,27 +56,27 @@ public class ControllerManager implements HalSensorReportListener,
     /////////////////////////////// SENSORS ///////////////////////////////////
 
     public void register(Sensor sensor) {
-        if(sensor.getDeviceData() == null) {
+        if(sensor.getDeviceConfig() == null) {
             logger.warning("Sensor data is null: "+ sensor);
             return;
         }
-        if(!availableSensors.contains(sensor.getDeviceData().getClass())) {
-            logger.warning("Sensor data plugin not available: "+ sensor.getDeviceData().getClass());
+        if(!availableSensors.contains(sensor.getDeviceConfig().getClass())) {
+            logger.warning("Sensor data plugin not available: "+ sensor.getDeviceConfig().getClass());
             return;
         }
 
-        logger.info("Registering new sensor(id: "+ sensor.getId() +"): "+ sensor.getDeviceData().getClass());
+        logger.info("Registering new sensor(id: "+ sensor.getId() +"): "+ sensor.getDeviceConfig().getClass());
         Class<? extends HalSensorController> c = sensor.getController();
         HalSensorController controller = getControllerInstance(c);
 
         if(controller != null)
-            controller.register(sensor.getDeviceData());
+            controller.register(sensor.getDeviceConfig());
         registeredSensors.add(sensor);
-        detectedSensors.remove(findSensor(sensor.getDeviceData(), detectedSensors)); // Remove if this device was detected
+        detectedSensors.remove(findSensor(sensor.getDeviceConfig(), detectedSensors)); // Remove if this device was detected
     }
 
     public void deregister(Sensor sensor){
-        if(sensor.getDeviceData() == null) {
+        if(sensor.getDeviceConfig() == null) {
             logger.warning("Sensor data is null: "+ sensor);
             return;
         }
@@ -85,8 +84,8 @@ public class ControllerManager implements HalSensorReportListener,
         Class<? extends HalSensorController> c = sensor.getController();
         HalSensorController controller = (HalSensorController) controllerMap.get(c);;
         if (controller != null) {
-            logger.info("Deregistering sensor(id: "+ sensor.getId() +"): "+ sensor.getDeviceData().getClass());
-            controller.deregister(sensor.getDeviceData());
+            logger.info("Deregistering sensor(id: "+ sensor.getId() +"): "+ sensor.getDeviceConfig().getClass());
+            controller.deregister(sensor.getDeviceConfig());
             registeredSensors.remove(sensor);
             removeControllerIfEmpty(controller);
         } else {
@@ -126,7 +125,7 @@ public class ControllerManager implements HalSensorReportListener,
                     detectedSensors.add(sensor);
                 }
             }
-            sensor.setDeviceData(sensorData); // Set the latest data
+            sensor.setDeviceConfig(sensorData); // Set the latest data
 
         }catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store sensor report", e);
@@ -136,7 +135,7 @@ public class ControllerManager implements HalSensorReportListener,
     private static Sensor findSensor(HalSensorData sensorData, List<Sensor> list){
         for (int i=0; i<list.size(); ++i) { // Don't use foreach for concurrency reasons
             Sensor s = list.get(i);
-            if (sensorData.equals(s.getDeviceData())) {
+            if (sensorData.equals(s.getDeviceConfig())) {
                 return s;
             }
         }
@@ -146,27 +145,27 @@ public class ControllerManager implements HalSensorReportListener,
     //////////////////////////////// EVENTS ///////////////////////////////////
 
     public void register(Event event) {
-        if(event.getDeviceData() == null) {
+        if(event.getDeviceConfig() == null) {
             logger.warning("Event data is null: "+ event);
             return;
         }
-        if(!availableEvents.contains(event.getDeviceData().getClass())) {
-            logger.warning("Event data plugin not available: "+ event.getDeviceData().getClass());
+        if(!availableEvents.contains(event.getDeviceConfig().getClass())) {
+            logger.warning("Event data plugin not available: "+ event.getDeviceConfig().getClass());
             return;
         }
 
-        logger.info("Registering new event(id: "+ event.getId() +"): "+ event.getDeviceData().getClass());
+        logger.info("Registering new event(id: "+ event.getId() +"): "+ event.getDeviceConfig().getClass());
         Class<? extends HalEventController> c = event.getController();
         HalEventController controller = getControllerInstance(c);
 
         if(controller != null)
-            controller.register(event.getDeviceData());
+            controller.register(event.getDeviceConfig());
         registeredEvents.add(event);
-        detectedEvents.remove(findEvent(event.getDeviceData(), detectedEvents)); // Remove if this device was detected
+        detectedEvents.remove(findEvent(event.getDeviceConfig(), detectedEvents)); // Remove if this device was detected
     }
 
     public void deregister(Event event){
-        if(event.getDeviceData() == null) {
+        if(event.getDeviceConfig() == null) {
             logger.warning("Event data is null: "+ event);
             return;
         }
@@ -174,8 +173,8 @@ public class ControllerManager implements HalSensorReportListener,
         Class<? extends HalEventController> c = event.getController();
         HalEventController controller = (HalEventController) controllerMap.get(c);
         if (controller != null) {
-            logger.info("Deregistering event(id: "+ event.getId() +"): "+ event.getDeviceData().getClass());
-            controller.deregister(event.getDeviceData());
+            logger.info("Deregistering event(id: "+ event.getId() +"): "+ event.getDeviceConfig().getClass());
+            controller.deregister(event.getDeviceConfig());
             registeredEvents.remove(event);
             removeControllerIfEmpty(controller);
         } else {
@@ -215,7 +214,7 @@ public class ControllerManager implements HalSensorReportListener,
                     detectedEvents.add(event);
                 }
             }
-            event.setDeviceData(eventData); // Set the latest data
+            event.setDeviceConfig(eventData); // Set the latest data
 
         }catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store event report", e);
@@ -225,7 +224,7 @@ public class ControllerManager implements HalSensorReportListener,
     private static Event findEvent(HalEventData eventData, List<Event> list){
         for (int i=0; i<list.size(); ++i) { // Don't use foreach for concurrency reasons
             Event e = list.get(i);
-            if (eventData.equals(e.getDeviceData())) {
+            if (eventData.equals(e.getDeviceConfig())) {
                 return e;
             }
         }
@@ -235,8 +234,8 @@ public class ControllerManager implements HalSensorReportListener,
     public void send(Event event){
         HalEventController controller = getControllerInstance(event.getController());
         if(controller != null) {
-            controller.send(event.getDeviceData());
-            reportReceived(event.getDeviceData()); // save action to db
+            controller.send(event.getDeviceConfig());
+            reportReceived(event.getDeviceConfig()); // save action to db
         }
         else
             logger.warning("No controller found for event id: "+ event.getId());

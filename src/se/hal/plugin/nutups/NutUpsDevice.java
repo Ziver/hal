@@ -1,40 +1,40 @@
 package se.hal.plugin.nutups;
 
+import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
-import se.hal.struct.PowerConsumptionSensorData;
+import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.osal.app.linux.NutUPSClient;
 import zutil.ui.Configurator;
 
 /**
  * Created by Ziver on 2016-05-25.
  */
-public class NutUpsDevice implements PowerConsumptionSensorData{
+public class NutUpsDevice implements HalSensorConfig{
 
     @Configurator.Configurable("UPS id")
-    private String deviceId;
-    private long timestamp;
-    private double consumption;
+    private String upsId;
 
 
     public NutUpsDevice(){}
 
     protected NutUpsDevice(NutUPSClient.UPSDevice ups){
-        this.deviceId = ups.getId();
-        this.timestamp = System.currentTimeMillis();
-        this.consumption = ups.getPowerUsage() * 1/60.0; // convert watt min to watt hour
+        this.upsId = ups.getId();
     }
 
 
-    @Override
-    public long getTimestamp() {
-        return timestamp;
+    protected HalSensorData read(NutUPSClient.UPSDevice ups){
+        PowerConsumptionSensorData data = new PowerConsumptionSensorData();
+        data.setTimestamp(System.currentTimeMillis());
+        data.setConsumption(ups.getPowerUsage() * 1/60.0); // convert watt min to watt hour
+        return data;
     }
 
-    @Override
-    public double getData() {
-        return consumption;
+
+    public String getUpsId(){
+        return upsId;
     }
+
 
     @Override
     public long getDataInterval(){
@@ -44,13 +44,12 @@ public class NutUpsDevice implements PowerConsumptionSensorData{
     @Override
     public boolean equals(Object obj){
         if (obj instanceof NutUpsDevice)
-            return deviceId != null && deviceId.equals(((NutUpsDevice)obj).deviceId);
+            return upsId != null && upsId.equals(((NutUpsDevice)obj).upsId);
         return false;
     }
 
     public String toString(){
-        return "id: "+deviceId +
-                ", consumption: "+consumption;
+        return "id: "+ upsId;
     }
 
     @Override

@@ -20,13 +20,30 @@
  * THE SOFTWARE.
  */
 
-package se.hal.struct;
+package se.hal.struct.devicedata;
 
 import se.hal.intf.HalEventData;
 
 /**
  * Created by Ziver on 2015-05-07.
  */
-public abstract class DimmerEventData implements HalEventData {
+public class SwitchEventData extends HalEventData {
 
+    private boolean enabled;
+
+
+    public void turnOn(){
+        enabled = true;
+    }
+    public void turnOff(){
+        enabled = false;
+    }
+
+    public boolean isOn(){
+        return enabled;
+    }
+    @Override
+    public double getData() {
+        return (enabled ? 1.0 : 0.0);
+    }
 }

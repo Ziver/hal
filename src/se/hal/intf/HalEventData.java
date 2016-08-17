@@ -1,20 +1,25 @@
 package se.hal.intf;
 
 /**
- * Created by Ziver on 2015-12-23.
+ * Interface representing one report from an event
+ *
+ * Created by Ziver on 2016-08-17.
  */
-public interface HalEventData {
+public abstract class HalEventData {
 
-    long getTimestamp();
+    private long timestamp = -1;
 
-    double getData();
 
-    Class<? extends HalEventController> getEventController();
+    public long getTimestamp(){
+        return timestamp;
+    }
+    public void setTimestamp(long timestamp){
+        this.timestamp = timestamp;
+    }
+
 
     /**
-     * This method needs to be implemented.
-     * NOTE: it should not compare data and timestamp, only static or unique data for the event type.
+     * @return serialized event data converted to double that will be saved in DB.
      */
-    boolean equals(Object obj);
-
+    public abstract double getData();
 }

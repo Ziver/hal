@@ -4,7 +4,7 @@ import se.hal.bot.AliceBot;
 import se.hal.intf.HalBot;
 import se.hal.intf.HalSpeachToText;
 import se.hal.intf.HalTextToSpeach;
-import se.hal.struct.SwitchEventData;
+import se.hal.struct.devicedata.SwitchEventData;
 import se.hal.stt.ManualSTTClient;
 import se.hal.tts.MaryRemoteTTSClient;
 

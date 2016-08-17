@@ -3,11 +3,13 @@ package se.hal.plugin.nutups;
 import se.hal.HalContext;
 import se.hal.intf.HalAutoScannableController;
 import se.hal.intf.HalSensorController;
-import se.hal.intf.HalSensorData;
+import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorReportListener;
 import zutil.log.LogUtil;
 import zutil.osal.app.linux.NutUPSClient;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +23,7 @@ public class NutUpsController implements HalSensorController, HalAutoScannableCo
     public static Logger logger = LogUtil.getLogger();
     private static final int SYNC_INTERVAL = 60 * 1000;
 
+    private HashMap<String,NutUpsDevice> registeredDevices = new HashMap<>();
     private NutUPSClient client;
     private ScheduledExecutorService executor;
     private HalSensorReportListener listener;
@@ -56,7 +59,10 @@ public class NutUpsController implements HalSensorController, HalAutoScannableCo
         try {
             if (client != null && listener != null) {
                 for (NutUPSClient.UPSDevice ups : client.getUPSList()) {
-                    listener.reportReceived(new NutUpsDevice(ups));
+                    NutUpsDevice device = registeredDevices.get(ups.getId());
+                    if (device == null)
+                        device = new NutUpsDevice(ups);
+                    listener.reportReceived(device, device.read(ups));
                 }
             }
         } catch (Exception e){
@@ -72,12 +78,12 @@ public class NutUpsController implements HalSensorController, HalAutoScannableCo
 
 
     @Override
-    public void register(HalSensorData sensor) {
-
+    public void register(HalSensorConfig sensor) {
+        registeredDevices.put(((NutUpsDevice) sensor).getUpsId(), (NutUpsDevice) sensor);
     }
     @Override
-    public void deregister(HalSensorData sensor) {
-
+    public void deregister(HalSensorConfig sensor) {
+        registeredDevices.remove(((NutUpsDevice) sensor).getUpsId());
     }
     @Override
     public int size() {

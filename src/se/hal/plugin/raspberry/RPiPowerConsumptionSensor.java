@@ -1,37 +1,25 @@
 package se.hal.plugin.raspberry;
 
+import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
-import se.hal.intf.HalSensorData;
-import se.hal.struct.PowerConsumptionSensorData;
+import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.ui.Configurator;
 
-public class RPiPowerConsumptionSensor implements PowerConsumptionSensorData {
+public class RPiPowerConsumptionSensor implements HalSensorConfig {
 	
 	@Configurator.Configurable("GPIO-Pin")
     private int gpioPin = -1;
-	
-	private double data;
-	private long timestamp;
+
 	
 	public RPiPowerConsumptionSensor(){
 		//need to be empty for the framework to create an instance
 	}
 	
-	public RPiPowerConsumptionSensor(int gpioPin, long timestamp, double data) {
+	public RPiPowerConsumptionSensor(int gpioPin) {
 		this.gpioPin = gpioPin;
-		this.timestamp = timestamp;
-		this.data = data;
 	}
-	
-    @Override
-    public long getTimestamp() {
-        return timestamp;
-    }
 
-    @Override
-    public double getData() {
-        return data;
-    }
+
 
     @Override
     public long getDataInterval(){
@@ -60,6 +48,6 @@ public class RPiPowerConsumptionSensor implements PowerConsumptionSensorData {
 	}
 
     public String toString(){
-        return "gpioPin:" + gpioPin +", data:" + data;
+        return "gpioPin:" + gpioPin;
     }
 }

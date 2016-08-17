@@ -2,10 +2,10 @@ package se.hal.page;
 
 import se.hal.ControllerManager;
 import se.hal.HalContext;
-import se.hal.intf.HalEventData;
+import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalHttpPage;
 import se.hal.struct.Event;
-import se.hal.struct.SwitchEventData;
+import se.hal.struct.devicedata.SwitchEventData;
 import se.hal.util.HistoryDataListSqlResult;
 import se.hal.util.HistoryDataListSqlResult.HistoryData;
 import zutil.db.DBConnection;
@@ -40,7 +40,7 @@ public class EventOverviewHttpPage extends HalHttpPage {
         if(request.containsKey("action")){
             // change event data
             Event event = Event.getEvent(db, id);
-            HalEventData eventData = event.getDeviceConfig();
+            HalEventConfig eventData = event.getDeviceConfig();
             if (eventData instanceof SwitchEventData){
                 if ( request.containsKey("data") && "on".equals(request.get("data")))
                     ((SwitchEventData)eventData).turnOn();

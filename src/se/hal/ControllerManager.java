@@ -29,7 +29,7 @@ public class ControllerManager implements HalSensorReportListener,
 
 
     /** All available sensor plugins **/
-    private List<Class<? extends HalSensorData>> availableSensors = new ArrayList<>();
+    private List<Class<? extends HalSensorConfig>> availableSensors = new ArrayList<>();
     /** List of all registered sensors **/
     private List<Sensor> registeredSensors = Collections.synchronizedList(new ArrayList<Sensor>());
     /** List of auto detected sensors **/
@@ -39,7 +39,7 @@ public class ControllerManager implements HalSensorReportListener,
 
 
     /** All available event plugins **/
-    private List<Class<? extends HalEventData>> availableEvents = new ArrayList<>();
+    private List<Class<? extends HalEventConfig>> availableEvents = new ArrayList<>();
     /** List of all registered events **/
     private List<Event> registeredEvents = Collections.synchronizedList(new ArrayList<Event>());
     /** List of auto detected events **/
@@ -82,7 +82,7 @@ public class ControllerManager implements HalSensorReportListener,
         }
 
         Class<? extends HalSensorController> c = sensor.getController();
-        HalSensorController controller = (HalSensorController) controllerMap.get(c);;
+        HalSensorController controller = (HalSensorController) controllerMap.get(c);
         if (controller != null) {
             logger.info("Deregistering sensor(id: "+ sensor.getId() +"): "+ sensor.getDeviceConfig().getClass());
             controller.deregister(sensor.getDeviceConfig());
@@ -93,7 +93,7 @@ public class ControllerManager implements HalSensorReportListener,
         }
     }
 
-    public List<Class<? extends HalSensorData>> getAvailableSensors(){
+    public List<Class<? extends HalSensorConfig>> getAvailableSensors(){
         return availableSensors;
     }
 
@@ -102,37 +102,37 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     @Override
-    public void reportReceived(HalSensorData sensorData) {
+    public void reportReceived(HalSensorConfig sensorConfig, HalSensorData sensorData) {
         try{
             DBConnection db = HalContext.getDB();
-            Sensor sensor = findSensor(sensorData, registeredSensors);
+            Sensor sensor = findSensor(sensorConfig, registeredSensors);
 
             if (sensor != null) {
-                logger.finest("Received report from sensor("+sensorData.getClass().getSimpleName()+"): "+ sensorData);
+                logger.finest("Received report from sensor("+sensorConfig.getClass().getSimpleName()+"): "+ sensorConfig);
                 PreparedStatement stmt =
                         db.getPreparedStatement("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUES(?, ?, ?)");
                 stmt.setLong(1, sensorData.getTimestamp());
                 stmt.setLong(2, sensor.getId());
                 stmt.setDouble(3, sensorData.getData());
-                db.exec(stmt);
+                DBConnection.exec(stmt);
             }
             else { // unknown sensor
                 logger.finest("Received report from unregistered sensor" +
-                        "("+sensorData.getClass().getSimpleName()+"): "+ sensorData);
-                sensor = findSensor(sensorData, detectedSensors);
+                        "("+sensorConfig.getClass().getSimpleName()+"): "+ sensorConfig);
+                sensor = findSensor(sensorConfig, detectedSensors);
                 if(sensor == null) {
                     sensor = new Sensor();
                     detectedSensors.add(sensor);
                 }
             }
-            sensor.setDeviceConfig(sensorData); // Set the latest data
+            sensor.setDeviceConfig(sensorConfig); // Set the latest data
 
         }catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store sensor report", e);
         }
     }
 
-    private static Sensor findSensor(HalSensorData sensorData, List<Sensor> list){
+    private static Sensor findSensor(HalSensorConfig sensorData, List<Sensor> list){
         for (int i=0; i<list.size(); ++i) { // Don't use foreach for concurrency reasons
             Sensor s = list.get(i);
             if (sensorData.equals(s.getDeviceConfig())) {
@@ -182,7 +182,7 @@ public class ControllerManager implements HalSensorReportListener,
         }
     }
 
-    public List<Class<? extends HalEventData>> getAvailableEvents(){
+    public List<Class<? extends HalEventConfig>> getAvailableEvents(){
         return availableEvents;
     }
 
@@ -191,37 +191,37 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     @Override
-    public void reportReceived(HalEventData eventData) {
+    public void reportReceived(HalEventConfig eventConfig, HalEventData eventData) {
         try {
             DBConnection db = HalContext.getDB();
-            Event event = findEvent(eventData, registeredEvents);
+            Event event = findEvent(eventConfig, registeredEvents);
 
             if (event != null) {
-                logger.finest("Received report from event("+eventData.getClass().getSimpleName()+"): "+ eventData);
+                logger.finest("Received report from event("+eventConfig.getClass().getSimpleName()+"): "+ eventConfig);
                 PreparedStatement stmt =
                         db.getPreparedStatement("INSERT INTO event_data_raw (timestamp, event_id, data) VALUES(?, ?, ?)");
                 stmt.setLong(1, eventData.getTimestamp());
                 stmt.setLong(2, event.getId());
                 stmt.setDouble(3, eventData.getData());
-                db.exec(stmt);
+                DBConnection.exec(stmt);
             }
             else { // unknown sensor
                 logger.info("Received report from unregistered event" +
-                        "("+eventData.getClass().getSimpleName()+"): "+ eventData);
-                event = findEvent(eventData, detectedEvents);
+                        "("+eventConfig.getClass().getSimpleName()+"): "+ eventConfig);
+                event = findEvent(eventConfig, detectedEvents);
                 if(event == null) {
                     event = new Event();
                     detectedEvents.add(event);
                 }
             }
-            event.setDeviceConfig(eventData); // Set the latest data
+            event.setDeviceConfig(eventConfig); // Set the latest data
 
         }catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store event report", e);
         }
     }
 
-    private static Event findEvent(HalEventData eventData, List<Event> list){
+    private static Event findEvent(HalEventConfig eventData, List<Event> list){
         for (int i=0; i<list.size(); ++i) { // Don't use foreach for concurrency reasons
             Event e = list.get(i);
             if (eventData.equals(e.getDeviceConfig())) {
@@ -235,7 +235,7 @@ public class ControllerManager implements HalSensorReportListener,
         HalEventController controller = getControllerInstance(event.getController());
         if(controller != null) {
             controller.send(event.getDeviceConfig());
-            reportReceived(event.getDeviceConfig()); // save action to db
+            reportReceived(event.getDeviceConfig(), event.getDeviceData()); // save action to db
         }
         else
             logger.warning("No controller found for event id: "+ event.getId());
@@ -245,15 +245,15 @@ public class ControllerManager implements HalSensorReportListener,
 
     @Override
     public void preConfigurationAction(Configurator configurator, Object obj) {
-        if(obj instanceof HalSensorData) {
-            Sensor sensor = findSensor((HalSensorData) obj, registeredSensors);
+        if(obj instanceof HalSensorConfig) {
+            Sensor sensor = findSensor((HalSensorConfig) obj, registeredSensors);
             if(sensor != null){
                 deregister(sensor);
                 limboSensors.add(sensor);
             }
         }
-        else if(obj instanceof HalEventData) {
-            Event event = findEvent((HalEventData) obj, registeredEvents);
+        else if(obj instanceof HalEventConfig) {
+            Event event = findEvent((HalEventConfig) obj, registeredEvents);
             if(event != null){
                 deregister(event);
                 limboEvents.add(event);
@@ -263,15 +263,15 @@ public class ControllerManager implements HalSensorReportListener,
 
     @Override
     public void postConfigurationAction(Configurator configurator, Object obj) {
-        if(obj instanceof HalSensorData) {
-            Sensor sensor = findSensor((HalSensorData) obj, limboSensors);
+        if(obj instanceof HalSensorConfig) {
+            Sensor sensor = findSensor((HalSensorConfig) obj, limboSensors);
             if(sensor != null){
                 register(sensor);
                 limboSensors.remove(sensor);
             }
         }
-        else if(obj instanceof HalEventData) {
-            Event event = findEvent((HalEventData) obj, limboEvents);
+        else if(obj instanceof HalEventConfig) {
+            Event event = findEvent((HalEventConfig) obj, limboEvents);
             if(event != null){
                 register(event);
                 limboEvents.remove(event);
@@ -280,7 +280,7 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     private <T> T getControllerInstance(Class<T> c){
-        Object controller = null;
+        Object controller;
         if (controllerMap.containsKey(c))
             controller = controllerMap.get(c);
         else {
@@ -341,13 +341,13 @@ public class ControllerManager implements HalSensorReportListener,
     public static void initialize(PluginManager pluginManager){
         ControllerManager manager = new ControllerManager();
 
-        for (Iterator<Class<? extends HalSensorData>> it=pluginManager.getClassIterator(HalSensorData.class);
-                it.hasNext(); ){
+        for (Iterator<Class<? extends HalSensorConfig>> it = pluginManager.getClassIterator(HalSensorConfig.class);
+             it.hasNext(); ){
             manager.availableSensors.add(it.next());
         }
 
-        for (Iterator<Class<? extends HalEventData>> it=pluginManager.getClassIterator(HalEventData.class);
-                it.hasNext(); ){
+        for (Iterator<Class<? extends HalEventConfig>> it = pluginManager.getClassIterator(HalEventConfig.class);
+             it.hasNext(); ){
             manager.availableEvents.add(it.next());
         }
 

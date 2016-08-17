@@ -1,6 +1,7 @@
 package se.hal.struct;
 
 import se.hal.intf.HalEventController;
+import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventData;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
  * Created by Ziver on 2015-12-15.
  */
 @DBBean.DBTable(value="event", superBean=true)
-public class Event extends AbstractDevice<HalEventData>{
+public class Event extends AbstractDevice<HalEventConfig,HalEventData>{
     private static final Logger logger = LogUtil.getLogger();
 
 

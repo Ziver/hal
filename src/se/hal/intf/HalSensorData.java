@@ -1,39 +1,25 @@
 package se.hal.intf;
 
 /**
- * Created by Ziver on 2015-12-23.
+ * Interface representing one data report from a sensor.
+ *
+ * Created by Ziver on 2016-08-17.
  */
-public interface HalSensorData {
-    enum AggregationMethod{
-        SUM,
-        AVERAGE
+public abstract class HalSensorData {
+
+    private long timestamp = -1;
+
+
+    public long getTimestamp(){
+        return timestamp;
+    }
+    public void setTimestamp(long timestamp){
+        this.timestamp = timestamp;
     }
 
 
-    long getTimestamp();
-
-    double getData();
-
-
     /**
-     * @return the intended data reporting interval in milliseconds.
+     * @return serialized sensor data converted to double that will be saved in DB.
      */
-    long getDataInterval();
-
-    /**
-     * @return which aggregation method that should be used to aggregate the reported data.
-     */
-    AggregationMethod getAggregationMethod();
-
-
-    /**
-     * @return the Controller class where SensorData should be registered on
-     */
-    Class<? extends HalSensorController> getSensorController();
-
-    /**
-     * NOTE: it should only static or unique data for the sensor type.
-     * This method is used to associate reported data with registered sensors
-     */
-    boolean equals(Object obj);
+    public abstract double getData();
 }

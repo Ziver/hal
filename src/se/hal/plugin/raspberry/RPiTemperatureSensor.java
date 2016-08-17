@@ -1,36 +1,17 @@
 package se.hal.plugin.raspberry;
 
+import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
-import se.hal.intf.HalSensorData;
-import se.hal.struct.TemperatureSensorData;
+import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.ui.Configurator;
 
-public class RPiTemperatureSensor implements TemperatureSensorData {
+public class RPiTemperatureSensor implements HalSensorConfig {
 	
 	@Configurator.Configurable("1-Wire Address")
     private String w1Address = null;
-	
-	private double data;
-	private long timestamp;
-	
-	public RPiTemperatureSensor(){
-		//need to be empty for the framework to create an instance
-	}
-	
-	public RPiTemperatureSensor(long timestamp, double data) {
-		this.timestamp = timestamp;
-		this.data = data;
-	}
-	
-    @Override
-    public long getTimestamp() {
-        return timestamp;
-    }
 
-    @Override
-    public double getData() {
-        return data;
-    }
+
+	
 
     @Override
     public long getDataInterval() {
@@ -58,8 +39,4 @@ public class RPiTemperatureSensor implements TemperatureSensorData {
 		return w1Address;
 	}
 
-	@Override
-	public double getTemperature() {
-		return data;
-	}
 }

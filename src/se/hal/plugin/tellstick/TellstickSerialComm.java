@@ -123,10 +123,10 @@ public class TellstickSerialComm implements Runnable,
         }
     }
     private void reportEvent(TellstickProtocol protocol){
-        if (sensorListener != null && protocol instanceof HalSensorData)
-            sensorListener.reportReceived((HalSensorData) protocol);
-        else if (eventListener != null && protocol instanceof HalEventData)
-            eventListener.reportReceived((HalEventData) protocol);
+        if (sensorListener != null && protocol instanceof HalSensorConfig)
+            sensorListener.reportReceived((HalSensorConfig) protocol);
+        else if (eventListener != null && protocol instanceof HalEventConfig)
+            eventListener.reportReceived((HalEventConfig) protocol);
     }
 
     /**
@@ -181,7 +181,7 @@ public class TellstickSerialComm implements Runnable,
 
 
     @Override
-    public void send(HalEventData event) {
+    public void send(HalEventConfig event) {
         if(event instanceof TellstickProtocol)
             write((TellstickProtocol) event);
     }
@@ -203,23 +203,23 @@ public class TellstickSerialComm implements Runnable,
 
 
     @Override
-    public void register(HalEventData event) {
+    public void register(HalEventConfig event) {
         if(event instanceof TellstickProtocol)
             registeredDevices.add((TellstickProtocol) event);
     }
     @Override
-    public void register(HalSensorData sensor) {
+    public void register(HalSensorConfig sensor) {
         if(sensor instanceof TellstickProtocol)
             registeredDevices.add((TellstickProtocol) sensor);
     }
 
     @Override
-    public void deregister(HalEventData event) {
+    public void deregister(HalEventConfig event) {
         if(event instanceof TellstickProtocol)
             registeredDevices.remove((TellstickProtocol) event);
     }
     @Override
-    public void deregister(HalSensorData sensor) {
+    public void deregister(HalSensorConfig sensor) {
         if(sensor instanceof TellstickProtocol)
             registeredDevices.remove((TellstickProtocol) sensor);
     }

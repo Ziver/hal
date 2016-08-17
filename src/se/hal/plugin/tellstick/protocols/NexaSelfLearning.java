@@ -22,10 +22,10 @@
 
 package se.hal.plugin.tellstick.protocols;
 
-import se.hal.intf.HalEventData;
+import se.hal.intf.HalEventConfig;
 import se.hal.plugin.tellstick.TellstickGroupProtocol;
 import se.hal.plugin.tellstick.TellstickProtocol;
-import se.hal.struct.SwitchEventData;
+import se.hal.struct.devicedata.SwitchEventData;
 import zutil.ByteUtil;
 import zutil.parser.binary.BinaryStruct;
 import zutil.parser.binary.BinaryStructInputStream;
@@ -38,7 +38,7 @@ import java.io.IOException;
  * Created by Ziver on 2015-02-18.
  */
 public class NexaSelfLearning extends TellstickProtocol
-        implements SwitchEventData,TellstickGroupProtocol,BinaryStruct {
+        implements HalEventConfig,TellstickGroupProtocol,BinaryStruct {
 
     @BinaryField(index=1, length=26)
     @Configurator.Configurable("House code")
@@ -128,16 +128,6 @@ public class NexaSelfLearning extends TellstickProtocol
         this.unit = unit;
     }
 
-    public boolean isOn() {
-        return enable;
-    }
-    public void turnOn() {
-        enable = true;
-    }
-    public void turnOff() {
-        enable = false;
-    }
-
 
 
     public String toString(){
@@ -168,8 +158,4 @@ public class NexaSelfLearning extends TellstickProtocol
             this.enable = ((NexaSelfLearning) group).enable;
     }
 
-    @Override
-    public double getData() {
-        return (enable ? 1 : 0);
-    }
 }

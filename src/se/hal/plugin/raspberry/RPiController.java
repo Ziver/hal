@@ -1,7 +1,7 @@
 package se.hal.plugin.raspberry;
 
 import se.hal.intf.HalSensorController;
-import se.hal.intf.HalSensorData;
+import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorReportListener;
 import se.hal.plugin.raspberry.hardware.RPiDS18B20;
 import se.hal.plugin.raspberry.hardware.RPiInteruptPulseFlankCounter;
@@ -27,7 +27,7 @@ public class RPiController implements HalSensorController {
     }
 
     @Override
-    public void register(HalSensorData sensor) {
+    public void register(HalSensorConfig sensor) {
     	if(sensor instanceof RPiPowerConsumptionSensor){
     		RPiPowerConsumptionSensor powerConsumptionSensor = (RPiPowerConsumptionSensor) sensor;
     		int gpioPin = powerConsumptionSensor.getGpioPin();
@@ -52,7 +52,7 @@ public class RPiController implements HalSensorController {
     }
 
     @Override
-    public void deregister(HalSensorData sensor) {
+    public void deregister(HalSensorConfig sensor) {
     	if(sensor instanceof RPiPowerConsumptionSensor){
     		RPiPowerConsumptionSensor powerConsumprtionSensor = (RPiPowerConsumptionSensor) sensor;
     		RPiSensor sensorToDeregister = pinToSensorMap.remove("GPIO_"+powerConsumprtionSensor.getGpioPin());
@@ -89,9 +89,9 @@ public class RPiController implements HalSensorController {
     	}
     }
     
-    public void sendDataReport(HalSensorData sensorData){
+    public void sendDataReport(HalSensorConfig sensorConfig){
     	if(sensorListener != null){
-    		sensorListener.reportReceived(sensorData);
+    		sensorListener.reportReceived(sensorConfig);
     	}else{
         	logger.log(Level.WARNING, "Could not report data. No registered listener");
         }

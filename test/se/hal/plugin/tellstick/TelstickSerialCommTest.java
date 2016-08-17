@@ -2,23 +2,11 @@ package se.hal.plugin.tellstick;
 
 import org.junit.Before;
 import org.junit.Test;
-import se.hal.HalContext;
-import se.hal.intf.HalEventData;
+import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventReportListener;
-import se.hal.intf.HalSensorData;
-import se.hal.intf.HalSensorReportListener;
-import se.hal.plugin.tellstick.protocols.Oregon0x1A2D;
 import zutil.converter.Converter;
-import zutil.db.DBConnection;
-import zutil.log.CompactLogFormatter;
-import zutil.log.LogUtil;
-import zutil.struct.MutableInt;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 
@@ -54,10 +42,10 @@ public class TelstickSerialCommTest {
     public void unregisteredEvent(){
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
-        final ArrayList<HalEventData> list = new ArrayList<>();
+        final ArrayList<HalEventConfig> list = new ArrayList<>();
         tellstick.setListener(new HalEventReportListener() {
             @Override
-            public void reportReceived(HalEventData e) {
+            public void reportReceived(HalEventConfig e) {
                 list.add(e);
             }
         });
@@ -72,10 +60,10 @@ public class TelstickSerialCommTest {
     public void event(){
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
-        final ArrayList<HalEventData> list = new ArrayList<>();
+        final ArrayList<HalEventConfig> list = new ArrayList<>();
         tellstick.setListener(new HalEventReportListener() {
             @Override
-            public void reportReceived(HalEventData e) {
+            public void reportReceived(HalEventConfig e) {
                 list.add(e);
             }
         });
@@ -91,7 +79,7 @@ public class TelstickSerialCommTest {
 
 
 
-    private static class TestEvent extends TellstickProtocol implements HalEventData{
+    private static class TestEvent extends TellstickProtocol implements HalEventConfig {
         public int testData;
 
         public TestEvent(){

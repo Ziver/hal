@@ -53,7 +53,8 @@ public class RPiDS18B20 implements RPiSensor, Runnable {
 	public void run() {
 		for(TemperatureSensor device : w1Mater.getDevices(TemperatureSensor.class)){
 			if(device.getName().equals(w1Address)){
-				controller.sendDataReport(new RPiTemperatureSensor(System.currentTimeMillis(), device.getTemperature(TemperatureScale.CELSIUS)));
+				controller.sendDataReport(
+						new RPiTemperatureSensor(System.currentTimeMillis(), device.getTemperature(TemperatureScale.CELSIUS)));
 				break;
 			}
 		}

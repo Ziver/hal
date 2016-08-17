@@ -1,0 +1,18 @@
+package se.hal.struct.devicedata;
+
+
+import se.hal.intf.HalSensorData;
+
+/**
+ * Created by Ziver on 2015-12-03.
+ */
+public class HumiditySensorData extends HalSensorData {
+
+    private double humidity;
+
+
+    @Override
+    public double getData() {
+        return humidity;
+    }
+}

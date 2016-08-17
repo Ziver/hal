@@ -1,8 +1,8 @@
 package se.hal.plugin.tellstick.protocols;
 
-import se.hal.intf.HalSensorData;
+import se.hal.intf.HalSensorConfig;
 import se.hal.plugin.tellstick.TellstickProtocol;
-import se.hal.struct.PowerConsumptionSensorData;
+import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.log.LogUtil;
 import zutil.ui.Configurator;
 
@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 /**
  * Created by Ziver on 2015-11-19.
  */
-public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionSensorData {
+public class Oregon0x1A2D extends TellstickProtocol implements HalSensorConfig {
     private static final Logger logger = LogUtil.getLogger();
 
     @Configurator.Configurable("Address")
@@ -82,19 +82,6 @@ public class Oregon0x1A2D extends TellstickProtocol implements PowerConsumptionS
     }
 
 
-    public double getTemperature(){
-        return temperature;
-    }
-
-    public double getHumidity(){
-        return humidity;
-    }
-
-
-    @Override
-    public double getData() {
-        return temperature;
-    }
 
     @Override
     public long getDataInterval() {

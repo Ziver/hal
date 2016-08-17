@@ -2,6 +2,6 @@ package se.hal.intf;
 
 public interface HalSensorReportListener {
 
-    void reportReceived(HalSensorData s);
+    void reportReceived(HalSensorConfig s, HalSensorData d);
 
 }

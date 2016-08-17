@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 /**
  * Created by Ziver on 2016-01-15.
  */
-public abstract class AbstractDevice<T> extends DBBean {
+public abstract class AbstractDevice<T,D> extends DBBean {
     private static final Logger logger = LogUtil.getLogger();
 
     // Sensor specific data
@@ -26,7 +26,7 @@ public abstract class AbstractDevice<T> extends DBBean {
     /** Sensor specific configuration **/
     private transient T deviceConfig;
     /** latest device data received **/
-    private transient Object latestDeviceData;
+    private transient D latestDeviceData;
 
     // User configuration
     @DBColumn("user_id")
@@ -39,6 +39,7 @@ public abstract class AbstractDevice<T> extends DBBean {
     private double y;
 
 
+    /**************** DEVICE CONFIG ******************/
 
     public Configurator<T> getDeviceConfigurator() {
         T obj = getDeviceConfig();
@@ -109,6 +110,20 @@ public abstract class AbstractDevice<T> extends DBBean {
     }
 
 
+    /**************** DEVICE DATA ******************/
+
+    /**
+     * @return the latest known data from the device
+     */
+    public D getDeviceData(){
+        return latestDeviceData;
+    }
+
+    public void setDeviceData(D latest){
+        this.latestDeviceData = latest;
+    }
+
+    /**************** OTHER VALUES ******************/
 
     public String getName() {
         return name;

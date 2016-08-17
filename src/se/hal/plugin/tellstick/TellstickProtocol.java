@@ -19,20 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package se.hal.plugin.tellstick;
 
-import se.hal.intf.HalEventController;
-import se.hal.intf.HalSensorController;
+import se.hal.intf.HalEventConfig;
+import se.hal.intf.HalEventData;
 
 /**
  * Created by Ziver on 2015-02-18.
  */
 public abstract class TellstickProtocol {
 
-    private String protocol;
-    private String model;
-    private long timestamp = -1;
+    private final String protocol;
+    private final String model;
 
 
     public TellstickProtocol(String protocol, String model){
@@ -48,22 +46,7 @@ public abstract class TellstickProtocol {
         return model;
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-
-    public Class<? extends HalEventController> getEventController() {
-        return TellstickSerialComm.class;
-    }
-    public Class<? extends HalSensorController> getSensorController() {
-        return TellstickSerialComm.class;
-    }
-
-    public abstract String encode();
+    public String encode(HalEventConfig deviceConfig, HalEventData deviceData){ return null; }
     public abstract void decode(byte[] data);
 
 }

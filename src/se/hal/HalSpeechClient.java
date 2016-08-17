@@ -50,17 +50,17 @@ public class HalSpeechClient {
         bot.initialize();
 
         /********************************************************************/
-/*        NexaSelfLearning nexa1 = new NexaSelfLearning();
+/*        NexaSelfLearningProtocol nexa1 = new NexaSelfLearningProtocol();
         nexa1.setHouse(15087918);
         nexa1.setUnit(0);
         switches.put("livingroom", new SwitchEventData("livingroom", nexa1));
 
-        NexaSelfLearning nexa2 = new NexaSelfLearning();
+        NexaSelfLearningProtocol nexa2 = new NexaSelfLearningProtocol();
         nexa2.setHouse(15087918);
         nexa2.setUnit(1);
         switches.put("bedroom", new SwitchEventData("bedroom", nexa2));
 
-        NexaSelfLearning nexa3 = new NexaSelfLearning();
+        NexaSelfLearningProtocol nexa3 = new NexaSelfLearningProtocol();
         nexa3.setHouse(15087918);
         nexa3.setUnit(3);
         switches.put("kitchen", new SwitchEventData("kitchen", nexa3));
@@ -70,7 +70,7 @@ public class HalSpeechClient {
             public void stateChange(TellstickProtocol protocol) {
                 for(SwitchEventData s : switches.values()) {
                     if(s.equals(protocol)) {
-                        String response = s.getName()+" window is "+(((NexaSelfLearning)protocol).isEnabled() ? "open": "closed");
+                        String response = s.getName()+" window is "+(((NexaSelfLearningProtocol)protocol).isEnabled() ? "open": "closed");
                         System.out.println(">>> " + response);
                         tts.speak(response);
                         return;

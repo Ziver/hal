@@ -20,12 +20,11 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.tellstick.protocols;
+package se.hal.plugin.tellstick.protocol;
 
 import se.hal.intf.HalEventConfig;
 import se.hal.plugin.tellstick.TellstickGroupProtocol;
 import se.hal.plugin.tellstick.TellstickProtocol;
-import se.hal.struct.devicedata.SwitchEventData;
 import zutil.ByteUtil;
 import zutil.parser.binary.BinaryStruct;
 import zutil.parser.binary.BinaryStructInputStream;
@@ -37,31 +36,15 @@ import java.io.IOException;
 /**
  * Created by Ziver on 2015-02-18.
  */
-public class NexaSelfLearning extends TellstickProtocol
-        implements HalEventConfig,TellstickGroupProtocol,BinaryStruct {
-
-    @BinaryField(index=1, length=26)
-    @Configurator.Configurable("House code")
-    private int house = 0;
-
-    @BinaryField(index=2, length=1)
-    @Configurator.Configurable("Group code")
-    private boolean group = false;
-
-    @BinaryField(index=3, length=1)
-    private boolean enable = false;
-
-    @BinaryField(index=4, length=4)
-    @Configurator.Configurable("Unit code")
-    private int unit = 0;
+public class NexaSelfLearningProtocol extends TellstickProtocol {
 
 
 
-    public NexaSelfLearning() {
+    public NexaSelfLearningProtocol() {
         super("arctech", "selflearning");
     }
 
-
+    @Override
     public String encode(){
         try {
             // T[t0][t1][t2][t3][length][d1]..[dn]+
@@ -94,6 +77,7 @@ public class NexaSelfLearning extends TellstickProtocol
         return "";
     }
 
+    @Override
     public void decode(byte[] data){
         // Data positions
         // house  = 0xFFFFFFC0
@@ -107,55 +91,5 @@ public class NexaSelfLearning extends TellstickProtocol
         BinaryStructInputStream.read(this, data);
     }
 
-
-
-    public int getHouse() {
-        return house;
-    }
-    public void setHouse(int house) {
-        this.house = house;
-    }
-    public boolean getGroup() {
-        return group;
-    }
-    public void setGroup(boolean group) {
-        this.group = group;
-    }
-    public int getUnit() {
-        return unit;
-    }
-    public void setUnit(int unit) {
-        this.unit = unit;
-    }
-
-
-
-    public String toString(){
-        return "house:"+house+
-                ", group:"+group+
-                ", unit:"+unit+
-                ", method:"+enable;
-    }
-
-    @Override
-    public boolean equals(Object obj){
-        if(obj instanceof NexaSelfLearning)
-            return ((NexaSelfLearning) obj).house == house &&
-                    ((NexaSelfLearning) obj).group == group &&
-                    ((NexaSelfLearning)obj).unit == unit;
-        return false;
-    }
-    @Override
-    public boolean equalsGroup(TellstickProtocol obj) {
-        if(obj instanceof NexaSelfLearning)
-            return ((NexaSelfLearning) obj).house == house &&
-                    (((NexaSelfLearning) obj).group || group );
-        return false;
-    }
-    @Override
-    public void copyGroupData(TellstickGroupProtocol group) {
-        if(group instanceof NexaSelfLearning)
-            this.enable = ((NexaSelfLearning) group).enable;
-    }
 
 }

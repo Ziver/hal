@@ -34,7 +34,7 @@ public interface TellstickGroupProtocol {
      * Protocols should extend this method if it has group functionality.
      * @return true if this object an the input is in the same group.
      */
-    public boolean equalsGroup(TellstickProtocol obj);
+    public boolean equalsGroup(TellstickGroupProtocol obj);
 
     /**
      * Copy the state data from the group to this object.

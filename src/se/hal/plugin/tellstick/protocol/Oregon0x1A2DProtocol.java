@@ -1,8 +1,7 @@
-package se.hal.plugin.tellstick.protocols;
+package se.hal.plugin.tellstick.protocol;
 
 import se.hal.intf.HalSensorConfig;
 import se.hal.plugin.tellstick.TellstickProtocol;
-import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.log.LogUtil;
 import zutil.ui.Configurator;
 
@@ -11,28 +10,15 @@ import java.util.logging.Logger;
 /**
  * Created by Ziver on 2015-11-19.
  */
-public class Oregon0x1A2D extends TellstickProtocol implements HalSensorConfig {
+public class Oregon0x1A2DProtocol extends TellstickProtocol {
     private static final Logger logger = LogUtil.getLogger();
 
-    @Configurator.Configurable("Address")
-    private int address = 0;
-    @Configurator.Configurable("Report Interval(ms)")
-    private int interval = 60*1000; // default 1 min
-
-    private double temperature = 0;
-    private double humidity = 0;
 
 
-
-    public Oregon0x1A2D(){
+    public Oregon0x1A2DProtocol(){
         super("oregon", "0x1A2D");
     }
 
-
-    @Override
-    public String encode() {
-        return null;
-    }
 
     @Override
     public void decode(byte[] data) {
@@ -66,31 +52,6 @@ public class Oregon0x1A2D extends TellstickProtocol implements HalSensorConfig {
             temperature = -temperature;
         humidity = (hum1 * 10.0) + hum2;
 
-    }
-
-    @Override
-    public boolean equals(Object obj){
-        if(! (obj instanceof Oregon0x1A2D))
-            return false;
-        return ((Oregon0x1A2D)obj).address == this.address;
-    }
-
-    public String toString(){
-        return "address:"+address+
-                ", temperature:"+temperature+
-                ", humidity:"+humidity;
-    }
-
-
-
-    @Override
-    public long getDataInterval() {
-        return interval;
-    }
-
-    @Override
-    public AggregationMethod getAggregationMethod() {
-        return AggregationMethod.SUM;
     }
 
 }

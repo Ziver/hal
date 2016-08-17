@@ -22,8 +22,8 @@
 
 package se.hal.plugin.tellstick;
 
-import se.hal.plugin.tellstick.protocols.NexaSelfLearning;
-import se.hal.plugin.tellstick.protocols.Oregon0x1A2D;
+import se.hal.plugin.tellstick.protocol.NexaSelfLearningProtocol;
+import se.hal.plugin.tellstick.protocol.Oregon0x1A2DProtocol;
 import zutil.converter.Converter;
 import zutil.log.LogUtil;
 
@@ -41,8 +41,8 @@ public class TellstickParser {
     private static HashMap<String, Class<? extends TellstickProtocol>> protocolMap;
 
     static {
-        registerProtocol(NexaSelfLearning.class);
-        registerProtocol(Oregon0x1A2D.class);
+        registerProtocol(NexaSelfLearningProtocol.class);
+        registerProtocol(Oregon0x1A2DProtocol.class);
     }
 
     private int firmwareVersion = -1;

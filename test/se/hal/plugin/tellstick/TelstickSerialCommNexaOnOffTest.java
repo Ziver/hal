@@ -1,6 +1,6 @@
 package se.hal.plugin.tellstick;
 
-import se.hal.plugin.tellstick.protocols.NexaSelfLearning;
+import se.hal.plugin.tellstick.protocol.NexaSelfLearningProtocol;
 
 /**
  * Created by Ziver on 2015-11-19.
@@ -17,7 +17,7 @@ public class TelstickSerialCommNexaOnOffTest {
 
             Thread.sleep(1000);
 
-            NexaSelfLearning nexa = new NexaSelfLearning();
+            NexaSelfLearningProtocol nexa = new NexaSelfLearningProtocol();
             //nexa.setHouse(11772006);
             nexa.setHouse(14160770);
             nexa.setGroup(false);

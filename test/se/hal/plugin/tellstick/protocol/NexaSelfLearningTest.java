@@ -20,9 +20,8 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.tellstick.protocols;
+package se.hal.plugin.tellstick.protocol;
 
-import zutil.ByteUtil;
 import zutil.converter.Converter;
 
 import java.nio.charset.StandardCharsets;
@@ -33,7 +32,7 @@ public class NexaSelfLearningTest {
 
     @org.junit.Test
     public void testEncode() throws Exception {
-        NexaSelfLearning nexa = new NexaSelfLearning();
+        NexaSelfLearningProtocol nexa = new NexaSelfLearningProtocol();
         nexa.setHouse(11_772_006);
         nexa.setUnit(0);
         nexa.turnOn();
@@ -61,7 +60,7 @@ public class NexaSelfLearningTest {
 
     @org.junit.Test
     public void decode_ON() throws Exception {
-        NexaSelfLearning nexa = decode("0x2CE81990");
+        NexaSelfLearningProtocol nexa = decode("0x2CE81990");
 
         assertEquals("House Code", 11772006, nexa.getHouse());
         assertEquals("Unit Code", 0, nexa.getUnit());
@@ -70,15 +69,15 @@ public class NexaSelfLearningTest {
 
     @org.junit.Test
     public void decode_OFF() throws Exception {
-        NexaSelfLearning nexa = decode("0x2CE81980");
+        NexaSelfLearningProtocol nexa = decode("0x2CE81980");
 
         assertEquals("House Code", 11772006, nexa.getHouse());
         assertEquals("Unit Code", 0, nexa.getUnit());
         assertFalse("Enabled", nexa.isOn());
     }
 
-    private NexaSelfLearning decode(String data){
-        NexaSelfLearning nexa = new NexaSelfLearning();
+    private NexaSelfLearningProtocol decode(String data){
+        NexaSelfLearningProtocol nexa = new NexaSelfLearningProtocol();
         nexa.decode(Converter.hexToByte(data));
         return nexa;
     }

@@ -3,8 +3,10 @@ package se.hal.plugin.tellstick.device;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
+import se.hal.plugin.tellstick.TellstickDevice;
 import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.plugin.tellstick.TellstickSerialComm;
+import se.hal.plugin.tellstick.protocol.Oregon0x1A2DProtocol;
 import zutil.log.LogUtil;
 import zutil.ui.Configurator;
 
@@ -13,7 +15,7 @@ import java.util.logging.Logger;
 /**
  * Created by Ziver on 2015-11-19.
  */
-public class Oregon0x1A2D implements HalSensorConfig {
+public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
     private static final Logger logger = LogUtil.getLogger();
 
     @Configurator.Configurable("Address")
@@ -22,6 +24,11 @@ public class Oregon0x1A2D implements HalSensorConfig {
     private int interval = 60*1000; // default 1 min
 
 
+
+    public Oregon0x1A2D() { }
+    public Oregon0x1A2D(int address) {
+        this.address = address;
+    }
 
 
     @Override
@@ -52,4 +59,9 @@ public class Oregon0x1A2D implements HalSensorConfig {
         return TellstickSerialComm.class;
     }
 
+
+    @Override
+    public String getProtocolName() { return Oregon0x1A2DProtocol.PROTOCOL; }
+    @Override
+    public String getModelName() { return Oregon0x1A2DProtocol.MODEL; }
 }

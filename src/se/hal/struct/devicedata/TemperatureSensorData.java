@@ -10,6 +10,11 @@ public class TemperatureSensorData extends HalSensorData {
     private double temperature;
 
 
+    public TemperatureSensorData(){}
+    public TemperatureSensorData(double temperature){
+        this.temperature =  temperature;
+    }
+
     /**
      * @param   data     the temperature to set in degrees C
      */

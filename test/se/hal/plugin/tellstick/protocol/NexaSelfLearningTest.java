@@ -22,9 +22,14 @@
 
 package se.hal.plugin.tellstick.protocol;
 
+import se.hal.plugin.tellstick.TellstickProtocol;
+import se.hal.plugin.tellstick.TellstickProtocol.TellstickDecodedEntry;
+import se.hal.plugin.tellstick.device.NexaSelfLearning;
+import se.hal.struct.devicedata.SwitchEventData;
 import zutil.converter.Converter;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -32,10 +37,11 @@ public class NexaSelfLearningTest {
 
     @org.junit.Test
     public void testEncode() throws Exception {
-        NexaSelfLearningProtocol nexa = new NexaSelfLearningProtocol();
-        nexa.setHouse(11_772_006);
-        nexa.setUnit(0);
-        nexa.turnOn();
+        NexaSelfLearning nexaDevice = new NexaSelfLearning();
+        nexaDevice.setHouse(11_772_006);
+        nexaDevice.setUnit(0);
+        SwitchEventData nexaData = new SwitchEventData();
+        nexaData.turnOn();
 
         byte[] expected = Converter.toBytes(new char[]{
                         84, // T
@@ -50,7 +56,8 @@ public class NexaSelfLearningTest {
                         0x00, // postemble
 
                         43}); // +
-        byte[] actual = nexa.encode().getBytes(StandardCharsets.ISO_8859_1);
+        NexaSelfLearningProtocol nexaProt = new NexaSelfLearningProtocol();
+        byte[] actual = nexaProt.encode(nexaDevice, nexaData).getBytes(StandardCharsets.ISO_8859_1);
 
         System.out.println("Expected: "+Converter.toHexString(expected).toUpperCase());
         System.out.println("Actual  : "+Converter.toHexString(actual).toUpperCase());
@@ -60,25 +67,25 @@ public class NexaSelfLearningTest {
 
     @org.junit.Test
     public void decode_ON() throws Exception {
-        NexaSelfLearningProtocol nexa = decode("0x2CE81990");
+        TellstickDecodedEntry nexa = decode("0x2CE81990");
 
-        assertEquals("House Code", 11772006, nexa.getHouse());
-        assertEquals("Unit Code", 0, nexa.getUnit());
-        assertTrue("Enabled", nexa.isOn());
+        assertEquals("House Code", 11772006, ((NexaSelfLearning)nexa.getDevice()).getHouse());
+        assertEquals("Unit Code", 0, ((NexaSelfLearning)nexa.getDevice()).getUnit());
+        assertTrue("Enabled", ((SwitchEventData)nexa.getData()).isOn());
     }
 
     @org.junit.Test
     public void decode_OFF() throws Exception {
-        NexaSelfLearningProtocol nexa = decode("0x2CE81980");
+        TellstickDecodedEntry nexa = decode("0x2CE81980");
 
-        assertEquals("House Code", 11772006, nexa.getHouse());
-        assertEquals("Unit Code", 0, nexa.getUnit());
-        assertFalse("Enabled", nexa.isOn());
+        assertEquals("House Code", 11772006, ((NexaSelfLearning)nexa.getDevice()).getHouse());
+        assertEquals("Unit Code", 0, ((NexaSelfLearning)nexa.getDevice()).getUnit());
+        assertFalse("Enabled", ((SwitchEventData)nexa.getData()).isOn());
     }
 
-    private NexaSelfLearningProtocol decode(String data){
-        NexaSelfLearningProtocol nexa = new NexaSelfLearningProtocol();
-        nexa.decode(Converter.hexToByte(data));
-        return nexa;
+    private TellstickDecodedEntry decode(String data){
+        NexaSelfLearningProtocol nexaProt = new NexaSelfLearningProtocol();
+        List<TellstickDecodedEntry> list = nexaProt.decode(Converter.hexToByte(data));
+        return list.get(0);
     }
 }

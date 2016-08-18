@@ -24,36 +24,35 @@ package se.hal.plugin.tellstick.device;
 
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
-import se.hal.plugin.tellstick.TellstickGroupProtocol;
-import se.hal.plugin.tellstick.TellstickProtocol;
+import se.hal.plugin.tellstick.TellstickDevice;
+import se.hal.plugin.tellstick.TellstickDeviceGroup;
 import se.hal.plugin.tellstick.TellstickSerialComm;
-import zutil.ByteUtil;
+import se.hal.plugin.tellstick.protocol.NexaSelfLearningProtocol;
 import zutil.parser.binary.BinaryStruct;
-import zutil.parser.binary.BinaryStructInputStream;
-import zutil.parser.binary.BinaryStructOutputStream;
 import zutil.ui.Configurator;
-
-import java.io.IOException;
 
 /**
  * Created by Ziver on 2015-02-18.
  */
-public class NexaSelfLearning implements HalEventConfig,TellstickGroupProtocol,BinaryStruct {
+public class NexaSelfLearning implements HalEventConfig,TellstickDevice,TellstickDeviceGroup {
 
-    @BinaryField(index=1, length=26)
     @Configurator.Configurable("House code")
     private int house = 0;
 
-    @BinaryField(index=2, length=1)
     @Configurator.Configurable("Group code")
     private boolean group = false;
 
-    @BinaryField(index=3, length=1)
-    private boolean enable = false;
-
-    @BinaryField(index=4, length=4)
     @Configurator.Configurable("Unit code")
     private int unit = 0;
+
+
+    public NexaSelfLearning() { }
+    public NexaSelfLearning(int house, boolean group, int unit) {
+        this.house = house;
+        this.group = group;
+        this.unit = unit;
+    }
+
 
 
     public int getHouse() {
@@ -80,8 +79,7 @@ public class NexaSelfLearning implements HalEventConfig,TellstickGroupProtocol,B
     public String toString(){
         return "house:"+house+
                 ", group:"+group+
-                ", unit:"+unit+
-                ", method:"+enable;
+                ", unit:"+unit;
     }
 
     @Override
@@ -93,20 +91,21 @@ public class NexaSelfLearning implements HalEventConfig,TellstickGroupProtocol,B
         return false;
     }
     @Override
-    public boolean equalsGroup(TellstickGroupProtocol obj) {
+    public boolean equalsGroup(TellstickDeviceGroup obj) {
         if(obj instanceof NexaSelfLearning)
             return ((NexaSelfLearning) obj).house == house &&
                     (((NexaSelfLearning) obj).group || group );
         return false;
     }
-    @Override
-    public void copyGroupData(TellstickGroupProtocol group) {
-        if(group instanceof NexaSelfLearning)
-            this.enable = ((NexaSelfLearning) group).enable;
-    }
+
 
 
     public Class<? extends HalEventController> getEventController() {
         return TellstickSerialComm.class;
     }
+
+    @Override
+    public String getProtocolName() { return NexaSelfLearningProtocol.PROTOCOL; }
+    @Override
+    public String getModelName() { return NexaSelfLearningProtocol.MODEL; }
 }

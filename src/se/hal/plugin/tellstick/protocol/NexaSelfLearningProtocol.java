@@ -23,29 +23,66 @@
 package se.hal.plugin.tellstick.protocol;
 
 import se.hal.intf.HalEventConfig;
-import se.hal.plugin.tellstick.TellstickGroupProtocol;
+import se.hal.intf.HalEventData;
 import se.hal.plugin.tellstick.TellstickProtocol;
+import se.hal.plugin.tellstick.device.NexaSelfLearning;
+import se.hal.struct.devicedata.SwitchEventData;
 import zutil.ByteUtil;
+import zutil.log.LogUtil;
 import zutil.parser.binary.BinaryStruct;
 import zutil.parser.binary.BinaryStructInputStream;
 import zutil.parser.binary.BinaryStructOutputStream;
-import zutil.ui.Configurator;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Ziver on 2015-02-18.
  */
 public class NexaSelfLearningProtocol extends TellstickProtocol {
+    private static final Logger logger = LogUtil.getLogger();
+    public static final String PROTOCOL = "arctech";
+    public static final String MODEL = "selflearning";
 
+
+    private static class NexaSLTransmissionStruct implements BinaryStruct{
+        @BinaryField(index=1, length=26)
+        int house = 0;
+
+        @BinaryField(index=2, length=1)
+        boolean group = false;
+
+        @BinaryField(index=3, length=1)
+        boolean enable = false;
+
+        @BinaryField(index=4, length=4)
+        int unit = 0;
+    }
 
 
     public NexaSelfLearningProtocol() {
-        super("arctech", "selflearning");
+        super(PROTOCOL, MODEL);
     }
 
     @Override
-    public String encode(){
+    public String encode(HalEventConfig deviceConfig, HalEventData deviceData){
+        if ( ! (deviceConfig instanceof NexaSelfLearning)){
+            logger.severe("Device config is not instance of NexaSelfLearning: "+deviceConfig.getClass());
+            return null;
+        }
+        if ( ! (deviceData instanceof SwitchEventData)){
+            logger.severe("Device data is not instance of SwitchEventData: "+deviceData.getClass());
+            return null;
+        }
+        NexaSLTransmissionStruct struct = new NexaSLTransmissionStruct();
+        struct.house = ((NexaSelfLearning) deviceConfig).getHouse();
+        struct.group = ((NexaSelfLearning) deviceConfig).getGroup();
+        struct.enable = ((SwitchEventData) deviceData).isOn();
+        struct.unit = ((NexaSelfLearning) deviceConfig).getUnit();
+
         try {
             // T[t0][t1][t2][t3][length][d1]..[dn]+
             StringBuilder enc = new StringBuilder(90); // Tellstick supports max 74 bytes
@@ -54,7 +91,7 @@ public class NexaSelfLearningProtocol extends TellstickProtocol {
 
             enc.append((char)0b0000_1001); // preamble
             int length = 4;
-            byte[] data = BinaryStructOutputStream.serialize(this);
+            byte[] data = BinaryStructOutputStream.serialize(struct);
             for (byte b : data){
                 for (int i=7; i>=0; --i){
                     if (ByteUtil.getBits(b, i, 1) == 0)
@@ -70,15 +107,16 @@ public class NexaSelfLearningProtocol extends TellstickProtocol {
 
             enc.append("+");
             return enc.toString();
+
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, null, e);
         }
 
-        return "";
+        return null;
     }
 
     @Override
-    public void decode(byte[] data){
+    public List<TellstickDecodedEntry> decode(byte[] data){
         // Data positions
         // house  = 0xFFFFFFC0
         // group  = 0x00000020
@@ -88,7 +126,15 @@ public class NexaSelfLearningProtocol extends TellstickProtocol {
         // 0x2CE81990 - 00101100_11101000_00011001_10 0 1 0000 - ON
         // 0x2CE81980 - 00101100_11101000_00011001_10 0 0 0000 - OFF
 
-        BinaryStructInputStream.read(this, data);
+        NexaSLTransmissionStruct struct = new NexaSLTransmissionStruct();
+        BinaryStructInputStream.read(struct, data);
+
+        ArrayList<TellstickDecodedEntry> list = new ArrayList<>();
+        list.add(new TellstickDecodedEntry(
+                new NexaSelfLearning(struct.house, struct.group, struct.unit),
+                new SwitchEventData(struct.enable)
+        ));
+        return list;
     }
 
 

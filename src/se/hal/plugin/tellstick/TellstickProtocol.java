@@ -21,8 +21,11 @@
  */
 package se.hal.plugin.tellstick;
 
+import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventData;
+
+import java.util.List;
 
 /**
  * Created by Ziver on 2015-02-18.
@@ -47,6 +50,24 @@ public abstract class TellstickProtocol {
     }
 
     public String encode(HalEventConfig deviceConfig, HalEventData deviceData){ return null; }
-    public abstract void decode(byte[] data);
+    public abstract List<TellstickDecodedEntry> decode(byte[] data);
 
+
+
+    public static class TellstickDecodedEntry {
+        private TellstickDevice device;
+        private HalDeviceData data;
+
+        public TellstickDecodedEntry(TellstickDevice device, HalDeviceData data){
+            this.device = device;
+            this.data = data;
+        }
+
+        public TellstickDevice getDevice(){
+            return device;
+        }
+        public HalDeviceData getData(){
+            return data;
+        }
+    }
 }

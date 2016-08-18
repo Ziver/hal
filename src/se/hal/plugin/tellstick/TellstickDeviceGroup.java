@@ -28,16 +28,11 @@ package se.hal.plugin.tellstick;
  * Indicates that the implementing class is a protocol that can have group events.
  * More specifically that on transmission will affect multiple devices.
  */
-public interface TellstickGroupProtocol {
+public interface TellstickDeviceGroup {
 
     /**
      * Protocols should extend this method if it has group functionality.
-     * @return true if this object an the input is in the same group.
+     * @return true if this object and the input object belongs to the same group.
      */
-    public boolean equalsGroup(TellstickGroupProtocol obj);
-
-    /**
-     * Copy the state data from the group to this object.
-     */
-    public void copyGroupData(TellstickGroupProtocol groupProtocol);
+    public boolean equalsGroup(TellstickDeviceGroup obj);
 }

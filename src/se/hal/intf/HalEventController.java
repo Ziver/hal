@@ -24,9 +24,10 @@ public interface HalEventController {
     void deregister(HalEventConfig event);
 
     /**
-     * @param   event  transmit this event if possible.
+     * @param   eventConfig  the event configuration to target when sending
+     * @param   eventData    the data to send
      */
-    void send(HalEventConfig event); // TODO: where to put data?
+    void send(HalEventConfig eventConfig, HalEventData eventData);
 
     /**
      * @return the number of registered objects

@@ -1,10 +1,13 @@
 package se.hal.plugin.tellstick.protocol;
 
-import se.hal.intf.HalSensorConfig;
 import se.hal.plugin.tellstick.TellstickProtocol;
+import se.hal.plugin.tellstick.device.Oregon0x1A2D;
+import se.hal.struct.devicedata.HumiditySensorData;
+import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.log.LogUtil;
-import zutil.ui.Configurator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -12,20 +15,22 @@ import java.util.logging.Logger;
  */
 public class Oregon0x1A2DProtocol extends TellstickProtocol {
     private static final Logger logger = LogUtil.getLogger();
+    public static final String PROTOCOL = "oregon";
+    public static final String MODEL = "0x1A2D";
 
 
 
     public Oregon0x1A2DProtocol(){
-        super("oregon", "0x1A2D");
+        super(PROTOCOL, MODEL);
     }
 
 
     @Override
-    public void decode(byte[] data) {
+    public List<TellstickDecodedEntry> decode(byte[] data) {
         //class:sensor;protocol:oregon;model:0x1A2D;data:20BA000000002700;
 
         // int channel = (data[0] >> 4) & 0x7; // channel not used
-        address = data[1] & 0xFF;
+        int address = data[1] & 0xFF;
         int temp3 = (data[2] >> 4) & 0xF;
         int temp1 = (data[3] >> 4) & 0xF;
         int temp2 = data[3] & 0xF;
@@ -44,14 +49,24 @@ public class Oregon0x1A2DProtocol extends TellstickProtocol {
 
         if (calcChecksum != checksum) {
             logger.fine("Checksum failed, address: "+address);
-            return;
+            return null;
         }
 
-        temperature = ((temp1 * 100) + (temp2 * 10) + temp3)/10.0;
+        double temperature = ((temp1 * 100) + (temp2 * 10) + temp3)/10.0;
         if (negative)
             temperature = -temperature;
-        humidity = (hum1 * 10.0) + hum2;
+        double humidity = (hum1 * 10.0) + hum2;
 
+        // Create return objects
+        ArrayList<TellstickDecodedEntry> list = new ArrayList<>();
+        Oregon0x1A2D device = new Oregon0x1A2D(address);
+        list.add(new TellstickDecodedEntry(
+                device, new TemperatureSensorData(temperature)
+        ));
+        list.add(new TellstickDecodedEntry(
+                device, new HumiditySensorData(humidity)
+        ));
+        return list;
     }
 
 }

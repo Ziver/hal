@@ -25,6 +25,7 @@ package se.hal.plugin.tellstick;
 import com.fazecast.jSerialComm.SerialPort;
 import se.hal.HalContext;
 import se.hal.intf.*;
+import se.hal.plugin.tellstick.TellstickProtocol.TellstickDecodedEntry;
 import zutil.log.LogUtil;
 import zutil.struct.TimedHashSet;
 
@@ -51,20 +52,20 @@ public class TellstickSerialComm implements Runnable,
     private SerialPort serial;
     private InputStream in;
     private OutputStream out;
-    private TimedHashSet set; // To check for duplicate transmissions
+    private TimedHashSet<String> set; // To check for duplicate transmissions
 
     protected TellstickParser parser;
     private HalSensorReportListener sensorListener;
     private HalEventReportListener eventListener;
 
-    private List<TellstickProtocol> registeredDevices;
+    private List<TellstickDevice> registeredDevices;
 
 
 
     public TellstickSerialComm() {
-        set = new TimedHashSet(TRANSMISSION_UNIQUENESS_TTL);
+        set = new TimedHashSet<>(TRANSMISSION_UNIQUENESS_TTL);
         parser = new TellstickParser();
-        registeredDevices = Collections.synchronizedList(new ArrayList<TellstickProtocol>());
+        registeredDevices = Collections.synchronizedList(new ArrayList<TellstickDevice>());
     }
 
     @Override
@@ -122,21 +123,17 @@ public class TellstickSerialComm implements Runnable,
             logger.log(Level.SEVERE, null, e);
         }
     }
-    private void reportEvent(TellstickProtocol protocol){
-        if (sensorListener != null && protocol instanceof HalSensorConfig)
-            sensorListener.reportReceived((HalSensorConfig) protocol);
-        else if (eventListener != null && protocol instanceof HalEventConfig)
-            eventListener.reportReceived((HalEventConfig) protocol);
-    }
 
     /**
      * There seems to be an issue with read(...) methods, only read() is working
      */
     private String readLine() throws IOException {
         StringBuilder str = new StringBuilder(50);
-        char c = 0;
-        while((c = (char)in.read()) >= 0){
+        int c;
+        while((c = in.read()) >= 0){
             switch(c) {
+                case -1:
+                    return null;
                 case '\n':
                 case '\r':
                     if(str.length() > 0)
@@ -149,48 +146,58 @@ public class TellstickSerialComm implements Runnable,
         return str.toString();
     }
     protected void handleLine(String data){
-        TellstickProtocol protocol = parser.decode(data);
-        if(protocol != null) {
-            if (protocol.getTimestamp() < 0)
-                protocol.setTimestamp(System.currentTimeMillis());
+        List<TellstickDecodedEntry> decodeList = parser.decode(data);
+        for (TellstickDecodedEntry entry : decodeList) {
+            if (entry.getData().getTimestamp() < 0)
+                entry.getData().setTimestamp(System.currentTimeMillis());
 
-            boolean registered = registeredDevices.contains(protocol);
-            if(registered && !set.contains(data) || // check for duplicates transmissions of registered devices
+            boolean registered = registeredDevices.contains(entry.getDevice());
+            if (registered && !set.contains(data) || // check for duplicates transmissions of registered devices
                     !registered && set.contains(data)) { // required duplicate transmissions before reporting unregistered devices
 
                 //Check for registered device that are in the same group
-                if(protocol instanceof TellstickGroupProtocol) {
-                    TellstickGroupProtocol groupProtocol = (TellstickGroupProtocol) protocol;
-                    for (int i=0; i<registeredDevices.size(); ++i) { // Don't use foreach for concurrency reasons
-                        TellstickProtocol childProtocol = registeredDevices.get(i);
-                        if (childProtocol instanceof TellstickGroupProtocol &&
-                                groupProtocol.equalsGroup(childProtocol) &&
-                                !protocol.equals(childProtocol)) {
-                            ((TellstickGroupProtocol) childProtocol).copyGroupData(groupProtocol);
-                            childProtocol.setTimestamp(protocol.getTimestamp());
-                            reportEvent(childProtocol);
+                if (entry.getDevice() instanceof TellstickDeviceGroup) {
+                    TellstickDeviceGroup groupProtocol = (TellstickDeviceGroup) entry.getDevice();
+                    for (int i = 0; i < registeredDevices.size(); ++i) { // Don't use foreach for concurrency reasons
+                        TellstickDevice childDevice = registeredDevices.get(i);
+                        if (childDevice instanceof TellstickDeviceGroup &&
+                                groupProtocol.equalsGroup((TellstickDeviceGroup)childDevice) &&
+                                !entry.getDevice().equals(childDevice)) {
+                            reportEvent(childDevice, entry.getData());
                         }
                     }
                 }
                 // Report source event
-                reportEvent(protocol);
+                reportEvent(entry.getDevice(), entry.getData());
             }
             set.add(data);
         }
     }
-
+    private void reportEvent(TellstickDevice tellstickDevice, HalDeviceData deviceData){
+        if (sensorListener != null) {
+            if (tellstickDevice instanceof HalSensorConfig)
+                    sensorListener.reportReceived((HalSensorConfig) tellstickDevice, deviceData);
+            else if (tellstickDevice instanceof HalEventConfig)
+                    eventListener.reportReceived((HalEventConfig) tellstickDevice, deviceData);
+        }
+    }
 
     @Override
-    public void send(HalEventConfig event) {
-        if(event instanceof TellstickProtocol)
-            write((TellstickProtocol) event);
-    }
-    public synchronized void write(TellstickProtocol prot) {
-        write(prot.encode());
-        parser.waitSendConformation();
-        prot.setTimestamp(System.currentTimeMillis());
+    public void send(HalEventConfig deviceConfig, HalEventData deviceData) {
+        if(deviceConfig instanceof TellstickDevice) {
+            TellstickDevice tellstickDevice = (TellstickDevice) deviceConfig;
+            TellstickProtocol prot = TellstickParser.getProtocolInstance(
+                    tellstickDevice.getProtocolName(),
+                    tellstickDevice.getModelName());
+            write(prot.encode(deviceConfig, deviceData));
+
+            parser.waitSendConformation();
+            deviceData.setTimestamp(System.currentTimeMillis());
+        }
     }
     private void write(String data) {
+        if (data == null)
+            return;
         try {
             for(int i=0; i<data.length();i++)
                 out.write(0xFF & data.charAt(i));
@@ -204,24 +211,24 @@ public class TellstickSerialComm implements Runnable,
 
     @Override
     public void register(HalEventConfig event) {
-        if(event instanceof TellstickProtocol)
-            registeredDevices.add((TellstickProtocol) event);
+        if(event instanceof TellstickDevice)
+            registeredDevices.add((TellstickDevice) event);
     }
     @Override
     public void register(HalSensorConfig sensor) {
-        if(sensor instanceof TellstickProtocol)
-            registeredDevices.add((TellstickProtocol) sensor);
+        if(sensor instanceof TellstickDevice)
+            registeredDevices.add((TellstickDevice) sensor);
     }
 
     @Override
     public void deregister(HalEventConfig event) {
-        if(event instanceof TellstickProtocol)
-            registeredDevices.remove((TellstickProtocol) event);
+        if(event instanceof TellstickDevice)
+            registeredDevices.remove(event);
     }
     @Override
     public void deregister(HalSensorConfig sensor) {
-        if(sensor instanceof TellstickProtocol)
-            registeredDevices.remove((TellstickProtocol) sensor);
+        if(sensor instanceof TellstickDevice)
+            registeredDevices.remove(sensor);
     }
 
     @Override

@@ -32,6 +32,11 @@ public class SwitchEventData extends HalEventData {
     private boolean enabled;
 
 
+    public SwitchEventData() { }
+    public SwitchEventData(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public void turnOn(){
         enabled = true;
     }

@@ -102,7 +102,7 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     @Override
-    public void reportReceived(HalSensorConfig sensorConfig, HalSensorData sensorData) {
+    public void reportReceived(HalSensorConfig sensorConfig, HalDeviceData sensorData) {
         try{
             DBConnection db = HalContext.getDB();
             Sensor sensor = findSensor(sensorConfig, registeredSensors);
@@ -191,7 +191,7 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     @Override
-    public void reportReceived(HalEventConfig eventConfig, HalEventData eventData) {
+    public void reportReceived(HalEventConfig eventConfig, HalDeviceData eventData) {
         try {
             DBConnection db = HalContext.getDB();
             Event event = findEvent(eventConfig, registeredEvents);
@@ -234,7 +234,7 @@ public class ControllerManager implements HalSensorReportListener,
     public void send(Event event){
         HalEventController controller = getControllerInstance(event.getController());
         if(controller != null) {
-            controller.send(event.getDeviceConfig());
+            controller.send(event.getDeviceConfig(), event.getDeviceData());
             reportReceived(event.getDeviceConfig(), event.getDeviceData()); // save action to db
         }
         else

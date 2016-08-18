@@ -11,6 +11,12 @@ public class HumiditySensorData extends HalSensorData {
     private double humidity;
 
 
+    public HumiditySensorData() { }
+    public HumiditySensorData(double humidity) {
+        this.humidity = humidity;
+    }
+
+
     @Override
     public double getData() {
         return humidity;

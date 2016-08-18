@@ -22,12 +22,15 @@
 
 package se.hal.plugin.tellstick;
 
+import se.hal.plugin.tellstick.TellstickProtocol.TellstickDecodedEntry;
 import se.hal.plugin.tellstick.protocol.NexaSelfLearningProtocol;
 import se.hal.plugin.tellstick.protocol.Oregon0x1A2DProtocol;
 import zutil.converter.Converter;
 import zutil.log.LogUtil;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,7 +41,7 @@ import java.util.logging.Logger;
  */
 public class TellstickParser {
     private static final Logger logger = LogUtil.getLogger();
-    private static HashMap<String, Class<? extends TellstickProtocol>> protocolMap;
+    private static HashMap<String, TellstickProtocol> protocolMap;
 
     static {
         registerProtocol(NexaSelfLearningProtocol.class);
@@ -48,8 +51,12 @@ public class TellstickParser {
     private int firmwareVersion = -1;
 
 
-
-    public TellstickProtocol decode(String data) {
+    /**
+     * Will decode the given data and return a list with device and data objects
+     * @param data
+     * @return a list with decoded objects or empty list if there was an error
+     */
+    public List<TellstickDecodedEntry> decode(String data) {
         if (data.startsWith("+W")) {
             data = data.substring(2);
             HashMap<String, String> map = new HashMap<String, String>();
@@ -59,19 +66,16 @@ public class TellstickParser {
                 map.put(keyValue[0], keyValue[1]);
             }
 
-            Class<? extends TellstickProtocol> protClass =
-                    getProtocolClass(map.get("protocol"), map.get("model"));
-            if (protClass != null) {
-                try {
-                    TellstickProtocol protocol = protClass.newInstance();
-                    String binData = map.get("data");
+            TellstickProtocol protocol =
+                    getProtocolInstance(map.get("protocol"), map.get("model"));
+            if (protocol != null) {
+                String binData = map.get("data");
 
-                    protocol.decode(Converter.hexToByte(binData));
-                    logger.finest("Decoded: " + protocol);
-                    return protocol;
-                } catch (Exception e) {
-                    logger.log(Level.WARNING, null, e);
-                }
+                logger.finest("Decoding: " + protocol);
+                List<TellstickDecodedEntry> list = protocol.decode(Converter.hexToByte(binData));
+                if (list == null)
+                    list = Collections.EMPTY_LIST;
+                return list;
             } else {
                 logger.warning("Unknown protocol: " + data);
             }
@@ -87,9 +91,12 @@ public class TellstickParser {
             logger.severe("Unknown prefix: " + data);
         }
 
-        return null;
+        return Collections.EMPTY_LIST;
     }
 
+    /**
+     * This method blocks until a send command confirmation is received.
+     */
     public void waitSendConformation(){
         try {
             this.wait();
@@ -104,20 +111,23 @@ public class TellstickParser {
     }
 
 
+
     public static void registerProtocol(Class<? extends TellstickProtocol> protClass) {
         try {
-            if (protocolMap == null)
-                protocolMap = new HashMap<>();
-            TellstickProtocol tmp = protClass.newInstance();
-            protocolMap.put(
-                    tmp.getProtocolName() + "-" + tmp.getModelName(),
-                    protClass);
+            registerProtocol( protClass.newInstance() );
         } catch (Exception e) {
             logger.log(Level.SEVERE, null, e);
         }
     }
+    public static void registerProtocol(TellstickProtocol protObj) {
+        if (protocolMap == null)
+            protocolMap = new HashMap<>();
+        protocolMap.put(
+                protObj.getProtocolName() + "-" + protObj.getModelName(),
+                protObj);
+    }
 
-    public static Class<? extends TellstickProtocol> getProtocolClass(String protocol, String model) {
+    public static TellstickProtocol getProtocolInstance(String protocol, String model) {
         return protocolMap.get(protocol + "-" + model);
     }
 }

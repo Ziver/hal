@@ -1,6 +1,8 @@
 package se.hal.plugin.tellstick;
 
+import se.hal.plugin.tellstick.device.NexaSelfLearning;
 import se.hal.plugin.tellstick.protocol.NexaSelfLearningProtocol;
+import se.hal.struct.devicedata.SwitchEventData;
 
 /**
  * Created by Ziver on 2015-11-19.
@@ -17,30 +19,32 @@ public class TelstickSerialCommNexaOnOffTest {
 
             Thread.sleep(1000);
 
-            NexaSelfLearningProtocol nexa = new NexaSelfLearningProtocol();
+            NexaSelfLearning nexaDevice = new NexaSelfLearning();
             //nexa.setHouse(11772006);
-            nexa.setHouse(14160770);
-            nexa.setGroup(false);
-            nexa.setUnit(1);
+            nexaDevice.setHouse(14160770);
+            nexaDevice.setGroup(false);
+            nexaDevice.setUnit(1);
+
+            SwitchEventData nexaData = new SwitchEventData();
 
             System.out.println("Up and Running");
             while(true) {
                 Thread.sleep(2000);
-                nexa.turnOn();
-                nexa.setUnit(0);
-                comm.write(nexa);
+                nexaData.turnOn();
+                nexaDevice.setUnit(0);
+                comm.send(nexaDevice, nexaData);
                 Thread.sleep(2000);
-                nexa.setUnit(1);
-                comm.write(nexa);
+                nexaDevice.setUnit(1);
+                comm.send(nexaDevice, nexaData);
                 Thread.sleep(2000);
 
 
-                nexa.turnOff();
-                nexa.setUnit(0);
-                comm.write(nexa);
+                nexaData.turnOff();
+                nexaDevice.setUnit(0);
+                comm.send(nexaDevice, nexaData);
                 Thread.sleep(2000);
-                nexa.setUnit(1);
-                comm.write(nexa);
+                nexaDevice.setUnit(1);
+                comm.send(nexaDevice, nexaData);
             }
         } catch (Exception e) {
             e.printStackTrace();

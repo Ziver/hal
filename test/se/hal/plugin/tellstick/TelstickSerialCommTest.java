@@ -2,11 +2,13 @@ package se.hal.plugin.tellstick;
 
 import org.junit.Before;
 import org.junit.Test;
-import se.hal.intf.HalEventConfig;
-import se.hal.intf.HalEventReportListener;
+import se.hal.intf.*;
+import se.hal.struct.devicedata.SwitchEventData;
+import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.converter.Converter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -45,7 +47,7 @@ public class TelstickSerialCommTest {
         final ArrayList<HalEventConfig> list = new ArrayList<>();
         tellstick.setListener(new HalEventReportListener() {
             @Override
-            public void reportReceived(HalEventConfig e) {
+            public void reportReceived(HalEventConfig e, HalDeviceData d) {
                 list.add(e);
             }
         });
@@ -63,7 +65,7 @@ public class TelstickSerialCommTest {
         final ArrayList<HalEventConfig> list = new ArrayList<>();
         tellstick.setListener(new HalEventReportListener() {
             @Override
-            public void reportReceived(HalEventConfig e) {
+            public void reportReceived(HalEventConfig e, HalDeviceData d) {
                 list.add(e);
             }
         });
@@ -79,7 +81,7 @@ public class TelstickSerialCommTest {
 
 
 
-    private static class TestEvent extends TellstickProtocol implements HalEventConfig {
+    private static class TestEvent extends TellstickProtocol implements HalEventConfig,TellstickDevice {
         public int testData;
 
         public TestEvent(){
@@ -87,16 +89,22 @@ public class TelstickSerialCommTest {
         }
 
         @Override
-        public void decode(byte[] data) {
+        public List<TellstickDecodedEntry> decode(byte[] data) {
             testData = Converter.toInt(data);
+
+            ArrayList<TellstickDecodedEntry> list = new ArrayList<>();
+            list.add(new TellstickDecodedEntry(
+                    this, new TemperatureSensorData(testData)
+            ));
+            return list;
         }
 
 
         @Override
-        public String encode() {return null;}
-        @Override
-        public double getData() {return 0;}
+        public Class<? extends HalEventController> getEventController() { return null; }
+
         @Override
         public boolean equals(Object obj) {return testData == ((TestEvent)obj).testData;}
+
     }
 }

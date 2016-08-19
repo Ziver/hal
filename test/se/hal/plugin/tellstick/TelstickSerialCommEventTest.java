@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Ziver on 2015-11-19.
  */
-public class TelstickSerialCommTest {
+public class TelstickSerialCommEventTest {
 
     @Before
     public void init(){
@@ -47,7 +47,7 @@ public class TelstickSerialCommTest {
         final ArrayList<HalEventConfig> list = new ArrayList<>();
         tellstick.setListener(new HalEventReportListener() {
             @Override
-            public void reportReceived(HalEventConfig e, HalDeviceData d) {
+            public void reportReceived(HalEventConfig e, HalEventData d) {
                 list.add(e);
             }
         });
@@ -65,7 +65,7 @@ public class TelstickSerialCommTest {
         final ArrayList<HalEventConfig> list = new ArrayList<>();
         tellstick.setListener(new HalEventReportListener() {
             @Override
-            public void reportReceived(HalEventConfig e, HalDeviceData d) {
+            public void reportReceived(HalEventConfig e, HalEventData d) {
                 list.add(e);
             }
         });

@@ -102,7 +102,7 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     @Override
-    public void reportReceived(HalSensorConfig sensorConfig, HalDeviceData sensorData) {
+    public void reportReceived(HalSensorConfig sensorConfig, HalSensorData sensorData) {
         try{
             DBConnection db = HalContext.getDB();
             Sensor sensor = findSensor(sensorConfig, registeredSensors);
@@ -124,8 +124,9 @@ public class ControllerManager implements HalSensorReportListener,
                     sensor = new Sensor();
                     detectedSensors.add(sensor);
                 }
+                sensor.setDeviceConfig(sensorConfig);
             }
-            sensor.setDeviceConfig(sensorConfig); // Set the latest data
+            sensor.setDeviceData(sensorData);
 
         }catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store sensor report", e);
@@ -191,7 +192,7 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     @Override
-    public void reportReceived(HalEventConfig eventConfig, HalDeviceData eventData) {
+    public void reportReceived(HalEventConfig eventConfig, HalEventData eventData) {
         try {
             DBConnection db = HalContext.getDB();
             Event event = findEvent(eventConfig, registeredEvents);
@@ -213,8 +214,9 @@ public class ControllerManager implements HalSensorReportListener,
                     event = new Event();
                     detectedEvents.add(event);
                 }
+                event.setDeviceConfig(eventConfig);
             }
-            event.setDeviceConfig(eventConfig); // Set the latest data
+            event.setDeviceData(eventData);
 
         }catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store event report", e);

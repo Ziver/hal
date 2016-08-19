@@ -1,9 +1,6 @@
 package se.hal.plugin.raspberry;
 
-import se.hal.intf.HalDeviceData;
-import se.hal.intf.HalSensorController;
-import se.hal.intf.HalSensorConfig;
-import se.hal.intf.HalSensorReportListener;
+import se.hal.intf.*;
 import se.hal.plugin.raspberry.hardware.RPiDS18B20;
 import se.hal.plugin.raspberry.hardware.RPiInteruptPulseFlankCounter;
 import zutil.log.LogUtil;
@@ -90,7 +87,7 @@ public class RPiController implements HalSensorController {
     	}
     }
     
-    public void sendDataReport(HalSensorConfig sensorConfig, HalDeviceData sensorData){
+    public void sendDataReport(HalSensorConfig sensorConfig, HalSensorData sensorData){
     	if(sensorListener != null){
     		sensorListener.reportReceived(sensorConfig, sensorData);
     	}else{

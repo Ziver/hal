@@ -59,7 +59,7 @@ public abstract class AbstractDevice<T,D> extends DBBean {
 
                 applyConfig();
             } catch (Exception e) {
-                logger.log(Level.SEVERE, "Unable instantiate DeviceData: "+type, e);
+                logger.log(Level.SEVERE, "Unable instantiate DeviceConfig: "+type, e);
             }
         }
         return deviceConfig;
@@ -74,7 +74,6 @@ public abstract class AbstractDevice<T,D> extends DBBean {
         if(data != null) {
             deviceConfig = data;
             type = data.getClass().getName();
-            applyConfig(); // TODO: this is a bit clunky, should probably be solved in another way
         } else {
             deviceConfig = null;
             type = null;

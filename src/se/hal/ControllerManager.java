@@ -57,7 +57,7 @@ public class ControllerManager implements HalSensorReportListener,
 
     public void register(Sensor sensor) {
         if(sensor.getDeviceConfig() == null) {
-            logger.warning("Sensor data is null: "+ sensor);
+            logger.warning("Sensor config is null: "+ sensor);
             return;
         }
         if(!availableSensors.contains(sensor.getDeviceConfig().getClass())) {
@@ -77,7 +77,7 @@ public class ControllerManager implements HalSensorReportListener,
 
     public void deregister(Sensor sensor){
         if(sensor.getDeviceConfig() == null) {
-            logger.warning("Sensor data is null: "+ sensor);
+            logger.warning("Sensor config is null: "+ sensor);
             return;
         }
 
@@ -147,7 +147,7 @@ public class ControllerManager implements HalSensorReportListener,
 
     public void register(Event event) {
         if(event.getDeviceConfig() == null) {
-            logger.warning("Event data is null: "+ event);
+            logger.warning("Event config is null: "+ event);
             return;
         }
         if(!availableEvents.contains(event.getDeviceConfig().getClass())) {
@@ -167,7 +167,7 @@ public class ControllerManager implements HalSensorReportListener,
 
     public void deregister(Event event){
         if(event.getDeviceConfig() == null) {
-            logger.warning("Event data is null: "+ event);
+            logger.warning("Event config is null: "+ event);
             return;
         }
 
@@ -291,7 +291,7 @@ public class ControllerManager implements HalSensorReportListener,
                 controller = c.newInstance();
                 if (controller instanceof HalAutoScannableController &&
                         ! ((HalAutoScannableController)controller).isAvailable()) {
-                    logger.warning("Controller not available: "+c.getName());
+                    logger.warning("Controller is not available: "+c.getName());
                     return null;
                 }
                 logger.info("Instantiating new controller: " + c.getName());

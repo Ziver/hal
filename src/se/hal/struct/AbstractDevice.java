@@ -26,7 +26,7 @@ public abstract class AbstractDevice<T,D> extends DBBean {
     /** Sensor specific configuration **/
     private transient T deviceConfig;
     /** latest device data received **/
-    private transient D latestDeviceData;
+    private transient D deviceData;
 
     // User configuration
     @DBColumn("user_id")
@@ -72,10 +72,12 @@ public abstract class AbstractDevice<T,D> extends DBBean {
      */
     public void setDeviceConfig(T data) {
         if(data != null) {
-            deviceConfig = data;
             type = data.getClass().getName();
+            deviceConfig = data;
+            deviceData = readDeviceData();
         } else {
             deviceConfig = null;
+            deviceData = null;
             type = null;
             config = null;
         }
@@ -115,14 +117,21 @@ public abstract class AbstractDevice<T,D> extends DBBean {
      * @return the latest known data from the device
      */
     public D getDeviceData(){
-        return latestDeviceData;
+        return deviceData;
     }
 
     public void setDeviceData(D latest){
-        this.latestDeviceData = latest;
+        this.deviceData = latest;
     }
 
-    /**************** OTHER VALUES ******************/
+    /**
+     * Reads latest device data from DB
+     */
+    private D readDeviceData(){
+        return null; // TODO: how to do this in a good way?
+    }
+
+    /**************** OTHER ******************/
 
     public String getName() {
         return name;

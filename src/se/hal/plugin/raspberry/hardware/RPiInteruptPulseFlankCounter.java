@@ -8,6 +8,7 @@ import se.hal.plugin.raspberry.RPiController;
 import se.hal.plugin.raspberry.RPiPowerConsumptionSensor;
 import se.hal.plugin.raspberry.RPiSensor;
 import se.hal.plugin.raspberry.RPiUtility;
+import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.log.LogUtil;
 
 import java.util.concurrent.ExecutorService;
@@ -132,7 +133,11 @@ public class RPiInteruptPulseFlankCounter implements Runnable, GpioPinListenerDi
 			@Override
 			public void run() {
             	logger.log(Level.INFO, "Reporting data. timestamp_end="+timestamp_end+", data="+data);
-            	controller.sendDataReport(new RPiPowerConsumptionSensor(gpioPin, timestamp_end, data));
+            	controller.sendDataReport(
+            			new RPiPowerConsumptionSensor(gpioPin),
+                        new PowerConsumptionSensorData(
+                                timestamp_end, data
+                        ));
 			}
 		});
     }

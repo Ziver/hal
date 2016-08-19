@@ -1,5 +1,6 @@
 package se.hal.plugin.raspberry;
 
+import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorReportListener;
@@ -89,9 +90,9 @@ public class RPiController implements HalSensorController {
     	}
     }
     
-    public void sendDataReport(HalSensorConfig sensorConfig){
+    public void sendDataReport(HalSensorConfig sensorConfig, HalDeviceData sensorData){
     	if(sensorListener != null){
-    		sensorListener.reportReceived(sensorConfig);
+    		sensorListener.reportReceived(sensorConfig, sensorData);
     	}else{
         	logger.log(Level.WARNING, "Could not report data. No registered listener");
         }

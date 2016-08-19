@@ -213,22 +213,24 @@ public class TellstickSerialComm implements Runnable,
     public void register(HalEventConfig event) {
         if(event instanceof TellstickDevice)
             registeredDevices.add((TellstickDevice) event);
+        else throw new IllegalArgumentException(
+                "Device configuration is not an instance of "+TellstickDevice.class+": "+event.getClass());
     }
     @Override
     public void register(HalSensorConfig sensor) {
         if(sensor instanceof TellstickDevice)
             registeredDevices.add((TellstickDevice) sensor);
+        else throw new IllegalArgumentException(
+                "Device configuration is not an instance of "+TellstickDevice.class+": "+sensor.getClass());
     }
 
     @Override
     public void deregister(HalEventConfig event) {
-        if(event instanceof TellstickDevice)
-            registeredDevices.remove(event);
+        registeredDevices.remove(event);
     }
     @Override
     public void deregister(HalSensorConfig sensor) {
-        if(sensor instanceof TellstickDevice)
-            registeredDevices.remove(sensor);
+        registeredDevices.remove(sensor);
     }
 
     @Override

@@ -14,11 +14,15 @@ public class TemperatureSensorData extends HalSensorData {
     public TemperatureSensorData(double temperature){
         this.temperature =  temperature;
     }
+    public TemperatureSensorData(long timestamp, double temperature){
+        this(temperature);
+        super.setTimestamp(timestamp);
+    }
 
     /**
      * @param   data     the temperature to set in degrees C
      */
-    public void setData(double data){
+    public void setTemperature(double data){
         this.temperature = data;
     }
 
@@ -29,4 +33,5 @@ public class TemperatureSensorData extends HalSensorData {
     public double getData() {
         return temperature;
     }
+
 }

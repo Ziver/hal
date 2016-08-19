@@ -41,7 +41,7 @@ public class TelstickSerialCommTest {
     //############ Normal TCs
 
     @Test
-    public void unregisteredEvent(){
+    public void receiveUnregisteredEvent(){
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
         final ArrayList<HalEventConfig> list = new ArrayList<>();
@@ -59,7 +59,7 @@ public class TelstickSerialCommTest {
     }
 
     @Test
-    public void event(){
+    public void receiveEvent(){
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
         final ArrayList<HalEventConfig> list = new ArrayList<>();
@@ -78,6 +78,7 @@ public class TelstickSerialCommTest {
         assertEquals("Nr of received events", 1, list.size());
         assertEquals("Data", event.testData, ((TestEvent)list.get(0)).testData);
     }
+
 
 
 
@@ -105,6 +106,5 @@ public class TelstickSerialCommTest {
 
         @Override
         public boolean equals(Object obj) {return testData == ((TestEvent)obj).testData;}
-
     }
 }

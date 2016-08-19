@@ -8,10 +8,15 @@ import zutil.ui.Configurator;
 public class RPiTemperatureSensor implements HalSensorConfig {
 	
 	@Configurator.Configurable("1-Wire Address")
-    private String w1Address = null;
+    private String w1Address;
 
 
-	
+
+    public RPiTemperatureSensor() { }
+    public RPiTemperatureSensor(String w1Address) {
+        this.w1Address = w1Address;
+    }
+
 
     @Override
     public long getDataInterval() {
@@ -30,8 +35,8 @@ public class RPiTemperatureSensor implements HalSensorConfig {
 
     @Override
     public boolean equals(Object obj){
-    	if(obj instanceof RPiTemperatureSensor)
-    		return obj == this;
+    	if(obj instanceof RPiTemperatureSensor && w1Address != null)
+    		return this.get1WAddress().equals(((RPiTemperatureSensor) obj).w1Address);
     	return false;
     }
 

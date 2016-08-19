@@ -32,6 +32,12 @@ public class DimmerEventData extends HalEventData {
     private double dimmValue;
 
 
+    public DimmerEventData() { }
+    public DimmerEventData(double dimmValue) {
+        this.dimmValue = dimmValue;
+    }
+
+
     @Override
     public double getData() {
         return dimmValue;

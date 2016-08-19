@@ -6,6 +6,7 @@ import com.pi4j.temperature.TemperatureScale;
 import se.hal.plugin.raspberry.RPiController;
 import se.hal.plugin.raspberry.RPiSensor;
 import se.hal.plugin.raspberry.RPiTemperatureSensor;
+import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.log.LogUtil;
 
 import java.util.concurrent.Executors;
@@ -54,7 +55,11 @@ public class RPiDS18B20 implements RPiSensor, Runnable {
 		for(TemperatureSensor device : w1Mater.getDevices(TemperatureSensor.class)){
 			if(device.getName().equals(w1Address)){
 				controller.sendDataReport(
-						new RPiTemperatureSensor(System.currentTimeMillis(), device.getTemperature(TemperatureScale.CELSIUS)));
+				        new RPiTemperatureSensor(w1Address),
+                        new TemperatureSensorData(
+                                System.currentTimeMillis(),
+                                device.getTemperature(TemperatureScale.CELSIUS)
+                        ));
 				break;
 			}
 		}

@@ -10,6 +10,18 @@ public class PowerConsumptionSensorData extends HalSensorData {
     private double wattHours;
 
 
+
+    public PowerConsumptionSensorData() { }
+    public PowerConsumptionSensorData(double wattHours) {
+        this.wattHours = wattHours;
+    }
+    public PowerConsumptionSensorData(long timestamp, double wattHours) {
+        this(wattHours);
+        super.setTimestamp(timestamp);
+    }
+
+
+
     public void setConsumption(double wattHours){
         this.wattHours = wattHours;
     }

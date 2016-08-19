@@ -11,11 +11,8 @@ public class RPiPowerConsumptionSensor implements HalSensorConfig {
     private int gpioPin = -1;
 
 	
-	public RPiPowerConsumptionSensor(){
-		//need to be empty for the framework to create an instance
-	}
-	
-	public RPiPowerConsumptionSensor(int gpioPin) {
+	public RPiPowerConsumptionSensor(){	} //need to be empty for the framework to create an instance
+ 	public RPiPowerConsumptionSensor(int gpioPin) {
 		this.gpioPin = gpioPin;
 	}
 
@@ -38,9 +35,9 @@ public class RPiPowerConsumptionSensor implements HalSensorConfig {
 
     @Override
     public boolean equals(Object obj){
-    	if(!(obj instanceof RPiPowerConsumptionSensor))
-    		return false;
-    	return ((RPiPowerConsumptionSensor)obj).gpioPin == gpioPin;
+    	if(obj instanceof RPiPowerConsumptionSensor)
+    		return ((RPiPowerConsumptionSensor)obj).gpioPin == gpioPin;
+    	return false;
     }
 
 	public int getGpioPin() {

@@ -56,7 +56,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     
     public void aggregateSensor(Sensor sensor) {
     	if(sensor.getDeviceConfig() == null){
-    		logger.fine("The sensor type is not supported - ignoring it");
+    		logger.fine("The sensor config is not available - ignoring it");
     		return;
     	}
 		logger.fine("The sensor is of type: " + sensor.getDeviceConfig().getClass().getName());

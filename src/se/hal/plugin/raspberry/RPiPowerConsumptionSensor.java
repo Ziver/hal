@@ -2,6 +2,7 @@ package se.hal.plugin.raspberry;
 
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
+import se.hal.intf.HalSensorData;
 import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.ui.Configurator;
 
@@ -29,8 +30,13 @@ public class RPiPowerConsumptionSensor implements HalSensorConfig {
     }
 
     @Override
-    public Class<? extends HalSensorController> getSensorController() {
+    public Class<? extends HalSensorController> getSensorControllerClass() {
         return RPiController.class;
+    }
+
+    @Override
+    public Class<? extends HalSensorData> getSensorDataClass() {
+        return PowerConsumptionSensorData.class;
     }
 
     @Override

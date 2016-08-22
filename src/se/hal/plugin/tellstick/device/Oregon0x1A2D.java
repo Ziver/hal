@@ -3,10 +3,12 @@ package se.hal.plugin.tellstick.device;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
+import se.hal.intf.HalSensorData;
 import se.hal.plugin.tellstick.TellstickDevice;
 import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.plugin.tellstick.TellstickSerialComm;
 import se.hal.plugin.tellstick.protocol.Oregon0x1A2DProtocol;
+import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.log.LogUtil;
 import zutil.ui.Configurator;
 
@@ -55,10 +57,14 @@ public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
     }
 
     @Override
-    public Class<? extends HalSensorController> getSensorController() {
+    public Class<? extends HalSensorController> getSensorControllerClass() {
         return TellstickSerialComm.class;
     }
 
+    @Override
+    public Class<? extends HalSensorData> getSensorDataClass() {
+        return PowerConsumptionSensorData.class; // TODO: needs to support all data, add enum?
+    }
 
     @Override
     public String getProtocolName() { return Oregon0x1A2DProtocol.PROTOCOL; }

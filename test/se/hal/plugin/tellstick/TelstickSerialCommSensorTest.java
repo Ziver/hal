@@ -2,10 +2,8 @@ package se.hal.plugin.tellstick;
 
 import org.junit.Before;
 import org.junit.Test;
-import se.hal.intf.HalSensorConfig;
-import se.hal.intf.HalSensorController;
-import se.hal.intf.HalSensorData;
-import se.hal.intf.HalSensorReportListener;
+import se.hal.intf.*;
+import se.hal.struct.devicedata.SwitchEventData;
 import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.converter.Converter;
 
@@ -97,6 +95,10 @@ public class TelstickSerialCommSensorTest {
         @Override
         public AggregationMethod getAggregationMethod() { return null; }
         @Override
-        public Class<? extends HalSensorController> getSensorController() { return null; }
+        public Class<? extends HalSensorController> getSensorControllerClass() { return null; }
+        @Override
+        public Class<? extends HalSensorData> getSensorDataClass() {
+            return null;
+        }
     }
 }

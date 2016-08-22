@@ -1,6 +1,7 @@
 package se.hal.struct;
 
 import se.hal.ControllerManager;
+import se.hal.HalContext;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.log.LogUtil;
@@ -74,7 +75,7 @@ public abstract class AbstractDevice<T,D> extends DBBean {
         if(data != null) {
             type = data.getClass().getName();
             deviceConfig = data;
-            deviceData = readDeviceData();
+            deviceData = getLatestDeviceData(HalContext.getDB());
         } else {
             deviceConfig = null;
             deviceData = null;
@@ -127,9 +128,7 @@ public abstract class AbstractDevice<T,D> extends DBBean {
     /**
      * Reads latest device data from DB
      */
-    private D readDeviceData(){
-        return null; // TODO: how to do this in a good way?
-    }
+    protected abstract D getLatestDeviceData(DBConnection db);
 
     /**************** OTHER ******************/
 

@@ -22,4 +22,6 @@ public abstract class HalDeviceData {
      * @return serialized event data converted to double that will be saved in DB.
      */
     public abstract double getData();
+
+    public abstract void setData(double data);
 }

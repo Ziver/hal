@@ -26,7 +26,12 @@ public interface HalSensorConfig {
     /**
      * @return the Controller class where SensorData should be registered on
      */
-    Class<? extends HalSensorController> getSensorController();
+    Class<? extends HalSensorController> getSensorControllerClass();
+
+    /**
+     * @return the class that should be instantiated and used for data received from this sensor
+     */
+    Class<? extends HalSensorData> getSensorDataClass();
 
     /**
      * NOTE: it should only static or unique data for the sensor type.

@@ -33,5 +33,9 @@ public class TemperatureSensorData extends HalSensorData {
     public double getData() {
         return temperature;
     }
+    @Override
+    public void setData(double temperature) {
+        this.temperature = temperature;
+    }
 
 }

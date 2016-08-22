@@ -47,8 +47,13 @@ public class SwitchEventData extends HalEventData {
     public boolean isOn(){
         return enabled;
     }
+
     @Override
     public double getData() {
         return (enabled ? 1.0 : 0.0);
+    }
+    @Override
+    public void setData(double enabled) {
+        this.enabled = enabled > 0;
     }
 }

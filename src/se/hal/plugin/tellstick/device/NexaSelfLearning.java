@@ -24,10 +24,14 @@ package se.hal.plugin.tellstick.device;
 
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
+import se.hal.intf.HalEventData;
+import se.hal.intf.HalSensorData;
 import se.hal.plugin.tellstick.TellstickDevice;
 import se.hal.plugin.tellstick.TellstickDeviceGroup;
 import se.hal.plugin.tellstick.TellstickSerialComm;
 import se.hal.plugin.tellstick.protocol.NexaSelfLearningProtocol;
+import se.hal.struct.devicedata.SwitchEventData;
+import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.parser.binary.BinaryStruct;
 import zutil.ui.Configurator;
 
@@ -99,9 +103,14 @@ public class NexaSelfLearning implements HalEventConfig,TellstickDevice,Tellstic
     }
 
 
-
-    public Class<? extends HalEventController> getEventController() {
+    @Override
+    public Class<? extends HalEventController> getEventControllerClass() {
         return TellstickSerialComm.class;
+    }
+
+    @Override
+    public Class<? extends HalEventData> getEventDataClass() {
+        return SwitchEventData.class;
     }
 
     @Override

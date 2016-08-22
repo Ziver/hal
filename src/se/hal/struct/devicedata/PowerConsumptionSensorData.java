@@ -21,11 +21,6 @@ public class PowerConsumptionSensorData extends HalSensorData {
     }
 
 
-
-    public void setConsumption(double wattHours){
-        this.wattHours = wattHours;
-    }
-
     /**
      * @return int representing Watt/Hour
      */
@@ -33,4 +28,9 @@ public class PowerConsumptionSensorData extends HalSensorData {
     public double getData() {
         return wattHours;
     }
+    @Override
+    public void setData(double wattHours){
+        this.wattHours = wattHours;
+    }
+
 }

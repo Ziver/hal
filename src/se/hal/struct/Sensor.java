@@ -4,6 +4,7 @@ import se.hal.HalContext;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorData;
+import se.hal.util.DeviceDataSqlResult;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
@@ -13,6 +14,7 @@ import zutil.log.LogUtil;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -109,6 +111,24 @@ public class Sensor extends AbstractDevice<HalSensorConfig,HalSensorData>{
 
 
     public Class<? extends HalSensorController> getController(){
-        return getDeviceConfig().getSensorController();
+        return getDeviceConfig().getSensorControllerClass();
+    }
+
+    @Override
+    protected HalSensorData getLatestDeviceData(DBConnection db) {
+        try {
+            Class deviceDataClass = getDeviceConfig().getSensorDataClass();
+            if (deviceDataClass == null)
+                throw new ClassNotFoundException("Unknown device data class for: " + getDeviceConfig().getClass());
+
+            PreparedStatement stmt = db.getPreparedStatement(
+                    "SELECT data FROM event_data_raw WHERE event_id == ? ORDER BY timestamp DESC LIMIT 1");
+            stmt.setLong(1, getId());
+            return (HalSensorData)
+                    DBConnection.exec(stmt, new DeviceDataSqlResult(deviceDataClass));
+        } catch (Exception e){
+            logger.log(Level.WARNING, null, e);
+        }
+        return null;
     }
 }

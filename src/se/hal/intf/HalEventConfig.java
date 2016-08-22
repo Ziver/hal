@@ -7,7 +7,12 @@ package se.hal.intf;
  */
 public interface HalEventConfig {
 
-    Class<? extends HalEventController> getEventController();
+    Class<? extends HalEventController> getEventControllerClass();
+
+    /**
+     * @return the class that should be instantiated and used for data received from this event
+     */
+    Class<? extends HalEventData> getEventDataClass();
 
     /**
      * This method needs to be implemented.

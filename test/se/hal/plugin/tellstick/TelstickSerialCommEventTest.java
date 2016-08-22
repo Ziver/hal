@@ -3,6 +3,7 @@ package se.hal.plugin.tellstick;
 import org.junit.Before;
 import org.junit.Test;
 import se.hal.intf.*;
+import se.hal.struct.devicedata.DimmerEventData;
 import se.hal.struct.devicedata.SwitchEventData;
 import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.converter.Converter;
@@ -95,14 +96,18 @@ public class TelstickSerialCommEventTest {
 
             ArrayList<TellstickDecodedEntry> list = new ArrayList<>();
             list.add(new TellstickDecodedEntry(
-                    this, new TemperatureSensorData(testData)
+                    this, new DimmerEventData(testData)
             ));
             return list;
         }
 
 
         @Override
-        public Class<? extends HalEventController> getEventController() { return null; }
+        public Class<? extends HalEventController> getEventControllerClass() { return null; }
+        @Override
+        public Class<? extends HalEventData> getEventDataClass() {
+            return null;
+        }
 
         @Override
         public boolean equals(Object obj) {return testData == ((TestEvent)obj).testData;}

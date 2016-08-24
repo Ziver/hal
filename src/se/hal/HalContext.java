@@ -146,6 +146,12 @@ public class HalContext {
 						return null;
 					}
 				});
+                if (dbVersion < 9) { // tellstick code has changed package
+                    db.exec("UPDATE sensor SET type = 'se.hal.plugin.tellstick.device.Oregon0x1A2D' WHERE type = 'se.hal.plugin.tellstick.protocols.Oregon0x1A2D'");
+                    db.exec("UPDATE event SET type = 'se.hal.plugin.tellstick.device.NexaSelfLearning' WHERE type = 'se.hal.plugin.tellstick.protocols.NexaSelfLearning'");
+                }
+
+
                 // Check if there is a local user
                 User localUser = User.getLocalUser(db);
                 if (localUser == null){

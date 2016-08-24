@@ -1,14 +1,15 @@
 package se.hal.plugin.tellstick.device;
 
-import se.hal.intf.HalEventController;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
 import se.hal.plugin.tellstick.TellstickDevice;
-import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.plugin.tellstick.TellstickSerialComm;
 import se.hal.plugin.tellstick.protocol.Oregon0x1A2DProtocol;
+import se.hal.struct.devicedata.HumiditySensorData;
+import se.hal.struct.devicedata.LightSensorData;
 import se.hal.struct.devicedata.PowerConsumptionSensorData;
+import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.log.LogUtil;
 import zutil.ui.Configurator;
 
@@ -20,11 +21,16 @@ import java.util.logging.Logger;
 public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
     private static final Logger logger = LogUtil.getLogger();
 
+    public enum OregonSensorType{
+        HUMIDITY,LIGHT,POWER,TEMPERATURE
+    }
+
     @Configurator.Configurable("Address")
     private int address = 0;
     @Configurator.Configurable("Report Interval(ms)")
     private int interval = 60*1000; // default 1 min
-
+    @Configurator.Configurable("Sensor Type")
+    private OregonSensorType sensorType;
 
 
     public Oregon0x1A2D() { }
@@ -37,11 +43,12 @@ public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
     public boolean equals(Object obj){
         if(! (obj instanceof Oregon0x1A2D))
             return false;
-        return ((Oregon0x1A2D)obj).address == this.address;
+        return ((Oregon0x1A2D)obj).address == this.address &&
+                ((Oregon0x1A2D)obj).sensorType == this.sensorType;
     }
 
     public String toString(){
-        return "address:"+address;
+        return "address:"+address+",sensorType:"+ sensorType;
     }
 
 
@@ -53,7 +60,9 @@ public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
 
     @Override
     public AggregationMethod getAggregationMethod() {
-        return AggregationMethod.SUM;
+        if (sensorType == OregonSensorType.POWER)
+            return AggregationMethod.SUM;
+        return AggregationMethod.AVERAGE;
     }
 
     @Override
@@ -63,7 +72,13 @@ public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
 
     @Override
     public Class<? extends HalSensorData> getSensorDataClass() {
-        return PowerConsumptionSensorData.class; // TODO: needs to support all data, add enum?
+        switch (sensorType){
+            case HUMIDITY:      return HumiditySensorData.class;
+            case LIGHT:         return LightSensorData.class;
+            case POWER:         return PowerConsumptionSensorData.class;
+            case TEMPERATURE:   return TemperatureSensorData.class;
+        }
+        return null;
     }
 
     @Override

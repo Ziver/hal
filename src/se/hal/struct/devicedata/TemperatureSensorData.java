@@ -19,12 +19,6 @@ public class TemperatureSensorData extends HalSensorData {
         super.setTimestamp(timestamp);
     }
 
-    /**
-     * @param   data     the temperature to set in degrees C
-     */
-    public void setTemperature(double data){
-        this.temperature = data;
-    }
 
     /**
      * @return temperature in degrees C
@@ -33,6 +27,9 @@ public class TemperatureSensorData extends HalSensorData {
     public double getData() {
         return temperature;
     }
+    /**
+     * @param   temperature     the temperature to set in degrees C
+     */
     @Override
     public void setData(double temperature) {
         this.temperature = temperature;

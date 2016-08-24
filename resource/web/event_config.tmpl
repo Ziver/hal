@@ -22,7 +22,7 @@
                 <tr>
                     <td>{{.getName()}}</td>
                     <td>{{.getType()}}</td>
-                    <td>{{.getDeviceData()}}</td>
+                    <td>{{.getDeviceConfig()}}</td>
                     <td>
                         <form method="POST">
                             <input type="hidden" name="action" value="remove_local_event">
@@ -57,13 +57,15 @@
                 <thead>
                 <th>Type</th>
                 <th>Date</th>
+                <th>Data</th>
                 <th>Configuration</th>
                 </thead>
                 {{#detectedEvents}}
                 <tr>
                     <td>{{.getType()}}</td>
                     <td><span class="timestamp">{{.getDeviceData().getTimestamp()}}</span></td>
-                    <td>{{.getDeviceData()}}</td>
+                    <td>{{.getDeviceData()}}</span></td>
+                    <td>{{.getDeviceConfig()}}</td>
                     <td>
                         <div class="btn-toolbar pull-right">
                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
@@ -172,7 +174,14 @@
         {{#.params}}
         <div class="form-group">
             <label class="control-label">{{.getNiceName()}}:</label>
-            <input type="text" class="form-control" name="{{.getName()}}">
+            {{#.isTypeString()}}<input type="text" class="form-control" name="{{.getName()}}">{{/#.isTypeString()}}
+            {{#.isTypeInt()}}<input type="number" class="form-control" name="{{.getName()}}">{{/#.isTypeInt()}}
+            {{#.isTypeBoolean()}}<input type="checkbox" name="{{.getName()}}">{{/#.isTypeBoolean()}}
+            {{#.isTypeEnum()}}
+            <select class="form-control" name="{{.getName()}}">
+                {{#.getPossibleValues()}}<option>{{.}}</option>{{/.getPossibleValues()}}
+            </select>
+            {{/#.isTypeEnum()}}
         </div>
         {{/.params}}
     </div>

@@ -35,14 +35,15 @@ void Interrupt::sleep()
 
     sleep_enable();         // enables the sleep bit in the mcucr register
                             // so sleep is possible. just a safety pin
-    /*
+
     power_adc_disable();
-    power_spi_disable();
-    power_timer0_disable();
-    power_timer1_disable();
-    power_timer2_disable();
-    power_twi_disable();
-    */
+    //power_spi_disable();
+    //power_timer0_disable();
+    //power_timer1_disable();
+    //power_timer2_disable();
+    //power_twi_disable();
+    //power_all_disable()
+
     while( ! Interrupt::wakeUpNow)
     {
         sleep_mode();           // here the device is actually put to sleep!!
@@ -51,6 +52,13 @@ void Interrupt::sleep()
     sleep_disable();        // first thing after waking from sleep:
                             // disable sleep...
 
+    power_adc_enable();
+    //power_spi_enable();
+    //power_usart0_enable();
+    //power_timer0_enable();
+    //power_timer1_enable();
+    //power_timer2_enable();
+    //power_twi_enable();
     //power_all_enable();     // during normal running time.
 }
 

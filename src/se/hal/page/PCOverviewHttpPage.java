@@ -113,8 +113,9 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
     private List<Sensor> getSensorList(DBConnection db) throws SQLException {
         List<Sensor> sensors = new ArrayList<>();
         for (Sensor sensor : Sensor.getSensors(db)) {
-            if (sensor.getDeviceConfig() != null &&
-                    sensor.getDeviceConfig() instanceof PowerConsumptionSensorData)
+            if (sensor.getDeviceConfig() != null) // Show all sensors for now
+//            if (sensor.getDeviceConfig() != null &&
+//                    sensor.getDeviceConfig().getSensorDataClass() == PowerConsumptionSensorData.class)
                 sensors.add(sensor);
         }
         return sensors;

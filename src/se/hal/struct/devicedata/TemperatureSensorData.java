@@ -38,6 +38,6 @@ public class TemperatureSensorData extends HalSensorData {
 
     @Override
     public String toString(){
-        return temperature+" \\u00b0C";
+        return temperature+" \u00b0C";
     }
 }

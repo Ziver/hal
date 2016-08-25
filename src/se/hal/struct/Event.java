@@ -50,7 +50,7 @@ public class Event extends AbstractDevice<HalEventConfig,HalEventData>{
         try {
             Class deviceDataClass = getDeviceConfig().getEventDataClass();
             if (deviceDataClass == null)
-                throw new ClassNotFoundException("Unknown device data class for: " + getDeviceConfig().getClass());
+                throw new ClassNotFoundException("Unknown event data class for: " + getDeviceConfig().getClass());
 
             PreparedStatement stmt = db.getPreparedStatement(
                     "SELECT data FROM event_data_raw WHERE event_id == ? ORDER BY timestamp DESC LIMIT 1");

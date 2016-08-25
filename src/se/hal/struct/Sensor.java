@@ -119,10 +119,10 @@ public class Sensor extends AbstractDevice<HalSensorConfig,HalSensorData>{
         try {
             Class deviceDataClass = getDeviceConfig().getSensorDataClass();
             if (deviceDataClass == null)
-                throw new ClassNotFoundException("Unknown device data class for: " + getDeviceConfig().getClass());
+                throw new ClassNotFoundException("Unknown sensor data class for: " + getDeviceConfig().getClass());
 
             PreparedStatement stmt = db.getPreparedStatement(
-                    "SELECT data FROM event_data_raw WHERE event_id == ? ORDER BY timestamp DESC LIMIT 1");
+                    "SELECT data FROM sensor_data_raw WHERE sensor_id == ? ORDER BY timestamp DESC LIMIT 1");
             stmt.setLong(1, getId());
             return (HalSensorData)
                     DBConnection.exec(stmt, new DeviceDataSqlResult(deviceDataClass));

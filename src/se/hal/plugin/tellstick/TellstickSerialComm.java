@@ -147,7 +147,7 @@ public class TellstickSerialComm implements Runnable,
                         return str.toString();
                     break;
                 default:
-                    str.append(c);
+                    str.append((char)c);
             }
         }
         return str.toString();

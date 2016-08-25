@@ -49,7 +49,7 @@ public class NutUpsDevice implements HalSensorConfig{
     }
 
     public String toString(){
-        return "id: "+ upsId;
+        return "upsId: "+ upsId;
     }
 
     @Override

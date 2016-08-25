@@ -16,7 +16,7 @@
                 <tr>
                     <td><a href="?id={{.getId()}}">{{.getName()}}</a></td>
                     <td>{{.getDeviceData().getClass().getSimpleName()}}</td>
-                    <td>{{.getDeviceData().getData()}}</td>
+                    <td>{{.getDeviceData()}}</td>
                     <td><span class="timestamp">{{.getDeviceData().getTimestamp()}}</span></td>
                 </tr>
                 {{/sensors}}

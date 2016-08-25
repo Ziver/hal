@@ -59,6 +59,7 @@ public abstract class AbstractDevice<T,D> extends DBBean {
                 deviceConfig = (T) c.newInstance();
 
                 applyConfig();
+                deviceData = getLatestDeviceData(HalContext.getDB());
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "Unable instantiate DeviceConfig: "+type, e);
             }
@@ -95,7 +96,7 @@ public abstract class AbstractDevice<T,D> extends DBBean {
     /**
      * Will update the config String that will be stored in DB.
      */
-    protected void updateConfigString() {
+    private void updateConfigString() {
         Configurator<T> configurator = getDeviceConfigurator();
         this.config = JSONWriter.toString(configurator.getValuesAsNode());
     }
@@ -103,7 +104,7 @@ public abstract class AbstractDevice<T,D> extends DBBean {
      * This method will configure the current DeviceData with the
      * configuration from the config String.
      */
-    protected void applyConfig(){
+    private void applyConfig(){
         if (config != null && !config.isEmpty()) {
             Configurator<T> configurator = getDeviceConfigurator();
             configurator.setValues(JSONParser.read(config));
@@ -153,9 +154,8 @@ public abstract class AbstractDevice<T,D> extends DBBean {
      */
     public void setType(String type) {
         if (this.type == null || !this.type.equals(type)) {
+            setDeviceConfig(null); // reset
             this.type = type;
-            this.config = null;
-            this.deviceConfig = null; // invalidate current sensor data object
         }
     }
 

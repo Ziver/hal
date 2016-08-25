@@ -51,7 +51,7 @@ based on Christopher Laws, March, 2013 code.
 
 void SensorBH1750::setup() {
   Wire.begin();
-  configure(BH1750_ONE_TIME_HIGH_RES_MODE);
+  //configure(BH1750_ONE_TIME_HIGH_RES_MODE);
 }
 
 
@@ -78,15 +78,15 @@ void SensorBH1750::configure(uint8_t mode) {
 
 
 void SensorBH1750::read(LightData& data) {
-  uint16_t level;
+	configure(BH1750_ONE_TIME_HIGH_RES_MODE);
 
-  Wire.beginTransmission(BH1750_I2CADDR);
-  Wire.requestFrom(BH1750_I2CADDR, 2);
-  level = Wire.read();
-  level <<= 8;
-  level |= Wire.read();
-  Wire.endTransmission();
+	Wire.beginTransmission(BH1750_I2CADDR);
+	Wire.requestFrom(BH1750_I2CADDR, 2);
+	uint16_t level = Wire.read();
+	level <<= 8;
+	level |= Wire.read();
+	Wire.endTransmission();
 
-  data.lumen = level/1.2; // convert to lux
+	data.lumen = level/1.2; // convert to lux
 }
 

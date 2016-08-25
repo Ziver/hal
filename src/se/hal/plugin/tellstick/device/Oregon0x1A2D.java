@@ -33,11 +33,23 @@ public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
     private OregonSensorType sensorType;
 
 
+
     public Oregon0x1A2D() { }
     public Oregon0x1A2D(int address) {
         this.address = address;
     }
 
+
+    public int getAddress() {
+        return address;
+    }
+    @Override
+    public long getDataInterval() {
+        return interval;
+    }
+    public OregonSensorType getSensorType() {
+        return sensorType;
+    }
 
     @Override
     public boolean equals(Object obj){
@@ -51,12 +63,6 @@ public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
         return "address:"+address+",sensorType:"+ sensorType;
     }
 
-
-
-    @Override
-    public long getDataInterval() {
-        return interval;
-    }
 
     @Override
     public AggregationMethod getAggregationMethod() {

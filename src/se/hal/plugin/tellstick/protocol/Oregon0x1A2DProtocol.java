@@ -1,8 +1,13 @@
 package se.hal.plugin.tellstick.protocol;
 
+import se.hal.intf.HalSensorData;
+import se.hal.plugin.tellstick.TellstickDevice;
 import se.hal.plugin.tellstick.TellstickProtocol;
+import se.hal.plugin.tellstick.TellstickSerialComm;
 import se.hal.plugin.tellstick.device.Oregon0x1A2D;
 import se.hal.struct.devicedata.HumiditySensorData;
+import se.hal.struct.devicedata.LightSensorData;
+import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.log.LogUtil;
 
@@ -59,14 +64,30 @@ public class Oregon0x1A2DProtocol extends TellstickProtocol {
 
         // Create return objects
         ArrayList<TellstickDecodedEntry> list = new ArrayList<>();
-        Oregon0x1A2D device = new Oregon0x1A2D(address);
-        list.add(new TellstickDecodedEntry(
-                device, new TemperatureSensorData(temperature)
-        ));
-        list.add(new TellstickDecodedEntry(
-                device, new HumiditySensorData(humidity)
-        ));
+        for (Oregon0x1A2D device : getSensorByAddress(address)) {
+            HalSensorData dataObj;
+            switch (device.getSensorType()){
+                case HUMIDITY:
+                    dataObj = new HumiditySensorData(humidity); break;
+                case LIGHT:
+                    dataObj = new LightSensorData(temperature); break;
+                case POWER:
+                    dataObj = new PowerConsumptionSensorData(temperature); break;
+                case TEMPERATURE:
+                default:
+                    dataObj = new TemperatureSensorData(temperature); break;
+            }
+            list.add(new TellstickDecodedEntry(device, dataObj));
+        }
         return list;
     }
 
+    private List<Oregon0x1A2D> getSensorByAddress(int address){
+        ArrayList<Oregon0x1A2D> list = new ArrayList<>();
+        for (TellstickDevice device : TellstickSerialComm.getInstance().getRegisteredDevices()){
+            if (device instanceof Oregon0x1A2D && ((Oregon0x1A2D) device).getAddress() == address)
+                list.add((Oregon0x1A2D) device);
+        }
+        return list;
+    }
 }

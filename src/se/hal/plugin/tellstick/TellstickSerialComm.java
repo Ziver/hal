@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -48,6 +49,7 @@ public class TellstickSerialComm implements Runnable,
         HalSensorController, HalEventController, HalAutoScannableController {
     private static final long TRANSMISSION_UNIQUENESS_TTL = 1000; // milliseconds
     private static final Logger logger = LogUtil.getLogger();
+    private static TellstickSerialComm instance; // Todo: Don't like this but it is the best I could come up with
 
     private SerialPort serial;
     private InputStream in;
@@ -83,6 +85,10 @@ public class TellstickSerialComm implements Runnable,
     }
 
     public void initialize(String portName) throws Exception {
+        if (instance != null)
+            throw new IllegalStateException("There is a previous TellstickSerialComm instance, only one allowed");
+        instance = this;
+
         logger.info("Connecting to com port... ("+ portName +")");
         serial = SerialPort.getCommPort(portName);
         serial.setBaudRate(9600);
@@ -110,6 +116,7 @@ public class TellstickSerialComm implements Runnable,
         serial = null;
         in = null;
         out = null;
+        instance = null;
     }
 
 
@@ -222,6 +229,10 @@ public class TellstickSerialComm implements Runnable,
                 "Device config is not an instance of "+TellstickDevice.class+": "+sensor.getClass());
     }
 
+    public List<TellstickDevice> getRegisteredDevices(){
+        return registeredDevices;
+    }
+
     @Override
     public void deregister(HalEventConfig event) {
         registeredDevices.remove(event);
@@ -245,4 +256,8 @@ public class TellstickSerialComm implements Runnable,
         sensorListener = listener;
     }
 
+
+    public static TellstickSerialComm getInstance(){
+        return instance;
+    }
 }

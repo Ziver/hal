@@ -37,9 +37,9 @@
                                         data-name="{{.getName()}}"
                                         data-type="{{.getType()}}"
                                         data-sync="{{.isSynced()}}"
-                                        {{#.getDeviceConfig().getConfiguration()}}
+                                        {{#.getDeviceConfigurator().getConfiguration()}}
                                         data-{{.getName()}}="{{.getString()}}"
-                                        {{/.getDeviceConfig().getConfiguration()}}
+                                        {{/.getDeviceConfigurator().getConfiguration()}}
                                         >
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </button>
@@ -74,9 +74,9 @@
                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
                                     data-target="#sensorModal"
                                     data-type="{{.getType()}}"
-                                    {{#.getDeviceConfig().getConfiguration()}}
+                                    {{#.getDeviceConfigurator().getConfiguration()}}
                                     data-{{.getName()}}="{{.getString()}}"
-                                    {{/.getDeviceConfig().getConfiguration()}}
+                                    {{/.getDeviceConfigurator().getConfiguration()}}
                                     >
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>

@@ -35,4 +35,9 @@ public class TemperatureSensorData extends HalSensorData {
         this.temperature = temperature;
     }
 
+
+    @Override
+    public String toString(){
+        return temperature+" \\u00b0C";
+    }
 }

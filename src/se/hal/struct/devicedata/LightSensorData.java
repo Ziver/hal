@@ -31,4 +31,8 @@ public class LightSensorData extends HalSensorData {
         this.lux = lux;
     }
 
+    @Override
+    public String toString(){
+        return lux+" lux";
+    }
 }

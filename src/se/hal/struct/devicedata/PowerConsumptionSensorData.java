@@ -33,4 +33,8 @@ public class PowerConsumptionSensorData extends HalSensorData {
         this.wattHours = wattHours;
     }
 
+    @Override
+    public String toString(){
+        return wattHours+" Wh";
+    }
 }

@@ -46,4 +46,9 @@ public class DimmerEventData extends HalEventData {
     public void setData(double dimmValue) {
         this.dimmValue = dimmValue;
     }
+
+    @Override
+    public String toString(){
+        return dimmValue+"%";
+    }
 }

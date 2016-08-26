@@ -35,8 +35,9 @@ public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
 
 
     public Oregon0x1A2D() { }
-    public Oregon0x1A2D(int address) {
+    public Oregon0x1A2D(int address, OregonSensorType sensorType) {
         this.address = address;
+        this.sensorType = sensorType;
     }
 
 

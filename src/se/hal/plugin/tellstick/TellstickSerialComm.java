@@ -229,8 +229,13 @@ public class TellstickSerialComm implements Runnable,
                 "Device config is not an instance of "+TellstickDevice.class+": "+sensor.getClass());
     }
 
-    public List<TellstickDevice> getRegisteredDevices(){
-        return registeredDevices;
+    public <T> List<T> getRegisteredDevices(Class<T> clazz){
+        ArrayList<T> list = new ArrayList<>();
+        for (TellstickDevice device : registeredDevices){
+            if (clazz.isAssignableFrom(device.getClass()))
+                list.add((T) device);
+        }
+        return list;
     }
 
     @Override

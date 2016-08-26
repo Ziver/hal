@@ -63,36 +63,50 @@ public class Oregon0x1A2DProtocol extends TellstickProtocol {
             temperature = -temperature;
         double humidity = (hum1 * 10.0) + hum2;
 
+
+
         // Create return objects
+        boolean humidityFound=false, temperatureFound=false;
         ArrayList<TellstickDecodedEntry> list = new ArrayList<>();
-        for (Oregon0x1A2D device : getSensorByAddress(address)) {
+        for (Oregon0x1A2D device : TellstickSerialComm.getInstance().getRegisteredDevices(Oregon0x1A2D.class)) {
+            if (device.getAddress() != address)
+                continue;
             HalSensorData dataObj;
             OregonSensorType sensorType = device.getSensorType();
             if (sensorType == null)
                 sensorType = OregonSensorType.POWER;
             switch (sensorType){
                 case HUMIDITY:
-                    dataObj = new HumiditySensorData(humidity); break;
+                    dataObj = new HumiditySensorData(humidity);
+                    humidityFound = true;
+                    break;
                 case LIGHT:
-                    dataObj = new LightSensorData(temperature); break;
+                    dataObj = new LightSensorData(temperature);
+                    temperatureFound = true;
+                    break;
                 case TEMPERATURE:
-                    dataObj = new TemperatureSensorData(temperature); break;
+                    dataObj = new TemperatureSensorData(temperature);
+                    temperatureFound = true;
+                    break;
                 default:
                 case POWER:
-                    dataObj = new PowerConsumptionSensorData(temperature); break;
+                    dataObj = new PowerConsumptionSensorData(temperature);
+                    temperatureFound = true;
+                    break;
 
             }
             list.add(new TellstickDecodedEntry(device, dataObj));
         }
-        return list;
-    }
+        // Add new sensors if we did not find a registered one
+        if (!temperatureFound)
+            list.add(new TellstickDecodedEntry(
+                    new Oregon0x1A2D(address, OregonSensorType.TEMPERATURE),
+                    new TemperatureSensorData(temperature)));
+        if (!humidityFound)
+            list.add(new TellstickDecodedEntry(
+                    new Oregon0x1A2D(address, OregonSensorType.HUMIDITY),
+                    new HumiditySensorData(humidity)));
 
-    private List<Oregon0x1A2D> getSensorByAddress(int address){
-        ArrayList<Oregon0x1A2D> list = new ArrayList<>();
-        for (TellstickDevice device : TellstickSerialComm.getInstance().getRegisteredDevices()){
-            if (device instanceof Oregon0x1A2D && ((Oregon0x1A2D) device).getAddress() == address)
-                list.add((Oregon0x1A2D) device);
-        }
         return list;
     }
 }

@@ -97,7 +97,7 @@ public class TellstickParser {
     /**
      * This method blocks until a send command confirmation is received.
      */
-    public void waitSendConformation(){
+    public synchronized void waitSendConformation(){
         try {
             this.wait();
         } catch (InterruptedException e) {

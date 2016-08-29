@@ -3,6 +3,7 @@ package se.hal.page;
 import se.hal.ControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalEventConfig;
+import se.hal.intf.HalEventData;
 import se.hal.intf.HalHttpPage;
 import se.hal.struct.Event;
 import se.hal.struct.devicedata.SwitchEventData;
@@ -39,14 +40,13 @@ public class EventOverviewHttpPage extends HalHttpPage {
 
         if(request.containsKey("action")){
             // change event data
+            SwitchEventData eventData = new SwitchEventData();
+            if ( request.containsKey("data") && "on".equals(request.get("data")))
+                eventData.turnOn();
+            else
+                eventData.turnOff();
             Event event = Event.getEvent(db, id);
-            HalEventConfig eventData = event.getDeviceConfig();
-            if (eventData instanceof SwitchEventData){
-                if ( request.containsKey("data") && "on".equals(request.get("data")))
-                    ((SwitchEventData)eventData).turnOn();
-                else
-                    ((SwitchEventData)eventData).turnOff();
-            }
+            event.setDeviceData(eventData);
             ControllerManager.getInstance().send(event);
         }
 

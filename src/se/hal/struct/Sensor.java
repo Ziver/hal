@@ -121,11 +121,13 @@ public class Sensor extends AbstractDevice<HalSensorConfig,HalSensorData>{
             if (deviceDataClass == null)
                 throw new ClassNotFoundException("Unknown sensor data class for: " + getDeviceConfig().getClass());
 
-            PreparedStatement stmt = db.getPreparedStatement(
-                    "SELECT data FROM sensor_data_raw WHERE sensor_id == ? ORDER BY timestamp DESC LIMIT 1");
-            stmt.setLong(1, getId());
-            return (HalSensorData)
-                    DBConnection.exec(stmt, new DeviceDataSqlResult(deviceDataClass));
+            if (getId() != null) {
+                PreparedStatement stmt = db.getPreparedStatement(
+                        "SELECT data FROM sensor_data_raw WHERE sensor_id == ? ORDER BY timestamp DESC LIMIT 1");
+                stmt.setLong(1, getId());
+                return (HalSensorData)
+                        DBConnection.exec(stmt, new DeviceDataSqlResult(deviceDataClass));
+            }
         } catch (Exception e){
             logger.log(Level.WARNING, null, e);
         }

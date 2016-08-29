@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by Ziver on 2015-11-19.
+ * @see <a href="https://github.com/telldus/telldus/blob/master/telldus-core/service/ProtocolOregon.cpp">ProtocolOregon.cpp Tellstick Reference</a>
  */
 public class Oregon0x1A2DProtocol extends TellstickProtocol {
     private static final Logger logger = LogUtil.getLogger();

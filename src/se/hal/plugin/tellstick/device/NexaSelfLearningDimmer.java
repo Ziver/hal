@@ -25,35 +25,29 @@ package se.hal.plugin.tellstick.device;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalEventData;
-import se.hal.intf.HalSensorData;
 import se.hal.plugin.tellstick.TellstickDevice;
 import se.hal.plugin.tellstick.TellstickDeviceGroup;
 import se.hal.plugin.tellstick.TellstickSerialComm;
 import se.hal.plugin.tellstick.protocol.NexaSelfLearningProtocol;
+import se.hal.struct.devicedata.DimmerEventData;
 import se.hal.struct.devicedata.SwitchEventData;
-import se.hal.struct.devicedata.TemperatureSensorData;
-import zutil.parser.binary.BinaryStruct;
 import zutil.ui.Configurator;
 
 /**
  * Created by Ziver on 2015-02-18.
  */
-public class NexaSelfLearning implements HalEventConfig,TellstickDevice,TellstickDeviceGroup {
+public class NexaSelfLearningDimmer implements HalEventConfig,TellstickDevice {
 
     @Configurator.Configurable("House code")
     private int house = 0;
-
-    @Configurator.Configurable("Group code")
-    private boolean group = false;
 
     @Configurator.Configurable("Unit code")
     private int unit = 0;
 
 
-    public NexaSelfLearning() { }
-    public NexaSelfLearning(int house, boolean group, int unit) {
+    public NexaSelfLearningDimmer() { }
+    public NexaSelfLearningDimmer(int house, int unit) {
         this.house = house;
-        this.group = group;
         this.unit = unit;
     }
 
@@ -64,12 +58,6 @@ public class NexaSelfLearning implements HalEventConfig,TellstickDevice,Tellstic
     }
     public void setHouse(int house) {
         this.house = house;
-    }
-    public boolean getGroup() {
-        return group;
-    }
-    public void setGroup(boolean group) {
-        this.group = group;
     }
     public int getUnit() {
         return unit;
@@ -82,23 +70,14 @@ public class NexaSelfLearning implements HalEventConfig,TellstickDevice,Tellstic
 
     public String toString(){
         return "house:"+house+
-                ", group:"+group+
                 ", unit:"+unit;
     }
 
     @Override
     public boolean equals(Object obj){
-        if(obj instanceof NexaSelfLearning)
-            return ((NexaSelfLearning) obj).house == house &&
-                    ((NexaSelfLearning) obj).group == group &&
-                    ((NexaSelfLearning)obj).unit == unit;
-        return false;
-    }
-    @Override
-    public boolean equalsGroup(TellstickDeviceGroup obj) {
-        if(obj instanceof NexaSelfLearning)
-            return ((NexaSelfLearning) obj).house == house &&
-                    (((NexaSelfLearning) obj).group || group );
+        if(obj instanceof NexaSelfLearningDimmer)
+            return ((NexaSelfLearningDimmer) obj).house == house &&
+                    ((NexaSelfLearningDimmer)obj).unit == unit;
         return false;
     }
 
@@ -109,7 +88,7 @@ public class NexaSelfLearning implements HalEventConfig,TellstickDevice,Tellstic
     }
     @Override
     public Class<? extends HalEventData> getEventDataClass() {
-        return SwitchEventData.class;
+        return DimmerEventData.class;
     }
 
     @Override

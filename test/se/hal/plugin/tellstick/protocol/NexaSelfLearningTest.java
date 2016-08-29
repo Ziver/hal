@@ -25,6 +25,8 @@ package se.hal.plugin.tellstick.protocol;
 import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.plugin.tellstick.TellstickProtocol.TellstickDecodedEntry;
 import se.hal.plugin.tellstick.device.NexaSelfLearning;
+import se.hal.plugin.tellstick.device.NexaSelfLearningDimmer;
+import se.hal.struct.devicedata.DimmerEventData;
 import se.hal.struct.devicedata.SwitchEventData;
 import zutil.converter.Converter;
 
@@ -36,28 +38,54 @@ import static org.junit.Assert.*;
 public class NexaSelfLearningTest {
 
     @org.junit.Test
-    public void testEncode() throws Exception {
+    public void testSwitchEncode() throws Exception {
         NexaSelfLearning nexaDevice = new NexaSelfLearning();
         nexaDevice.setHouse(11_772_006);
-        nexaDevice.setUnit(0);
-        SwitchEventData nexaData = new SwitchEventData();
-        nexaData.turnOn();
+        nexaDevice.setUnit(3);
+        SwitchEventData nexaData = new SwitchEventData(true);
 
         byte[] expected = Converter.toBytes(new char[]{
                         84, // T
                         127, 255, 24, 0, // timings
-                        134, // length
+                        130, // length
 
-                        0x09, // preamble
-                        168, 168, 138, 168, 138, 138, 168, 168, 138, 138,
-                        138, 168, 138, 168, 168, 168, 168, 168, 168, 138,
-                        138, 168, 168, 138, 138, 168, 168, 138, 168, 168,
-                        168, 168,
-                        0x00, // postemble
+                        154, 138, 136, 170, 136, 168, 170, 138, 136, 168,
+                        168, 170, 136, 170, 138, 138, 138, 138, 138, 136,
+                        168, 170, 138, 136, 168, 170, 138, 136, 170, 138,
+                        136, 168, 160,
 
                         43}); // +
         NexaSelfLearningProtocol nexaProt = new NexaSelfLearningProtocol();
-        byte[] actual = nexaProt.encode(nexaDevice, nexaData).getBytes(StandardCharsets.ISO_8859_1);
+        byte[] actual = nexaProt.encode(nexaDevice, nexaData).getTransmissionString()
+                .getBytes(StandardCharsets.ISO_8859_1);
+
+        System.out.println("Expected: "+Converter.toHexString(expected).toUpperCase());
+        System.out.println("Actual  : "+Converter.toHexString(actual).toUpperCase());
+        assertArrayEquals(expected, actual);
+    }
+
+    @org.junit.Test
+    public void testDimmerEncode() throws Exception {
+        NexaSelfLearningDimmer nexaDevice = new NexaSelfLearningDimmer();
+        nexaDevice.setHouse(11_772_006);
+        nexaDevice.setUnit(3);
+        DimmerEventData nexaData = new DimmerEventData(0.5);
+
+        byte[] expected = Converter.toBytes(new char[]{
+                84, // T
+                127, 255, 24, 0, // timings
+                162, // length, 32 extra timings
+
+                154, 138, 136, 170, 136, 168, 170, 138, 136, 168,
+                168, 170, 136, 170, 138, 138, 138, 138, 138, 136,
+                168, 170, 138, 136, 168, 170, 138,
+                138, 138, 138, 136, 168,
+                168, 170, 138, 138, 138, 138, 138, 138, 128, // Dimer value
+
+                43}); // +
+        NexaSelfLearningProtocol nexaProt = new NexaSelfLearningProtocol();
+        byte[] actual = nexaProt.encode(nexaDevice, nexaData).getTransmissionString()
+                .getBytes(StandardCharsets.ISO_8859_1);
 
         System.out.println("Expected: "+Converter.toHexString(expected).toUpperCase());
         System.out.println("Actual  : "+Converter.toHexString(actual).toUpperCase());

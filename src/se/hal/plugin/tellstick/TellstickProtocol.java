@@ -24,6 +24,7 @@ package se.hal.plugin.tellstick;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventData;
+import se.hal.plugin.tellstick.cmd.TellstickCmd;
 
 import java.util.List;
 
@@ -49,9 +50,9 @@ public abstract class TellstickProtocol {
         return model;
     }
 
-    public String encode(HalEventConfig deviceConfig, HalEventData deviceData){ return null; }
-    public abstract List<TellstickDecodedEntry> decode(byte[] data);
 
+    public TellstickCmd encode(HalEventConfig deviceConfig, HalEventData deviceData){ return null; }
+    public abstract List<TellstickDecodedEntry> decode(byte[] data);
 
 
     public static class TellstickDecodedEntry {

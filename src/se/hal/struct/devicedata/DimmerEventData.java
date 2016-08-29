@@ -38,6 +38,9 @@ public class DimmerEventData extends HalEventData {
     }
 
 
+    /**
+     * @return the dim level from 0.0 to 1.0
+     */
     @Override
     public double getData() {
         return dimmValue;

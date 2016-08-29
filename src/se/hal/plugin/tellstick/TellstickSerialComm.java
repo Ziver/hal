@@ -26,6 +26,7 @@ import com.fazecast.jSerialComm.SerialPort;
 import se.hal.HalContext;
 import se.hal.intf.*;
 import se.hal.plugin.tellstick.TellstickProtocol.TellstickDecodedEntry;
+import se.hal.plugin.tellstick.cmd.TellstickCmd;
 import zutil.log.LogUtil;
 import zutil.struct.TimedHashSet;
 
@@ -34,7 +35,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -42,8 +42,8 @@ import java.util.logging.Logger;
 
 
 /**
- * This version of the TwoWaySerialComm example makes use of the
- * SerialPortEventListener to avoid polling.
+ * Tellstick serial port controller, this class handles all tellstick
+ * communication and reporting to Hal
  */
 public class TellstickSerialComm implements Runnable,
         HalSensorController, HalEventController, HalAutoScannableController {
@@ -194,7 +194,9 @@ public class TellstickSerialComm implements Runnable,
             TellstickProtocol prot = TellstickParser.getProtocolInstance(
                     tellstickDevice.getProtocolName(),
                     tellstickDevice.getModelName());
-            write(prot.encode(deviceConfig, deviceData));
+            TellstickCmd cmd = prot.encode(deviceConfig, deviceData);
+            if (cmd != null)
+                write(cmd.getTransmissionString());
 
             parser.waitSendConformation();
             deviceData.setTimestamp(System.currentTimeMillis());

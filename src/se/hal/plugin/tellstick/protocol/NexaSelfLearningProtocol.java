@@ -24,8 +24,12 @@ package se.hal.plugin.tellstick.protocol;
 
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventData;
+import se.hal.plugin.tellstick.cmd.TellstickCmd;
+import se.hal.plugin.tellstick.cmd.TellstickCmdExtendedSend;
 import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.plugin.tellstick.device.NexaSelfLearning;
+import se.hal.plugin.tellstick.device.NexaSelfLearningDimmer;
+import se.hal.struct.devicedata.DimmerEventData;
 import se.hal.struct.devicedata.SwitchEventData;
 import zutil.ByteUtil;
 import zutil.log.LogUtil;
@@ -41,6 +45,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by Ziver on 2015-02-18.
+ * @see <a href="https://github.com/telldus/telldus/blob/master/telldus-core/service/ProtocolNexa.cpp">ProtocolNexa.cpp Tellstick Reference</a>
  */
 public class NexaSelfLearningProtocol extends TellstickProtocol {
     private static final Logger logger = LogUtil.getLogger();
@@ -49,18 +54,23 @@ public class NexaSelfLearningProtocol extends TellstickProtocol {
 
 
     private static class NexaSLTransmissionStruct implements BinaryStruct{
-        @BinaryField(index=1, length=26)
+        @BinaryField(index=10, length=26)
         int house = 0;
 
-        @BinaryField(index=2, length=1)
+        @BinaryField(index=20, length=1)
         boolean group = false;
 
-        @BinaryField(index=3, length=1)
+        @BinaryField(index = 30, length = 1)
         boolean enable = false;
 
-        @BinaryField(index=4, length=4)
+        @BinaryField(index=40, length=4)
         int unit = 0;
     }
+    private static class NexaSLTransmissionDimmerStruct extends NexaSLTransmissionStruct {
+        @BinaryField(index = 50, length = 4)
+        int dimLevel = 0;
+    }
+
 
 
     public NexaSelfLearningProtocol() {
@@ -68,45 +78,52 @@ public class NexaSelfLearningProtocol extends TellstickProtocol {
     }
 
     @Override
-    public String encode(HalEventConfig deviceConfig, HalEventData deviceData){
-        if ( ! (deviceConfig instanceof NexaSelfLearning)){
+    public TellstickCmd encode(HalEventConfig deviceConfig, HalEventData deviceData){
+        if ( ! (deviceConfig instanceof NexaSelfLearning || deviceConfig instanceof NexaSelfLearningDimmer)){
             logger.severe("Device config is not instance of NexaSelfLearning: "+deviceConfig.getClass());
             return null;
         }
-        if ( ! (deviceData instanceof SwitchEventData)){
-            logger.severe("Device data is not instance of SwitchEventData: "+deviceData.getClass());
+        if ( ! (deviceData instanceof SwitchEventData || deviceData instanceof DimmerEventData)){
+            logger.severe("Device data is not an instance of SwitchEventData or DimmerEventData: "+deviceData.getClass());
             return null;
         }
-        NexaSLTransmissionStruct struct = new NexaSLTransmissionStruct();
-        struct.house = ((NexaSelfLearning) deviceConfig).getHouse();
-        struct.group = ((NexaSelfLearning) deviceConfig).getGroup();
-        struct.enable = ((SwitchEventData) deviceData).isOn();
-        struct.unit = ((NexaSelfLearning) deviceConfig).getUnit();
 
+        // Create transmission struct
+        NexaSLTransmissionStruct struct;
+        if (deviceData instanceof DimmerEventData) {
+            struct = new NexaSLTransmissionDimmerStruct();
+            struct.house = ((NexaSelfLearningDimmer) deviceConfig).getHouse();
+            struct.unit = ((NexaSelfLearningDimmer) deviceConfig).getUnit();
+            ((NexaSLTransmissionDimmerStruct)struct).dimLevel = (int)(deviceData.getData()*16);
+        }
+        else {
+            struct = new NexaSLTransmissionStruct();
+            struct.house = ((NexaSelfLearning) deviceConfig).getHouse();
+            struct.group = ((NexaSelfLearning) deviceConfig).getGroup();
+            struct.unit = ((NexaSelfLearning) deviceConfig).getUnit();
+            struct.enable = ((SwitchEventData) deviceData).isOn();
+        }
+
+
+        // Generate transmission string
         try {
-            // T[t0][t1][t2][t3][length][d1]..[dn]+
-            StringBuilder enc = new StringBuilder(90); // Tellstick supports max 74 bytes
-            enc.append(new char[]{'T', 127, 255, 24, 0});
-            enc.append((char)0); // length
+            TellstickCmdExtendedSend cmd = new TellstickCmdExtendedSend();
+            cmd.setPulls0Timing(1270);
+            cmd.setPulls1Timing(2550);
+            cmd.setPulls2Timing(240);
 
-            enc.append((char)0b0000_1001); // preamble
-            int length = 4;
+            cmd.addPulls2().addPulls1(); // preamble
             byte[] data = BinaryStructOutputStream.serialize(struct);
             for (byte b : data){
                 for (int i=7; i>=0; --i){
-                    if (ByteUtil.getBits(b, i, 1) == 0)
-                        enc.append((char) 0b1010_1000); // 0b1010_1000
+                    if (ByteUtil.getBits(b, i, 1) == 0) // 0
+                        cmd.addPulls2().addPulls2().addPulls2().addPulls0(); // 0b1010_1000
                     else // 1
-                        enc.append((char) 0b1000_1010); // 0b1000_1010
-                    length += 4;
+                        cmd.addPulls2().addPulls0().addPulls2().addPulls2(); // 0b1000_1010
                 }
             }
-            enc.append((char)0b0000_0000); // postemble
-            length += 2;
-            enc.setCharAt(5, (char)length); // Set calculated length
-
-            enc.append("+");
-            return enc.toString();
+            //cmd.addPulls2().addPulls2(); // postemble?
+            return cmd;
 
         } catch (IOException e) {
             logger.log(Level.SEVERE, null, e);

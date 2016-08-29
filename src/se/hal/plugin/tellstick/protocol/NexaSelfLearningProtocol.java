@@ -123,7 +123,7 @@ public class NexaSelfLearningProtocol extends TellstickProtocol {
                         cmd.addPulls2().addPulls0().addPulls2().addPulls2(); // 0b1000_1010
                 }
             }
-            //cmd.addPulls2().addPulls2(); // postemble?
+            cmd.addPulls2().addPulls2(); // postemble?
             return cmd;
 
         } catch (IOException e) {

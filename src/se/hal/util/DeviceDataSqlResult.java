@@ -24,14 +24,17 @@ public class DeviceDataSqlResult implements SQLResultHandler<HalDeviceData> {
     @Override
     public HalDeviceData handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
         try {
-            HalDeviceData dataObj = clazz.newInstance();
-            dataObj.setData(result.getDouble("data"));
-            dataObj.setTimestamp(result.getLong("timestamp"));
-            return dataObj;
+            if (result.next()) {
+                HalDeviceData dataObj = clazz.newInstance();
+                dataObj.setData(result.getDouble("data"));
+                dataObj.setTimestamp(result.getLong("timestamp"));
+                return dataObj;
+            }
         } catch (SQLException e){
             throw e;
         } catch (Exception e){
             throw new SQLException(e);
         }
+        return null;
     }
 }

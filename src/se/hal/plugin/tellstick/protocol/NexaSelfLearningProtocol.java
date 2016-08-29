@@ -24,6 +24,7 @@ package se.hal.plugin.tellstick.protocol;
 
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventData;
+import se.hal.plugin.tellstick.TellstickSerialComm;
 import se.hal.plugin.tellstick.cmd.TellstickCmd;
 import se.hal.plugin.tellstick.cmd.TellstickCmdExtendedSend;
 import se.hal.plugin.tellstick.TellstickProtocol;
@@ -147,10 +148,24 @@ public class NexaSelfLearningProtocol extends TellstickProtocol {
         BinaryStructInputStream.read(struct, data);
 
         ArrayList<TellstickDecodedEntry> list = new ArrayList<>();
-        list.add(new TellstickDecodedEntry(
-                new NexaSelfLearning(struct.house, struct.group, struct.unit),
-                new SwitchEventData(struct.enable)
-        ));
+/*        for (NexaSelfLearningDimmer device : TellstickSerialComm.getInstance().getRegisteredDevices(NexaSelfLearningDimmer.class)) {
+            if (device.getHouse() == struct.house && device.getUnit() == struct.unit){
+                NexaSLTransmissionDimmerStruct dimmerStruct = new NexaSLTransmissionDimmerStruct();
+                BinaryStructInputStream.read(dimmerStruct, data);
+
+                list.add(new TellstickDecodedEntry(
+                        new NexaSelfLearningDimmer(dimmerStruct.house, dimmerStruct.unit),
+                        new DimmerEventData(dimmerStruct.dimLevel)
+                ));
+            }
+        }
+        if (list.isEmpty()) { // No dimmer stored, we assume it is a switch event then...
+*/
+            list.add(new TellstickDecodedEntry(
+                    new NexaSelfLearning(struct.house, struct.group, struct.unit),
+                    new SwitchEventData(struct.enable)
+            ));
+/*        }*/
         return list;
     }
 

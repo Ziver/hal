@@ -103,7 +103,7 @@ public class Oregon0x1A2DProtocol extends TellstickProtocol {
             list.add(new TellstickDecodedEntry(
                     new Oregon0x1A2D(address, OregonSensorType.TEMPERATURE),
                     new TemperatureSensorData(temperature)));
-        if (!humidityFound)
+        if (!humidityFound && humidity!=0)
             list.add(new TellstickDecodedEntry(
                     new Oregon0x1A2D(address, OregonSensorType.HUMIDITY),
                     new HumiditySensorData(humidity)));

@@ -123,7 +123,7 @@ public class Sensor extends AbstractDevice<HalSensorConfig,HalSensorData>{
 
             if (getId() != null) {
                 PreparedStatement stmt = db.getPreparedStatement(
-                        "SELECT data FROM sensor_data_raw WHERE sensor_id == ? ORDER BY timestamp DESC LIMIT 1");
+                        "SELECT * FROM sensor_data_raw WHERE sensor_id == ? ORDER BY timestamp DESC LIMIT 1");
                 stmt.setLong(1, getId());
                 return (HalSensorData)
                         DBConnection.exec(stmt, new DeviceDataSqlResult(deviceDataClass));

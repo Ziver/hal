@@ -54,7 +54,7 @@ public class Event extends AbstractDevice<HalEventConfig,HalEventData>{
 
             if (getId() != null) {
                 PreparedStatement stmt = db.getPreparedStatement(
-                        "SELECT data FROM event_data_raw WHERE event_id == ? ORDER BY timestamp DESC LIMIT 1");
+                        "SELECT * FROM event_data_raw WHERE event_id == ? ORDER BY timestamp DESC LIMIT 1");
                 stmt.setLong(1, getId());
                 return (HalEventData)
                         DBConnection.exec(stmt, new DeviceDataSqlResult(deviceDataClass));

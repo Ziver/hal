@@ -47,12 +47,12 @@ public class NexaSelfLearningTest {
         byte[] expected = Converter.toBytes(new char[]{
                         84, // T
                         127, 255, 24, 0, // timings
-                        130, // length
+                        132, // length
 
                         154, 138, 136, 170, 136, 168, 170, 138, 136, 168,
                         168, 170, 136, 170, 138, 138, 138, 138, 138, 136,
                         168, 170, 138, 136, 168, 170, 138, 136, 170, 138,
-                        136, 168, 160,
+                        136, 168, 170,
 
                         43}); // +
         NexaSelfLearningProtocol nexaProt = new NexaSelfLearningProtocol();
@@ -74,13 +74,13 @@ public class NexaSelfLearningTest {
         byte[] expected = Converter.toBytes(new char[]{
                 84, // T
                 127, 255, 24, 0, // timings
-                162, // length, 32 extra timings
+                164, // length, 32 extra timings
 
                 154, 138, 136, 170, 136, 168, 170, 138, 136, 168,
                 168, 170, 136, 170, 138, 138, 138, 138, 138, 136,
                 168, 170, 138, 136, 168, 170, 138,
                 138, 138, 138, 136, 168,
-                168, 170, 138, 138, 138, 138, 138, 138, 128, // Dimer value
+                168, 170, 138, 138, 138, 138, 138, 138, 138, // Dimer value
 
                 43}); // +
         NexaSelfLearningProtocol nexaProt = new NexaSelfLearningProtocol();

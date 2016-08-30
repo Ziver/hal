@@ -19,12 +19,12 @@
                     <th class="text-right">Owner:</th>
                     <td>{{event.getUser().getUsername()}} <p></td>
                 </tr>
-                {{#event.getDeviceConfig().getConfiguration()}}
+                {{#event.getDeviceConfigurator().getConfiguration()}}
                 <tr>
                     <th class="text-right">{{.getNiceName()}}:</th>
                     <td>{{.getString()}}</td>
                 </tr>
-                {{/event.getDeviceConfig().getConfiguration()}}
+                {{/event.getDeviceConfigurator().getConfiguration()}}
             </table>
         </div>
     </div>

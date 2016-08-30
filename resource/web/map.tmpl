@@ -58,7 +58,7 @@
         }
 
         svg = SVG("map");
-        drawMap();
+        drawLoop();
 
         // set events
         $("#button-edit").click(function() {
@@ -128,6 +128,12 @@
         }
     }
 
+    function drawLoop(){
+        if (editModeEnabled == false)
+            drawMap();
+        setTimeout("drawMap()", 10000);
+    }
+
     function drawMap(){
         // Get map data
         $.getJSON("?json&action=getdata", function(json){
@@ -151,7 +157,7 @@
             $.each(json.events, function(i, event) {
                 var group = svg.group();
                 var img = "/img/lightbulb_off.svg";
-                if (event.data > 0)
+                if (event.data == "ON")
                     var img = "/img/lightbulb_on.svg";
                 group.image(img)
                     .addClass("draggable").addClass("event")

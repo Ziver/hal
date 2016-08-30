@@ -141,7 +141,7 @@
             // Sensors
             $.each(json.sensors, function(i, sensor) {
                 var group = svg.group();
-                group.image("/img/temperature.png")
+                group.image("/img/temperature.svg")
                     .addClass("draggable").addClass("sensor")
                     .x(sensor.x).y(sensor.y)
                     .attr("device-id", sensor.id)
@@ -150,7 +150,10 @@
             // Events
             $.each(json.events, function(i, event) {
                 var group = svg.group();
-                group.image("/img/lightbulb.svg")
+                var img = "/img/lightbulb_off.svg";
+                if (event.data > 0)
+                    var img = "/img/lightbulb_on.svg";
+                group.image(img)
                     .addClass("draggable").addClass("event")
                     .x(event.x).y(event.y)
                     .attr("device-id", event.id)

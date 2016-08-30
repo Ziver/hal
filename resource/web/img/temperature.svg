@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 19.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 40 40"
+   style="enable-background:new 0 0 40 40;"
+   xml:space="preserve"
+   width="50"
+   height="50"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="temperature.svg"><metadata
+   id="metadata4173"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs4171" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1081"
+   inkscape:window-height="736"
+   id="namedview4169"
+   showgrid="false"
+   inkscape:zoom="9.46"
+   inkscape:cx="25.39307"
+   inkscape:cy="25"
+   inkscape:window-x="2520"
+   inkscape:window-y="555"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_1" />
+
+
+
+
+
+
+
+
+
+
+<g
+   id="g4196"><circle
+     r="7.8224101"
+     cy="30.105705"
+     cx="20"
+     id="path4182"
+     style="opacity:1;fill:#dbf2ff;fill-opacity:1;stroke:none;stroke-width:1.39999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1" /><rect
+     y="1.860465"
+     x="15.729387"
+     height="21.64905"
+     width="8.5412264"
+     id="rect4188"
+     style="opacity:1;fill:#dbf2ff;fill-opacity:0.94117647;stroke:none;stroke-width:1.39999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1" /></g><g
+   id="g4192"><circle
+     style="opacity:1;fill:#b5ddf5;fill-opacity:1;stroke:none;stroke-width:1.39999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
+     id="circle4186"
+     cx="20"
+     cy="30.105705"
+     r="5.919661" /><rect
+     y="3.4672306"
+     x="17.378435"
+     height="22.241014"
+     width="5.2431293"
+     id="rect4190"
+     style="opacity:1;fill:#b5ddf5;fill-opacity:1;stroke:none;stroke-width:1.39999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1" /></g><path
+   style="opacity:1;fill:none;fill-opacity:1;stroke:#7496c4;stroke-width:1.04999995;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 19.662109 2.3261719 L 19.662109 29.386719 L 19.748047 29.386719 A 9.7780126 9.7780126 0 0 0 15.222656 37.632812 A 9.7780126 9.7780126 0 0 0 25 47.410156 A 9.7780126 9.7780126 0 0 0 34.777344 37.632812 A 9.7780126 9.7780126 0 0 0 30.234375 29.386719 L 30.337891 29.386719 L 30.337891 2.3261719 L 19.662109 2.3261719 z "
+   transform="scale(0.8,0.8)"
+   id="circle4202" /><g
+   id="g4209"
+   style="fill:#ec5a5a;fill-opacity:1"><circle
+     r="5.919661"
+     cy="30.105705"
+     cx="20"
+     id="circle4211"
+     style="opacity:1;fill:#ec5a5a;fill-opacity:1;stroke:none;stroke-width:1.39999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1" /><path
+     style="opacity:1;fill:#ec5a5a;fill-opacity:1;stroke:none;stroke-width:1.39999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
+     d="M 28.277344 16.167969 L 21.722656 19.59375 L 21.722656 32.134766 L 28.277344 32.134766 L 28.277344 16.167969 z "
+     transform="scale(0.8,0.8)"
+     id="rect4213" /></g></svg>

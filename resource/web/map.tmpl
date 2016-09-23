@@ -147,10 +147,12 @@
             // Sensors
             $.each(json.sensors, function(i, sensor) {
                 var group = svg.group();
-                group.image("/img/temperature.svg")
-                    .addClass("draggable").addClass("sensor")
+                group.image("/img/temperature.svg");
+                group.text(sensor.data).move(45,15).fill('#999');
+
+                group.addClass("draggable").addClass("sensor")
                     .x(sensor.x).y(sensor.y)
-                    .attr("device-id", sensor.id)
+                    .attr("device-id", sensor.id);
                 group.title(sensor.name);
             });
             // Events
@@ -158,11 +160,12 @@
                 var group = svg.group();
                 var img = "/img/lightbulb_off.svg";
                 if (event.data == "ON")
-                    var img = "/img/lightbulb_on.svg";
-                group.image(img)
-                    .addClass("draggable").addClass("event")
+                    img = "/img/lightbulb_on.svg";
+                group.image(img);
+
+                group.addClass("draggable").addClass("event")
                     .x(event.x).y(event.y)
-                    .attr("device-id", event.id)
+                    .attr("device-id", event.id);
                 group.title(event.name);
             });
         });

@@ -79,13 +79,19 @@ public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
 
     @Override
     public Class<? extends HalSensorData> getSensorDataClass() {
-        switch (sensorType){
-            case HUMIDITY:      return HumiditySensorData.class;
-            case LIGHT:         return LightSensorData.class;
-            case POWER:         return PowerConsumptionSensorData.class;
-            case TEMPERATURE:   return TemperatureSensorData.class;
+        if (sensorType != null) {
+            switch (sensorType) {
+                case HUMIDITY:
+                    return HumiditySensorData.class;
+                case LIGHT:
+                    return LightSensorData.class;
+                case POWER:
+                    return PowerConsumptionSensorData.class;
+                case TEMPERATURE:
+                    return TemperatureSensorData.class;
+            }
         }
-        return null;
+        return TemperatureSensorData.class;
     }
 
     @Override

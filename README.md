@@ -1,7 +1,8 @@
 # Hal
 
-Hal is a home automation hub with sensor statistics with the functionality to share that data between friends. 
-It is developed to be very extensible so future Sensors and other input devices can be supported.
+Hal is a home automation hub with sensor statistics with the functionality to 
+share that data between friends. It is developed to be very extensible so future 
+Sensors and other input devices can be supported.
  
 Currently supported devices:
 - **Tellstick**
@@ -10,7 +11,7 @@ Currently supported devices:
 - **Raspberry Pi**, GPIO connected sensors
 
 
-The project is currently in alpha state, as such things will change and break.
+The project is currently in alpha state, and as such things will change and break.
 
 ### Screenshots
 ![](screenshot_01.jpg)
@@ -23,9 +24,8 @@ The project is currently in alpha state, as such things will change and break.
 
 ## Installing
 
-A step by step series of examples that tell you have to get a development env running
-
-Stay what the step will be
+To run the Hal server you first need to clone the git repository and then run the 
+ant command to build and run:
 
 ```
 ant run
@@ -35,7 +35,8 @@ Check `hal.conf.example` for available configuration options.
 
 ## Running the tests
 
-The current test coverage is greatly lacking, but to run the JUnit test cases run:
+The current test coverage is greatly lacking, but to run the available JUnit 
+test-cases run:
 
 ```
 ant test
@@ -49,7 +50,8 @@ ant test
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details
+This project is licensed under the MIT License - see the 
+[LICENSE.txt](LICENSE.txt) file for details
 
 ## Acknowledgments
 

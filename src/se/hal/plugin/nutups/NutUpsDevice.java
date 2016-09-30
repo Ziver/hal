@@ -4,7 +4,7 @@ import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
 import se.hal.struct.devicedata.PowerConsumptionSensorData;
-import zutil.osal.app.linux.NutUPSClient;
+import zutil.osal.linux.app.NutUPSClient;
 import zutil.ui.Configurator;
 
 /**

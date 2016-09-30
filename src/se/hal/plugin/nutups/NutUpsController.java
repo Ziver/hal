@@ -6,9 +6,8 @@ import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorReportListener;
 import zutil.log.LogUtil;
-import zutil.osal.app.linux.NutUPSClient;
+import zutil.osal.linux.app.NutUPSClient;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

@@ -12,8 +12,9 @@ public class HumiditySensorData extends HalSensorData {
 
 
     public HumiditySensorData() { }
-    public HumiditySensorData(double humidity) {
+    public HumiditySensorData(double humidity, long timestamp) {
         this.humidity = humidity;
+        this.setTimestamp(timestamp);
     }
 
 

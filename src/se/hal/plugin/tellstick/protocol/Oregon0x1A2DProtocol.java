@@ -67,6 +67,7 @@ public class Oregon0x1A2DProtocol extends TellstickProtocol {
 
 
         // Create return objects
+        long timestamp = System.currentTimeMillis();
         boolean humidityFound=false, temperatureFound=false;
         ArrayList<TellstickDecodedEntry> list = new ArrayList<>();
         for (Oregon0x1A2D device : TellstickSerialComm.getInstance().getRegisteredDevices(Oregon0x1A2D.class)) {
@@ -78,20 +79,20 @@ public class Oregon0x1A2DProtocol extends TellstickProtocol {
                 sensorType = OregonSensorType.POWER;
             switch (sensorType){
                 case HUMIDITY:
-                    dataObj = new HumiditySensorData(humidity);
+                    dataObj = new HumiditySensorData(humidity, timestamp);
                     humidityFound = true;
                     break;
                 case LIGHT:
-                    dataObj = new LightSensorData(temperature);
+                    dataObj = new LightSensorData(temperature, timestamp);
                     temperatureFound = true;
                     break;
                 case TEMPERATURE:
-                    dataObj = new TemperatureSensorData(temperature);
+                    dataObj = new TemperatureSensorData(temperature, timestamp);
                     temperatureFound = true;
                     break;
                 default:
                 case POWER:
-                    dataObj = new PowerConsumptionSensorData(temperature);
+                    dataObj = new PowerConsumptionSensorData(temperature, timestamp);
                     temperatureFound = true;
                     break;
 
@@ -102,11 +103,11 @@ public class Oregon0x1A2DProtocol extends TellstickProtocol {
         if (!temperatureFound)
             list.add(new TellstickDecodedEntry(
                     new Oregon0x1A2D(address, OregonSensorType.TEMPERATURE),
-                    new TemperatureSensorData(temperature)));
+                    new TemperatureSensorData(temperature, timestamp)));
         if (!humidityFound && humidity>0.0)
             list.add(new TellstickDecodedEntry(
                     new Oregon0x1A2D(address, OregonSensorType.HUMIDITY),
-                    new HumiditySensorData(humidity)));
+                    new HumiditySensorData(humidity, timestamp)));
 
         return list;
     }

@@ -33,8 +33,9 @@ public class DimmerEventData extends HalEventData {
 
 
     public DimmerEventData() { }
-    public DimmerEventData(double dimmValue) {
+    public DimmerEventData(double dimmValue, long timestamp) {
         this.dimmValue = dimmValue;
+        this.setTimestamp(timestamp);
     }
 
 

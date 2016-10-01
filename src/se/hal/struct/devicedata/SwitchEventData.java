@@ -33,8 +33,9 @@ public class SwitchEventData extends HalEventData {
 
 
     public SwitchEventData() { }
-    public SwitchEventData(boolean enabled) {
+    public SwitchEventData(boolean enabled, long timestamp) {
         this.enabled = enabled;
+        this.setTimestamp(timestamp);
     }
 
     public void turnOn(){

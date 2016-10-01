@@ -163,7 +163,7 @@ public class NexaSelfLearningProtocol extends TellstickProtocol {
 */
             list.add(new TellstickDecodedEntry(
                     new NexaSelfLearning(struct.house, struct.group, struct.unit),
-                    new SwitchEventData(struct.enable)
+                    new SwitchEventData(struct.enable, System.currentTimeMillis())
             ));
 /*        }*/
         return list;

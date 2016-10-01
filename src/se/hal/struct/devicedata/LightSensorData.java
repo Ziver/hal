@@ -11,8 +11,9 @@ public class LightSensorData extends HalSensorData {
 
 
     public LightSensorData(){}
-    public LightSensorData(double lux){
+    public LightSensorData(double lux, long timestamp){
         this.lux =  lux;
+        this.setTimestamp(timestamp);
     }
 
 

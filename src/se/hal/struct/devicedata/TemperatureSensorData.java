@@ -11,11 +11,8 @@ public class TemperatureSensorData extends HalSensorData {
 
 
     public TemperatureSensorData(){}
-    public TemperatureSensorData(double temperature){
+    public TemperatureSensorData(double temperature, long timestamp){
         this.temperature =  temperature;
-    }
-    public TemperatureSensorData(long timestamp, double temperature){
-        this(temperature);
         super.setTimestamp(timestamp);
     }
 

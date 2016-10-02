@@ -79,6 +79,7 @@ void SensorBH1750::configure(uint8_t mode) {
 
 void SensorBH1750::read(LightData& data) {
 	configure(BH1750_ONE_TIME_HIGH_RES_MODE);
+    _delay_ms(200); // Wait for measurement
 
 	Wire.beginTransmission(BH1750_I2CADDR);
 	Wire.requestFrom(BH1750_I2CADDR, 2);

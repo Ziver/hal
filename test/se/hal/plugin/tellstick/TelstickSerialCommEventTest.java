@@ -96,7 +96,7 @@ public class TelstickSerialCommEventTest {
 
             ArrayList<TellstickDecodedEntry> list = new ArrayList<>();
             list.add(new TellstickDecodedEntry(
-                    this, new DimmerEventData(testData)
+                    this, new DimmerEventData(testData, System.currentTimeMillis())
             ));
             return list;
         }

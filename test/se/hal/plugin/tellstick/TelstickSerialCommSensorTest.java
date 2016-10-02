@@ -80,7 +80,7 @@ public class TelstickSerialCommSensorTest {
 
             ArrayList<TellstickDecodedEntry> list = new ArrayList<>();
             list.add(new TellstickDecodedEntry(
-                    this, new TemperatureSensorData(testData)
+                    this, new TemperatureSensorData(testData, 0)
             ));
             return list;
         }

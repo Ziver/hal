@@ -42,7 +42,7 @@ public class NexaSelfLearningTest {
         NexaSelfLearning nexaDevice = new NexaSelfLearning();
         nexaDevice.setHouse(11_772_006);
         nexaDevice.setUnit(3);
-        SwitchEventData nexaData = new SwitchEventData(true);
+        SwitchEventData nexaData = new SwitchEventData(true, System.currentTimeMillis());
 
         byte[] expected = Converter.toBytes(new char[]{
                         84, // T
@@ -69,7 +69,7 @@ public class NexaSelfLearningTest {
         NexaSelfLearningDimmer nexaDevice = new NexaSelfLearningDimmer();
         nexaDevice.setHouse(11_772_006);
         nexaDevice.setUnit(3);
-        DimmerEventData nexaData = new DimmerEventData(0.5);
+        DimmerEventData nexaData = new DimmerEventData(0.5, System.currentTimeMillis());
 
         byte[] expected = Converter.toBytes(new char[]{
                 84, // T

@@ -9,6 +9,8 @@ import zutil.osal.MultiCommandExecutor;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,7 +33,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
 
     @Override
     public boolean isAvailable() {
-        return true;
+        return ! InetScanner.getLocalInet4Address().isEmpty();
     }
 
     @Override
@@ -44,7 +46,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
                     logger.fine("Starting network scan...");
                     InetScanner scanner = new InetScanner();
                     scanner.setListener(NetScanController.this);
-                    scanner.scan(InetAddress.getLocalHost());
+                    scanner.scan(InetScanner.getLocalInet4Address().get(0));
                     logger.fine("Network scan done");
                 } catch (Exception e) {
                     e.printStackTrace();

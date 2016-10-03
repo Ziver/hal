@@ -25,7 +25,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
 
     private ScheduledExecutorService executor;
     private HalEventReportListener listener;
-    private ArrayList<NetworkDevice> devices = new ArrayList<>();
+    private ArrayList<LocalNetworkDevice> devices = new ArrayList<>();
 
 
 
@@ -56,13 +56,12 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
 
     @Override
     public void run() {
-        try{
-            MultiCommandExecutor executor = new MultiCommandExecutor();
+        try(MultiCommandExecutor executor = new MultiCommandExecutor();){
             for (int i = 0; i < devices.size(); i++) {
-                NetworkDevice device = devices.get(i);
+                LocalNetworkDevice device = devices.get(i);
                 if (listener != null) {
-                    logger.fine("Pinging ip: "+device.getIp());
-                    boolean online = InetScanner.isReachable(InetAddress.getByName(device.getIp()), executor);
+                    logger.fine("Pinging ip: "+device.getHost());
+                    boolean online = InetScanner.isReachable(device.getHost(), executor);
                     listener.reportReceived(device, new SwitchEventData(online, System.currentTimeMillis()));
                 }
             }
@@ -75,7 +74,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
         logger.fine("Detected ip: "+ip.getHostAddress());
         if (listener != null)
             listener.reportReceived(
-                    new NetworkDevice(ip.getHostAddress()),
+                    new LocalNetworkDevice(ip.getHostAddress()),
                     new SwitchEventData(true, System.currentTimeMillis()));
     }
 
@@ -83,8 +82,8 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
 
     @Override
     public void register(HalEventConfig event) {
-        if (event instanceof NetworkDevice)
-            devices.add((NetworkDevice) event);
+        if (event instanceof LocalNetworkDevice)
+            devices.add((LocalNetworkDevice) event);
     }
     @Override
     public void deregister(HalEventConfig event) {

@@ -6,36 +6,34 @@ import se.hal.intf.HalEventData;
 import se.hal.struct.devicedata.SwitchEventData;
 import zutil.ui.Configurator;
 
-import java.net.InetAddress;
-
 /**
  * Created by Ziver on 2016-10-02.
  */
-public class NetworkDevice implements HalEventConfig {
+public class LocalNetworkDevice implements HalEventConfig {
 
     @Configurator.Configurable("IP Address")
-    private String ip;
+    private String host;
 
 
 
-    public NetworkDevice() { }
-    public NetworkDevice(String hostAddress) {
-        this.ip = hostAddress;
+    public LocalNetworkDevice() { }
+    public LocalNetworkDevice(String hostAddress) {
+        this.host = hostAddress;
     }
 
 
-    public String getIp() {
-        return ip;
+    public String getHost() {
+        return host;
     }
 
     @Override
     public String toString(){
-        return "IP: "+ip;
+        return "Host: "+ host;
     }
     @Override
     public boolean equals(Object obj){
-        if (obj instanceof NetworkDevice)
-            return ip != null && ip.equals(((NetworkDevice) obj).ip);
+        if (obj instanceof LocalNetworkDevice)
+            return host != null && host.equals(((LocalNetworkDevice) obj).host);
         return false;
     }
 

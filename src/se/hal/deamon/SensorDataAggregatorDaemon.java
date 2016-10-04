@@ -205,13 +205,19 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
 		}
 		
 		private void saveData(PreparedStatement preparedInsertStmt, float confidenceSum, float sum, int samples, UTCTimePeriod currentPeriod, long sequenceId) throws SQLException{
-			float aggrConfidence = confidenceSum / (float)this.expectedSampleCount;
+			float aggrConfidence = -1;
 			float data = -1;
 			switch(aggrMethod){
-				case SUM: data = sum; break;
-				case AVERAGE: data = sum/samples; break;
+				case SUM:
+					data = sum;
+					aggrConfidence = confidenceSum / (float)this.expectedSampleCount;
+					break;
+				case AVERAGE:
+					data = sum/samples;
+					aggrConfidence = 1; // ignore confidence for average
+					break;
 			}
-			logger.finer("saved period: " + currentPeriod + ", data: " + sum + ", confidence: " + aggrConfidence + ", samples: " + samples + ", aggrMethod: " + aggrMethod);
+			logger.finer("saved period: " + currentPeriod + ", data: " + data + ", confidence: " + aggrConfidence + ", samples: " + samples + ", aggrMethod: " + aggrMethod);
 
 			preparedInsertStmt.setLong(1, sensorId);
 			preparedInsertStmt.setLong(2, sequenceId);

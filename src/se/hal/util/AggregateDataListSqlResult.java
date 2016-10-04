@@ -2,6 +2,7 @@ package se.hal.util;
 
 import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 import se.hal.struct.Sensor;
+import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 
@@ -93,7 +94,9 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
 					 list.add(new AggregateData(id, previousTimestampEnd + 1, null /*Float.NaN*/, username));
 			}
 
-			list.add(new AggregateData(id, timestampEnd, (estimatedData/1000f), username));	//add this data point to list
+			if (sensor.getDeviceConfig().getSensorDataClass() == PowerConsumptionSensorData.class)
+				estimatedData = (estimatedData/1000f);
+			list.add(new AggregateData(id, timestampEnd, estimatedData, username));	//add this data point to list
 
 			// Update previous end timestamp
 			previousTimestampEnd = timestampEnd;

@@ -5,5 +5,5 @@ sync_port=6666
 #tellstick.com_port=COM5
 #nutups.host=
 #nutups.port=
-# Network scanning is disabled by default as it is not appropriate for all networks
-#netscan.scanip=true
+# Network scanning should probably be disabled in some networks (default on)
+#netscan.ipscan=false

@@ -137,7 +137,7 @@ public class HalContext {
                         }
                         if(clearInternalAggrData){
                             logger.fine("Clearing local aggregate data");
-                            db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
+                            db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id IN "
                                     + "(SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)");
                             //update all internal sensors aggregation version to indicate for peers that they need to re-sync all data
                             db.exec("UPDATE sensor SET aggr_version = (aggr_version+1) WHERE id = "

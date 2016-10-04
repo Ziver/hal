@@ -182,6 +182,12 @@ public class HalContext {
     public static int getIntegerProperty(String key){
         return Integer.parseInt(getStringProperty(key));
     }
+    public static boolean getBooleanProperty(String key) {
+        return Boolean.parseBoolean(getStringProperty(key));
+    }
+    public static boolean containsProperty(String key) {
+        return getStringProperty(key) != null;
+    }
     public static void setProperty(String key, String value) throws SQLException {
         PreparedStatement stmt = db.getPreparedStatement("REPLACE INTO conf (key, value) VALUES (?, ?)");
         stmt.setObject(1, key);
@@ -189,6 +195,9 @@ public class HalContext {
         DBConnection.exec(stmt);
         dbConf.setProperty(key, value);
     }
+
+
+
 
     public static DBConnection getDB(){
         return db;
@@ -201,5 +210,6 @@ public class HalContext {
     public static void setDB(DBConnection db){
     	HalContext.db = db;
     }
+
 
 }

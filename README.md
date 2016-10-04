@@ -5,7 +5,9 @@ share that data between friends. It is developed to be very extensible so future
 Sensors and other input devices can be supported.
  
 Currently supported devices:
-- **Tellstick**
+- **Network Scanner**, IP scanner to detect devices on local network
+- **NUT**, Linux UPS daemon
+- **Tellstick**, Supported devices:
     - NexaSelfLearning
     - Oregon0x1A2D
 - **Raspberry Pi**, GPIO connected sensors

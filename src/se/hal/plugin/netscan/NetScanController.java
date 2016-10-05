@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -43,7 +44,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
 
     @Override
     public void initialize() throws Exception {
-        executor = Executors.newScheduledThreadPool(1);
+        executor = Executors.newScheduledThreadPool(2);
         executor.scheduleAtFixedRate(NetScanController.this, 10_000, PING_INTERVAL, TimeUnit.MILLISECONDS);
         if (!HalContext.containsProperty(PARAM_IPSCAN) || HalContext.getBooleanProperty(PARAM_IPSCAN)) {
             executor.scheduleAtFixedRate(new Runnable() {
@@ -56,7 +57,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
                         scanner.scan(InetUtil.getLocalInet4Address().get(0));
                         logger.fine("Network scan done");
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        logger.log(Level.SEVERE, null, e);
                     }
                 }
             }, 30_000, NETWORK_SYNC_INTERVAL, TimeUnit.MILLISECONDS);
@@ -68,6 +69,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
         try(MultiCommandExecutor executor = new MultiCommandExecutor();){
             for (Map.Entry<LocalNetworkDevice,SwitchEventData> entry : devices.entrySet()) {
                 if (listener != null) {
+                    logger.finest("Pinging IP "+entry.getKey().getHost());
                     boolean online = InetScanner.isReachable(entry.getKey().getHost(), executor);
                     if (entry.getValue() == null || entry.getValue().isOn() != online) {
                         entry.setValue(
@@ -77,13 +79,13 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, null, e);
         }
     }
     @Override
     public void foundInetAddress(InetAddress ip) {
-        logger.fine("Detected ip: "+ip.getHostAddress());
+        logger.fine("Auto Detected ip: "+ip.getHostAddress());
         if (listener != null)
             listener.reportReceived(
                     new LocalNetworkDevice(ip.getHostAddress()),

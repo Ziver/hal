@@ -177,8 +177,8 @@ public class TellstickSerialComm implements Runnable,
                 // Report source event
                 reportEvent(entry.getDevice(), entry.getData());
             }
-            set.add(data);
         }
+        set.add(data);
     }
     private void reportEvent(TellstickDevice tellstickDevice, HalDeviceData deviceData){
         if (sensorListener != null && tellstickDevice instanceof HalSensorConfig)

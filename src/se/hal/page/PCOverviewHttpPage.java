@@ -51,60 +51,67 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request) throws Exception {
-        DataNode root = new DataNode(DataNode.DataType.Map);
+        DataNode root = new DataNode(DataNode.DataType.List);
 
         DBConnection db = HalContext.getDB();
         List<Sensor> sensors = getSensorList(db);
 
         if (request.containsKey("data")) {
-            DataNode node = new DataNode(DataNode.DataType.List);
-            if (request.get("data").equals("minute")) {
-                DataNode nowTime = new DataNode(DataNode.DataType.Map);
-                nowTime.set("time", System.currentTimeMillis()-24*60*60*1000);
-                node.add(nowTime);
-                for (Sensor sensor : sensors)
-                    addAggregateDataToDataNode(node,
-                            AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.FIVE_MINUTES, UTCTimeUtility.DAY_IN_MS));
-            }
-            else if (request.get("data").equals("hour")) {
-                DataNode nowTime = new DataNode(DataNode.DataType.Map);
-                nowTime.set("time", System.currentTimeMillis()-7*24*60*60*1000);
-                node.add(nowTime);
-                for (Sensor sensor : sensors)
-                    addAggregateDataToDataNode(node,
-                            AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.HOUR, UTCTimeUtility.WEEK_IN_MS));
-            }
-            else if (request.get("data").equals("day")) {
-                for (Sensor sensor : sensors)
-                    addAggregateDataToDataNode(node,
-                            AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.DAY, UTCTimeUtility.INFINITY));
-            }
-            else if (request.get("data").equals("week")) {
-                for (Sensor sensor : sensors)
-                    addAggregateDataToDataNode(node,
-                            AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, AggregationPeriodLength.WEEK, UTCTimeUtility.INFINITY));
+            AggregationPeriodLength aggrType;
+            long aggrLength = UTCTimeUtility.INFINITY;
+
+            switch(request.get("data")){
+                case "minute":
+                default:
+                    aggrType = AggregationPeriodLength.FIVE_MINUTES;
+                    aggrLength = UTCTimeUtility.DAY_IN_MS;
+                    break;
+                case "hour":
+                    aggrType = AggregationPeriodLength.HOUR;
+                    aggrLength = UTCTimeUtility.WEEK_IN_MS;
+                    break;
+                case "day":
+                    aggrType = AggregationPeriodLength.DAY;
+                    break;
+                case "week":
+                    aggrType = AggregationPeriodLength.WEEK;
+                    break;
             }
 
-            DataNode nowTime = new DataNode(DataNode.DataType.Map);
-            nowTime.set("time", System.currentTimeMillis());
-            node.add(nowTime);
-
-            root.set("data", node);
+            for (Sensor sensor : sensors) {
+                addAggregateDataToDataNode(root, sensor, aggrLength,
+                        AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, aggrType, aggrLength));
+            }
         }
 
         return root;
     }
 
-    private void addAggregateDataToDataNode(DataNode root, List<AggregateData> dataList) {
-        for (AggregateDataListSqlResult.AggregateData data : dataList) {
-            DataNode dataNode = new DataNode(DataNode.DataType.Map);
-            dataNode.set("time", data.timestamp);
-            if (data.data == null || Float.isNaN(data.data))
-                dataNode.set("" + data.id, (String)null);
-            else
-                dataNode.set("" + data.id, data.data);
-            root.add(dataNode);
+    private void addAggregateDataToDataNode(DataNode root, Sensor sensor, long endTime, List<AggregateData> dataList) {
+        DataNode timestampNode = new DataNode(DataNode.DataType.List);
+        DataNode dataNode = new DataNode(DataNode.DataType.List);
+        // end timestamp
+        if (endTime != UTCTimeUtility.INFINITY){
+            timestampNode.add(System.currentTimeMillis() - endTime);
+            dataNode.add((String)null);
         }
+        // actual data
+        for (AggregateDataListSqlResult.AggregateData data : dataList) {
+            timestampNode.add(data.timestamp);
+            if (data.data == null || Float.isNaN(data.data))
+                dataNode.add((String)null);
+            else
+                dataNode.add(data.data);
+        }
+        // start timestamp
+        timestampNode.add(System.currentTimeMillis());
+        dataNode.add((String)null);
+
+        DataNode deviceNode = new DataNode(DataNode.DataType.Map);
+        deviceNode.set("name", sensor.getName());
+        deviceNode.set("timestamps", timestampNode);
+        deviceNode.set("data", dataNode);
+        root.add(deviceNode);
     }
 
     /**

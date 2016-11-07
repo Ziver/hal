@@ -20,35 +20,56 @@
 <script>
 
     $(function(){
-		initChart("minute-power-chart", "?json&data=minute", 5*60*1000);
-		initChart("hour-power-chart", "?json&data=hour", 60*60*1000);
-		initChart("day-power-chart", "?json&data=day", -1);
-		initChart("week-power-chart", "?json&data=week", -1);
+		initChart("#minute-power-chart", "?json&data=minute", 5*60*1000);
+		initChart("#hour-power-chart", "?json&data=hour", 60*60*1000);
+		initChart("#day-power-chart", "?json&data=day", -1);
+		initChart("#week-power-chart", "?json&data=week", -1);
 
 	});
 
     function initChart(elementId, url, time){
-        var chart = Morris.Line({
-              element: elementId,
-              data: [{time:0}],
-              xkey: 'time',
-              ykeys: [ {{#sensors}} {{.getId()}}, {{/sensors}} ],
-              labels: [ {{#sensors}} "{{.getUser().getUsername()}}: {{.getName()}}", {{/sensors}} ],
-              continuousLine: false,
-              pointSize: 1,
-              postUnits: 'kWh',
-              resize: true,
-              hideHover: 'auto',
-        });
-        updateChart(chart, url, time);
-    }
-
-    function updateChart(chart, url, time){
         $.getJSON(url, function(json){
-            chart.setData(json.data);
+            var dataXs = {};
+            var data = [];
+            var labels = [];
+            json.forEach(function(d, i) {
+                var index = 'data'+i;
+                labels[index] = d.name;
+                dataXs[index] = 'data'+i+'x';
+                data.push([index+'x'].concat(d.timestamps));
+                data.push([index].concat(d.data));
+            });
+
+            var chart = c3.generate({
+                bindto: elementId,
+                data: {
+                    xs: dataXs,
+                    columns: data,
+                    names: labels,
+                    type: 'spline',
+                    xFormat: null,
+                },
+                axis : {
+                    x : {
+                        type : 'timeseries',
+                        label: 'Timestamp'
+                    },
+                    y: {
+                        label: 'Power'
+                    },
+                    y2: {
+                        show: true,
+                        label: 'Temperature'
+                    }
+                },
+                grid: {
+                    y: {show: true}
+                },
+                point: {
+                    show: false
+                }
+            });
         });
-        if(time > 0)
-            setTimeout(function(){ updateChart(chart, url, time); }, time);
     }
 </script>
 

@@ -29,37 +29,25 @@
 
     function initChart(elementId, url, time){
         $.getJSON(url, function(json){
-            var dataXs = {};
-            var data = [];
-            var labels = [];
-            json.forEach(function(d, i) {
-                var index = 'data'+i;
-                labels[index] = d.name;
-                dataXs[index] = 'data'+i+'x';
-                data.push([index+'x'].concat(d.timestamps));
-                data.push([index].concat(d.data));
-            });
-
             var chart = c3.generate({
                 bindto: elementId,
-                data: {
-                    xs: dataXs,
-                    columns: data,
-                    names: labels,
-                    type: 'spline',
-                    xFormat: null,
-                },
+                data: getChartData(json),
                 axis : {
                     x : {
                         type : 'timeseries',
-                        label: 'Timestamp'
+                        label: 'Timestamp',
+                        tick: {
+                            format: '%Y-%m-%d %H:%M'
+                        }
                     },
                     y: {
-                        label: 'Power'
+                        label: 'Power (kWh)',
+                        min: 0,
                     },
                     y2: {
                         show: true,
-                        label: 'Temperature'
+                        label: 'Temperature (C)',
+                        min: 0,
                     }
                 },
                 grid: {
@@ -69,7 +57,41 @@
                     show: false
                 }
             });
+
+            if(time > 0)
+                setTimeout(function(){ updateChart(chart, url, time); }, time);
         });
+    }
+    function updateChart(chart, url, time){
+        $.getJSON(url, function(json){
+            chart.flow(getChartData(json));
+        });
+        setTimeout(function(){ updateChart(chart, url, time); }, time);
+    }
+    function getChartData(json){
+        var dataXaxis = {};
+        var dataYaxis = {};
+        var data = [];
+        var labels = [];
+        json.forEach(function(sensor, i) {
+            var index = 'data'+i;
+            labels[index] = sensor.user +": "+ sensor.name;
+            dataXaxis[index] = 'data'+i+'x';
+            data.push([index+'x'].concat(sensor.timestamps));
+            data.push([index].concat(sensor.data));
+            if (sensor.type == "PowerConsumptionSensorData")
+                dataYaxis[index] = 'y';
+            else //if (sensor.type == "TemperatureSensorData")
+                dataYaxis[index] = 'y2';
+        });
+
+        return {
+            xs: dataXaxis,
+            columns: data,
+            names: labels,
+            type: 'spline',
+            axes: dataYaxis,
+        };
     }
 </script>
 

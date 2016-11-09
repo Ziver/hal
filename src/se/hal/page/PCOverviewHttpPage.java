@@ -109,6 +109,8 @@ public class PCOverviewHttpPage extends HalHttpPage implements HalHttpPage.HalJs
 
         DataNode deviceNode = new DataNode(DataNode.DataType.Map);
         deviceNode.set("name", sensor.getName());
+        deviceNode.set("user", sensor.getUser().getUsername());
+        deviceNode.set("type", sensor.getDeviceConfig().getSensorDataClass().getSimpleName());
         deviceNode.set("timestamps", timestampNode);
         deviceNode.set("data", dataNode);
         root.add(deviceNode);

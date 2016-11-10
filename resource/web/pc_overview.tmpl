@@ -22,51 +22,55 @@
     $(function(){
 		initChart("#minute-power-chart", "?json&data=minute", 5*60*1000);
 		initChart("#hour-power-chart", "?json&data=hour", 60*60*1000);
-		initChart("#day-power-chart", "?json&data=day", -1);
-		initChart("#week-power-chart", "?json&data=week", -1);
+		initChart("#day-power-chart", "?json&data=day", 24*60*60*1000);
+		initChart("#week-power-chart", "?json&data=week", 7*24*60*60*1000);
 
 	});
 
-    function initChart(elementId, url, time){
-        $.getJSON(url, function(json){
-            var chart = c3.generate({
-                bindto: elementId,
-                data: getChartData(json),
-                axis : {
-                    x : {
-                        type : 'timeseries',
-                        label: 'Timestamp',
-                        tick: {
-                            format: '%Y-%m-%d %H:%M'
-                        }
-                    },
-                    y: {
-                        label: 'Power (kWh)',
-                        min: 0,
-                    },
-                    y2: {
-                        show: true,
-                        label: 'Temperature (C)',
-                        min: 0,
-                    }
-                },
-                grid: {
-                    y: {show: true}
-                },
-                point: {
-                    show: false
-                }
-            });
+    function initChart(elementId, url, updateTime){
+        var tickConf = {count: 20};
+        if (updateTime < 60*60*1000)
+            tickConf['format'] = '%H:%M';
+        else if (updateTime < 24*60*60*1000)
+            tickConf['format'] = '%Y-%m-%d %H:%M';
+        else
+            tickConf['format'] = '%Y-%m-%d';
 
-            if(time > 0)
-                setTimeout(function(){ updateChart(chart, url, time); }, time);
+
+        var chart = c3.generate({
+            bindto: elementId,
+            data:  {json: []}, // set empty data, data will be loaded later
+            axis : {
+                x : {
+                    type : 'timeseries',
+                    label: 'Timestamp',
+                    tick: tickConf,
+                },
+                y: {
+                    label: 'Power (kWh)',
+                    min: 0,
+                },
+                y2: {
+                    show: true,
+                    label: 'Temperature (C)',
+                    min: 0,
+                }
+            },
+            grid: {
+                y: {show: true}
+            },
+            point: {
+                show: false
+            }
         });
+
+        updateChart(chart, url, updateTime);;
     }
-    function updateChart(chart, url, time){
+    function updateChart(chart, url, updateTime){
         $.getJSON(url, function(json){
-            chart.flow(getChartData(json));
+            chart.load(getChartData(json));
         });
-        setTimeout(function(){ updateChart(chart, url, time); }, time);
+        setTimeout(function(){ updateChart(chart, url, updateTime); }, updateTime);
     }
     function getChartData(json){
         var dataXaxis = {};
@@ -79,6 +83,7 @@
             dataXaxis[index] = 'data'+i+'x';
             data.push([index+'x'].concat(sensor.timestamps));
             data.push([index].concat(sensor.data));
+
             if (sensor.type == "PowerConsumptionSensorData")
                 dataYaxis[index] = 'y';
             else //if (sensor.type == "TemperatureSensorData")

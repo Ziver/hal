@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 
 public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implements HalDaemon {
 	private static final Logger logger = LogUtil.getLogger();
-    public static final int PROTOCOL_VERSION = 4;
+    public static final int PROTOCOL_VERSION = 5; // Increment for protocol changes
 
 
 	public PCDataSynchronizationDaemon() {
@@ -81,6 +81,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                         PeerDataRspDTO rsp = new PeerDataRspDTO();
                         User localUser = User.getLocalUser(db);
                         rsp.username = localUser.getUsername();
+                        rsp.email = localUser.getEmail();
                         rsp.address = localUser.getAddress();
 
                         rsp.sensors = new ArrayList<>();
@@ -151,6 +152,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
 	///////////////  DTO ///////////////////////
     protected static class PeerDataRspDTO implements Serializable{
         public String username;
+        public String email;
         public String address;
 
         public ArrayList<SensorDTO> sensors;

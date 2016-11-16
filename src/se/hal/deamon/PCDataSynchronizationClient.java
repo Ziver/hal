@@ -66,6 +66,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
                     out.writeObject(new PeerDataReqDTO());
                     PeerDataRspDTO peerData = (PeerDataRspDTO) in.readObject();
                     user.setUsername(peerData.username);
+                    user.setEmail(peerData.email);
                     user.setAddress(peerData.address);
                     user.save(db);
 

@@ -15,6 +15,7 @@ import java.util.List;
 public class User extends DBBean{
 
     private String username;
+    private String email;
     private String address;
     private int external;
 
@@ -61,6 +62,12 @@ public class User extends DBBean{
 	}
 	public void setUsername(String name) {
 		this.username = name;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public String getAddress() {
 		return address;

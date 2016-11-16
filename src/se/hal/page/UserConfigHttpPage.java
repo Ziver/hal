@@ -40,6 +40,7 @@ public class UserConfigHttpPage extends HalHttpPage {
                         localUser.setExternal(false);
                     }
                     localUser.setUsername(request.get("username"));
+                    localUser.setEmail(request.get("email"));
                     localUser.setAddress(request.get("address"));
                     localUser.save(db);
                     break;

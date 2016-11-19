@@ -1,5 +1,6 @@
 package se.hal.struct;
 
+import zutil.api.Gravatar;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
@@ -68,6 +69,12 @@ public class User extends DBBean{
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public String getAvatarUrl(){
+		return Gravatar.getImageUrl(email, 130);
+	}
+	public String getLargeAvatarUrl(){
+		return Gravatar.getImageUrl(email, 250);
 	}
 	public String getAddress() {
 		return address;

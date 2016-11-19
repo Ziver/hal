@@ -97,6 +97,7 @@
 
             <table class="table table-hover table-condensed">
                 <thead>
+                <th>#</th>
                 <th>Username</th>
                 <th>Address</th>
                 <th>Hostname</th>
@@ -110,6 +111,7 @@
                 </thead>
                 {{#extUsers}}
                 <tr>
+                    <td><img style="width: 20px;" src="{{.getAvatarUrl()}}" /></td>
                     <td>{{.getUsername()}}</td>
                     <td>{{.getAddress()}}</td>
                     <td>{{.getHostname()}}</td>

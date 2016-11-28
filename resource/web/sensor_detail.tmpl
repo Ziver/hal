@@ -1,26 +1,5 @@
 <h1 class="page-header">Details for <a href="#">{{sensor.getName()}}</a></h1>
 
-<script>
-    $(function(){
-        Morris.Line({
-            element: "chart",
-            data: [
-                { x: (Date.now()-24*60*60*1000) },
-                {{#aggregation}}
-                    { x: {{.timestamp}}, data: {{.data}} },
-                {{/aggregation}}
-                { x: Date.now() }
-            ],
-            xkey: 'x',
-            ykeys: ['data'],
-            labels: ['Data'],
-            continuousLine: false,
-            resize: true,
-            hideHover: 'auto',
-        });
-	});
-</script>
-
 <div class="col-md-12">
     <div class="panel panel-default drop-shadow">
         <div class="panel-heading">Last 24 hours</div>
@@ -29,7 +8,11 @@
         </div>
     </div>
 </div>
-
+<script>
+    $(function(){
+		createChart("#chart", "/data/sensor?aggr=minute&sensor_id={{sensor.getID()}}", 5*60*1000);
+	});
+</script>
 
 <div class="col-md-5">
     <div class="panel panel-default drop-shadow">

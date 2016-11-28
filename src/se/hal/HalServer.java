@@ -1,12 +1,9 @@
 package se.hal;
 
 
-import se.hal.deamon.PCDataSynchronizationClient;
-import se.hal.deamon.PCDataSynchronizationDaemon;
-import se.hal.deamon.SensorDataAggregatorDaemon;
-import se.hal.deamon.SensorDataCleanupDaemon;
 import se.hal.intf.HalDaemon;
 import se.hal.intf.HalHttpPage;
+import se.hal.intf.HalJsonPage;
 import se.hal.page.*;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
@@ -56,14 +53,8 @@ public class HalServer {
 
         // init daemons
         daemons = new ArrayList<>();
-        daemons.addAll(Arrays.asList(new HalDaemon[]{
-                new SensorDataAggregatorDaemon(),
-                new SensorDataCleanupDaemon(),
-        }));
-        for (Iterator<HalDaemon> it=pluginManager.getObjectIterator(HalDaemon.class);
-                it.hasNext(); ){
+        for (Iterator<HalDaemon> it=pluginManager.getObjectIterator(HalDaemon.class); it.hasNext(); )
             daemons.add(it.next());
-        }
         // We set only one thread for easier troubleshooting
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         for(HalDaemon daemon : daemons){
@@ -75,20 +66,10 @@ public class HalServer {
         HalHttpPage.getRootNav().createSubNav("Sensors");
         HalHttpPage.getRootNav().createSubNav("Events").setWeight(100);
         pages = new ArrayList<>();
-        pages.addAll(Arrays.asList(new HalHttpPage[]{
-                new MapHttpPage(),
-
-                new SensorOverviewHttpPage(),
-                new SensorConfigHttpPage(),
-
-                new EventOverviewHttpPage(),
-                new EventConfigHttpPage(),
-                new UserConfigHttpPage(),
-        }));
-        for (Iterator<HalHttpPage> it=pluginManager.getObjectIterator(HalHttpPage.class);
-                it.hasNext(); ){
+        for (Iterator<HalHttpPage> it = pluginManager.getObjectIterator(HalJsonPage.class); it.hasNext(); )
             pages.add(it.next());
-        }
+        for (Iterator<HalHttpPage> it=pluginManager.getObjectIterator(HalHttpPage.class); it.hasNext(); )
+            pages.add(it.next());
 
         HttpServer http = new HttpServer(HalContext.getIntegerProperty("http_port"));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("resource/web/")));

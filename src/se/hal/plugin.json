@@ -1,0 +1,20 @@
+{
+	"version": 1.0,
+	"name": "Hal Core",
+	"interfaces": [
+        {"se.hal.intf.HalDaemon": "se.hal.daemon.SensorDataAggregatorDaemon"},
+        {"se.hal.intf.HalDaemon": "se.hal.daemon.SensorDataCleanupDaemon"},
+
+
+		{"se.hal.intf.HalJsonPage": "se.hal.page.MapJsonPage"},
+		{"se.hal.intf.HalHttpPage": "se.hal.page.MapHttpPage"},
+
+		{"se.hal.intf.HalJsonPage": "se.hal.page.SensorJsonPage"},
+		{"se.hal.intf.HalHttpPage": "se.hal.page.SensorOverviewHttpPage"},
+		{"se.hal.intf.HalHttpPage": "se.hal.page.SensorConfigHttpPage"},
+
+		{"se.hal.intf.HalHttpPage": "se.hal.page.EventOverviewHttpPage"},
+		{"se.hal.intf.HalHttpPage": "se.hal.page.EventConfigHttpPage"},
+		{"se.hal.intf.HalHttpPage": "se.hal.page.UserConfigHttpPage"}
+	]
+}

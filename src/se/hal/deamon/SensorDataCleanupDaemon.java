@@ -101,7 +101,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
 					if(sensorId != result.getInt("sensor_id")){
 						throw new IllegalArgumentException("Found entry for aggregation for the wrong sensorId (expecting: "+sensorId+", but was: "+result.getInt("sensor_id")+")");
 					}
-                    logger.finer("Deleting sensor(id: "+ sensorId +") aggregate entry timestamp: "+ result.getLong("timestamp_start") +" - "+ result.getLong("timestamp_end") + " (" + UTCTimeUtility.timeInMsToString(result.getLong("timestamp_end")-result.getLong("timestamp_start")) + ")");
+                    logger.finer("Deleting sensor(id: "+ sensorId +") aggregate entry timestamp: "+ result.getLong("timestamp_start") +" - "+ result.getLong("timestamp_end") + " (" + UTCTimeUtility.timeInMsToString(1+result.getLong("timestamp_end")-result.getLong("timestamp_start")) + ")");
 					preparedDeleteStmt.setInt(1, result.getInt("sensor_id"));
 					preparedDeleteStmt.setLong(2, result.getLong("sequence_id"));
 					preparedDeleteStmt.addBatch();

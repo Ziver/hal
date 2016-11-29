@@ -1,6 +1,6 @@
 package se.hal.util;
 
-import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
+import se.hal.daemon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 import se.hal.struct.Sensor;
 import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.db.DBConnection;

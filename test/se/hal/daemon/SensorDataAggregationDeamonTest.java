@@ -1,4 +1,4 @@
-package se.hal.deamon;
+package se.hal.daemon;
 
 import java.sql.PreparedStatement;
 

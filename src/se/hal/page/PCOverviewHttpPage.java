@@ -1,21 +1,13 @@
 package se.hal.page;
 
 import se.hal.HalContext;
-import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 import se.hal.intf.HalHttpPage;
-import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
-import se.hal.util.AggregateDataListSqlResult;
-import se.hal.util.AggregateDataListSqlResult.AggregateData;
-import se.hal.util.UTCTimeUtility;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
-import zutil.parser.DataNode;
 import zutil.parser.Templator;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

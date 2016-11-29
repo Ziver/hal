@@ -1,6 +1,6 @@
 package se.hal.util;
 
-import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
+import se.hal.daemon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

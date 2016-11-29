@@ -1,4 +1,4 @@
-package se.hal.deamon;
+package se.hal.daemon;
 
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;

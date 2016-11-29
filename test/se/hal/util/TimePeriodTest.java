@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
+import se.hal.daemon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 
 import java.util.Arrays;
 import java.util.Collection;

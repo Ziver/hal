@@ -1,7 +1,7 @@
 package se.hal.page;
 
 import se.hal.HalContext;
-import se.hal.deamon.SensorDataAggregatorDaemon;
+import se.hal.daemon.SensorDataAggregatorDaemon;
 import se.hal.intf.HalJsonPage;
 import se.hal.struct.Sensor;
 import se.hal.util.AggregateDataListSqlResult;

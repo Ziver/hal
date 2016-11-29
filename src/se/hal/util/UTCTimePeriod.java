@@ -1,6 +1,6 @@
 package se.hal.util;
 
-import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
+import se.hal.daemon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 
 public class UTCTimePeriod{
 	private final long start;

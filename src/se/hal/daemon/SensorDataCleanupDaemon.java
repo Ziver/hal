@@ -1,7 +1,7 @@
-package se.hal.deamon;
+package se.hal.daemon;
 
 import se.hal.HalContext;
-import se.hal.deamon.SensorDataAggregatorDaemon.AggregationPeriodLength;
+import se.hal.daemon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
 import se.hal.util.UTCTimeUtility;

@@ -1,10 +1,10 @@
-package se.hal.deamon;
+package se.hal.daemon;
 
 import se.hal.HalContext;
-import se.hal.deamon.PCDataSynchronizationDaemon.PeerDataRspDTO;
-import se.hal.deamon.PCDataSynchronizationDaemon.SensorDTO;
-import se.hal.deamon.PCDataSynchronizationDaemon.SensorDataDTO;
-import se.hal.deamon.PCDataSynchronizationDaemon.SensorDataListDTO;
+import se.hal.daemon.PCDataSynchronizationDaemon.PeerDataRspDTO;
+import se.hal.daemon.PCDataSynchronizationDaemon.SensorDTO;
+import se.hal.daemon.PCDataSynchronizationDaemon.SensorDataDTO;
+import se.hal.daemon.PCDataSynchronizationDaemon.SensorDataListDTO;
 import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;

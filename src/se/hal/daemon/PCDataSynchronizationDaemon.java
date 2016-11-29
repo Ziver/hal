@@ -1,8 +1,8 @@
-package se.hal.deamon;
+package se.hal.daemon;
 
 import se.hal.HalContext;
-import se.hal.deamon.PCDataSynchronizationClient.PeerDataReqDTO;
-import se.hal.deamon.PCDataSynchronizationClient.SensorDataReqDTO;
+import se.hal.daemon.PCDataSynchronizationClient.PeerDataReqDTO;
+import se.hal.daemon.PCDataSynchronizationClient.SensorDataReqDTO;
 import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;

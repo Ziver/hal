@@ -1,5 +1,6 @@
 package se.hal.intf;
 
+import zutil.log.LogUtil;
 import zutil.net.http.HttpHeader;
 import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
@@ -10,12 +11,13 @@ import zutil.parser.json.JSONWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A interface defining a Hal json endpoint
  */
 public abstract class HalJsonPage extends HalHttpPage{
-
+    private static final Logger logger = LogUtil.getLogger();
 
     public HalJsonPage(String id) {
         super(id);
@@ -34,8 +36,10 @@ public abstract class HalJsonPage extends HalHttpPage{
         out.setHeader("Content-Type", "application/json");
         JSONWriter writer = new JSONWriter(out);
         try{
-            writer.write(jsonRespond(session, cookie, request));
+            writer.write(
+                    jsonRespond(session, cookie, request));
         } catch (Exception e){
+            logger.log(Level.SEVERE, null, e);
             DataNode root = new DataNode(DataNode.DataType.Map);
             root.set("error", e.getMessage());
             writer.write(root);

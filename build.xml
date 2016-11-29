@@ -105,7 +105,8 @@
 
 	<target name="build-dependencies">
 		<mkdir dir="${buildDir}" />
-		<get src="http://ci.koc.se/jenkins/job/Zutil/lastSuccessfulBuild/artifact/build/release/Zutil.jar" dest="${libDir}" verbose="true" usetimestamp="true"/>
+		<get src="http://ci.koc.se/jenkins/job/Zutil/105/artifact/build/release/Zutil.jar"
+			 dest="${libDir}" verbose="true" usetimestamp="true"/>
 	</target>
 
 	<target name="build-test" depends="build">

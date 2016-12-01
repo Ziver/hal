@@ -73,7 +73,7 @@ public class HalServer {
 
         HttpServer http = new HttpServer(HalContext.getIntegerProperty("http_port"));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("resource/web/")));
-        http.setPage("/", new HttpRedirectPage("/"+pages.get(0).getId()));
+        http.setPage("/", new HttpRedirectPage("/map"));
         http.setPage(HalAlertManager.getInstance().getUrl(), HalAlertManager.getInstance());
         for(HalHttpPage page : pages){
             http.setPage(page.getId(), page);

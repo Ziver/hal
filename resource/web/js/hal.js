@@ -119,5 +119,6 @@ function getChartData(json){
         names: labels,
         type: 'spline',
         axes: dataYaxis,
+        unload: true,
     };
 }

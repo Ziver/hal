@@ -69,7 +69,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
         try(MultiCommandExecutor executor = new MultiCommandExecutor();){
             for (Map.Entry<LocalNetworkDevice,SwitchEventData> entry : devices.entrySet()) {
                 if (listener != null) {
-                    logger.finest("Pinging IP "+entry.getKey().getHost());
+                    //logger.finest("Pinging IP "+entry.getKey().getHost());
                     boolean online = InetScanner.isReachable(entry.getKey().getHost(), executor);
                     if (entry.getValue() == null || entry.getValue().isOn() != online) {
                         entry.setValue(

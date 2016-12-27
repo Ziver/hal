@@ -34,6 +34,7 @@ public abstract class HalJsonPage extends HalHttpPage{
 
 
         out.setHeader("Content-Type", "application/json");
+        out.setHeader("Pragma", "no-cache");
         JSONWriter writer = new JSONWriter(out);
         try{
             writer.write(

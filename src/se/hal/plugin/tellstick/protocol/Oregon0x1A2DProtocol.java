@@ -1,7 +1,6 @@
 package se.hal.plugin.tellstick.protocol;
 
 import se.hal.intf.HalSensorData;
-import se.hal.plugin.tellstick.TellstickDevice;
 import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.plugin.tellstick.TellstickSerialComm;
 import se.hal.plugin.tellstick.device.Oregon0x1A2D;
@@ -10,6 +9,7 @@ import se.hal.struct.devicedata.HumiditySensorData;
 import se.hal.struct.devicedata.LightSensorData;
 import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import se.hal.struct.devicedata.TemperatureSensorData;
+import zutil.converter.Converter;
 import zutil.log.LogUtil;
 
 import java.util.ArrayList;
@@ -34,7 +34,16 @@ public class Oregon0x1A2DProtocol extends TellstickProtocol {
 
     @Override
     public List<TellstickDecodedEntry> decode(byte[] data) {
-        //class:sensor;protocol:oregon;model:0x1A2D;data:20BA000000002700;
+        /*
+        Nibble(s)           Details
+        0..3            Sensor ID This 16-bit value is unique to each sensor, or sometimes a group of sensors.
+        4               Channel Some sensors use the coding 1 << (ch – 1), where ch is 1, 2 or 3.
+        5..6            Rolling Code Value changes randomly every time the sensor is reset
+        7               Flags 1 Bit value 0x4 is the battery low flag
+        8..[n-5]        Sensor-specific Data Usually in BCD format
+        [n-3]..[n-4]    Checksum The 8-bit sum of nibbles 0..[n-5]
+        */
+        //Example: class:sensor;protocol:oregon;model:0x1A2D;data:20BA000000002700;
 
         // int channel = (data[0] >> 4) & 0x7; // channel not used
         int address = data[1] & 0xFF;
@@ -46,16 +55,14 @@ public class Oregon0x1A2DProtocol extends TellstickProtocol {
         int hum1 = data[5] & 0xF;
         int checksum = data[6];
 
-        int calcChecksum = ((data[5] >> 4) & 0xF) + (data[5] & 0xF);
-        calcChecksum += ((data[4] >> 4) & 0xF) + (data[4] & 0xF);
-        calcChecksum += ((data[3] >> 4) & 0xF) + (data[3] & 0xF);
-        calcChecksum += ((data[2] >> 4) & 0xF) + (data[2] & 0xF);
-        calcChecksum += ((data[1] >> 4) & 0xF) + (data[1] & 0xF);
-        calcChecksum += ((data[0] >> 4) & 0xF) + (data[0] & 0xF);
+        int calcChecksum = 0;
+        for (int i = 0; i < 6; i++) {
+            calcChecksum += ((data[i] >> 4) & 0xF) + (data[i] & 0xF);
+        }
         calcChecksum += 0x1 + 0xA + 0x2 + 0xD - 0xA;
 
         if (calcChecksum != checksum) {
-            logger.fine("Checksum failed, address: "+address);
+            logger.fine("Checksum failed, address: "+address+", data: "+ Converter.toHexString(data));
             return null;
         }
 

@@ -127,9 +127,9 @@ inline void ProtocolOregon::calculateAndSetChecksum(byte data[])
   for(byte i = 0; i<8;i++)
   {
     sum += (data[i]&0xF0) >> 4;
-    sum += (data[i]&0xF);
+    sum += (data[i]&0x0F);
   }
-  data[8] = ((sum - 0xa) & 0xFF);
+  data[8] = ((sum - 0x0A) & 0xFF);
 }
 
 

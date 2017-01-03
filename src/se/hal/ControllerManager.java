@@ -55,6 +55,10 @@ public class ControllerManager implements HalSensorReportListener,
 
     /////////////////////////////// SENSORS ///////////////////////////////////
 
+    /**
+     * Register a Sensor instance on the manager.
+     * The manager will start to save reported data for the registered Sensor.
+     */
     public void register(Sensor sensor) {
         if(sensor.getDeviceConfig() == null) {
             logger.warning("Sensor config is null: "+ sensor);
@@ -75,6 +79,11 @@ public class ControllerManager implements HalSensorReportListener,
         detectedSensors.remove(findSensor(sensor.getDeviceConfig(), detectedSensors)); // Remove if this device was detected
     }
 
+    /**
+     * Deregisters a Sensor from the manager.
+     * Data reported on the Sensor will no longer be saved but already saved data will not be modified.
+     * The Controller that owns the Sensor will be deallocated if it has no more registered devices.
+     */
     public void deregister(Sensor sensor){
         if(sensor.getDeviceConfig() == null) {
             logger.warning("Sensor config is null: "+ sensor);
@@ -93,14 +102,39 @@ public class ControllerManager implements HalSensorReportListener,
         }
     }
 
+    /**
+     * Registers a Sensor class type as usable by the manager
+     */
+    public void addAvailableSensor(Class<? extends HalSensorConfig> sensorClass) {
+        if ( ! availableSensors.contains(sensorClass))
+            availableSensors.add(sensorClass);
+    }
+
+    /**
+     * @return a List of all available Sensors that can be registered to this manager
+     */
     public List<Class<? extends HalSensorConfig>> getAvailableSensors(){
         return availableSensors;
     }
 
+    /**
+     * @return a List of Sensor instances that have been registered to this manager
+     */
+    public List<Sensor> getRegisteredSensors(){
+        return registeredSensors;
+    }
+
+
+    /**
+     * @return a List of Sensor instances that have been reported but not registered on the manager
+     */
     public List<Sensor> getDetectedSensors(){
         return detectedSensors;
     }
 
+    /**
+     * Called by Controllers to report received Sensor data
+     */
     @Override
     public void reportReceived(HalSensorConfig sensorConfig, HalSensorData sensorData) {
         try{
@@ -145,6 +179,10 @@ public class ControllerManager implements HalSensorReportListener,
 
     //////////////////////////////// EVENTS ///////////////////////////////////
 
+    /**
+     * Register a Event instance on the manager.
+     * The manager will start to save reported data for the registered Event.
+     */
     public void register(Event event) {
         if(event.getDeviceConfig() == null) {
             logger.warning("Event config is null: "+ event);
@@ -165,6 +203,11 @@ public class ControllerManager implements HalSensorReportListener,
         detectedEvents.remove(findEvent(event.getDeviceConfig(), detectedEvents)); // Remove if this device was detected
     }
 
+    /**
+     * Deregisters a Event from the manager.
+     * Data reported on the Event will no longer be saved but already saved data will not be modified.
+     * The Controller that owns the Event will be deallocated if it has no more registered devices.
+     */
     public void deregister(Event event){
         if(event.getDeviceConfig() == null) {
             logger.warning("Event config is null: "+ event);
@@ -183,14 +226,38 @@ public class ControllerManager implements HalSensorReportListener,
         }
     }
 
+    /**
+     * Registers a Event class type as usable by the manager
+     */
+    public void addAvailableEvent(Class<? extends HalEventConfig> eventClass) {
+        if ( ! availableEvents.contains(eventClass))
+            availableEvents.add(eventClass);
+    }
+
+    /**
+     * @return a List of all available Events that can be registered to this manager
+     */
     public List<Class<? extends HalEventConfig>> getAvailableEvents(){
         return availableEvents;
     }
 
+    /**
+     * @return a List of Sensor instances that have been registered to this manager
+     */
+    public List<Event> getRegisteredEvents(){
+        return registeredEvents;
+    }
+
+    /**
+     * @return a List of Event instances that have been reported but not registered on the manager
+     */
     public List<Event> getDetectedEvents(){
         return detectedEvents;
     }
 
+    /**
+     * Called by Controllers to report received Event data
+     */
     @Override
     public void reportReceived(HalEventConfig eventConfig, HalEventData eventData) {
         try {
@@ -345,12 +412,12 @@ public class ControllerManager implements HalSensorReportListener,
 
         for (Iterator<Class<? extends HalSensorConfig>> it = pluginManager.getClassIterator(HalSensorConfig.class);
              it.hasNext(); ){
-            manager.availableSensors.add(it.next());
+            manager.addAvailableSensor(it.next());
         }
 
         for (Iterator<Class<? extends HalEventConfig>> it = pluginManager.getClassIterator(HalEventConfig.class);
              it.hasNext(); ){
-            manager.availableEvents.add(it.next());
+            manager.addAvailableEvent(it.next());
         }
 
         for (Iterator<Class<? extends HalAutoScannableController>> it=
@@ -361,6 +428,7 @@ public class ControllerManager implements HalSensorReportListener,
 
         instance = manager;
     }
+
 
     public static ControllerManager getInstance(){
         return instance;

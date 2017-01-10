@@ -8,13 +8,13 @@
 	<property name="srcDir" value="${gitRoot}/src" />
 	<property name="testDir" value="${gitRoot}/test" />
 	<property name="libDir" value="${gitRoot}/lib" />
-	<property name="buildRoot" value="${gitRoot}/build" />
-	<property name="buildDir" value="${buildRoot}/production" />
-	<property name="buildTestDir" value="${buildRoot}/test" />
-	<property name="releaseDir" value="${buildRoot}/release" />
-	<property name="reportsDir" value="${buildRoot}/reports" />
+	<property name="outputRoot" value="${gitRoot}/build" />
+	<property name="buildDir" value="${outputRoot}/production" />
+	<property name="buildTestDir" value="${outputRoot}/test" />
+	<property name="releaseDir" value="${outputRoot}/release" />
+	<property name="reportsDir" value="${outputRoot}/reports" />
 
-	<!--define standard arduments for javac-->
+	<!--define standard arguments for javac-->
 	<presetdef name="javac">
 		<javac includeantruntime="false" />
 	</presetdef>
@@ -37,7 +37,7 @@
 
 	<!-- ________________________ EXECUTION TARGETS ________________________ -->
 
-	<target name="run" depends="release">
+	<target name="run" depends="package">
 		<java fork="true" failonerror="true" classname="se.hal.HalServer">
 			<classpath>
 				<pathelement path="${releaseDir}/hal.jar"/>
@@ -46,7 +46,7 @@
 		</java>
 	</target>
 
-	<target name="remote-debug" depends="release">
+	<target name="remote-debug" depends="package">
 		<java fork="true" failonerror="true" classname="se.hal.HalServer">
             <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005" />
 			<classpath>
@@ -74,22 +74,11 @@
 	<!--clean all build paths-->
 	<target name="clean">
 		<delete includeemptydirs="true" failonerror="false">
-			<fileset dir="${buildRoot}" includes="**/*"/>
+			<fileset dir="${outputRoot}" includes="**/*"/>
 		</delete>
 	</target>
 
 	<!--build product code-->
-	<target name="release" depends="build">
-		<copy file="${gitRoot}/hal.conf.example" todir="${releaseDir}" />
-		<copy file="${gitRoot}/hal-default.db" todir="${releaseDir}" />
-		<copy file="${gitRoot}/logging.properties" todir="${releaseDir}" />
-		<copy file="${gitRoot}/run.sh" todir="${releaseDir}" />
-		<copydir src="${libDir}" dest="${releaseDir}/lib"
-				 excludes="junit-*.jar,hamcrest-*.jar" />
-		<copydir src="resource/web" dest="${releaseDir}/resource/web" />
-		<jar destfile="${releaseDir}/hal.jar" basedir="${buildDir}" />
-	</target>
-
 	<target name="build" depends="build-dependencies">
 		<mkdir dir="${buildDir}" />
 		<javac srcdir="${srcDir}" destdir="${buildDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
@@ -120,6 +109,17 @@
 			<fileset dir="${testDir}"
 					 excludes="**/*.java" />
 		</copy>
+	</target>
+
+	<target name="package" depends="build">
+		<copy file="${gitRoot}/hal.conf.example" todir="${releaseDir}" />
+		<copy file="${gitRoot}/hal-default.db" todir="${releaseDir}" />
+		<copy file="${gitRoot}/logging.properties" todir="${releaseDir}" />
+		<copy file="${gitRoot}/run.sh" todir="${releaseDir}" />
+		<copydir src="${libDir}" dest="${releaseDir}/lib"
+				 excludes="junit-*.jar,hamcrest-*.jar" />
+		<copydir src="resource/web" dest="${releaseDir}/resource/web" />
+		<jar destfile="${releaseDir}/hal.jar" basedir="${buildDir}" />
 	</target>
 
 

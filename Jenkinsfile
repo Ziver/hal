@@ -24,7 +24,7 @@ node {
 
     stage('Package') {
         sh 'ant package'
-        archiveArtifacts artifacts: 'build/release/*', fingerprint: true
+        archiveArtifacts artifacts: 'build/release/**', fingerprint: true
 
         // Tag artifact
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'f8e5f6c6-4adb-4ab2-bb5d-1c8535dff491',

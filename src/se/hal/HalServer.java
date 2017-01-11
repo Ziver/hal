@@ -32,15 +32,16 @@ public class HalServer {
         // init logging
         LogUtil.readConfiguration("logging.properties");
 
+        // init DB and other configurations
+        DBConnection db = HalContext.getDB();
+
         // init Managers
         PluginManager pluginManager = new PluginManager("./");
         HalContext.initialize();
-        ControllerManager.initialize(pluginManager);
         HalAlertManager.initialize();
+        ControllerManager.initialize(pluginManager);
+        TriggerManager.initialize(pluginManager);
 
-
-        // init DB and other configurations
-        DBConnection db = HalContext.getDB();
 
         // Init sensors,events and controllers
         for(Sensor sensor : Sensor.getLocalSensors(db)){

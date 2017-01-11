@@ -5,7 +5,7 @@
 		{"se.hal.intf.HalHttpPage": "se.hal.page.PCOverviewHttpPage"},
 		{"se.hal.intf.HalHttpPage": "se.hal.page.PCHeatMapHttpPage"},
 
-        {"se.hal.intf.HalDaemon": "se.hal.deamon.PCDataSynchronizationClient"},
-        {"se.hal.intf.HalDaemon": "se.hal.deamon.PCDataSynchronizationDaemon"}
+        {"se.hal.intf.HalDaemon": "se.hal.daemon.PCDataSynchronizationClient"},
+        {"se.hal.intf.HalDaemon": "se.hal.daemon.PCDataSynchronizationDaemon"}
 	]
 }

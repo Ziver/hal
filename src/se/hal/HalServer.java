@@ -33,11 +33,11 @@ public class HalServer {
         LogUtil.readConfiguration("logging.properties");
 
         // init DB and other configurations
+        HalContext.initialize();
         DBConnection db = HalContext.getDB();
+        PluginManager pluginManager = new PluginManager("./");
 
         // init Managers
-        PluginManager pluginManager = new PluginManager("./");
-        HalContext.initialize();
         HalAlertManager.initialize();
         ControllerManager.initialize(pluginManager);
         TriggerManager.initialize(pluginManager);

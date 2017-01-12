@@ -20,12 +20,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
- * Created by Ziver on 2015-12-03.
+ * Main class for Hal
  */
 public class HalServer {
-	
-    private static List<HalDaemon> daemons;
-    private static List<HalHttpPage> pages;
+
+    private static ScheduledExecutorService daemonExecutor;
+    private static List<HalDaemon> daemons = new ArrayList<>();
+
+    private static HttpServer http;
+    private static List<HalHttpPage> pages = new ArrayList<>();
+
 
 
     public static void main(String[] args) throws Exception {
@@ -53,32 +57,34 @@ public class HalServer {
 
 
         // init daemons
-        daemons = new ArrayList<>();
-        for (Iterator<HalDaemon> it=pluginManager.getObjectIterator(HalDaemon.class); it.hasNext(); )
-            daemons.add(it.next());
         // We set only one thread for easier troubleshooting
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        for(HalDaemon daemon : daemons){
-            daemon.initiate(executor);
-        }
+        daemonExecutor = Executors.newScheduledThreadPool(1);
+        for (Iterator<HalDaemon> it=pluginManager.getObjectIterator(HalDaemon.class); it.hasNext(); )
+            registerDaemon(it.next());
 
 
         // init http server
         HalHttpPage.getRootNav().createSubNav("Sensors");
         HalHttpPage.getRootNav().createSubNav("Events").setWeight(100);
-        pages = new ArrayList<>();
-        for (Iterator<HalHttpPage> it = pluginManager.getObjectIterator(HalJsonPage.class); it.hasNext(); )
-            pages.add(it.next());
-        for (Iterator<HalHttpPage> it=pluginManager.getObjectIterator(HalHttpPage.class); it.hasNext(); )
-            pages.add(it.next());
 
-        HttpServer http = new HttpServer(HalContext.getIntegerProperty("http_port"));
+        http = new HttpServer(HalContext.getIntegerProperty("http_port"));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("resource/web/")));
         http.setPage("/", new HttpRedirectPage("/map"));
         http.setPage(HalAlertManager.getInstance().getUrl(), HalAlertManager.getInstance());
-        for(HalHttpPage page : pages){
-            http.setPage(page.getId(), page);
-        }
+        for (Iterator<HalHttpPage> it = pluginManager.getObjectIterator(HalJsonPage.class); it.hasNext(); )
+            registerPage(it.next());
+        for (Iterator<HalHttpPage> it=pluginManager.getObjectIterator(HalHttpPage.class); it.hasNext(); )
+            registerPage(it.next());
         http.start();
+    }
+
+
+    public static void registerDaemon(HalDaemon daemon){
+        daemons.add(daemon);
+        daemon.initiate(daemonExecutor);
+    }
+    public static void registerPage(HalHttpPage page){
+        pages.add(page);
+        http.setPage(page.getId(), page);
     }
 }

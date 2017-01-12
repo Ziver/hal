@@ -9,6 +9,9 @@ import zutil.plugin.PluginManager;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 
@@ -17,13 +20,27 @@ import java.util.logging.Logger;
  */
 public class TriggerManager {
     private static final Logger logger = LogUtil.getLogger();
+    private static final long EVALUATION_INTERVAL = 5 * 1000;
     private static TriggerManager instance;
 
     private ArrayList<Class<? extends HalTrigger>> availableTriggers = new ArrayList<>();
     private ArrayList<Class<? extends HalAction>>  availableActions  = new ArrayList<>();
 
     private ArrayList<TriggerFlow> triggerFlows = new ArrayList<>();
+    private ScheduledExecutorService executor;
 
+
+    public void setEvaluationInterval(long interval) {
+        if (executor != null)
+            executor.shutdownNow();
+        executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                evaluateAndExecute();
+            }
+        }, 0, interval, TimeUnit.MILLISECONDS);
+    }
 
 
     public void addAvailableTrigger(Class<? extends HalTrigger> clazz) {
@@ -48,7 +65,6 @@ public class TriggerManager {
     }
 
 
-
     /**
      * Main execution method.
      * This method will go through all flows and evaluate them. If the
@@ -66,25 +82,24 @@ public class TriggerManager {
     }
 
 
-
-    public static void initialize(PluginManager pluginManager){
+    public static void initialize(PluginManager pluginManager) {
         TriggerManager manager = new TriggerManager();
 
         for (Iterator<Class<? extends HalTrigger>> it = pluginManager.getClassIterator(HalTrigger.class);
-             it.hasNext(); ){
+             it.hasNext(); ) {
             manager.addAvailableTrigger(it.next());
         }
 
         for (Iterator<Class<? extends HalAction>> it = pluginManager.getClassIterator(HalAction.class);
-             it.hasNext(); ){
+             it.hasNext(); ) {
             manager.addAvailableAction(it.next());
         }
 
+        manager.setEvaluationInterval(EVALUATION_INTERVAL);
         instance = manager;
     }
 
     public static TriggerManager getInstance(){
         return instance;
     }
-
 }

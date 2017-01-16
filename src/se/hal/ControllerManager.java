@@ -358,7 +358,7 @@ public class ControllerManager implements HalSensorReportListener,
                 controller = c.newInstance();
                 if (controller instanceof HalAutoScannableController &&
                         ! ((HalAutoScannableController)controller).isAvailable()) {
-                    logger.warning("Controller is not available: "+c.getName());
+                    logger.warning("Controller is not ready: "+c.getName());
                     return null;
                 }
                 logger.info("Instantiating new controller: " + c.getName());

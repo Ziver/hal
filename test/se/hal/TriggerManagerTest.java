@@ -75,7 +75,7 @@ public class TriggerManagerTest {
 
     /////////////////////////////////////////////////////////////////////////////
 
-    private static class TestTrigger implements HalTrigger {
+    private static class TestTrigger extends HalTrigger {
         boolean evaluation;
         TestTrigger(boolean b){ evaluation = b; }
         @Override
@@ -86,7 +86,7 @@ public class TriggerManagerTest {
     }
 
 
-    private class TestAction implements HalAction {
+    private class TestAction extends HalAction {
         int nrOfExecutions;
         @Override
         public void execute() { nrOfExecutions++; }

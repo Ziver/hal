@@ -1,20 +1,47 @@
 package se.hal.intf;
 
+import se.hal.struct.dso.TriggerDSO;
+import zutil.db.DBConnection;
+import zutil.db.bean.DBBean;
+
+import java.sql.SQLException;
+
 /**
- * A interfaces that declares a trigger/condition that
+ * A class that declares a trigger/condition that
  * needs to be validated before an action can be run
  */
-public interface HalTrigger {
+public abstract class HalTrigger{
+    private TriggerDSO dso;
+
+
+    public static HalTrigger getTrigger(DBConnection db, long id) throws SQLException {
+        TriggerDSO dso = DBBean.load(db, TriggerDSO.class, id);
+        dso.getObject().dso = dso;
+        return dso.getObject();
+    }
+
+
+    public Long getId(){
+        return (dso!=null ? dso.getId() : null);
+    }
+
+    public void save(DBConnection db) throws SQLException {
+        if (dso == null)
+            dso = new TriggerDSO();
+        dso.setObject(this);
+        dso.save(db);
+    }
+
 
     /**
      * Evaluates if this trigger has passed. If the trigger is
      * true then this method will return true until the {@link #reset()}
      * method is called.
      */
-    boolean evaluate();
+    public abstract boolean evaluate();
 
     /**
      * Reset the evaluation to false.
      */
-    void reset();
+    public abstract void reset();
 }

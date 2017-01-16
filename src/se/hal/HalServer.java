@@ -7,6 +7,7 @@ import se.hal.intf.HalJsonPage;
 import se.hal.page.*;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
+import se.hal.struct.TriggerFlow;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
@@ -47,16 +48,20 @@ public class HalServer {
         TriggerManager.initialize(pluginManager);
 
 
-        // Init sensors,events and controllers
+        // Import sensors,events and controllers
         for(Sensor sensor : Sensor.getLocalSensors(db)){
             ControllerManager.getInstance().register(sensor);
         }
         for(Event event : Event.getLocalEvents(db)){
             ControllerManager.getInstance().register(event);
         }
+        // Import triggers
+        for(TriggerFlow flow : TriggerFlow.getTriggerFlows(db)){
+            TriggerManager.getInstance().register(flow);
+        }
 
 
-        // init daemons
+        // Init daemons
         // We set only one thread for easier troubleshooting
         daemonExecutor = Executors.newScheduledThreadPool(1);
         for (Iterator<HalDaemon> it=pluginManager.getObjectIterator(HalDaemon.class); it.hasNext(); )

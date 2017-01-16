@@ -6,12 +6,14 @@ import se.hal.struct.TriggerFlow;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginManager;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -28,6 +30,7 @@ public class TriggerManager {
 
     private ArrayList<TriggerFlow> triggerFlows = new ArrayList<>();
     private ScheduledExecutorService executor;
+
 
 
     public void setEvaluationInterval(long interval) {

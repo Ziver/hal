@@ -85,6 +85,7 @@ public abstract class AbstractDevice<T,D> extends DBBean {
         }
     }
 
+    @Override
     public void save(DBConnection db) throws SQLException {
         if (deviceConfig != null)
             updateConfigString();

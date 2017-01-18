@@ -1,0 +1,5 @@
+# Github language stats file
+external/* linguist-vendored
+lib/* linguist-vendored
+resource/web/css/* linguist-vendored
+resource/web/js/* linguist-vendored

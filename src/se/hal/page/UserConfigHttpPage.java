@@ -2,6 +2,9 @@ package se.hal.page;
 
 import se.hal.HalContext;
 import se.hal.intf.HalHttpPage;
+import se.hal.page.HalAlertManager.AlertLevel;
+import se.hal.page.HalAlertManager.AlertTTL;
+import se.hal.page.HalAlertManager.HalAlert;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -43,6 +46,8 @@ public class UserConfigHttpPage extends HalHttpPage {
                     localUser.setEmail(request.get("email"));
                     localUser.setAddress(request.get("address"));
                     localUser.save(db);
+                    HalAlertManager.getInstance().addAlert(new HalAlert(
+                            AlertLevel.SUCCESS, "Successfully saved profile changes", AlertTTL.ONE_VIEW));
                     break;
             }
         }

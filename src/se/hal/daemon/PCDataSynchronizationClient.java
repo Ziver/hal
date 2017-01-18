@@ -6,6 +6,9 @@ import se.hal.daemon.PCDataSynchronizationDaemon.SensorDTO;
 import se.hal.daemon.PCDataSynchronizationDaemon.SensorDataDTO;
 import se.hal.daemon.PCDataSynchronizationDaemon.SensorDataListDTO;
 import se.hal.intf.HalDaemon;
+import se.hal.page.HalAlertManager;
+import se.hal.page.HalAlertManager.AlertTTL;
+import se.hal.page.HalAlertManager.HalAlert;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
@@ -132,6 +135,8 @@ public class PCDataSynchronizationClient implements HalDaemon {
 
 				} catch (NoRouteToHostException|UnknownHostException|ConnectException e) {
 					logger.warning("Unable to connect to "+ user.getHostname()+":"+user.getPort() +", "+ e.getMessage());
+					HalAlertManager.getInstance().addAlert(new HalAlert(HalAlertManager.AlertLevel.WARNING,
+							"Unable to connect to user with host: "+user.getHostname(), AlertTTL.DISMISSED));
 				} catch (Exception e) {
                     logger.log(Level.SEVERE, null, e);
 				}

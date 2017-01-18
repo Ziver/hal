@@ -3,6 +3,9 @@ package se.hal.page;
 import se.hal.ControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalHttpPage;
+import se.hal.page.HalAlertManager.AlertLevel;
+import se.hal.page.HalAlertManager.AlertTTL;
+import se.hal.page.HalAlertManager.HalAlert;
 import se.hal.struct.Event;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
@@ -62,6 +65,8 @@ public class EventConfigHttpPage extends HalHttpPage {
                     event.getDeviceConfigurator().setValues(request).applyConfiguration();
                     event.save(db);
                     ControllerManager.getInstance().register(event);
+                    HalAlertManager.getInstance().addAlert(new HalAlert(
+                            AlertLevel.SUCCESS, "Successfully created new event: "+event.getName(), AlertTTL.ONE_VIEW));
                     break;
                 case "modify_local_event":
                     event = Event.getEvent(db, id);
@@ -71,6 +76,11 @@ public class EventConfigHttpPage extends HalHttpPage {
                         event.setUser(localUser);
                         event.getDeviceConfigurator().setValues(request).applyConfiguration();
                         event.save(db);
+                        HalAlertManager.getInstance().addAlert(new HalAlert(
+                                AlertLevel.SUCCESS, "Successfully saved event: "+event.getName(), AlertTTL.ONE_VIEW));
+                    } else {
+                        HalAlertManager.getInstance().addAlert(new HalAlert(
+                                AlertLevel.ERROR, "Unknown event id: "+id, AlertTTL.ONE_VIEW));
                     }
                     break;
                 case "remove_local_event":
@@ -78,6 +88,11 @@ public class EventConfigHttpPage extends HalHttpPage {
                     if(event != null) {
                         ControllerManager.getInstance().deregister(event);
                         event.delete(db);
+                        HalAlertManager.getInstance().addAlert(new HalAlert(
+                                AlertLevel.SUCCESS, "Successfully deleted event: "+event.getName(), AlertTTL.ONE_VIEW));
+                    }else {
+                        HalAlertManager.getInstance().addAlert(new HalAlert(
+                                AlertLevel.ERROR, "Unknown event id: "+id, AlertTTL.ONE_VIEW));
                     }
                     break;
             }

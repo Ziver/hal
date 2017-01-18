@@ -42,6 +42,7 @@ public class HalAlertManager implements HttpPage {
     }
 
     public void addAlert(HalAlert alert){
+        alerts.remove(alert); // We don't want to flood the user with duplicate alerts
         alerts.add(alert);
     }
 
@@ -136,6 +137,14 @@ public class HalAlertManager implements HttpPage {
 
         public String getMessage() {
             return msg;
+        }
+
+        @Override
+        public boolean equals(Object obj){
+            if (obj instanceof HalAlert)
+                return level == ((HalAlert) obj).level &&
+                        msg.equals(((HalAlert) obj).msg);
+            return false;
         }
     }
 }

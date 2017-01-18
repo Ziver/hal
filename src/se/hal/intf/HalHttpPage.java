@@ -55,8 +55,8 @@ public abstract class HalHttpPage implements HttpPage{
             }
             tmpl.set("rootNav", rootNav.createPagedNavInstance(header).getSubNavs());
             tmpl.set("userNav", userNav.createPagedNavInstance(header).getSubNavs());
-            tmpl.set("alerts", HalAlertManager.getInstance().generateAlerts());
             tmpl.set("content", httpRespond(session, cookie, request));
+            tmpl.set("alerts", HalAlertManager.getInstance().generateAlerts()); // do last so we don't miss any alerts
             out.print(tmpl.compile());
         } catch (Exception e) {
             throw new IOException(e);

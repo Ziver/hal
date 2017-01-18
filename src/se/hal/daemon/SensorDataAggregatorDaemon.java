@@ -3,6 +3,10 @@ package se.hal.daemon;
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
 import se.hal.intf.HalSensorConfig.AggregationMethod;
+import se.hal.page.HalAlertManager;
+import se.hal.page.HalAlertManager.AlertLevel;
+import se.hal.page.HalAlertManager.AlertTTL;
+import se.hal.page.HalAlertManager.HalAlert;
 import se.hal.struct.Sensor;
 import se.hal.util.UTCTimePeriod;
 import se.hal.util.UTCTimeUtility;
@@ -111,6 +115,12 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     		
     		if(latestCompletePeriodEndTimestamp == maxTimestampFoundForSensor){
     			logger.fine("no new data to evaluate - aggregation is up to date");
+    			// Check if the sensor has stopped responding
+				if (maxTimestampFoundForSensor + sensor.getDeviceConfig().getDataInterval()*3 < System.currentTimeMillis()){
+                    logger.fine("Sensor \"" + sensorId + "\" has stopped sending data");
+				    HalAlertManager.getInstance().addAlert(new HalAlert(AlertLevel.WARNING,
+                            "Sensor \""+sensor.getName()+"\" has stopped responding", AlertTTL.DISMISSED));
+				}
     			return;
     		}else{
     			logger.fine("evaluating period: "+ (maxTimestampFoundForSensor+1) + "=>" + latestCompletePeriodEndTimestamp + " (" + UTCTimeUtility.getDateString(maxTimestampFoundForSensor+1) + "=>" + UTCTimeUtility.getDateString(latestCompletePeriodEndTimestamp) + ") with expected sample count: " + expectedSampleCount);

@@ -91,39 +91,33 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     	DBConnection db = HalContext.getDB();
     	PreparedStatement stmt = null;
     	try {
-    		
-    		stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr"
-    				+ " WHERE sensor_id == ?"
-    					+ " AND timestamp_end-timestamp_start == ?");
-    		stmt.setLong(1, sensorId);
-    		switch(aggrPeriodLength){
-    			case SECOND: stmt.setLong(2, UTCTimeUtility.SECOND_IN_MS-1); break;
-    			case MINUTE: stmt.setLong(2, UTCTimeUtility.MINUTE_IN_MS-1); break; 
-				case FIVE_MINUTES: stmt.setLong(2, UTCTimeUtility.FIVE_MINUTES_IN_MS-1); break;
-				case FIFTEEN_MINUTES: stmt.setLong(2, UTCTimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
-				case HOUR: stmt.setLong(2, UTCTimeUtility.HOUR_IN_MS-1); break;
-				case DAY: stmt.setLong(2, UTCTimeUtility.DAY_IN_MS-1); break;
-				case WEEK: stmt.setLong(2, UTCTimeUtility.WEEK_IN_MS-1); break;
-				default: logger.warning("aggregation period length is not supported."); return;
-    		}
-    		Long maxTimestampFoundForSensor = DBConnection.exec(stmt, new SimpleSQLResult<Long>());
-    		if(maxTimestampFoundForSensor == null)
-    			maxTimestampFoundForSensor = 0l;
+    		Long maxAggrTimestampInDB = getLatestAggrTimestamp(db, sensor, aggrPeriodLength);
+    		if(maxAggrTimestampInDB == null)
+    			maxAggrTimestampInDB = 0l;
     		
     		long latestCompletePeriodEndTimestamp = new UTCTimePeriod(aggregationStartTime, aggrPeriodLength).getPreviosPeriod().getEndTimestamp();
     		long oldestPeriodStartTimestamp = new UTCTimePeriod(aggregationStartTime-ageLimitInMs, aggrPeriodLength).getStartTimestamp();
-    		
-    		if(latestCompletePeriodEndTimestamp == maxTimestampFoundForSensor){
-    			logger.fine("no new data to evaluate - aggregation is up to date");
-    			// Check if the sensor has stopped responding
-				if (maxTimestampFoundForSensor + sensor.getDeviceConfig().getDataInterval()*3 < System.currentTimeMillis()){
+
+            // Check if the sensor has stopped responding for 15 min or 3 times the data interval and alert the user
+            if (aggrPeriodLength == AggregationPeriodLength.FIVE_MINUTES) {
+                Long maxRawTimestampInDB = getLatestRawTimestamp(db, sensor);
+                long dataInterval = sensor.getDeviceConfig().getDataInterval();
+                if (dataInterval < UTCTimeUtility.FIVE_MINUTES_IN_MS)
+                    dataInterval = UTCTimeUtility.FIVE_MINUTES_IN_MS;
+                if (maxRawTimestampInDB != null &&
+                        maxRawTimestampInDB + (dataInterval * 3) < System.currentTimeMillis()) {
                     logger.fine("Sensor \"" + sensorId + "\" has stopped sending data");
-				    HalAlertManager.getInstance().addAlert(new HalAlert(AlertLevel.WARNING,
-                            "Sensor \""+sensor.getName()+"\" has stopped responding", AlertTTL.DISMISSED));
-				}
+                    HalAlertManager.getInstance().addAlert(new HalAlert(AlertLevel.WARNING,
+                            "Sensor \"" + sensor.getName() + "\" has stopped responding " +
+                                    "since <span class=\"timestamp\">"+maxRawTimestampInDB+"</span>", AlertTTL.DISMISSED));
+                }
+            }
+
+    		if(latestCompletePeriodEndTimestamp == maxAggrTimestampInDB){
+    			logger.fine("no new data to evaluate - aggregation is up to date");
     			return;
     		}else{
-    			logger.fine("evaluating period: "+ (maxTimestampFoundForSensor+1) + "=>" + latestCompletePeriodEndTimestamp + " (" + UTCTimeUtility.getDateString(maxTimestampFoundForSensor+1) + "=>" + UTCTimeUtility.getDateString(latestCompletePeriodEndTimestamp) + ") with expected sample count: " + expectedSampleCount);
+    			logger.fine("evaluating period: "+ (maxAggrTimestampInDB+1) + "=>" + latestCompletePeriodEndTimestamp + " (" + UTCTimeUtility.getDateString(maxAggrTimestampInDB+1) + "=>" + UTCTimeUtility.getDateString(latestCompletePeriodEndTimestamp) + ") with expected sample count: " + expectedSampleCount);
     		}
     		
     		stmt = db.getPreparedStatement("SELECT *, 1 AS confidence FROM sensor_data_raw"
@@ -133,7 +127,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     					+ " AND timestamp >= ? "
     				+" ORDER BY timestamp ASC");
     		stmt.setLong(1, sensorId);
-    		stmt.setLong(2, maxTimestampFoundForSensor);
+    		stmt.setLong(2, maxAggrTimestampInDB);
     		stmt.setLong(3, latestCompletePeriodEndTimestamp);
     		stmt.setLong(4, oldestPeriodStartTimestamp);
     		DBConnection.exec(stmt, new DataAggregator(sensorId, aggrPeriodLength, expectedSampleCount, aggrMethod, aggregationStartTime));
@@ -141,7 +135,32 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
             logger.log(Level.SEVERE, null, e);
 		}
     }
-    
+
+    private Long getLatestAggrTimestamp(DBConnection db, Sensor sensor, AggregationPeriodLength aggrPeriodLength) throws SQLException {
+        PreparedStatement stmt = db.getPreparedStatement("SELECT MAX(timestamp_end) FROM sensor_data_aggr"
+                + " WHERE sensor_id == ?"
+                + " AND timestamp_end-timestamp_start == ?");
+        stmt.setLong(1, sensor.getId());
+        switch(aggrPeriodLength){
+            case SECOND: stmt.setLong(2, UTCTimeUtility.SECOND_IN_MS-1); break;
+            case MINUTE: stmt.setLong(2, UTCTimeUtility.MINUTE_IN_MS-1); break;
+            case FIVE_MINUTES: stmt.setLong(2, UTCTimeUtility.FIVE_MINUTES_IN_MS-1); break;
+            case FIFTEEN_MINUTES: stmt.setLong(2, UTCTimeUtility.FIFTEEN_MINUTES_IN_MS-1); break;
+            case HOUR: stmt.setLong(2, UTCTimeUtility.HOUR_IN_MS-1); break;
+            case DAY: stmt.setLong(2, UTCTimeUtility.DAY_IN_MS-1); break;
+            case WEEK: stmt.setLong(2, UTCTimeUtility.WEEK_IN_MS-1); break;
+            default:
+                throw new IllegalArgumentException("aggregation period length is not supported.");
+        }
+        return DBConnection.exec(stmt, new SimpleSQLResult<Long>());
+    }
+    private Long getLatestRawTimestamp(DBConnection db, Sensor sensor) throws SQLException {
+        PreparedStatement stmt = db.getPreparedStatement("SELECT MAX(timestamp) FROM sensor_data_raw WHERE sensor_id == ?");
+        stmt.setLong(1, sensor.getId());
+        return DBConnection.exec(stmt, new SimpleSQLResult<Long>());
+    }
+
+
     /**
      * Internal class for aggregating data to the aggregated DB table
      */

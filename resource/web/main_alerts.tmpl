@@ -5,7 +5,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
-            <strong>Error:</strong> {{.getMessage()}}
+            <strong>{{.getMessage()}}</strong>
         </div>
     {{/.isError()}}
     {{#.isWarning()}}
@@ -14,7 +14,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
-            <strong>Warning:</strong> {{.getMessage()}}
+            <strong>{{.getMessage()}}</strong>
         </div>
     {{/.isWarning()}}
     {{#.isSuccess()}}
@@ -23,7 +23,7 @@
             <span aria-hidden="true">&times;</span>
         </button>
         <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
-        <strong>Success:</strong> {{.getMessage()}}
+        <strong>{{.getMessage()}}</strong>
     </div>
     {{/.isSuccess()}}
     {{#.isInfo()}}
@@ -32,7 +32,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-            <strong>Info:</strong> {{.getMessage()}}
+            <strong>{{.getMessage()}}</strong>
         </div>
     {{/.isInfo()}}
 {{/alerts}}

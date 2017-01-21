@@ -46,6 +46,7 @@ public class HalAlertManager implements HttpPage {
         alerts.add(alert);
     }
 
+
     public Templator generateAlerts(){
         try {
             // clone alert list and update ttl of alerts
@@ -110,23 +111,19 @@ public class HalAlertManager implements HttpPage {
         private int id;
         private AlertLevel level;
         private String msg;
-        protected int ttl;
+        private int ttl;
 
         public HalAlert(AlertLevel level, String msg, AlertTTL ttl) {
             this.id = nextId++;
             this.level = level;
             this.msg = msg;
-            switch (ttl){
-                case ONE_VIEW:  this.ttl = 1; break;
-                case DISMISSED: this.ttl = Integer.MAX_VALUE; break;
-            }
+            setTTL(ttl);
         }
 
 
         public int getId() {
             return id;
         }
-
         public AlertLevel getLevel() {
             return level;
         }
@@ -134,9 +131,18 @@ public class HalAlertManager implements HttpPage {
         public boolean isWarning(){ return level == AlertLevel.WARNING; }
         public boolean isSuccess(){ return level == AlertLevel.SUCCESS; }
         public boolean isInfo(){    return level == AlertLevel.INFO; }
-
         public String getMessage() {
             return msg;
+        }
+
+        public void setTTL(AlertTTL ttl){
+            switch (ttl){
+                case ONE_VIEW:  this.ttl = 1; break;
+                case DISMISSED: this.ttl = Integer.MAX_VALUE; break;
+            }
+        }
+        public void dissmiss(){
+            ttl = -1;
         }
 
         @Override

@@ -16,7 +16,7 @@
 
 // TEMPERATURE SENSOR
 #define TEMPERATURE_ENABLED // comment out to disable sensor
-#define TEMPERATURE_SENSOR      SensorDHT(DHT11, 10)
+#define TEMPERATURE_SENSOR      SensorDHT(DHT22, 10)
 #define TEMPERATURE_PROTOCOL    ProtocolOregon(11, DEVICE_BASE_ID + 2)
 #define TEMPERATURE_TIMER_MULTIPLIER 10
 

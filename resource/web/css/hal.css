@@ -84,6 +84,21 @@ body {
   margin-top: 0;
 }
 
+.vertical-space {
+	height: 70px;
+}
+.text-vert-middle {
+    vertical-align: middle !important;
+}
+
+.table-borderless tbody tr td {
+    border: none;
+}
+
+.drop-shadow {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12)
+}
+
 
 /*
  * Placeholder dashboard ideas
@@ -102,14 +117,6 @@ body {
 .placeholder img {
   display: inline-block;
   border-radius: 50%;
-}
-
-.panel{
-	margin-bottom: 70px;
-}
-
-.drop-shadow {
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12)
 }
 
 

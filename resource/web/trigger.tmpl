@@ -1,0 +1,161 @@
+<h1 class="page-header">
+    Triggers
+
+    <form class="pull-right">
+        <input type="hidden" name="action" value="create_flow" />
+        <button type="submit" class="btn btn-default">
+            <span class="glyphicon glyphicon-plus"></span>
+        </button>
+    </form>
+</h1>
+
+
+{{#flows}}
+<div class="col-md-12">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading"></div>
+        <div class="panel-body">
+            <table class="table table-condensed">
+                <thead class="row">
+                    <th class="col-md-5 text-center">
+                        Triggers
+                        <button class="btn btn-default btn-xs pull-right" data-toggle="modal"
+                                data-target="#triggerModal">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                    </th>
+                    <th></th>
+                    <th class="col-md-6 text-center">
+                        Actions
+                        <button class="btn btn-default btn-xs pull-right" data-toggle="modal"
+                                data-target="#actionModal">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                    </th>
+                </thead>
+
+                <tr>
+                    <td>
+                        <!-- TRIGGERS -->
+                        <table class="table table-hover table-condensed table-borderless">
+                            <tr><td>
+                                <div class="panel panel-default drop-shadow"><div class="panel-body">
+                                    <span class="glyphicon glyphicon-time"></span>
+                                    test trigger
+                                </div></div>
+                            </td></tr>
+                            <tr><td>
+                                <div class="panel panel-default drop-shadow"><div class="panel-body">
+                                    <span class="glyphicon glyphicon-time"></span>
+                                    test trigger
+                                </div></div>
+                            </td></tr>
+                            <tr><td>
+                                <div class="panel panel-default drop-shadow"><div class="panel-body">
+                                    <span class="glyphicon glyphicon-time"></span>
+                                    test trigger
+                                </div></div>
+                            </td></tr>
+                        </table>
+                        <!-- /TRIGGERS -->
+                    </td>
+                    <td class="text-center text-vert-middle">
+                        <span class="glyphicon glyphicon-arrow-right"></span><br />
+                        <span class="glyphicon glyphicon-arrow-right"></span>
+                    </td>
+                    <td>
+                        <!-- ACTIONS -->
+                        <table class="table table-hover table-condensed table-borderless">
+                            <tr><td>
+                                <div class="panel panel-default drop-shadow"><div class="panel-body">
+                                    <span class="glyphicon glyphicon-play-circle"></span>
+                                    test action
+                                </div></div>
+                            </td></tr>
+                            <tr><td>
+                                <div class="panel panel-default drop-shadow"><div class="panel-body">
+                                    <span class="glyphicon glyphicon-play-circle"></span>
+                                    test action
+                                </div></div>
+                            </td></tr>
+                            <tr><td>
+                                <div class="panel panel-default drop-shadow"><div class="panel-body">
+                                    <span class="glyphicon glyphicon-play-circle"></span>
+                                    test action
+                                </div></div>
+                            </td></tr>
+                        </table>
+                        <!-- /ACTIONS -->
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{{/flows}}
+
+
+
+
+<!-------------------------------- MODALS -------------------------------->
+
+<div class="modal fade" id="triggerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">Trigger</h4>
+            </div>
+            <form method="POST">
+                <div class="modal-body">
+                    <input type="hidden" id="action" name="action" value="">
+                    <input type="hidden" id="id" name="id">
+                    <div class="form-group">
+                        <label class="control-label">Type:</label>
+                        <select class="form-control" name="type">
+                            {{#availableTriggers}}
+                            <option>{{.getName()}}</option>
+                            {{/availableTriggers}}
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="actionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">Action</h4>
+            </div>
+            <form method="POST">
+                <div class="modal-body">
+                    <input type="hidden" id="action" name="action" value="">
+                    <input type="hidden" id="id" name="id">
+                    <div class="form-group">
+                        <label class="control-label">Type:</label>
+                        <select class="form-control" name="type">
+                            {{#availableActions}}
+                            <option>{{.getName()}}</option>
+                            {{/availableActions}}
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -6,39 +6,29 @@ import se.hal.intf.HalHttpPage;
 import se.hal.page.HalAlertManager.AlertLevel;
 import se.hal.page.HalAlertManager.AlertTTL;
 import se.hal.page.HalAlertManager.HalAlert;
+import se.hal.struct.ClassConfigurationData;
 import se.hal.struct.Event;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
-import zutil.ui.Configurator;
-import zutil.ui.Configurator.ConfigurationParam;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class EventConfigHttpPage extends HalHttpPage {
     private static final String TEMPLATE = "resource/web/event_config.tmpl";
 
-    private class EventDataParams{
-        public Class clazz;
-        public ConfigurationParam[] params;
-    }
-    private EventDataParams[] eventConfigurations;
+    private ArrayList<ClassConfigurationData> eventConfigurations;
 
 
     public EventConfigHttpPage() {
         super("event_config");
         super.getRootNav().createSubNav("Events").createSubNav(this.getId(), "Configuration").setWeight(100);
 
-        eventConfigurations = new EventDataParams[
-                ControllerManager.getInstance().getAvailableEvents().size()];
-        int i=0;
-        for(Class c : ControllerManager.getInstance().getAvailableEvents()){
-            eventConfigurations[i] = new EventDataParams();
-            eventConfigurations[i].clazz = c;
-            eventConfigurations[i].params = Configurator.getConfiguration(c);
-            ++i;
-        }
+        eventConfigurations = new ArrayList<>();
+        for(Class c : ControllerManager.getInstance().getAvailableEvents())
+            eventConfigurations.add(new ClassConfigurationData(c));
     }
 
     @Override

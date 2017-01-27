@@ -6,39 +6,29 @@ import se.hal.intf.HalHttpPage;
 import se.hal.page.HalAlertManager.AlertLevel;
 import se.hal.page.HalAlertManager.AlertTTL;
 import se.hal.page.HalAlertManager.HalAlert;
+import se.hal.struct.ClassConfigurationData;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
-import zutil.ui.Configurator;
-import zutil.ui.Configurator.ConfigurationParam;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class SensorConfigHttpPage extends HalHttpPage {
     private static final String TEMPLATE = "resource/web/sensor_config.tmpl";
 
-    private class SensorDataParams{
-        public Class clazz;
-        public ConfigurationParam[] params;
-    }
-    private SensorDataParams[] sensorConfigurations;
+    private ArrayList<ClassConfigurationData> sensorConfigurations;
 
 
     public SensorConfigHttpPage() {
         super("sensor_config");
         super.getRootNav().createSubNav("Sensors").createSubNav(this.getId(), "Configuration").setWeight(100);
 
-        sensorConfigurations = new SensorDataParams[
-                ControllerManager.getInstance().getAvailableSensors().size()];
-        int i=0;
-        for(Class c : ControllerManager.getInstance().getAvailableSensors()){
-            sensorConfigurations[i] = new SensorDataParams();
-            sensorConfigurations[i].clazz = c;
-            sensorConfigurations[i].params = Configurator.getConfiguration(c);
-            ++i;
-        }
+        sensorConfigurations = new ArrayList<>();
+        for(Class c : ControllerManager.getInstance().getAvailableSensors())
+            sensorConfigurations.add(new ClassConfigurationData(c));
     }
 
     @Override

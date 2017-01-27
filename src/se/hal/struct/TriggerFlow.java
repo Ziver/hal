@@ -26,10 +26,8 @@ import java.util.logging.Logger;
 public class TriggerFlow extends DBBean {
     private static final Logger logger = LogUtil.getLogger();
 
-    private String triggers; // only used for flat DB storage
-    private transient ArrayList<HalTrigger> triggerList = new ArrayList<>();
-    private String actions; // only used for flat DB storage
-    private transient ArrayList<HalAction> actionList = new ArrayList<>();
+    private transient List<HalTrigger> triggerList = new ArrayList<>();
+    private transient List<HalAction> actionList = new ArrayList<>();
 
 
 
@@ -37,50 +35,37 @@ public class TriggerFlow extends DBBean {
         PreparedStatement stmt = db.getPreparedStatement("SELECT * FROM trigger_flow");
         return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(TriggerFlow.class, db));
     }
-
-
-    @Override
-    public void save(DBConnection db) throws SQLException {
-        DataNode root = new DataNode(DataNode.DataType.List);
-        for (HalTrigger t : triggerList)
-            root.add(t.getId());
-        triggers = JSONWriter.toString(root);
-        for (HalAction a : actionList)
-            root.add(a.getId());
-        actions = JSONWriter.toString(root);
-
-        super.save(db);
+    public static TriggerFlow getTriggerFlow(DBConnection db, int id) throws SQLException {
+        return DBBean.load(db, TriggerFlow.class, id);
     }
+
+
 
     @Override
     protected void postUpdateAction() {
         DBConnection db = HalContext.getDB();
 
         triggerList.clear();
-        for (DataNode tId : JSONParser.read(triggers))
-            try {
-                triggerList.add(HalTrigger.getTrigger(db, tId.getInt()));
-            } catch (SQLException e) {
-                logger.log(Level.SEVERE, null, e);
-            }
+        triggerList = HalTrigger.getTriggers(db, this);
 
         actionList.clear();
-        for (DataNode aId : JSONParser.read(actions))
-            try {
-                actionList.add(HalAction.getAction(db, aId.getInt()));
-            } catch (SQLException e) {
-                logger.log(Level.SEVERE, null, e);
-            }
+        actionList = HalAction.getActions(db, this);
     }
 
 
     public void addTrigger(HalTrigger trigger) {
         triggerList.add(trigger);
     }
+    public void removeTrigger(HalTrigger trigger) {
+        triggerList.remove(trigger);
+    }
+
     public void addAction(HalAction action) {
         actionList.add(action);
     }
-
+    public void removeAction(HalAction action) {
+        actionList.remove(action);
+    }
 
     /**
      * @return true if any one of the triggerList evaluate to true,
@@ -112,4 +97,6 @@ public class TriggerFlow extends DBBean {
             trigger.reset();
         }
     }
+
+
 }

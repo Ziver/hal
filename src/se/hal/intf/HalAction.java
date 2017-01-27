@@ -1,10 +1,12 @@
 package se.hal.intf;
 
+import se.hal.struct.TriggerFlow;
 import se.hal.struct.dso.ActionDSO;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Defines a action that will be executed
@@ -17,6 +19,10 @@ public abstract class HalAction{
         ActionDSO dso = DBBean.load(db, ActionDSO.class, id);
         dso.getObject().dso = dso;
         return dso.getObject();
+    }
+    public static List<HalAction> getActions(DBConnection db, TriggerFlow flow) {
+        // TODO:
+        return null;
     }
 
 
@@ -31,6 +37,9 @@ public abstract class HalAction{
         dso.save(db);
     }
 
+    public void delete(DBConnection db) throws SQLException {
+        dso.delete(db);
+    }
 
 
     /**

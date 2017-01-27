@@ -1,10 +1,12 @@
 package se.hal.intf;
 
+import se.hal.struct.TriggerFlow;
 import se.hal.struct.dso.TriggerDSO;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * A class that declares a trigger/condition that
@@ -19,6 +21,9 @@ public abstract class HalTrigger{
         dso.getObject().dso = dso;
         return dso.getObject();
     }
+    public static List<HalTrigger> getTriggers(DBConnection db, TriggerFlow flow) {
+        return null;
+    }
 
 
     public Long getId(){
@@ -32,6 +37,11 @@ public abstract class HalTrigger{
         dso.save(db);
     }
 
+    public void delete(DBConnection db) throws SQLException {
+        dso.delete(db);
+    }
+
+
 
     /**
      * Evaluates if this trigger has passed. If the trigger is
@@ -44,4 +54,5 @@ public abstract class HalTrigger{
      * Reset the evaluation to false.
      */
     public abstract void reset();
+
 }

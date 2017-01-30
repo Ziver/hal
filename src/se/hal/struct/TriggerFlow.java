@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 public class TriggerFlow extends DBBean {
     private static final Logger logger = LogUtil.getLogger();
 
-    private transient List<HalTrigger> triggerList = new ArrayList<>();
-    private transient List<HalAction> actionList = new ArrayList<>();
+    private transient List<Trigger> triggerList = new ArrayList<>();
+    private transient List<Action> actionList = new ArrayList<>();
 
 
 
@@ -46,24 +46,24 @@ public class TriggerFlow extends DBBean {
         DBConnection db = HalContext.getDB();
 
         triggerList.clear();
-        triggerList = HalTrigger.getTriggers(db, this);
+        triggerList = Trigger.getTriggers(db, this);
 
         actionList.clear();
-        actionList = HalAction.getActions(db, this);
+        actionList = Action.getActions(db, this);
     }
 
 
-    public void addTrigger(HalTrigger trigger) {
+    public void addTrigger(Trigger trigger) {
         triggerList.add(trigger);
     }
-    public void removeTrigger(HalTrigger trigger) {
+    public void removeTrigger(Trigger trigger) {
         triggerList.remove(trigger);
     }
 
-    public void addAction(HalAction action) {
+    public void addAction(Action action) {
         actionList.add(action);
     }
-    public void removeAction(HalAction action) {
+    public void removeAction(Action action) {
         actionList.remove(action);
     }
 
@@ -73,7 +73,7 @@ public class TriggerFlow extends DBBean {
      *         Note: this method will not execute any actionList
      */
     public boolean evaluate(){
-        for(HalTrigger trigger : triggerList){
+        for(Trigger trigger : triggerList){
             if (trigger.evaluate())
                 return true;
         }
@@ -84,7 +84,7 @@ public class TriggerFlow extends DBBean {
      * Executes the associated actionList in this flow
      */
     public void execute(){
-        for(HalAction action : actionList){
+        for(Action action : actionList){
             action.execute();
         }
     }
@@ -93,7 +93,7 @@ public class TriggerFlow extends DBBean {
      * Resets all trigger evaluations
      */
     public void reset() {
-        for(HalTrigger trigger : triggerList){
+        for(Trigger trigger : triggerList){
             trigger.reset();
         }
     }

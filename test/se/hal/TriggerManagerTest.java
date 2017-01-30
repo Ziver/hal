@@ -3,6 +3,8 @@ package se.hal;
 import org.junit.Test;
 import se.hal.intf.HalAction;
 import se.hal.intf.HalTrigger;
+import se.hal.struct.Action;
+import se.hal.struct.Trigger;
 import se.hal.struct.TriggerFlow;
 
 import java.util.Collections;
@@ -43,9 +45,9 @@ public class TriggerManagerTest {
         registerAvailableTrigger();
 
         TriggerFlow flow = new TriggerFlow();
-        flow.addTrigger(new TestTrigger(true));
+        flow.addTrigger(new Trigger(new TestTrigger(true)));
         TestAction action = new TestAction();
-        flow.addAction(action);
+        flow.addAction(new Action(action));
         manager.register(flow);
         manager.evaluateAndExecute();
         assertEquals(1, action.nrOfExecutions);
@@ -58,9 +60,9 @@ public class TriggerManagerTest {
 
         TriggerFlow flow = new TriggerFlow();
         TestTrigger trigger = new TestTrigger(true);
-        flow.addTrigger(trigger);
+        flow.addTrigger(new Trigger(trigger));
         TestAction action = new TestAction();
-        flow.addAction(action);
+        flow.addAction(new Action(action));
         manager.register(flow);
 
         manager.evaluateAndExecute();
@@ -75,7 +77,7 @@ public class TriggerManagerTest {
 
     /////////////////////////////////////////////////////////////////////////////
 
-    private static class TestTrigger extends HalTrigger {
+    private static class TestTrigger implements HalTrigger {
         boolean evaluation;
         TestTrigger(boolean b){ evaluation = b; }
         @Override
@@ -86,7 +88,7 @@ public class TriggerManagerTest {
     }
 
 
-    private class TestAction extends HalAction {
+    private class TestAction implements HalAction {
         int nrOfExecutions;
         @Override
         public void execute() { nrOfExecutions++; }

@@ -5,7 +5,9 @@ import se.hal.TriggerManager;
 import se.hal.intf.HalAction;
 import se.hal.intf.HalHttpPage;
 import se.hal.intf.HalTrigger;
+import se.hal.struct.Action;
 import se.hal.struct.ClassConfigurationData;
+import se.hal.struct.Trigger;
 import se.hal.struct.TriggerFlow;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -46,12 +48,12 @@ public class TriggerHttpPage extends HalHttpPage {
             TriggerFlow flow = null;
             if (request.containsKey("flow_id"))
                 flow = TriggerFlow.getTriggerFlow(db, Integer.parseInt(request.get("flow_id")));
-            HalTrigger trigger = null;
+            Trigger trigger = null;
             if (request.containsKey("trigger_id"))
-                trigger = HalTrigger.getTrigger(db, Integer.parseInt(request.get("trigger_id")));
-            HalAction action = null;
+                trigger = Trigger.getTrigger(db, Integer.parseInt(request.get("trigger_id")));
+            Action action = null;
             if (request.containsKey("action_id"))
-                action = HalAction.getAction(db, Integer.parseInt(request.get("action_id")));
+                action = Action.getAction(db, Integer.parseInt(request.get("action_id")));
 
 
             switch(request.get("action")) {
@@ -94,8 +96,8 @@ public class TriggerHttpPage extends HalHttpPage {
 
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
-        tmpl.set("triggerConfigurations", triggerConfigurators);
-        tmpl.set("actionConfigurations", actionConfigurators);
+        tmpl.set("triggerConf", triggerConfigurators);
+        tmpl.set("actionConf", actionConfigurators);
         tmpl.set("availableTriggers", TriggerManager.getInstance().getAvailableTriggers());
         tmpl.set("availableActions", TriggerManager.getInstance().getAvailableActions());
         tmpl.set("flows", TriggerFlow.getTriggerFlows(db));

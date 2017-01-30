@@ -98,6 +98,53 @@
 
 
 <!-------------------------------- MODALS -------------------------------->
+<script>
+    $(function(){
+        initDynamicModalForm("trigger");
+        initDynamicModalForm("action");
+    });
+
+
+    var dynamicConf = {};
+
+    function initDynamicModalForm(name){
+        // read in all configurations into global variable (to skip naming issues)
+        dynamicConf[name] = [];
+        $("#"+name+"-data-conf-template div").each(function(){
+            dynamicConf[name][$(this).attr("id")] = $(this).html();
+        });
+        // Update dynamic inputs
+        $("#"+name+"Modal select[name=type]").change(function(){
+            $("#"+name+"Modal #"+name+"-data-conf").html(dynamicConf[name][$(this).val()]);
+        });
+        // click event
+        $("#"+name+"Modal").on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            modal.find("input[type=text]").val(""); // Reset all inputs
+            if(button.data("id") >= 0){ // edit
+                modal.find("input[name=action]").val("modify_"+name);
+            }
+            else{ // create
+                modal.find("input[name=action]").val("create_"+name);
+                modal.find("input[name=id]").val(-1);
+            }
+            // set dynamic form data
+            modal.find("select[name=type]").val(button.data("type"));
+            modal.find("select[name=type]").change(); // Update dynamic inputs
+            $.each(button.attr(), function(fieldName, value) {
+                if(fieldName.startsWith("data-")) {
+                    fieldName = fieldName.substring(5);
+                    console.log(fieldName, value);
+                    // case insensitive search
+                    modal.find("input").filter(function() {
+                           return this.name.toLowerCase() == fieldName;
+                    }).val(value);
+                }
+            });
+        });
+    }
+</script>
 
 <div class="modal fade" id="triggerModal" tabindex="-1">
     <div class="modal-dialog">
@@ -119,6 +166,10 @@
                         </select>
                     </div>
 
+                    <hr>
+                    <div id="trigger-data-conf">
+                        <!-- Dynamic form -->
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="reset" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -150,6 +201,10 @@
                         </select>
                     </div>
 
+                    <hr>
+                    <div id="action-data-conf">
+                        <!-- Dynamic form -->
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="reset" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -158,4 +213,45 @@
             </form>
         </div>
     </div>
+</div>
+
+
+<div id="trigger-data-conf-template" class="hidden">
+    {{#triggerConf}}
+    <div id="{{.clazz.getName()}}">
+        {{#.params}}
+        <div class="form-group">
+            <label class="control-label">{{.getNiceName()}}:</label>
+            {{#.isTypeString()}}<input type="text" class="form-control" name="{{.getName()}}">{{/#.isTypeString()}}
+            {{#.isTypeInt()}}<input type="number" class="form-control" name="{{.getName()}}">{{/#.isTypeInt()}}
+            {{#.isTypeBoolean()}}<input type="checkbox" name="{{.getName()}}">{{/#.isTypeBoolean()}}
+            {{#.isTypeEnum()}}
+            <select class="form-control" name="{{.getName()}}">
+                {{#.getPossibleValues()}}<option>{{.}}</option>{{/.getPossibleValues()}}
+            </select>
+            {{/#.isTypeEnum()}}
+        </div>
+        {{/.params}}
+    </div>
+    {{/triggerConf}}
+</div>
+
+<div id="sensor-data-conf-template" class="hidden">
+    {{#actionConf}}
+    <div id="{{.clazz.getName()}}">
+        {{#.params}}
+        <div class="form-group">
+            <label class="control-label">{{.getNiceName()}}:</label>
+            {{#.isTypeString()}}<input type="text" class="form-control" name="{{.getName()}}">{{/#.isTypeString()}}
+            {{#.isTypeInt()}}<input type="number" class="form-control" name="{{.getName()}}">{{/#.isTypeInt()}}
+            {{#.isTypeBoolean()}}<input type="checkbox" name="{{.getName()}}">{{/#.isTypeBoolean()}}
+            {{#.isTypeEnum()}}
+            <select class="form-control" name="{{.getName()}}">
+                {{#.getPossibleValues()}}<option>{{.}}</option>{{/.getPossibleValues()}}
+            </select>
+            {{/#.isTypeEnum()}}
+        </div>
+        {{/.params}}
+    </div>
+    {{/actionConf}}
 </div>

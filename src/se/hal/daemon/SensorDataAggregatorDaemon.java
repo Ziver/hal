@@ -108,8 +108,9 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
                         maxRawTimestampInDB + (dataInterval * 3) < System.currentTimeMillis()) {
                     logger.fine("Sensor \"" + sensorId + "\" has stopped sending data");
                     HalAlertManager.getInstance().addAlert(new HalAlert(AlertLevel.WARNING,
-                            "Sensor \"" + sensor.getName() + "\" has stopped responding " +
-                                    "since <span class=\"timestamp\">"+maxRawTimestampInDB+"</span>", AlertTTL.DISMISSED));
+                            "Sensor \"" + sensor.getName() + "\" has stopped responding",
+							"since <span class=\"timestamp\">"+maxRawTimestampInDB+"</span>",
+							AlertTTL.DISMISSED));
                 }
             }
 

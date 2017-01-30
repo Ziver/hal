@@ -110,12 +110,18 @@ public class HalAlertManager implements HttpPage {
 
         private int id;
         private AlertLevel level;
+        private String title;
         private String msg;
         private int ttl;
 
-        public HalAlert(AlertLevel level, String msg, AlertTTL ttl) {
+
+        public HalAlert(AlertLevel level, String title, AlertTTL ttl) {
+            this(level, title, null, ttl);
+        }
+        public HalAlert(AlertLevel level, String title, String msg, AlertTTL ttl) {
             this.id = nextId++;
             this.level = level;
+            this.title = title;
             this.msg = msg;
             setTTL(ttl);
         }
@@ -131,6 +137,9 @@ public class HalAlertManager implements HttpPage {
         public boolean isWarning(){ return level == AlertLevel.WARNING; }
         public boolean isSuccess(){ return level == AlertLevel.SUCCESS; }
         public boolean isInfo(){    return level == AlertLevel.INFO; }
+        public String getTitle() {
+            return title;
+        }
         public String getMessage() {
             return msg;
         }
@@ -149,7 +158,7 @@ public class HalAlertManager implements HttpPage {
         public boolean equals(Object obj){
             if (obj instanceof HalAlert)
                 return level == ((HalAlert) obj).level &&
-                        msg.equals(((HalAlert) obj).msg);
+                        title.equals(((HalAlert) obj).title);
             return false;
         }
     }

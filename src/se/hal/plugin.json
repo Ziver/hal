@@ -16,6 +16,10 @@
 		{"se.hal.intf.HalHttpPage": "se.hal.page.EventOverviewHttpPage"},
 		{"se.hal.intf.HalHttpPage": "se.hal.page.EventConfigHttpPage"},
 		{"se.hal.intf.HalHttpPage": "se.hal.page.TriggerHttpPage"},
-		{"se.hal.intf.HalHttpPage": "se.hal.page.UserConfigHttpPage"}
+		{"se.hal.intf.HalHttpPage": "se.hal.page.UserConfigHttpPage"},
+
+
+		{"se.hal.intf.HalTrigger": "se.hal.trigger.DateTimeTrigger"},
+		{"se.hal.intf.HalTrigger": "se.hal.trigger.TimerTrigger"}
 	]
 }

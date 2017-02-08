@@ -20,6 +20,7 @@
 
 
 		{"se.hal.intf.HalTrigger": "se.hal.trigger.DateTimeTrigger"},
-		{"se.hal.intf.HalTrigger": "se.hal.trigger.TimerTrigger"}
+		{"se.hal.intf.HalTrigger": "se.hal.trigger.TimerTrigger"},
+		{"se.hal.intf.HalAction": "se.hal.trigger.action.SendEventAction"}
 	]
 }

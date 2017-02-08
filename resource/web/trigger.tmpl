@@ -20,7 +20,7 @@
                     <th class="col-md-5 text-center">
                         Triggers
                         <button class="btn btn-default btn-xs pull-right" data-toggle="modal"
-                                data-target="#triggerModal">
+                                data-target="#triggerModal" data-action="create_trigger" data-flow-id="{{.getId()}}">
                             <span class="glyphicon glyphicon-plus"></span>
                         </button>
                     </th>
@@ -28,7 +28,7 @@
                     <th class="col-md-6 text-center">
                         Actions
                         <button class="btn btn-default btn-xs pull-right" data-toggle="modal"
-                                data-target="#actionModal">
+                                data-target="#actionModal" data-action="create_action" data-flow-id="{{.getId()}}">
                             <span class="glyphicon glyphicon-plus"></span>
                         </button>
                     </th>
@@ -38,24 +38,14 @@
                     <td>
                         <!-- TRIGGERS -->
                         <table class="table table-hover table-condensed table-borderless">
+                            {{#.getTriggers()}}
                             <tr><td>
                                 <div class="panel panel-default drop-shadow"><div class="panel-body">
                                     <span class="glyphicon glyphicon-time"></span>
-                                    test trigger
+                                    {{.}}
                                 </div></div>
                             </td></tr>
-                            <tr><td>
-                                <div class="panel panel-default drop-shadow"><div class="panel-body">
-                                    <span class="glyphicon glyphicon-time"></span>
-                                    test trigger
-                                </div></div>
-                            </td></tr>
-                            <tr><td>
-                                <div class="panel panel-default drop-shadow"><div class="panel-body">
-                                    <span class="glyphicon glyphicon-time"></span>
-                                    test trigger
-                                </div></div>
-                            </td></tr>
+                            {{/.getTriggers()}}
                         </table>
                         <!-- /TRIGGERS -->
                     </td>
@@ -66,24 +56,14 @@
                     <td>
                         <!-- ACTIONS -->
                         <table class="table table-hover table-condensed table-borderless">
+                            {{#.getActions()}}
                             <tr><td>
                                 <div class="panel panel-default drop-shadow"><div class="panel-body">
                                     <span class="glyphicon glyphicon-play-circle"></span>
-                                    test action
+                                    {{.}}
                                 </div></div>
                             </td></tr>
-                            <tr><td>
-                                <div class="panel panel-default drop-shadow"><div class="panel-body">
-                                    <span class="glyphicon glyphicon-play-circle"></span>
-                                    test action
-                                </div></div>
-                            </td></tr>
-                            <tr><td>
-                                <div class="panel panel-default drop-shadow"><div class="panel-body">
-                                    <span class="glyphicon glyphicon-play-circle"></span>
-                                    test action
-                                </div></div>
-                            </td></tr>
+                            {{/.getActions()}}
                         </table>
                         <!-- /ACTIONS -->
                     </td>
@@ -121,14 +101,8 @@
         $("#"+name+"Modal").on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var modal = $(this);
-            modal.find("input[type=text]").val(""); // Reset all inputs
-            if(button.data("id") >= 0){ // edit
-                modal.find("input[name=action]").val("modify_"+name);
-            }
-            else{ // create
-                modal.find("input[name=action]").val("create_"+name);
-                modal.find("input[name=id]").val(-1);
-            }
+            modal.find("input").val(""); // Reset all inputs
+
             // set dynamic form data
             modal.find("select[name=type]").val(button.data("type"));
             modal.find("select[name=type]").change(); // Update dynamic inputs
@@ -155,8 +129,9 @@
             </div>
             <form method="POST">
                 <div class="modal-body">
-                    <input type="hidden" id="action" name="action" value="">
-                    <input type="hidden" id="id" name="id">
+                    <input type="hidden" name="action" value="">
+                    <input type="hidden" name="flow-id">
+                    <input type="hidden" name="trigger-id">
                     <div class="form-group">
                         <label class="control-label">Type:</label>
                         <select class="form-control" name="type">
@@ -190,8 +165,9 @@
             </div>
             <form method="POST">
                 <div class="modal-body">
-                    <input type="hidden" id="action" name="action" value="">
-                    <input type="hidden" id="id" name="id">
+                    <input type="hidden" name="action" value="">
+                    <input type="hidden" name="flow_id">
+                    <input type="hidden" name="action_id">
                     <div class="form-group">
                         <label class="control-label">Type:</label>
                         <select class="form-control" name="type">
@@ -236,7 +212,7 @@
     {{/triggerConf}}
 </div>
 
-<div id="sensor-data-conf-template" class="hidden">
+<div id="action-data-conf-template" class="hidden">
     {{#actionConf}}
     <div id="{{.clazz.getName()}}">
         {{#.params}}

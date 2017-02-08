@@ -21,6 +21,6 @@ public class TimerTrigger implements HalTrigger {
 
     @Override
     public void reset() {
-        timer = new Timer(timerTime * 1000);
+        timer = new Timer(timerTime * 1000).start();
     }
 }

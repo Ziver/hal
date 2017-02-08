@@ -46,14 +46,14 @@ public class TriggerHttpPage extends HalHttpPage {
 
         if(request.containsKey("action")){
             TriggerFlow flow = null;
-            if (request.containsKey("flow_id"))
-                flow = TriggerFlow.getTriggerFlow(db, Integer.parseInt(request.get("flow_id")));
+            if (request.containsKey("flow-id") && !request.get("flow-id").isEmpty())
+                flow = TriggerFlow.getTriggerFlow(db, Integer.parseInt(request.get("flow-id")));
             Trigger trigger = null;
-            if (request.containsKey("trigger_id"))
-                trigger = Trigger.getTrigger(db, Integer.parseInt(request.get("trigger_id")));
+            if (request.containsKey("trigger-id") && !request.get("trigger-id").isEmpty())
+                trigger = Trigger.getTrigger(db, Integer.parseInt(request.get("trigger-id")));
             Action action = null;
-            if (request.containsKey("action_id"))
-                action = Action.getAction(db, Integer.parseInt(request.get("action_id")));
+            if (request.containsKey("action-id") && !request.get("action-id").isEmpty())
+                action = Action.getAction(db, Integer.parseInt(request.get("action-id")));
 
 
             switch(request.get("action")) {
@@ -68,10 +68,17 @@ public class TriggerHttpPage extends HalHttpPage {
 
                 // Triggers
                 case "create_trigger":
-                    //TODO: trigger = new HalTrigger();
+                    if (flow == null){
+                        HalAlertManager.getInstance().addAlert(new HalAlertManager.HalAlert(
+                                HalAlertManager.AlertLevel.ERROR, "Invalid flow id", HalAlertManager.AlertTTL.ONE_VIEW));
+                        break;
+                    }
+                    trigger = new Trigger();
                     flow.addTrigger(trigger);
+                    /* FALLTHROUGH */
                 case "modify_trigger":
-                    // TODO: save attrib
+                    trigger.setObjectClass(request.get("type"));
+                    trigger.getObjectConfigurator().setValues(request).applyConfiguration();
                     trigger.save(db);
                     break;
                 case "remove_trigger":
@@ -81,10 +88,17 @@ public class TriggerHttpPage extends HalHttpPage {
 
                 // Triggers
                 case "create_action":
-                    //TODO: action = new HalAction();
+                    if (flow == null){
+                        HalAlertManager.getInstance().addAlert(new HalAlertManager.HalAlert(
+                                HalAlertManager.AlertLevel.ERROR, "Invalid flow id", HalAlertManager.AlertTTL.ONE_VIEW));
+                        break;
+                    }
+                    action = new Action();
                     flow.addAction(action);
+                    /* FALLTHROUGH */
                 case "modify_action":
-                    // TODO: save attrib
+                    action.setObjectClass(request.get("type"));
+                    action.getObjectConfigurator().setValues(request).applyConfiguration();
                     action.save(db);
                     break;
                 case "remove_action":

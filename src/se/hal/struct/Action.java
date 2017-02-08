@@ -7,6 +7,7 @@ import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanObjectDSO;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public class Action extends DBBeanObjectDSO<HalAction>{
     }
     public static List<Action> getActions(DBConnection db, TriggerFlow flow) {
         // TODO:
-        return null;
+        return new ArrayList<>();
     }
 
 

@@ -6,6 +6,7 @@ import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanObjectDSO;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public class Trigger extends DBBeanObjectDSO<HalTrigger>{
     }
     public static List<Trigger> getTriggers(DBConnection db, TriggerFlow flow) {
         // Todo:
-        return null;
+        return new ArrayList<>();
     }
 
 

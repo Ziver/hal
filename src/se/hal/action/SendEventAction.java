@@ -1,4 +1,4 @@
-package se.hal.trigger.action;
+package se.hal.action;
 
 import se.hal.ControllerManager;
 import se.hal.HalContext;
@@ -9,7 +9,6 @@ import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.ui.Configurator;
 
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

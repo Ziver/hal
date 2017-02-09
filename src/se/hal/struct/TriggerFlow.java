@@ -1,21 +1,14 @@
 package se.hal.struct;
 
-import se.hal.HalContext;
-import se.hal.intf.HalAction;
-import se.hal.intf.HalTrigger;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
 import zutil.log.LogUtil;
-import zutil.parser.DataNode;
-import zutil.parser.json.JSONParser;
-import zutil.parser.json.JSONWriter;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -26,8 +19,10 @@ import java.util.logging.Logger;
 public class TriggerFlow extends DBBean {
     private static final Logger logger = LogUtil.getLogger();
 
-    private transient List<Trigger> triggerList = new ArrayList<>();
-    private transient List<Action> actionList = new ArrayList<>();
+    @DBLinkTable(beanClass=Trigger.class, table="trigger", idColumn = "flow_id")
+    private List<Trigger> triggerList = new ArrayList<>();
+    @DBLinkTable(beanClass=Action.class, table="action", idColumn = "flow_id")
+    private List<Action> actionList = new ArrayList<>();
 
 
 
@@ -40,16 +35,13 @@ public class TriggerFlow extends DBBean {
     }
 
 
-
     @Override
-    protected void postUpdateAction() {
-        DBConnection db = HalContext.getDB();
-
-        triggerList.clear();
-        triggerList = Trigger.getTriggers(db, this);
-
-        actionList.clear();
-        actionList = Action.getActions(db, this);
+    public void delete(DBConnection db) throws SQLException {
+        for(Trigger trigger : triggerList)
+            trigger.delete(db);
+        for(Action action : actionList)
+            action.delete(db);
+        super.delete(db);
     }
 
 

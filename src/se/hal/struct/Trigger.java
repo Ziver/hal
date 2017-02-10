@@ -23,11 +23,7 @@ public class Trigger extends DBBeanObjectDSO<HalTrigger>{
     public static Trigger getTrigger(DBConnection db, long id) throws SQLException {
         return DBBean.load(db, Trigger.class, id);
     }
-    public static List<Trigger> getTriggers(DBConnection db, TriggerFlow flow) throws SQLException {
-        PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM trigger WHERE flow_id == ?" );
-        stmt.setLong(1, flow.getId());
-        return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Trigger.class, db) );
-    }
+
 
 
     public Trigger() { }

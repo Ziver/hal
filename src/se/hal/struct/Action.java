@@ -22,11 +22,6 @@ public class Action extends DBBeanObjectDSO<HalAction>{
     public static Action getAction(DBConnection db, long id) throws SQLException {
         return DBBean.load(db, Action.class, id);
     }
-    public static List<Action> getActions(DBConnection db, TriggerFlow flow) throws SQLException {
-        PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM action WHERE flow_id == ?" );
-        stmt.setLong(1, flow.getId());
-        return DBConnection.exec(stmt, DBBeanSQLResultHandler.createList(Action.class, db) );
-    }
 
 
     public Action() { }

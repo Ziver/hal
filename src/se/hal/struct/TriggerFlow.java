@@ -48,12 +48,18 @@ public class TriggerFlow extends DBBean {
     public void addTrigger(Trigger trigger) {
         triggerList.add(trigger);
     }
+    public List<Trigger> getTriggers() {
+        return triggerList;
+    }
     public void removeTrigger(Trigger trigger) {
         triggerList.remove(trigger);
     }
 
     public void addAction(Action action) {
         actionList.add(action);
+    }
+    public List<Action> getActions() {
+        return actionList;
     }
     public void removeAction(Action action) {
         actionList.remove(action);

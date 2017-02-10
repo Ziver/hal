@@ -40,10 +40,35 @@
                         <table class="table table-hover table-condensed table-borderless">
                             {{#.getTriggers()}}
                             <tr><td>
-                                <div class="panel panel-default drop-shadow"><div class="panel-body">
-                                    <span class="glyphicon glyphicon-time"></span>
-                                    {{.}}
-                                </div></div>
+                                <div class="panel panel-default drop-shadow {{#.evaluate()}}panel-success{{/.evaluate()}}">
+                                    <div class="panel-heading" style="padding: 2px 15px;">
+                                        <small>{{.getClass().getName()}}</small>
+                                        <form method="POST">
+                                            <input type="hidden" name="action" value="remove_trigger">
+                                            <input type="hidden" name="id" value="{{.getId()}}">
+
+                                            <div class="btn-toolbar pull-right">
+                                                <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
+                                                        data-target="#triggerModal"
+                                                        data-action="modify_trigger"
+                                                        data-trigger-id="{{.getId()}}"
+                                                        data-type="{{.getObjectClass()}}"
+                                                        {{#.getObjectConfigurator().getConfiguration()}}
+                                                        data-{{.getName()}}="{{.getString()}}"
+                                                        {{/.getObjectConfigurator().getConfiguration()}} >
+                                                    <span class="glyphicon glyphicon-pencil"></span>
+                                                </button>
+                                                <button type="submit" class="btn btn-danger btn-xs">
+                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="panel-body">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                        {{.}}
+                                    </div>
+                                </div>
                             </td></tr>
                             {{/.getTriggers()}}
                         </table>
@@ -58,10 +83,35 @@
                         <table class="table table-hover table-condensed table-borderless">
                             {{#.getActions()}}
                             <tr><td>
-                                <div class="panel panel-default drop-shadow"><div class="panel-body">
-                                    <span class="glyphicon glyphicon-play-circle"></span>
-                                    {{.}}
-                                </div></div>
+                                <div class="panel panel-default drop-shadow">
+                                    <div class="panel-heading" style="padding: 2px 15px;">
+                                        <small>{{.getClass().getName()}}</small>
+                                        <form method="POST">
+                                            <input type="hidden" name="action" value="remove_action">
+                                            <input type="hidden" name="id" value="{{.getId()}}">
+
+                                            <div class="btn-toolbar pull-right">
+                                                <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
+                                                        data-target="#actionModal"
+                                                        data-action="modify_action"
+                                                        data-action-id="{{.getId()}}"
+                                                        data-type="{{.getObjectClass()}}"
+                                                        {{#.getObjectConfigurator().getConfiguration()}}
+                                                        data-{{.getName()}}="{{.getString()}}"
+                                                        {{/.getObjectConfigurator().getConfiguration()}} >
+                                                <span class="glyphicon glyphicon-pencil"></span>
+                                                </button>
+                                                <button type="submit" class="btn btn-danger btn-xs">
+                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="panel-body">
+                                        <span class="glyphicon glyphicon-play-circle"></span>
+                                        {{.}}
+                                    </div>
+                                </div>
                             </td></tr>
                             {{/.getActions()}}
                         </table>
@@ -166,8 +216,8 @@
             <form method="POST">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="">
-                    <input type="hidden" name="flow_id">
-                    <input type="hidden" name="action_id">
+                    <input type="hidden" name="flow-id">
+                    <input type="hidden" name="action-id">
                     <div class="form-group">
                         <label class="control-label">Type:</label>
                         <select class="form-control" name="type">

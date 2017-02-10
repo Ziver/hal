@@ -23,4 +23,8 @@ public class TimerTrigger implements HalTrigger {
     public void reset() {
         timer = new Timer(timerTime * 1000).start();
     }
+
+    public String toString(){
+        return "Timer: "+ timerTime +"s";
+    }
 }

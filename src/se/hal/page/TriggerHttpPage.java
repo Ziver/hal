@@ -75,11 +75,12 @@ public class TriggerHttpPage extends HalHttpPage {
                     }
                     trigger = new Trigger();
                     flow.addTrigger(trigger);
+                    flow.save(db);
                     /* FALLTHROUGH */
                 case "modify_trigger":
                     trigger.setObjectClass(request.get("type"));
                     trigger.getObjectConfigurator().setValues(request).applyConfiguration();
-                    flow.save(db); // will save all sub beans also
+                    trigger.save(db); // will save all sub beans also
                     break;
                 case "remove_trigger":
                     flow.removeTrigger(trigger);
@@ -95,11 +96,12 @@ public class TriggerHttpPage extends HalHttpPage {
                     }
                     action = new Action();
                     flow.addAction(action);
+                    flow.save(db);
                     /* FALLTHROUGH */
                 case "modify_action":
                     action.setObjectClass(request.get("type"));
                     action.getObjectConfigurator().setValues(request).applyConfiguration();
-                    flow.save(db); // will save all sub beans also
+                    action.save(db); // will save all sub beans also
                     break;
                 case "remove_action":
                     flow.removeAction(action);

@@ -48,7 +48,7 @@ public class HalServer {
         TriggerManager.initialize(pluginManager);
 
 
-        // Import sensors,events and controllers
+        // Import sensors,events and triggers
         for(Sensor sensor : Sensor.getLocalSensors(db)){
             ControllerManager.getInstance().register(sensor);
         }

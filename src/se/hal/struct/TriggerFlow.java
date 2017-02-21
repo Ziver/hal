@@ -35,15 +35,6 @@ public class TriggerFlow extends DBBean {
     }
 
 
-    @Override
-    public void delete(DBConnection db) throws SQLException {
-        for(Trigger trigger : triggerList)
-            trigger.delete(db);
-        for(Action action : actionList)
-            action.delete(db);
-        super.delete(db);
-    }
-
 
     public void addTrigger(Trigger trigger) {
         triggerList.add(trigger);

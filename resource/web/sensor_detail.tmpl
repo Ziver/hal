@@ -4,67 +4,93 @@
     <div class="panel panel-default drop-shadow">
         <div class="panel-heading">Last 24 hours</div>
         <div class="panel-body">
-            <div id="chart" style="height:350px;"></div>
+            <div id="min-chart" style="height:350px;"></div>
         </div>
     </div>
 </div>
-<script>
-    $(function(){
-		createChart("#chart", "/data/sensor?aggr=minute&id={{sensor.getId()}}", 5*60*1000);
-	});
-</script>
+
 
 <div class="col-md-5">
-    <div class="panel panel-default drop-shadow">
-        <div class="panel-heading">Configuration</div>
-        <div class="panel-body">
-            <table class="table table-hover table-condensed">
-                <thead>
-                <tr>
-                    <th class="text-right">Name:</th>
-                    <th>{{sensor.getName()}}</th>
-                </tr>
-                </thead>
-                <tr>
-                    <th class="text-right">Type:</th>
-                    <td>{{sensor.getDeviceData().getClass().getSimpleName()}}</td>
-                </tr>
-                <tr>
-                    <th class="text-right">Public:</th>
-                    <td>{{sensor.isSynced()}}</td>
-                </tr>
-                <tr>
-                    <th class="text-right">Owner:</th>
-                    <td>{{sensor.getUser().getUsername()}} <p></td>
-                </tr>
-                {{#sensor.getDeviceConfigurator().getConfiguration()}}
-                <tr>
-                    <th class="text-right">{{.getNiceName()}}:</th>
-                    <td>{{.getString()}}</td>
-                </tr>
-                {{/sensor.getDeviceConfigurator().getConfiguration()}}
-            </table>
+    <div>
+        <div class="panel panel-default drop-shadow">
+            <div class="panel-heading">Configuration</div>
+            <div class="panel-body">
+                <table class="table table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th class="text-right">Name:</th>
+                        <th>{{sensor.getName()}}</th>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <th class="text-right">Type:</th>
+                        <td>{{sensor.getDeviceData().getClass().getSimpleName()}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Public:</th>
+                        <td>{{sensor.isSynced()}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Owner:</th>
+                        <td>{{sensor.getUser().getUsername()}} <p></td>
+                    </tr>
+                    {{#sensor.getDeviceConfigurator().getConfiguration()}}
+                    <tr>
+                        <th class="text-right">{{.getNiceName()}}:</th>
+                        <td>{{.getString()}}</td>
+                    </tr>
+                    {{/sensor.getDeviceConfigurator().getConfiguration()}}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="panel panel-default drop-shadow">
+            <div class="panel-heading">History data</div>
+            <div class="panel-body">
+
+                <table class="table table-hover table-condensed">
+                    <thead>
+                        <th class="col-md-6">Timestamp</th>
+                        <th class="col-md-2">Data</th>
+                    </thead>
+                    {{#history}}
+                    <tr>
+                        <td><span class="timestamp">{{.timestamp}}</span></td>
+                        <td>{{.data}}</td>
+                    </tr>
+                    {{/history}}
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="col-md-7">
-    <div class="panel panel-default drop-shadow">
-        <div class="panel-heading">History data</div>
-        <div class="panel-body">
+    <div>
+        <div class="panel panel-default drop-shadow">
+            <div class="panel-heading">7 days</div>
+            <div class="panel-body">
+                <div id="hour-chart" style="height:350px;"></div>
+            </div>
+        </div>
+    </div>
 
-            <table class="table table-hover table-condensed">
-                <thead>
-                    <th class="col-md-6">Timestamp</th>
-                    <th class="col-md-2">Data</th>
-                </thead>
-                {{#history}}
-                <tr>
-                    <td><span class="timestamp">{{.timestamp}}</span></td>
-                    <td>{{.data}}</td>
-                </tr>
-                {{/history}}
-            </table>
+    <div>
+        <div class="panel panel-default drop-shadow">
+            <div class="panel-heading">All History</div>
+            <div class="panel-body">
+                <div id="week-chart" style="height:350px;"></div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    $(function(){
+		createChart("#min-chart", "/data/sensor?aggr=minute&id={{sensor.getId()}}", 5*60*1000);
+		createChart("#hour-chart", "/data/sensor?aggr=hour&id={{sensor.getId()}}", 60*60*1000);
+		createChart("#week-chart", "/data/sensor?aggr=week&id={{sensor.getId()}}", 7*24*60*60*1000);
+	});
+</script>

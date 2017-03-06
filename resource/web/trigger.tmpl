@@ -13,7 +13,17 @@
 {{#flows}}
 <div class="col-md-12">
     <div class="panel panel-default drop-shadow">
-        <div class="panel-heading"></div>
+        <div class="panel-heading clearfix">
+            <form method="POST">
+                <input type="hidden" name="action" value="remove_flow">
+                <input type="hidden" name="flow-id" value="{{.getId()}}">
+                <div class="btn-toolbar pull-right">
+                    <button type="submit" class="btn btn-danger btn-xs" style="padding: 1px 20px;">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
         <div class="panel-body">
             <table class="table table-condensed">
                 <thead class="row">
@@ -45,7 +55,7 @@
                                         <small>{{.getClass().getName()}}</small>
                                         <form method="POST">
                                             <input type="hidden" name="action" value="remove_trigger">
-                                            <input type="hidden" name="id" value="{{.getId()}}">
+                                            <input type="hidden" name="trigger-id" value="{{.getId()}}">
 
                                             <div class="btn-toolbar pull-right">
                                                 <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
@@ -88,7 +98,7 @@
                                         <small>{{.getClass().getName()}}</small>
                                         <form method="POST">
                                             <input type="hidden" name="action" value="remove_action">
-                                            <input type="hidden" name="id" value="{{.getId()}}">
+                                            <input type="hidden" name="action-id" value="{{.getId()}}">
 
                                             <div class="btn-toolbar pull-right">
                                                 <button type="button" class="btn btn-default btn-xs" data-toggle="modal"

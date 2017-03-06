@@ -45,6 +45,11 @@ public class SendEventAction implements HalAction {
 
 
     public String toString(){
-        return "Send event: "+ eventId +" with data: "+ data;
+        DBConnection db = HalContext.getDB();
+        Event event = null;
+        try{ event = Event.getEvent(db, eventId); } catch (Exception e){} //ignore exception
+        return "Send event: "+ eventId +
+                " ("+(event!=null ? event.getName() : null)+")" +
+                " with data: "+ data;
     }
 }

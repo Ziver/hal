@@ -5,6 +5,8 @@ import zutil.CronTimer;
 import zutil.ui.Configurator;
 import zutil.ui.Configurator.PreConfigurationActionListener;
 
+import java.text.SimpleDateFormat;
+
 /**
  *
  */
@@ -30,19 +32,27 @@ public class DateTimeTrigger implements HalTrigger,PreConfigurationActionListene
     @Override
     public void preConfigurationAction(Configurator configurator, Object obj) {
         cronTimer = new CronTimer(minute, hour, dayOfMonth, month, dayOfWeek, year);
+        reset();
     }
 
     @Override
     public boolean evaluate() {
         if (cronTimer == null)
             return false;
-        if (timeOut < 0)
+        if (System.currentTimeMillis()-timeOut > 60*1000) // have we passed the timeout by one minute?
             reset();
-        return timeOut < System.currentTimeMillis();
+        return timeOut <= System.currentTimeMillis();
     }
 
     @Override
     public void reset() {
-        timeOut = cronTimer.next();
+        if (cronTimer != null)
+            timeOut = cronTimer.next();
+    }
+
+    public String toString(){
+        return //"Cron: \""+minute+" "+hour+" "+dayOfMonth+" "+month+" "+dayOfWeek+" "+year+"\" "+
+                "Next timeout: "+
+                (timeOut>0 ? new SimpleDateFormat("yyyy-MM-dd HH:mm").format(timeOut) : timeOut);
     }
 }

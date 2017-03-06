@@ -6,7 +6,6 @@ import se.hal.struct.TriggerFlow;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginManager;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +39,9 @@ public class TriggerManager {
         executor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                evaluateAndExecute();
+                try {
+                    evaluateAndExecute();
+                } catch (Exception e){ logger.log(Level.SEVERE, "Trigger Evaluation Thread has Crashed", e); }
             }
         }, 0, interval, TimeUnit.MILLISECONDS);
     }
@@ -74,7 +75,7 @@ public class TriggerManager {
      * evaluation of a trigger returns true then its execute method will be called.
      */
     public synchronized void evaluateAndExecute() {
-        for (int i = 0; i < triggerFlows.size(); i++) { // avoid foreach as triggerFlow can change while we are running
+        for (int i = 0; i < triggerFlows.size(); i++) { // avoid foreach as triggerFlows can change while we are running
             TriggerFlow flow = triggerFlows.get(i);
             if (flow.evaluate()) {
                 logger.fine("Flow "+ flow.getId() +" evaluated true, executing actions");

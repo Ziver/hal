@@ -94,7 +94,7 @@
 
 	<target name="build-dependencies">
 		<mkdir dir="${buildDir}" />
-		<get src="http://ci.koc.se/jenkins/job/Zutil/146/artifact/build/release/Zutil.jar"
+		<get src="http://ci.koc.se/jenkins/job/Zutil/147/artifact/build/release/Zutil.jar"
 			 dest="${libDir}" verbose="true" usetimestamp="true"/>
 	</target>
 

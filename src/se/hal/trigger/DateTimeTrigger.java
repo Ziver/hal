@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 /**
  *
  */
-public class DateTimeTrigger implements HalTrigger,PreConfigurationActionListener {
+public class DateTimeTrigger implements HalTrigger,Configurator.PostConfigurationActionListener {
 
     @Configurator.Configurable("Minute (Cron format)")
     private String minute = "00";
@@ -30,7 +30,7 @@ public class DateTimeTrigger implements HalTrigger,PreConfigurationActionListene
 
 
     @Override
-    public void preConfigurationAction(Configurator configurator, Object obj) {
+    public void postConfigurationAction(Configurator configurator, Object obj) {
         cronTimer = new CronTimer(minute, hour, dayOfMonth, month, dayOfWeek, year);
         reset();
     }
@@ -55,4 +55,5 @@ public class DateTimeTrigger implements HalTrigger,PreConfigurationActionListene
                 "Next timeout: "+
                 (timeOut>0 ? new SimpleDateFormat("yyyy-MM-dd HH:mm").format(timeOut) : timeOut);
     }
+
 }

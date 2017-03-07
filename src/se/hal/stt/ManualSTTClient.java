@@ -22,17 +22,17 @@
 
 package se.hal.stt;
 
-import se.hal.intf.HalSpeachToText;
+import se.hal.intf.HalSpeechToText;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class ManualSTTClient implements HalSpeachToText {
+public class ManualSTTClient implements HalSpeechToText {
     private BufferedReader in;
 
 	@Override
-	public void initSTT() {
+	public void initialize() {
         //  open up standard input
         in = new BufferedReader(new InputStreamReader(System.in));
 	}

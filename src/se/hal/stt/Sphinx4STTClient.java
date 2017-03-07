@@ -25,7 +25,7 @@ package se.hal.stt;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 import edu.cmu.sphinx.api.SpeechResult;
-import se.hal.intf.HalSpeachToText;
+import se.hal.intf.HalSpeechToText;
 
 import java.io.IOException;
 
@@ -33,11 +33,11 @@ import java.io.IOException;
 /**
  * Created by Ziver on 2015-05-08.
  */
-public class Sphinx4STTClient implements HalSpeachToText {
+public class Sphinx4STTClient implements HalSpeechToText {
     private LiveSpeechRecognizer recognizer;
 
     @Override
-    public void initSTT() {
+    public void initialize() {
         Configuration configuration = new Configuration();
 
         // Set path to acoustic model.

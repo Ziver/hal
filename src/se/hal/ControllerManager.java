@@ -161,6 +161,9 @@ public class ControllerManager implements HalSensorReportListener,
                 sensor.setDeviceConfig(sensorConfig);
             }
             sensor.setDeviceData(sensorData);
+            // call listeners
+            for(HalDeviceReportListener<Sensor> listener : sensor.getReportListeners())
+                listener.receivedReport(sensor);
 
         }catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store sensor report", e);
@@ -284,6 +287,9 @@ public class ControllerManager implements HalSensorReportListener,
                 event.setDeviceConfig(eventConfig);
             }
             event.setDeviceData(eventData);
+            // call listeners
+            for(HalDeviceReportListener<Event> listener : event.getReportListeners())
+                listener.receivedReport(event);
 
         }catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store event report", e);

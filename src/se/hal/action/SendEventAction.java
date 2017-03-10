@@ -18,9 +18,9 @@ import java.util.logging.Logger;
 public class SendEventAction implements HalAction {
     private static final Logger logger = LogUtil.getLogger();
 
-    @Configurator.Configurable(order = 1, value = "Event Device ID")
+    @Configurator.Configurable("Event Device ID")
     private int eventId;
-    @Configurator.Configurable(order = 1, value = "Data to Send")
+    @Configurator.Configurable("Data to Send")
     private double data;
 
 

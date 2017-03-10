@@ -52,7 +52,7 @@
                             <tr><td>
                                 <div class="panel panel-default drop-shadow {{#.evaluate()}}panel-success{{/.evaluate()}}">
                                     <div class="panel-heading" style="padding: 2px 15px;">
-                                        <small>{{.getClass().getName()}}</small>
+                                        <small>{{.getObjectClass()}}</small>
                                         <form method="POST">
                                             <input type="hidden" name="action" value="remove_trigger">
                                             <input type="hidden" name="trigger-id" value="{{.getId()}}">
@@ -95,7 +95,7 @@
                             <tr><td>
                                 <div class="panel panel-default drop-shadow">
                                     <div class="panel-heading" style="padding: 2px 15px;">
-                                        <small>{{.getClass().getName()}}</small>
+                                        <small>{{.getObjectClass()}}</small>
                                         <form method="POST">
                                             <input type="hidden" name="action" value="remove_action">
                                             <input type="hidden" name="action-id" value="{{.getId()}}">

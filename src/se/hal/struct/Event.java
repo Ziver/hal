@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * Created by Ziver on 2015-12-15.
  */
 @DBBean.DBTable(value="event", superBean=true)
-public class Event extends AbstractDevice<HalEventConfig,HalEventData>{
+public class Event extends AbstractDevice<Event, HalEventConfig,HalEventData>{
     private static final Logger logger = LogUtil.getLogger();
 
 
@@ -40,7 +40,7 @@ public class Event extends AbstractDevice<HalEventConfig,HalEventData>{
 
 
 
-
+    @Override
     public Class<? extends HalEventController> getController(){
         return getDeviceConfig().getEventControllerClass();
     }

@@ -2,6 +2,7 @@ package se.hal.struct;
 
 import se.hal.ControllerManager;
 import se.hal.HalContext;
+import se.hal.intf.HalDeviceReportListener;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.log.LogUtil;
@@ -10,13 +11,19 @@ import zutil.parser.json.JSONWriter;
 import zutil.ui.Configurator;
 
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Ziver on 2016-01-15.
+ * Contains logic and data common to devices (Events and Sensors)
+ *
+ * @param   <T>     is the device type
+ * @param   <C>     is the device configuration class
+ * @param   <D>     is the device data class
  */
-public abstract class AbstractDevice<T,D> extends DBBean {
+public abstract class AbstractDevice<T extends AbstractDevice, C,D> extends DBBean {
     private static final Logger logger = LogUtil.getLogger();
 
     // Sensor specific data
@@ -25,7 +32,7 @@ public abstract class AbstractDevice<T,D> extends DBBean {
     private String config; // only used to store the deviceConfig configuration in DB
 
     /** Sensor specific configuration **/
-    private transient T deviceConfig;
+    private transient C deviceConfig;
     /** latest device data received **/
     private transient D deviceData;
 
@@ -39,24 +46,26 @@ public abstract class AbstractDevice<T,D> extends DBBean {
     @DBColumn("map_y")
     private double y;
 
+    protected transient List<HalDeviceReportListener<T>> listeners = new LinkedList<>();
+
 
     /**************** DEVICE CONFIG ******************/
 
-    public Configurator<T> getDeviceConfigurator() {
-        T obj = getDeviceConfig();
+    public Configurator<C> getDeviceConfigurator() {
+        C obj = getDeviceConfig();
         if (obj != null) {
-            Configurator<T> configurator = new Configurator<>(obj);
+            Configurator<C> configurator = new Configurator<>(obj);
             configurator.setPreConfigurationListener(ControllerManager.getInstance());
             configurator.setPostConfigurationListener(ControllerManager.getInstance());
             return configurator;
         }
         return null;
     }
-    public T getDeviceConfig() {
+    public C getDeviceConfig() {
         if (deviceConfig == null || !deviceConfig.getClass().getName().equals(type)) {
             try {
                 Class c = Class.forName(type);
-                deviceConfig = (T) c.newInstance();
+                deviceConfig = (C) c.newInstance();
 
                 applyConfig();
                 deviceData = getLatestDeviceData(HalContext.getDB());
@@ -72,7 +81,7 @@ public abstract class AbstractDevice<T,D> extends DBBean {
      * And the current config will be applied on the new DeviceData.
      * DeviceData will be reset if the input is set as null.
      */
-    public void setDeviceConfig(T data) {
+    public void setDeviceConfig(C data) {
         if(data != null) {
             type = data.getClass().getName();
             deviceConfig = data;
@@ -98,7 +107,7 @@ public abstract class AbstractDevice<T,D> extends DBBean {
      * Will update the config String that will be stored in DB.
      */
     private void updateConfigString() {
-        Configurator<T> configurator = getDeviceConfigurator();
+        Configurator<C> configurator = getDeviceConfigurator();
         this.config = JSONWriter.toString(configurator.getValuesAsNode());
     }
     /**
@@ -107,12 +116,13 @@ public abstract class AbstractDevice<T,D> extends DBBean {
      */
     private void applyConfig(){
         if (config != null && !config.isEmpty()) {
-            Configurator<T> configurator = getDeviceConfigurator();
+            Configurator<C> configurator = getDeviceConfigurator();
             configurator.setValues(JSONParser.read(config));
             configurator.applyConfiguration();
         }
     }
 
+    public abstract Class<?> getController();
 
     /**************** DEVICE DATA ******************/
 
@@ -180,4 +190,13 @@ public abstract class AbstractDevice<T,D> extends DBBean {
         this.y = y;
     }
 
+    public void addReportListener(HalDeviceReportListener<T> listener){
+        listeners.add(listener);
+    }
+    public void removeReportListener(HalDeviceReportListener<T> listener){
+        listeners.remove(listener);
+    }
+    public List<HalDeviceReportListener<T>> getReportListeners(){
+        return listeners;
+    }
 }

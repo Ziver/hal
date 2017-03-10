@@ -103,7 +103,6 @@
 		<javac srcdir="${testDir}" destdir="${buildTestDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
 			<classpath refid="classpath.test" />
 			<include name="**/*.java" />
-			<exclude name="se/hal/test/JarvisSyntersizerTest.java" />
 		</javac>
 		<copy todir="${buildTestDir}">
 			<fileset dir="${testDir}"

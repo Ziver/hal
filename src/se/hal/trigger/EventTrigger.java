@@ -27,6 +27,8 @@ public class EventTrigger implements HalTrigger,
 
     @Configurator.Configurable("Event Device ID")
     private int eventId = -1;
+    @Configurator.Configurable("Trigger only on change")
+    private boolean triggerOnChange = true;
     @Configurator.Configurable("Data to compare to")
     private double expectedData;
 
@@ -58,7 +60,8 @@ public class EventTrigger implements HalTrigger,
     public void receivedReport(Event device) {
         receivedData = device.getDeviceData();
         // Instant trigger evaluation
-        TriggerManager.getInstance().evaluateAndExecute();
+        if (triggerOnChange)
+            TriggerManager.getInstance().evaluateAndExecute();
     }
 
 
@@ -71,14 +74,17 @@ public class EventTrigger implements HalTrigger,
 
     @Override
     public void reset() {
-        receivedData = null;
+        if (triggerOnChange) // only reset if we want to trigger on change
+            receivedData = null;
     }
 
 
     @Override
     public String toString(){
         Event event = getEvent(eventId);
-        return (event != null ? event.getName() : null) + " == "+ expectedData;
+        return "Trigger " + (triggerOnChange ? "on" : "when") +
+                " event: "+eventId+" ("+(event != null ? event.getName() : null) + ")" +
+                " == "+ expectedData;
     }
 
 }

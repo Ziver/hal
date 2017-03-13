@@ -74,8 +74,8 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
                     //logger.finest("Pinging IP "+ device.getHost());
                     boolean online = InetScanner.isReachable(device.getHost(), executor);
                     if (data == null || data.isOn() != online) {
-                        entry.setValue(
-                                new SwitchEventData(online, System.currentTimeMillis()));
+                        data = new SwitchEventData(online, System.currentTimeMillis());
+                        entry.setValue(data);
                         logger.fine("IP "+device.getHost() +" state has changed to "+ data);
                         listener.reportReceived(device, data);
                     }

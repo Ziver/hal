@@ -63,10 +63,10 @@ public class TriggerFlow extends DBBean {
      */
     public boolean evaluate(){
         for(Trigger trigger : triggerList){
-            if (trigger.evaluate())
-                return true;
+            if (!trigger.evaluate())
+                return false;
         }
-        return false;
+        return true;
     }
 
     /**

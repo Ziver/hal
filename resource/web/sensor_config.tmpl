@@ -226,10 +226,17 @@
                 if(fieldName.startsWith("data-")) {
                     fieldName = fieldName.substring(5);
                     console.log(fieldName, value);
-                    // case insensitive search
-                    modal.find("input").filter(function() {
+                    input = modal.find("input").filter(function() {
                            return this.name.toLowerCase() == fieldName;
-                    }).val(value);
+                    });
+                    if (input.attr("type") == "checkbox") { // special handling for checkboxes
+                        if (value=="true") input.attr("checked", "true");
+                        else               input.removeAttr("checked", "true");
+                        // Add default false value as a unchecked checkbox is not included in the post
+                        input.parent().prepend("<input type='hidden' name='"+input.attr("name")+"' value='false' />");
+                    } else {
+                        input.val(value);
+                    }
                 }
             });
         });
@@ -306,7 +313,7 @@
             <label class="control-label">{{.getNiceName()}}:</label>
             {{#.isTypeString()}}<input type="text" class="form-control" name="{{.getName()}}">{{/#.isTypeString()}}
             {{#.isTypeInt()}}<input type="number" class="form-control" name="{{.getName()}}">{{/#.isTypeInt()}}
-            {{#.isTypeBoolean()}}<input type="checkbox" name="{{.getName()}}">{{/#.isTypeBoolean()}}
+            {{#.isTypeBoolean()}}<input type="checkbox" name="{{.getName()}}" value="true">{{/#.isTypeBoolean()}}
             {{#.isTypeEnum()}}
             <select class="form-control" name="{{.getName()}}">
                 {{#.getPossibleValues()}}<option>{{.}}</option>{{/.getPossibleValues()}}

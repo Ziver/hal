@@ -3,6 +3,6 @@
 	"name": "Network Scanner",
 	"interfaces": [
 		{"se.hal.intf.HalAutoScannableController": "se.hal.plugin.netscan.NetScanController"},
-		{"se.hal.intf.HalEventConfig": "se.hal.plugin.netscan.LocalNetworkDevice"}
+		{"se.hal.intf.HalEventConfig": "se.hal.plugin.netscan.NetworkDevice"}
 	]
 }

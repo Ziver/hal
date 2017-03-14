@@ -9,10 +9,7 @@ import zutil.net.InetScanner;
 import zutil.net.InetScanner.InetScanListener;
 import zutil.osal.MultiCommandExecutor;
 
-import java.io.IOException;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -33,7 +30,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
     private ScheduledExecutorService executor;
     private HalEventReportListener listener;
     /** A register and a cache of previous state **/
-    private HashMap<LocalNetworkDevice,SwitchEventData> devices = new HashMap<>();
+    private HashMap<NetworkDevice,SwitchEventData> devices = new HashMap<>();
 
 
 
@@ -46,7 +43,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
     public void initialize() throws Exception {
         executor = Executors.newScheduledThreadPool(2);
         executor.scheduleAtFixedRate(NetScanController.this, 10_000, PING_INTERVAL, TimeUnit.MILLISECONDS);
-        if (!HalContext.containsProperty(PARAM_IPSCAN) || HalContext.getBooleanProperty(PARAM_IPSCAN)) {
+        if (HalContext.getBooleanProperty(PARAM_IPSCAN, true)) {
             executor.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
@@ -66,18 +63,23 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
 
     @Override
     public void run() {
-        try(MultiCommandExecutor executor = new MultiCommandExecutor();){
-            for (Map.Entry<LocalNetworkDevice,SwitchEventData> entry : devices.entrySet()) {
-                LocalNetworkDevice device = entry.getKey();
-                SwitchEventData data = entry.getValue();
+        try(MultiCommandExecutor executor = new MultiCommandExecutor()){
+            for (Map.Entry<NetworkDevice,SwitchEventData> entry : devices.entrySet()) {
+                NetworkDevice device = entry.getKey();
+                SwitchEventData prevData = entry.getValue();
                 if (listener != null) {
                     //logger.finest("Pinging IP "+ device.getHost());
-                    boolean online = InetScanner.isReachable(device.getHost(), executor);
-                    if (data == null || data.isOn() != online) {
-                        data = new SwitchEventData(online, System.currentTimeMillis());
-                        entry.setValue(data);
-                        logger.fine("IP "+device.getHost() +" state has changed to "+ data);
-                        listener.reportReceived(device, data);
+                    SwitchEventData newData = new SwitchEventData(
+                            InetScanner.isReachable(device.getHost(), executor),
+                            System.currentTimeMillis());
+                    entry.setValue(newData);
+
+                    // Should we report?
+                    if (prevData == null ||
+                            (!prevData.isOn() && newData.isOn()) ||
+                            (!prevData.isOn() && !newData.isOn()) ) { // require two off measurements to report off
+                        logger.fine("IP "+device.getHost() +" state has changed to "+ newData.isOn());
+                        listener.reportReceived(device, newData);
                     }
                 }
             }
@@ -90,7 +92,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
         logger.fine("Auto Detected ip: "+ip.getHostAddress());
         if (listener != null)
             listener.reportReceived(
-                    new LocalNetworkDevice(ip.getHostAddress()),
+                    new NetworkDevice(ip.getHostAddress()),
                     new SwitchEventData(true, System.currentTimeMillis()));
     }
 
@@ -98,8 +100,8 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
 
     @Override
     public void register(HalEventConfig event) {
-        if (event instanceof LocalNetworkDevice)
-            devices.put((LocalNetworkDevice) event, null);
+        if (event instanceof NetworkDevice)
+            devices.put((NetworkDevice) event, null);
     }
     @Override
     public void deregister(HalEventConfig event) {

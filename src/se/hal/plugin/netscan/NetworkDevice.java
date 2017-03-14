@@ -9,15 +9,15 @@ import zutil.ui.Configurator;
 /**
  * Created by Ziver on 2016-10-02.
  */
-public class LocalNetworkDevice implements HalEventConfig {
+public class NetworkDevice implements HalEventConfig {
 
     @Configurator.Configurable("IP Address")
     private String host;
 
 
 
-    public LocalNetworkDevice() { }
-    public LocalNetworkDevice(String hostAddress) {
+    public NetworkDevice() { }
+    public NetworkDevice(String hostAddress) {
         this.host = hostAddress;
     }
 
@@ -32,8 +32,8 @@ public class LocalNetworkDevice implements HalEventConfig {
     }
     @Override
     public boolean equals(Object obj){
-        if (obj instanceof LocalNetworkDevice)
-            return host != null && host.equals(((LocalNetworkDevice) obj).host);
+        if (obj instanceof NetworkDevice)
+            return host != null && host.equals(((NetworkDevice) obj).host);
         return false;
     }
 

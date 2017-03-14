@@ -179,14 +179,29 @@ public class HalContext {
             value = dbConf.getProperty(key);
         return value;
     }
+    public static String getStringProperty(String key, String defaultValue){
+        if (!HalContext.containsProperty(key))
+            return defaultValue;
+        return getStringProperty(key);
+    }
+    public static boolean containsProperty(String key) {
+        return getStringProperty(key) != null;
+    }
     public static int getIntegerProperty(String key){
         return Integer.parseInt(getStringProperty(key));
+    }
+    public static int getIntegerProperty(String key, int defaultValue){
+        if (!HalContext.containsProperty(key))
+            return defaultValue;
+        return getIntegerProperty(key);
     }
     public static boolean getBooleanProperty(String key) {
         return Boolean.parseBoolean(getStringProperty(key));
     }
-    public static boolean containsProperty(String key) {
-        return getStringProperty(key) != null;
+    public static boolean getBooleanProperty(String key, boolean defaultValue) {
+        if (!HalContext.containsProperty(key))
+            return defaultValue;
+        return getBooleanProperty(key);
     }
     public static void setProperty(String key, String value) throws SQLException {
         PreparedStatement stmt = db.getPreparedStatement("REPLACE INTO conf (key, value) VALUES (?, ?)");

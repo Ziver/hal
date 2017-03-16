@@ -62,6 +62,8 @@ public class TriggerFlow extends DBBean {
      *         Note: this method will not execute any actionList
      */
     public boolean evaluate(){
+        if (triggerList.isEmpty())
+            return false;
         for(Trigger trigger : triggerList){
             if (!trigger.evaluate())
                 return false;

@@ -47,7 +47,7 @@ public class DateTimeTrigger implements HalTrigger,Configurator.PostConfiguratio
     @Override
     public void reset() {
         if (cronTimer != null)
-            timeOut = cronTimer.next();
+            timeOut = cronTimer.next(System.currentTimeMillis() - 60*1000); // include this
     }
 
     public String toString(){

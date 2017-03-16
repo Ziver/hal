@@ -194,53 +194,8 @@
 
 <!------------- MODALS --------------->
 <script>
-    var sensorDataConf = {};
-
     $(function(){
-        // initialize sensor modal things
-        $("#sensor-data-conf-template div").each(function(){
-            sensorDataConf[$(this).attr("id")] = $(this).html();
-        });
-        $("#sensorModal select[name=type]").change(function(){
-            // Update dynamic inputs
-            $("#sensorModal #sensor-data-conf").html(sensorDataConf[$(this).val()]);
-        });
-        // click event
-        $("#sensorModal").on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var modal = $(this);
-            modal.find("input[type=text]").val(""); // Reset all inputs
-            if(button.data("id") >= 0){ // edit
-                modal.find("input[name=action]").val("modify_local_sensor");
-                modal.find("input[name=sync]").prop("checked", button.data("sync"));
-            }
-            else{ // create
-                modal.find("input[name=action]").val("create_local_sensor");
-                modal.find("input[name=id]").val(-1);
-                modal.find("input[name=sync]").prop("checked", "false");
-            }
-            // set dynamic form data
-            modal.find("select[name=type]").val(button.data("type"));
-            modal.find("select[name=type]").change(); // Update dynamic inputs
-            $.each(button.attr(), function(fieldName, value) {
-                if(fieldName.startsWith("data-")) {
-                    fieldName = fieldName.substring(5);
-                    console.log(fieldName, value);
-                    input = modal.find("input").filter(function() {
-                           return this.name.toLowerCase() == fieldName;
-                    });
-                    if (input.attr("type") == "checkbox") { // special handling for checkboxes
-                        if (value=="true") input.attr("checked", "true");
-                        else               input.removeAttr("checked", "true");
-                        // Add default false value as a unchecked checkbox is not included in the post
-                        input.parent().prepend("<input type='hidden' name='"+input.attr("name")+"' value='false' />");
-                    } else {
-                        input.val(value);
-                    }
-                }
-            });
-        });
-
+        initDynamicModalForm("sensorModal", "sensor-data-conf", "sensor-data-conf-template");
 
         $("#userModal").on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);

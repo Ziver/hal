@@ -89,49 +89,8 @@
 
 <!------------- MODALS --------------->
 <script>
-    var eventDataConf = {};
-
     $(function(){
-        // initialize event modal things
-        $("#event-data-conf-template div").each(function(){
-            eventDataConf[$(this).attr("id")] = $(this).html();
-        });
-        $("#eventModal select[name=type]").change(function(){
-            // Update dynamic inputs
-            $("#eventModal #event-data-conf").html(eventDataConf[$(this).val()]);
-        });
-        // click event
-        $("#eventModal").on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var modal = $(this);
-            modal.find("input[type=text]").val(""); // Reset all inputs
-            if(button.data("id") >= 0){ // edit
-                modal.find("input[name=action]").val("modify_local_event");
-            }
-            else{ // create
-                modal.find("input[name=action]").val("create_local_event");
-                modal.find("input[name=id]").val(-1);
-            }
-            // Set dynamic data
-            modal.find("select[name=type]").val(button.data("type"));
-            modal.find("select[name=type]").change(); // Update dynamic inputs
-            $.each(button.attr(), function(fieldName, value) {
-                if(fieldName.startsWith("data-")) {
-                    fieldName = fieldName.substring(5);
-                    input = modal.find("input").filter(function() {
-                           return this.name.toLowerCase() == fieldName;
-                    });
-                    if (input.attr("type") == "checkbox") { // special handling for checkboxes
-                        if (value=="true") input.attr("checked", "true");
-                        else               input.removeAttr("checked", "true");
-                        // Add default false value as a unchecked checkbox is not included in the post
-                        input.parent().prepend("<input type='hidden' name='"+input.attr("name")+"' value='false' />");
-                    } else {
-                        input.val(value);
-                    }
-                }
-            });
-        });
+        initDynamicModalForm("eventModal", "event-data-conf", "event-data-conf-template");
     });
 </script>
 

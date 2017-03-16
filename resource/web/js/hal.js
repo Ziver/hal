@@ -5,7 +5,7 @@ $(function(){
     $(".timestamp").relTimestamp();
 });
 
-////////////////////////////////////// JQuery functions
+////////////////////////////////////// JQuery helper functions
 
 // $.attr() # returns all attributes of an element
 (function(old) {
@@ -121,4 +121,49 @@ function getChartData(json){
         axes: dataYaxis,
         unload: true,
     };
+}
+
+////////////// Dynamic forms
+var dynamicConf = {};
+
+function initDynamicModalForm(modalId, formTemplateId, templateID){
+    // read in all configurations into global variable (to skip naming issues)
+    dynamicConf[formTemplateId] = [];
+    $("#"+templateID+" div").each(function(){
+        dynamicConf[formTemplateId][$(this).attr("id")] = $(this).html();
+    });
+    // Update dynamic inputs
+    $("#"+modalId+" select[name=type]").change(function(){
+        $("#"+modalId+" #"+formTemplateId).html(dynamicConf[formTemplateId][$(this).val()]);
+    });
+    // click event
+    $("#"+modalId).on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var modal = $(this);
+        // Reset all inputs
+        modal.find("#"+formTemplateId).empty(); // clear form div
+
+        // select dynamic form
+        var selector = modal.find("select[name=type]");
+        selector.val(button.data("type"));
+        selector.change(); // Update dynamic inputs
+        // set dynamic form data
+        $.each(button.attr(), function(fieldName, value) {
+            if(fieldName.startsWith("data-")) {
+                fieldName = fieldName.substring(5);
+                // case insensitive search
+                input = modal.find("input").filter(function() {
+                       return this.name.toLowerCase() == fieldName;
+                });
+                if (input.attr("type") == "checkbox") { // special handling for checkboxes
+                    if (value=="true") input.attr("checked", "true");
+                    else               input.removeAttr("checked");
+                    // Add default false value as a unchecked checkbox is not included in the post
+                    input.parent().prepend("<input type='hidden' name='"+input.attr("name")+"' value='false' />");
+                } else {
+                    input.val(value);
+                }
+            }
+        });
+    });
 }

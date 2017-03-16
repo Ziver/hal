@@ -140,52 +140,9 @@
 <!-------------------------------- MODALS -------------------------------->
 <script>
     $(function(){
-        initDynamicModalForm("trigger");
-        initDynamicModalForm("action");
+        initDynamicModalForm("triggerModal", "trigger-data-conf", "trigger-data-conf-template");
+        initDynamicModalForm("actionModal", "action-data-conf", "action-data-conf-template");
     });
-
-
-    var dynamicConf = {};
-
-    function initDynamicModalForm(name){
-        // read in all configurations into global variable (to skip naming issues)
-        dynamicConf[name] = [];
-        $("#"+name+"-data-conf-template div").each(function(){
-            dynamicConf[name][$(this).attr("id")] = $(this).html();
-        });
-        // Update dynamic inputs
-        $("#"+name+"Modal select[name=type]").change(function(){
-            $("#"+name+"Modal #"+name+"-data-conf").html(dynamicConf[name][$(this).val()]);
-        });
-        // click event
-        $("#"+name+"Modal").on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var modal = $(this);
-            modal.find("input").val(""); // Reset all inputs
-
-            // set dynamic form data
-            modal.find("select[name=type]").val(button.data("type"));
-            modal.find("select[name=type]").change(); // Update dynamic inputs
-            $.each(button.attr(), function(fieldName, value) {
-                if(fieldName.startsWith("data-")) {
-                    fieldName = fieldName.substring(5);
-                    console.log(fieldName, value);
-                    // case insensitive search
-                    input = modal.find("input").filter(function() {
-                           return this.name.toLowerCase() == fieldName;
-                    });
-                    if (input.attr("type") == "checkbox") { // special handling for checkboxes
-                        if (value=="true") input.attr("checked", "true");
-                        else               input.removeAttr("checked", "true");
-                        // Add default false value as a unchecked checkbox is not included in the post
-                        input.parent().prepend("<input type='hidden' name='"+input.attr("name")+"' value='false' />");
-                    } else {
-                        input.val(value);
-                    }
-                }
-            });
-        });
-    }
 </script>
 
 <div class="modal fade" id="triggerModal" tabindex="-1">

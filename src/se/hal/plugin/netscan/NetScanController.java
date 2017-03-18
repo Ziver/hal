@@ -68,14 +68,14 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
                 NetworkDevice device = entry.getKey();
                 SwitchEventData prevData = entry.getValue();
                 if (listener != null) {
-                    //logger.finest("Pinging IP "+ device.getHost());
-                    boolean ping1 = InetScanner.isReachable(device.getHost(), executor);
-                    boolean ping2 = InetScanner.isReachable(device.getHost(), executor);
+                    // We ping two times to increase reliability
+                    boolean ping = false;
+                    ping |= InetScanner.isReachable(device.getHost(), executor);
+                    ping |= InetScanner.isReachable(device.getHost(), executor);
 
                     // Should we report?
-                    if (prevData == null ||
-                            (ping1 == ping2 && prevData.isOn() != ping1)) { // only store if we get consistent pings
-                        SwitchEventData newData = new SwitchEventData(ping1, System.currentTimeMillis());
+                    if (prevData == null || prevData.isOn() != ping) {
+                        SwitchEventData newData = new SwitchEventData(ping, System.currentTimeMillis());
                         entry.setValue(newData);
                         logger.fine("IP "+device.getHost() +" state has changed to "+ newData.isOn());
                         listener.reportReceived(device, newData);

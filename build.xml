@@ -46,7 +46,7 @@
 		</java>
 	</target>
 
-	<target name="remote-debug" depends="package">
+	<target name="debug-remote" depends="package">
 		<java fork="true" failonerror="true" classname="se.hal.HalServer">
             <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005" />
 			<classpath>

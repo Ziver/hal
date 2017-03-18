@@ -111,13 +111,18 @@
 	</target>
 
 	<target name="package" depends="build">
-		<copy file="${gitRoot}/hal.conf.example" todir="${releaseDir}" />
-		<copy file="${gitRoot}/hal-default.db" todir="${releaseDir}" />
-		<copy file="${gitRoot}/logging.properties" todir="${releaseDir}" />
-		<copy file="${gitRoot}/run.sh" todir="${releaseDir}" />
-		<copydir src="${libDir}" dest="${releaseDir}/lib"
-				 excludes="junit-*.jar,hamcrest-*.jar" />
-		<copydir src="resource/web" dest="${releaseDir}/resource/web" />
+		<copy todir="${releaseDir}" >
+			<fileset file="${gitRoot}/hal.conf.example" />
+			<fileset file="${gitRoot}/hal-default.db" />
+			<fileset file="${gitRoot}/logging.properties" />
+			<fileset file="${gitRoot}/run.sh" />
+		</copy>
+		<copy  todir="${releaseDir}/lib">
+			<fileset dir="${libDir}" excludes="junit-*.jar,hamcrest-*.jar" />
+		</copy>
+		<copy  todir="${releaseDir}/resource/web">
+			<fileset dir="resource/web" />
+		</copy>
 		<jar destfile="${releaseDir}/hal.jar" basedir="${buildDir}" />
 	</target>
 

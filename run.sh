@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ant clean
-ant release
+ant package
 # Kill current session
 screen -S hal -X kill
 # Start new session

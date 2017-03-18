@@ -39,7 +39,8 @@ public class DateTimeTrigger implements HalTrigger,Configurator.PostConfiguratio
     public boolean evaluate() {
         if (cronTimer == null)
             return false;
-        if (System.currentTimeMillis()-timeOut > 60*1000) // have we passed the timeout by one minute?
+        // have we passed the majority of the minute? then get next timeout
+        if (System.currentTimeMillis()-timeOut > 50*1000)
             reset();
         return timeOut <= System.currentTimeMillis();
     }
@@ -47,7 +48,7 @@ public class DateTimeTrigger implements HalTrigger,Configurator.PostConfiguratio
     @Override
     public void reset() {
         if (cronTimer != null)
-            timeOut = cronTimer.next(System.currentTimeMillis() - 60*1000); // include this
+            timeOut = cronTimer.next();
     }
 
     public String toString(){

@@ -2,6 +2,7 @@ package se.hal.struct;
 
 import se.hal.ControllerManager;
 import se.hal.HalContext;
+import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalDeviceReportListener;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
@@ -23,7 +24,7 @@ import java.util.logging.Logger;
  * @param   <C>     is the device configuration class
  * @param   <D>     is the device data class
  */
-public abstract class AbstractDevice<T extends AbstractDevice, C,D> extends DBBean {
+public abstract class AbstractDevice<T extends AbstractDevice, C,D extends HalDeviceData> extends DBBean {
     private static final Logger logger = LogUtil.getLogger();
 
     // Sensor specific data

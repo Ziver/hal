@@ -71,7 +71,8 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
                     // We ping two times to increase reliability
                     boolean ping = false;
                     ping |= InetScanner.isReachable(device.getHost(), executor);
-                    ping |= InetScanner.isReachable(device.getHost(), executor);
+                    if (!ping)
+                        ping |= InetScanner.isReachable(device.getHost(), executor);
 
                     // Should we report?
                     if (prevData == null || prevData.isOn() != ping) {

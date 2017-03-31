@@ -156,6 +156,7 @@ function initDynamicModalForm(modalId, formTemplateId, templateID){
                        return this.name.toLowerCase() == fieldName;
                 });
                 if (input.attr("type") == "checkbox") { // special handling for checkboxes
+                    input.attr("value", "true");
                     if (value=="true") input.attr("checked", "true");
                     else               input.removeAttr("checked");
                     // Add default false value as a unchecked checkbox is not included in the post

@@ -25,7 +25,6 @@
                     <td>{{.getDeviceConfig()}}</td>
                     <td>
                         <form method="POST">
-                            <input type="hidden" name="action" value="remove_local_event">
                             <input type="hidden" name="id" value="{{.getId()}}">
 
                             <div class="btn-toolbar pull-right">
@@ -41,7 +40,7 @@
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </button>
 
-                                <button type="submit" class="btn btn-danger btn-xs">
+                                <button type="submit" class="btn btn-danger btn-xs" name="action" value="remove_local_event">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </button>
                             </div>

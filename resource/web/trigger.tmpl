@@ -2,8 +2,7 @@
     Triggers
 
     <form class="pull-right" method="POST">
-        <input type="hidden" name="action" value="create_flow" />
-        <button type="submit" class="btn btn-default">
+        <button type="submit" class="btn btn-default" name="action" value="create_flow">
             <span class="glyphicon glyphicon-plus"></span>
         </button>
     </form>
@@ -15,10 +14,9 @@
     <div class="panel panel-default drop-shadow">
         <div class="panel-heading clearfix">
             <form method="POST">
-                <input type="hidden" name="action" value="remove_flow">
                 <input type="hidden" name="flow-id" value="{{.getId()}}">
                 <div class="btn-toolbar pull-right">
-                    <button type="submit" class="btn btn-danger btn-xs" style="padding: 1px 20px;">
+                    <button type="submit" class="btn btn-danger btn-xs" style="padding: 1px 20px;" name="action" value="remove_flow">
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                 </div>
@@ -54,7 +52,6 @@
                                     <div class="panel-heading" style="padding: 2px 15px;">
                                         <small>{{.getObjectClass()}}</small>
                                         <form method="POST">
-                                            <input type="hidden" name="action" value="remove_trigger">
                                             <input type="hidden" name="trigger-id" value="{{.getId()}}">
 
                                             <div class="btn-toolbar pull-right">
@@ -68,7 +65,7 @@
                                                         {{/.getObjectConfigurator().getConfiguration()}} >
                                                     <span class="glyphicon glyphicon-pencil"></span>
                                                 </button>
-                                                <button type="submit" class="btn btn-danger btn-xs">
+                                                <button type="submit" class="btn btn-danger btn-xs" name="action" value="remove_trigger">
                                                     <span class="glyphicon glyphicon-trash"></span>
                                                 </button>
                                             </div>
@@ -97,7 +94,6 @@
                                     <div class="panel-heading" style="padding: 2px 15px;">
                                         <small>{{.getObjectClass()}}</small>
                                         <form method="POST">
-                                            <input type="hidden" name="action" value="remove_action">
                                             <input type="hidden" name="action-id" value="{{.getId()}}">
 
                                             <div class="btn-toolbar pull-right">
@@ -111,7 +107,7 @@
                                                         {{/.getObjectConfigurator().getConfiguration()}} >
                                                 <span class="glyphicon glyphicon-pencil"></span>
                                                 </button>
-                                                <button type="submit" class="btn btn-danger btn-xs">
+                                                <button type="submit" class="btn btn-danger btn-xs" name="action" value="remove_action">
                                                     <span class="glyphicon glyphicon-trash"></span>
                                                 </button>
                                             </div>

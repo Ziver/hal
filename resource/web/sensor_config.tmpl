@@ -27,7 +27,6 @@
                     <td>{{.getDeviceConfig()}}</td>
                     <td>
                         <form method="POST">
-                            <input type="hidden" name="action" value="remove_local_sensor">
                             <input type="hidden" name="id" value="{{.getId()}}">
 
                             <div class="btn-toolbar pull-right">
@@ -44,7 +43,7 @@
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </button>
 
-                                <button type="submit" class="btn btn-danger btn-xs">
+                                <button type="submit" class="btn btn-danger btn-xs" name="action" value="remove_local_sensor">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </button>
                             </div>
@@ -119,7 +118,6 @@
                     <td>{{.getPort()}}</td>
                     <td>
                         <form method="POST">
-                            <input type="hidden" name="action" value="remove_external_user">
                             <input type="hidden" name="id" value="{{.getId()}}">
 
                             <div class="btn-toolbar pull-right">
@@ -131,7 +129,7 @@
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </button>
 
-                                <button type="submit" class="btn btn-danger btn-xs">
+                                <button type="submit" class="btn btn-danger btn-xs" name="action" value="remove_external_user">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </button>
                             </div>

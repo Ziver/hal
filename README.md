@@ -3,7 +3,12 @@
 Hal is a home automation hub with sensor statistics with the functionality to 
 share that data between friends. It is developed to be very extensible so future 
 Sensors and other input devices can be supported.
- 
+
+Features:
+- **Map**, Set up a house map with sensor and events mapped on a floorplan
+- **Triggers and Actions**, IFTTT type functionality
+- **Power;Challenge**, Sync power or sensor usage between friends to lower e.g Power usage 
+
 Currently supported devices:
 - **Network Scanner**, IP scanner to detect devices on local network
 - **NUT**, Linux UPS daemon

@@ -3,6 +3,7 @@ package se.hal.struct;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
+import zutil.db.handler.SimpleSQLResult;
 import zutil.log.LogUtil;
 
 import java.sql.PreparedStatement;
@@ -32,6 +33,27 @@ public class TriggerFlow extends DBBean {
     }
     public static TriggerFlow getTriggerFlow(DBConnection db, int id) throws SQLException {
         return DBBean.load(db, TriggerFlow.class, id);
+    }
+    /**
+     * Looks up the parent TriggerFlow for the specified Trigger
+     */
+    public static TriggerFlow getTriggerFlow(DBConnection db, Trigger trigger) throws SQLException {
+        return getParentFlow(db, "trigger", trigger);
+    }
+    /**
+     * Looks up the parent TriggerFlow for the specified Action
+     */
+    public static TriggerFlow getTriggerFlow(DBConnection db, Action action) throws SQLException {
+        return getParentFlow(db, "action", action);
+    }
+    private static TriggerFlow getParentFlow(DBConnection db, String table, DBBean subObj) throws SQLException {
+        if (subObj.getId() == null)
+            return null;
+        Integer flowId = db.exec("SELECT flow_id FROM "+table+" WHERE id=="+subObj.getId(),
+                new SimpleSQLResult<Integer>());
+        if (flowId == null)
+            return null;
+        return TriggerFlow.getTriggerFlow(db, flowId);
     }
 
 

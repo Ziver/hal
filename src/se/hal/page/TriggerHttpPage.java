@@ -83,6 +83,8 @@ public class TriggerHttpPage extends HalHttpPage {
                     trigger.save(db); // will save all sub beans also
                     break;
                 case "remove_trigger":
+                    if (flow == null)
+                        flow = TriggerFlow.getTriggerFlow(db, trigger);
                     flow.removeTrigger(trigger);
                     trigger.delete(db);
                     break;
@@ -104,6 +106,8 @@ public class TriggerHttpPage extends HalHttpPage {
                     action.save(db); // will save all sub beans also
                     break;
                 case "remove_action":
+                    if (flow == null)
+                        flow = TriggerFlow.getTriggerFlow(db, action);
                     flow.removeAction(action);
                     action.delete(db);
                     break;

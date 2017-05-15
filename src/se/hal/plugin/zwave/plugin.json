@@ -1,0 +1,7 @@
+{
+	"version": 1.0,
+	"name": "Z-Wave",
+	"interfaces": [
+		{"se.hal.intf.HalAutoScannableController": "se.hal.plugin.zwave.ZWaveSerialComm"}
+	]
+}

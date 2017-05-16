@@ -15,3 +15,5 @@ sync_port=6666
 # Network scanning should probably be disabled in some networks (default on)
 #netscan.ipscan=false
 
+## ZWave plugin
+#zwave.com_port=COM4

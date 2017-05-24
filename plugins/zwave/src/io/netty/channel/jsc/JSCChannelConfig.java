@@ -223,9 +223,6 @@ public interface JSCChannelConfig extends ChannelConfig {
     JSCChannelConfig setAutoRead(boolean autoRead);
 
     @Override
-    JSCChannelConfig setAutoClose(boolean autoClose);
-
-    @Override
     JSCChannelConfig setWriteBufferHighWaterMark(int writeBufferHighWaterMark);
 
     @Override

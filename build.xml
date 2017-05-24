@@ -4,33 +4,36 @@
 	<!-- ________________________ PROPERTIES AND SETTINGS ________________________ -->
 
 	<!--common properties-->
-	<property name="gitRoot" value="." />
-	<property name="srcDir" value="${gitRoot}/src" />
-	<property name="testDir" value="${gitRoot}/test" />
-	<property name="libDir" value="${gitRoot}/lib" />
-	<property name="outputRoot" value="${gitRoot}/build" />
-	<property name="buildDir" value="${outputRoot}/production" />
-	<property name="buildTestDir" value="${outputRoot}/test" />
-	<property name="releaseDir" value="${outputRoot}/release" />
-	<property name="reportsDir" value="${outputRoot}/reports" />
+	<property name="root" value="." />
+	<property name="srcDir" value="${root}/src" />
+	<property name="testDir" value="${root}/test" />
+	<property name="libDir" value="${root}/lib" />
+
+	<property name="buildRoot" value="${root}/build" />
+	<property name="compileDir" value="${buildRoot}/production" />
+	<property name="compileTestDir" value="${buildRoot}/test" />
+	<property name="releaseDir" value="${buildRoot}/release" />
+	<property name="reportsDir" value="${buildRoot}/reports" />
+    <property name="releaseJar" value="hal.jar" />
+
+
+	<!-- ________________________ CLASSPATH ________________________ -->
 
 	<!--define standard arguments for javac-->
 	<presetdef name="javac">
 		<javac includeantruntime="false" />
 	</presetdef>
 
-	<!-- ________________________ CLASSPATHS ________________________ -->
-
 	<!--classpath included when building-->
 	<path id="classpath.build">
         <fileset dir="${libDir}">
             <include name="**/*.jar"/>
         </fileset>
-		<pathelement location="${buildDir}" />
+		<pathelement location="${compileDir}" />
 	</path>
 
 	<path id="classpath.test">
-		<pathelement location="${buildTestDir}" />
+		<pathelement location="${compileTestDir}" />
 		<!--include libraries used for building-->
 		<path refid="classpath.build"/>
 	</path>
@@ -40,7 +43,7 @@
 	<target name="run" depends="package">
 		<java fork="true" failonerror="true" classname="se.hal.HalServer">
 			<classpath>
-				<pathelement path="${releaseDir}/hal.jar"/>
+				<pathelement path="${releaseDir}/${releaseJar}"/>
 				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
 			</classpath>
 		</java>
@@ -50,7 +53,7 @@
 		<java fork="true" failonerror="true" classname="se.hal.HalServer">
             <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005" />
 			<classpath>
-				<pathelement path="${releaseDir}/hal.jar"/>
+				<pathelement path="${releaseDir}/${releaseJar}"/>
 				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
 			</classpath>
 		</java>
@@ -64,7 +67,7 @@
 			<formatter type="xml" /> <!-- to file -->
 
 			<batchtest todir="${reportsDir}" skipNonTests="true">
-				<fileset dir="${buildTestDir}" includes="**/*Test*.class" />
+				<fileset dir="${compileTestDir}" includes="**/*Test*.class" />
 			</batchtest>
 		</junit>
 	</target>
@@ -74,37 +77,37 @@
 	<!--clean all build paths-->
 	<target name="clean">
 		<delete includeemptydirs="true" failonerror="false">
-			<fileset dir="${outputRoot}" includes="**/*"/>
+			<fileset dir="${buildRoot}" includes="**/*"/>
 		</delete>
 	</target>
 
 	<!--build product code-->
 	<target name="build" depends="build-dependencies">
-		<mkdir dir="${buildDir}" />
-		<javac srcdir="${srcDir}" destdir="${buildDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
+		<mkdir dir="${compileDir}" />
+		<javac srcdir="${srcDir}" destdir="${compileDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
 			<classpath refid="classpath.build" />
 			<include name="**/*.java" />
 			<exclude name="se/hal/tts/GoogleTTSClient.java" />
 		</javac>
-		<copy todir="${buildDir}">
+		<copy todir="${compileDir}">
 			<fileset dir="${srcDir}"
 					 excludes="**/*.java" />
 		</copy>
 	</target>
 
 	<target name="build-dependencies">
-		<mkdir dir="${buildDir}" />
+		<mkdir dir="${compileDir}" />
 		<get src="http://ci.koc.se/jenkins/job/Zutil/147/artifact/build/release/Zutil.jar"
 			 dest="${libDir}" verbose="true" usetimestamp="true"/>
 	</target>
 
 	<target name="build-test" depends="build">
-		<mkdir dir="${buildTestDir}" />
-		<javac srcdir="${testDir}" destdir="${buildTestDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
+		<mkdir dir="${compileTestDir}" />
+		<javac srcdir="${testDir}" destdir="${compileTestDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
 			<classpath refid="classpath.test" />
 			<include name="**/*.java" />
 		</javac>
-		<copy todir="${buildTestDir}">
+		<copy todir="${compileTestDir}">
 			<fileset dir="${testDir}"
 					 excludes="**/*.java" />
 		</copy>
@@ -112,10 +115,10 @@
 
 	<target name="package" depends="build">
 		<copy todir="${releaseDir}" >
-			<fileset file="${gitRoot}/hal.conf.example" />
-			<fileset file="${gitRoot}/hal-default.db" />
-			<fileset file="${gitRoot}/logging.properties" />
-			<fileset file="${gitRoot}/run.sh" />
+			<fileset file="${root}/hal.conf.example" />
+			<fileset file="${root}/hal-default.db" />
+			<fileset file="${root}/logging.properties" />
+			<fileset file="${root}/run.sh" />
 		</copy>
 		<copy  todir="${releaseDir}/lib">
 			<fileset dir="${libDir}" excludes="junit-*.jar,hamcrest-*.jar" />
@@ -123,7 +126,7 @@
 		<copy  todir="${releaseDir}/resource/web">
 			<fileset dir="resource/web" />
 		</copy>
-		<jar destfile="${releaseDir}/hal.jar" basedir="${buildDir}" />
+		<jar destfile="${releaseDir}/${releaseJar}" basedir="${compileDir}" />
 	</target>
 
 

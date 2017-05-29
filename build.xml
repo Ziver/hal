@@ -59,6 +59,9 @@
 		</java>
 	</target>
 
+    <!-- Test targets -->
+    <target name="test-all" depends="test,test-plugins" />
+
 	<target name="test" depends="build-test">
 		<mkdir dir="${reportsDir}" />
 		<junit printsummary="yes" haltonfailure="false" fork="true">
@@ -72,16 +75,28 @@
 		</junit>
 	</target>
 
+    <target name="test-plugins" depends="build-test">
+        <subant target="test" verbose="true">
+            <fileset dir="plugins/" includes="*/build.xml"/>
+        </subant>
+    </target>
 	<!-- ________________________ BUILD TARGETS ________________________ -->
 
-	<!--clean all build paths-->
+	<!-- clean all build paths -->
 	<target name="clean">
 		<delete includeemptydirs="true" failonerror="false">
 			<fileset dir="${buildRoot}" includes="**/*"/>
 		</delete>
+        <!-- clean plugins -->
+        <subant target="clean" verbose="true">
+            <fileset dir="plugins/" includes="*/build.xml"/>
+        </subant>
 	</target>
 
-	<!--build product code-->
+
+	<!-- build product code -->
+    <target name="build-all" depends="build,build-plugins" />
+
 	<target name="build" depends="build-dependencies">
 		<mkdir dir="${compileDir}" />
 		<javac srcdir="${srcDir}" destdir="${compileDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
@@ -101,6 +116,12 @@
 			 dest="${libDir}" verbose="true" usetimestamp="true"/>
 	</target>
 
+	<target name="build-plugins" depends="build">
+		<subant target="build" verbose="true">
+			<fileset dir="plugins/" includes="*/build.xml"/>
+		</subant>
+	</target>
+
 	<target name="build-test" depends="build">
 		<mkdir dir="${compileTestDir}" />
 		<javac srcdir="${testDir}" destdir="${compileTestDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
@@ -113,6 +134,9 @@
 		</copy>
 	</target>
 
+    <!-- generate release packages -->
+    <target name="package-all" depends="package,package-plugins" />
+
 	<target name="package" depends="build">
 		<copy todir="${releaseDir}" >
 			<fileset file="${root}/hal.conf.example" />
@@ -120,15 +144,32 @@
 			<fileset file="${root}/logging.properties" />
 			<fileset file="${root}/run.sh" />
 		</copy>
-		<copy  todir="${releaseDir}/lib">
+		<copy todir="${releaseDir}/lib">
 			<fileset dir="${libDir}" excludes="junit-*.jar,hamcrest-*.jar" />
 		</copy>
-		<copy  todir="${releaseDir}/resource/web">
+		<copy todir="${releaseDir}/resource/web">
 			<fileset dir="resource/web" />
 		</copy>
 		<jar destfile="${releaseDir}/${releaseJar}" basedir="${compileDir}" />
 	</target>
 
+	<target name="package-plugins" depends="package">
+		<subant target="package" verbose="true">
+			<fileset dir="plugins/" includes="*/build.xml"/>
+		</subant>
+        <!-- Copy plugin jars -->
+        <copy todir="${releaseDir}/plugins" flatten="true" includeEmptyDirs="false">
+            <fileset dir="plugins/">
+                <include name="*/build/release/**"/>
+            </fileset>
+        </copy>
+        <!-- Copy plugin libs -->
+        <copy todir="${releaseDir}/lib" flatten="true" includeEmptyDirs="false">
+            <fileset dir="plugins/">
+                <include name="*/lib/**"/>
+            </fileset>
+        </copy>
+	</target>
 
 	<!-- ________________________ UTILITY TARGETS ________________________ -->
 

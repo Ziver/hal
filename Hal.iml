@@ -7,7 +7,10 @@
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/resource" type="java-resource" relativeOutputPath="resource" />
       <sourceFolder url="file://$MODULE_DIR$/plugins/zwave/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugins/tellstick/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugins/tellstick/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/plugins/tellstick/build" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/zwave/build" />
     </content>
     <orderEntry type="inheritedJdk" />

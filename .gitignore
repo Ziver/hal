@@ -1,5 +1,5 @@
 /screenlog.0*
 /hal.conf
 /hal.db*
-/build/
+build
 /lib/Zutil.jar

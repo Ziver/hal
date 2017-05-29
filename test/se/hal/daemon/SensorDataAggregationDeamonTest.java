@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import se.hal.HalContext;
-import se.hal.plugin.tellstick.device.Oregon0x1A2D;
+import se.hal.plugin.netscan.NetworkDevice;
 import se.hal.util.UTCTimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.DBUpgradeHandler;
@@ -43,7 +43,7 @@ public class SensorDataAggregationDeamonTest {
 		System.out.println("Adding user to database");
 		db.exec("INSERT INTO user(id, external, username) VALUES(222, 0, 'test')");	//adding user
 		System.out.println("Adding sensor to database");
-		db.exec("INSERT INTO sensor(id, user_id, external_id, type) VALUES(111, 222, 333, '"+Oregon0x1A2D.class.getName()+"')");	//adding sensor
+		db.exec("INSERT INTO sensor(id, user_id, external_id, type) VALUES(111, 222, 333, '"+NetworkDevice.class.getName()+"')");	//adding sensor
 		System.out.println("Generating raw data and saving it to the database...");
 		PreparedStatement stmt = db.getPreparedStatement("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUES(?, ?, ?)");
 		try{
@@ -77,7 +77,7 @@ public class SensorDataAggregationDeamonTest {
 		
 		//TODO: verify the aggregation
 		
-		System.out.println("Finnished testing raw data aggregation");
+		System.out.println("Finished testing raw data aggregation");
 	}
 	
 	

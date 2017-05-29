@@ -10,12 +10,12 @@ node {
 
     stage('Build') {
         sh 'ant clean'
-        sh 'ant build'
+        sh 'ant build-all'
     }
 
     stage('Test') {
         try {
-            sh 'ant test'
+            sh 'ant test-all'
         } finally {
             step([$class: 'JUnitResultArchiver', testResults: 'build/reports/*.xml'])
         }
@@ -23,7 +23,7 @@ node {
 
 
     stage('Package') {
-        sh 'ant package'
+        sh 'ant package-all'
         archiveArtifacts artifacts: 'build/release/**', fingerprint: true
 
         // Tag artifact

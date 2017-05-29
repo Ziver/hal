@@ -164,7 +164,7 @@
             </fileset>
         </copy>
         <!-- Copy plugin libs -->
-        <copy todir="${releaseDir}/lib" flatten="true" includeEmptyDirs="false">
+        <copy todir="${releaseDir}/lib" flatten="true" includeEmptyDirs="false" failonerror="false">
             <fileset dir="plugins/">
                 <include name="*/lib/**"/>
             </fileset>

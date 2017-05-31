@@ -2,43 +2,14 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="lib" path="external/marytts-5.1.2/lib/icu4j-54.1.1.jar"/>
-	<classpathentry kind="lib" path="external/marytts-5.1.2/lib/marytts-client-5.1.2-jar-with-dependencies.jar"/>
-	<classpathentry kind="lib" path="external/marytts-5.1.2/lib/marytts-lang-en-5.1.2.jar"/>
-	<classpathentry kind="lib" path="external/marytts-5.1.2/lib/marytts-lang-sv-5.1.2.jar"/>
-	<classpathentry kind="lib" path="external/marytts-5.1.2/lib/marytts-runtime-5.1.2-jar-with-dependencies.jar"/>
-	<classpathentry kind="lib" path="external/marytts-5.1.2/lib/voice-cmu-slt-hsmm-5.1.2.jar"/>
-	<classpathentry kind="lib" path="lib/Ab.jar"/>
-	<classpathentry kind="lib" path="lib/commons-math3-3.5.jar"/>
-	<classpathentry kind="lib" path="lib/marytts-client-5.1.2-jar-with-dependencies.jar"/>
-	<classpathentry kind="lib" path="lib/marytts-runtime-5.1.2-jar-with-dependencies.jar"/>
-	<classpathentry kind="lib" path="lib/junit-4.12.jar"/>
-	<classpathentry kind="lib" path="lib/java-speech-api-master.jar"/>
-	<classpathentry kind="lib" path="lib/sphinx4-core.jar"/>
-	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.11.2_HACKED_FOR_RPI.jar"/>
-	<classpathentry kind="lib" path="lib/jSerialComm-1.3.10.jar"/>
-	<classpathentry kind="lib" path="lib/pi4j-core-1.1-SNAPSHOT.jar" sourcepath="external/pi4j-1.1/pi4j-core-sources-1.1-SNAPSHOT.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/hal/external/pi4j-1.1/pi4j-core-javadoc-1.1-SNAPSHOT.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/pi4j-device-1.1-SNAPSHOT.jar" sourcepath="external/pi4j-1.1/pi4j-device-sources-1.1-SNAPSHOT.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/hal/external/pi4j-1.1/pi4j-device-javadoc-1.1-SNAPSHOT.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/pi4j-gpio-extension-1.1-SNAPSHOT.jar" sourcepath="external/pi4j-1.1/pi4j-gpio-extension-sources-1.1-SNAPSHOT.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/hal/external/pi4j-1.1/pi4j-gpio-extension-javadoc-1.1-SNAPSHOT.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/pi4j-service-1.1-SNAPSHOT.jar" sourcepath="external/pi4j-1.1/pi4j-service-sources-1.1-SNAPSHOT.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/hal/external/pi4j-1.1/pi4j-service-javadoc-1.1-SNAPSHOT.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="plugins/tellstick/src"/>
+	<classpathentry kind="src" path="plugins/tellstick/test"/>
+	<classpathentry kind="src" path="plugins/zwave/src"/>
+
+	<classpathentry kind="lib" path="lib/*"/>
+	<classpathentry kind="src" path="plugins/zwave/lib/*"/>
+
+
 	<classpathentry combineaccessrules="false" kind="src" path="/zutil-java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

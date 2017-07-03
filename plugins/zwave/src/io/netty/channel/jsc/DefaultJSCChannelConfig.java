@@ -24,7 +24,6 @@ import io.netty.channel.RecvByteBufAllocator;
 import java.util.Map;
 
 import static io.netty.channel.jsc.JSCChannelOption.*;
-import static io.netty.channel.rxtx.RxtxChannelOption.WAIT_TIME;
 
 /**
  * Default configuration class for jSerialComm device connections.
@@ -52,24 +51,18 @@ final class DefaultJSCChannelConfig extends DefaultChannelConfig implements JSCC
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getOption(ChannelOption<T> option) {
-        if (option == BAUD_RATE) {
+        if (option == BAUD_RATE)
             return (T) Integer.valueOf(getBaudrate());
-        }
-        if (option == STOP_BITS) {
+        else if (option == STOP_BITS)
             return (T) getStopbits();
-        }
-        if (option == DATA_BITS) {
+        else if (option == DATA_BITS)
             return (T) Integer.valueOf(getDatabits());
-        }
-        if (option == PARITY_BIT) {
+        else if (option == PARITY_BIT)
             return (T) getParitybit();
-        }
-        if (option == WAIT_TIME) {
+        else if (option == WAIT_TIME)
             return (T) Integer.valueOf(getWaitTimeMillis());
-        }
-        if (option == READ_TIMEOUT) {
+        else if (option == READ_TIMEOUT)
             return (T) Integer.valueOf(getReadTimeout());
-        }
         return super.getOption(option);
     }
 

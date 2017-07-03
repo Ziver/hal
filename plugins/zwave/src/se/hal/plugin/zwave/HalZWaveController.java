@@ -3,16 +3,77 @@ package se.hal.plugin.zwave;
 import com.whizzosoftware.wzwave.controller.ZWaveController;
 import com.whizzosoftware.wzwave.controller.ZWaveControllerListener;
 import com.whizzosoftware.wzwave.controller.netty.NettyZWaveController;
+import com.whizzosoftware.wzwave.node.NodeInfo;
 import com.whizzosoftware.wzwave.node.ZWaveEndpoint;
+import com.whizzosoftware.wzwave.persist.HashMapPersistentStore;
 import se.hal.HalContext;
 import se.hal.intf.*;
+
+import java.io.IOException;
 
 /**
  *
  */
-public class HalZWaveController implements HalSensorController, HalEventController, HalAutoScannableController, ZWaveControllerListener {
+public class HalZWaveController implements HalSensorController, HalEventController, HalAutoScannableController {
 
     private ZWaveController controller;
+
+
+    public static void main(String[] args) throws IOException {
+        NettyZWaveController zwave = new NettyZWaveController("COM5", new HashMapPersistentStore());
+        zwave.setListener(new ZWaveControllerListener(){
+            @Override
+            public void onZWaveNodeAdded(ZWaveEndpoint node) {
+                System.out.println("onZWaveNodeAdded: "+ node);
+            }
+
+            @Override
+            public void onZWaveNodeUpdated(ZWaveEndpoint node) {
+                System.out.println("onZWaveNodeUpdated: "+ node);
+            }
+
+            @Override
+            public void onZWaveConnectionFailure(Throwable t) {
+                System.out.println("onZWaveConnectionFailure: "+ t);
+            }
+
+            @Override
+            public void onZWaveControllerInfo(String libraryVersion, Integer homeId, Byte nodeId) {
+                System.out.println("onZWaveControllerInfo: "+ libraryVersion+" "+homeId+" "+nodeId);
+            }
+
+            @Override
+            public void onZWaveInclusionStarted() {
+                System.out.println("onZWaveInclusionStarted");
+            }
+
+            @Override
+            public void onZWaveInclusion(NodeInfo nodeInfo, boolean success) {
+                System.out.println("onZWaveInclusion: "+ nodeInfo + " "+success);
+            }
+
+            @Override
+            public void onZWaveInclusionStopped() {
+                System.out.println("onZWaveInclusionStopped");
+            }
+
+            @Override
+            public void onZWaveExclusionStarted() {
+                System.out.println("onZWaveExclusionStarted");
+            }
+
+            @Override
+            public void onZWaveExclusion(NodeInfo nodeInfo, boolean success) {
+                System.out.println("onZWaveExclusion: "+ nodeInfo + " "+success);
+            }
+
+            @Override
+            public void onZWaveExclusionStopped() {
+                System.out.println("onZWaveExclusionStopped");
+            }
+        });
+        zwave.start();
+    }
 
 
     @Override
@@ -21,8 +82,8 @@ public class HalZWaveController implements HalSensorController, HalEventControll
     }
     @Override
     public void initialize() throws Exception {
-        controller = new NettyZWaveController(HalContext.getStringProperty("zwave.com_port"));
-        controller.setListener(this);
+        //controller = new NettyZWaveController(HalContext.getStringProperty("zwave.com_port"));
+        //controller.setListener(this);
         controller.start();
     }
 
@@ -34,20 +95,6 @@ public class HalZWaveController implements HalSensorController, HalEventControll
 
     ////////////// Z-WAVE CODE ////////////////////////
 
-    @Override
-    public void onZWaveNodeAdded(ZWaveEndpoint zWaveEndpoint) {
-
-    }
-
-    @Override
-    public void onZWaveNodeUpdated(ZWaveEndpoint zWaveEndpoint) {
-
-    }
-
-    @Override
-    public void onZWaveConnectionFailure(Throwable throwable) {
-
-    }
 
 
     ////////////// HAL CODE ////////////////////////

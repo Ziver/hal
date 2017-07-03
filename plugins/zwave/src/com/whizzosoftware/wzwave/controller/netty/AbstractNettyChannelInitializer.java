@@ -50,11 +50,11 @@ abstract class AbstractNettyChannelInitializer<T extends Channel> extends Channe
 
         // Setup general channel handlers and coders
         channel.pipeline().addLast("decoder", new ZWaveFrameDecoder());
-        channel.pipeline().addLast("ack", new AcknowledgementInboundHandler());
-        channel.pipeline().addLast("transaction", new ZWaveDataFrameTransactionInboundHandler());
-        channel.pipeline().addLast("handler", inboundHandler);
+        channel.pipeline().addLast("ack", new ACKInboundHandler());
         channel.pipeline().addLast("encoder", new ZWaveFrameEncoder());
-        channel.pipeline().addLast("writeQueue", new ZWaveQueuedOutboundHandler());
+        channel.pipeline().addLast("writeQueue", new FrameQueueHandler());
+        channel.pipeline().addLast("transaction", new TransactionInboundHandler());
+        channel.pipeline().addLast("handler", inboundHandler);
     }
 
 

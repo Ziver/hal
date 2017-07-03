@@ -30,7 +30,7 @@ public final class JSCChannelOption<T> extends ChannelOption<T> {
     public static final ChannelOption<Stopbits> STOP_BITS = valueOf("STOP_BITS");
     public static final ChannelOption<Integer> DATA_BITS = valueOf("DATA_BITS");
     public static final ChannelOption<Paritybit> PARITY_BIT = valueOf("PARITY_BIT");
-    public static final ChannelOption<Integer> WAIT_TIME = valueOf("WITE_TIMEOUT");
+    public static final ChannelOption<Integer> WAIT_TIME = valueOf("WAIT_TIME");
     public static final ChannelOption<Integer> READ_TIMEOUT = valueOf("READ_TIMEOUT");
 
     @SuppressWarnings({ "unused", "deprecation" })

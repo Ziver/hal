@@ -15,6 +15,24 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="wzwave" exported="" />
+    <orderEntry type="module" module-name="Zutil" exported="" />
+    <orderEntry type="module-library" exported="">
+      <library name="ZWave lib">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/plugins/zwave/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <NATIVE>
+          <root url="file://$MODULE_DIR$/plugins/zwave/lib" />
+        </NATIVE>
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.ideaLibSources/netty-all-4.0.46.Final-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.ideaLibSources/wzwave-0.0.3-sources.jar!/" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/plugins/zwave/lib" recursive="false" />
+      </library>
+    </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="lib">
         <CLASSES>
@@ -25,15 +43,12 @@
           <root url="file://$MODULE_DIR$/lib" />
         </NATIVE>
         <SOURCES>
-          <root url="jar://$USER_HOME$/.ideaLibSources/jSerialComm-1.3.10-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ideaLibSources/zwave4j-0.3-sources.jar!/" />
           <root url="jar://$USER_HOME$/.ideaLibSources/wzwave-0.0.3-sources.jar!/" />
           <root url="jar://$USER_HOME$/.ideaLibSources/netty-all-4.0.46.Final-sources.jar!/" />
         </SOURCES>
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="Zutil" exported="" />
     <orderEntry type="module-library" scope="TEST">
       <library name="JUnit4">
         <CLASSES>
@@ -42,19 +57,6 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="ZWave lib">
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/plugins/zwave/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$USER_HOME$/.ideaLibSources/netty-all-4.0.46.Final-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ideaLibSources/wzwave-0.0.3-sources.jar!/" />
-        </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/plugins/zwave/lib" recursive="false" />
       </library>
     </orderEntry>
   </component>

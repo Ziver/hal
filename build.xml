@@ -40,7 +40,7 @@
 
 	<!-- ________________________ EXECUTION TARGETS ________________________ -->
 
-	<target name="run" depends="package">
+	<target name="run" depends="package-all">
 		<java fork="true" failonerror="true" classname="se.hal.HalServer">
 			<classpath>
 				<pathelement path="${releaseDir}/${releaseJar}"/>

@@ -86,9 +86,13 @@ function createChart(elementId, url, updateTime=-1){
         }
     });
 
-    updateChart(chart, url, updateTime);;
+    updateChart(chart, url, updateTime);
+    $(window).focus(function(e) {
+        updateChart(chart, url);
+    });
 }
-function updateChart(chart, url, updateTime){
+function updateChart(chart, url, updateTime=-1){
+    console.log('Updating chart: '+chart.element.id);
     $.getJSON(url, function(json){
         chart.load(getChartData(json));
     });

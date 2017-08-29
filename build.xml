@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Hal" >
 
-	<!-- ________________________ PROPERTIES AND SETTINGS ________________________ -->
+    <!-- ________________________ PROPERTIES AND SETTINGS ________________________ -->
 
-	<!--common properties-->
-	<property name="root" value="." />
-	<property name="srcDir" value="${root}/src" />
-	<property name="testDir" value="${root}/test" />
-	<property name="libDir" value="${root}/lib" />
+    <!--common properties-->
+    <property name="root" value="." />
+    <property name="srcDir" value="${root}/src" />
+    <property name="testDir" value="${root}/test" />
+    <property name="libDir" value="${root}/lib" />
 
-	<property name="buildRoot" value="${root}/build" />
-	<property name="compileDir" value="${buildRoot}/production" />
-	<property name="compileTestDir" value="${buildRoot}/test" />
-	<property name="releaseDir" value="${buildRoot}/release" />
-	<property name="reportsDir" value="${buildRoot}/reports" />
+    <property name="buildRoot" value="${root}/build" />
+    <property name="compileDir" value="${buildRoot}/production" />
+    <property name="compileTestDir" value="${buildRoot}/test" />
+    <property name="releaseDir" value="${buildRoot}/release" />
+    <property name="reportsDir" value="${buildRoot}/reports" />
     <property name="releaseJar" value="hal.jar" />
 
 
-	<!-- ________________________ CLASSPATH ________________________ -->
+    <!-- ________________________ CLASSPATH ________________________ -->
 
-	<!--define standard arguments for javac-->
-	<presetdef name="javac">
-		<javac includeantruntime="false" />
-	</presetdef>
+    <!--define standard arguments for javac-->
+    <presetdef name="javac">
+        <javac includeantruntime="false" />
+    </presetdef>
 
-	<!--classpath included when building-->
-	<path id="classpath.build">
+    <!--classpath included when building-->
+    <path id="classpath.build">
         <fileset dir="${libDir}">
             <include name="**/*.jar"/>
         </fileset>
@@ -53,111 +53,111 @@
 	<target name="debug-remote" depends="package">
 		<java fork="true" failonerror="true" classname="se.hal.HalServer">
             <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005" />
-			<classpath>
-				<pathelement path="${releaseDir}/${releaseJar}"/>
-				<pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
-			</classpath>
-		</java>
-	</target>
+            <classpath>
+                <pathelement path="${releaseDir}/${releaseJar}"/>
+                <pathelement path="${libDir}/*"/>	<!--wildcard may not be platform independent, ok?-->
+            </classpath>
+        </java>
+    </target>
 
     <!-- Test targets -->
     <target name="test-all" depends="test,test-plugins" />
 
-	<target name="test" depends="build-test">
-		<mkdir dir="${reportsDir}" />
-		<junit printsummary="yes" haltonfailure="false" fork="true">
-			<classpath refid="classpath.test" />
-			<formatter type="plain" usefile="false" /> <!-- to screen -->
-			<formatter type="xml" /> <!-- to file -->
+    <target name="test" depends="build-test">
+        <mkdir dir="${reportsDir}" />
+        <junit printsummary="yes" haltonfailure="false" fork="true">
+            <classpath refid="classpath.test" />
+            <formatter type="plain" usefile="false" /> <!-- to screen -->
+            <formatter type="xml" /> <!-- to file -->
 
-			<batchtest todir="${reportsDir}" skipNonTests="true">
-				<fileset dir="${compileTestDir}" includes="**/*Test*.class" />
-			</batchtest>
-		</junit>
-	</target>
+            <batchtest todir="${reportsDir}" skipNonTests="true">
+                <fileset dir="${compileTestDir}" includes="**/*Test*.class" />
+            </batchtest>
+        </junit>
+    </target>
 
     <target name="test-plugins" depends="build-test">
         <subant target="test" verbose="true">
             <fileset dir="plugins/" includes="*/build.xml"/>
         </subant>
     </target>
-	<!-- ________________________ BUILD TARGETS ________________________ -->
+    <!-- ________________________ BUILD TARGETS ________________________ -->
 
-	<!-- clean all build paths -->
-	<target name="clean">
-		<delete includeemptydirs="true" failonerror="false">
-			<fileset dir="${buildRoot}" includes="**/*"/>
-		</delete>
+    <!-- clean all build paths -->
+    <target name="clean">
+        <delete includeemptydirs="true" failonerror="false">
+            <fileset dir="${buildRoot}" includes="**/*"/>
+        </delete>
         <!-- clean plugins -->
         <subant target="clean" verbose="true">
             <fileset dir="plugins/" includes="*/build.xml"/>
         </subant>
-	</target>
+    </target>
 
 
-	<!-- build product code -->
+    <!-- build product code -->
     <target name="build-all" depends="build,build-plugins" />
 
-	<target name="build" depends="build-dependencies">
-		<mkdir dir="${compileDir}" />
-		<javac srcdir="${srcDir}" destdir="${compileDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
-			<classpath refid="classpath.build" />
-			<include name="**/*.java" />
-			<exclude name="se/hal/tts/GoogleTTSClient.java" />
-		</javac>
-		<copy todir="${compileDir}">
-			<fileset dir="${srcDir}"
-					 excludes="**/*.java" />
-		</copy>
-	</target>
+    <target name="build" depends="build-dependencies">
+        <mkdir dir="${compileDir}" />
+        <javac srcdir="${srcDir}" destdir="${compileDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
+            <classpath refid="classpath.build" />
+            <include name="**/*.java" />
+            <exclude name="se/hal/tts/GoogleTTSClient.java" />
+        </javac>
+        <copy todir="${compileDir}">
+            <fileset dir="${srcDir}"
+                     excludes="**/*.java" />
+        </copy>
+    </target>
 
-	<target name="build-dependencies">
-		<mkdir dir="${compileDir}" />
-		<get src="http://ci.koc.se/jenkins/job/Zutil/147/artifact/build/release/Zutil.jar"
-			 dest="${libDir}" verbose="true" usetimestamp="true"/>
-	</target>
+    <target name="build-dependencies">
+        <mkdir dir="${compileDir}" />
+        <get src="http://ci.koc.se/jenkins/job/Zutil/147/artifact/build/release/Zutil.jar"
+             dest="${libDir}" verbose="true" usetimestamp="true"/>
+    </target>
 
-	<target name="build-plugins" depends="build">
-		<subant target="build" verbose="true">
-			<fileset dir="plugins/" includes="*/build.xml"/>
-		</subant>
-	</target>
+    <target name="build-plugins" depends="build">
+        <subant target="build" verbose="true">
+            <fileset dir="plugins/" includes="*/build.xml"/>
+        </subant>
+    </target>
 
-	<target name="build-test" depends="build">
-		<mkdir dir="${compileTestDir}" />
-		<javac srcdir="${testDir}" destdir="${compileTestDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
-			<classpath refid="classpath.test" />
-			<include name="**/*.java" />
-		</javac>
-		<copy todir="${compileTestDir}">
-			<fileset dir="${testDir}"
-					 excludes="**/*.java" />
-		</copy>
-	</target>
+    <target name="build-test" depends="build">
+        <mkdir dir="${compileTestDir}" />
+        <javac srcdir="${testDir}" destdir="${compileTestDir}" debug="yes" debugLevel="lines,vars,source" fork="yes">
+            <classpath refid="classpath.test" />
+            <include name="**/*.java" />
+        </javac>
+        <copy todir="${compileTestDir}">
+            <fileset dir="${testDir}"
+                     excludes="**/*.java" />
+        </copy>
+    </target>
 
     <!-- generate release packages -->
     <target name="package-all" depends="package,package-plugins" />
 
-	<target name="package" depends="build">
-		<copy todir="${releaseDir}" >
-			<fileset file="${root}/hal.conf.example" />
-			<fileset file="${root}/hal-default.db" />
-			<fileset file="${root}/logging.properties" />
-			<fileset file="${root}/run.sh" />
-		</copy>
-		<copy todir="${releaseDir}/lib">
-			<fileset dir="${libDir}" excludes="junit-*.jar,hamcrest-*.jar" />
-		</copy>
-		<copy todir="${releaseDir}/resource/web">
-			<fileset dir="resource/web" />
-		</copy>
-		<jar destfile="${releaseDir}/${releaseJar}" basedir="${compileDir}" />
-	</target>
+    <target name="package" depends="build">
+        <copy todir="${releaseDir}" >
+            <fileset file="${root}/hal.conf.example" />
+            <fileset file="${root}/hal-default.db" />
+            <fileset file="${root}/logging.properties" />
+            <fileset file="${root}/run.sh" />
+        </copy>
+        <copy todir="${releaseDir}/lib">
+            <fileset dir="${libDir}" excludes="junit-*.jar,hamcrest-*.jar" />
+        </copy>
+        <copy todir="${releaseDir}/resource/web">
+            <fileset dir="resource/web" />
+        </copy>
+        <jar destfile="${releaseDir}/${releaseJar}" basedir="${compileDir}" />
+    </target>
 
-	<target name="package-plugins" depends="package">
-		<subant target="package" verbose="true">
-			<fileset dir="plugins/" includes="*/build.xml"/>
-		</subant>
+    <target name="package-plugins" depends="package">
+        <subant target="package" verbose="true">
+            <fileset dir="plugins/" includes="*/build.xml"/>
+        </subant>
         <!-- Copy plugin jars -->
         <copy todir="${releaseDir}/plugins" flatten="true" includeEmptyDirs="false">
             <fileset dir="plugins/">
@@ -170,19 +170,19 @@
                 <include name="*/lib/**"/>
             </fileset>
         </copy>
-	</target>
+    </target>
 
-	<!-- ________________________ UTILITY TARGETS ________________________ -->
+    <!-- ________________________ UTILITY TARGETS ________________________ -->
 
-	<target name="clear-aggr-data-from-db" depends="">
-		<exec executable="sqlite3">
-			<arg line="hal.db 'DELETE FROM sensor_data_aggr'" />
-		</exec>
+    <target name="clear-aggr-data-from-db" depends="">
+        <exec executable="sqlite3">
+            <arg line="hal.db 'DELETE FROM sensor_data_aggr'" />
+        </exec>
 
-		<!-- update all internal sensors aggregation version to indicate for peers that they need to re-sync all data -->
-		<exec executable="sqlite3">
-			<arg line="hal.db 'UPDATE sensor SET aggr_version = (aggr_version+1) WHERE id = (SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)'" />
-		</exec>
-	</target>
+        <!-- update all internal sensors aggregation version to indicate for peers that they need to re-sync all data -->
+        <exec executable="sqlite3">
+            <arg line="hal.db 'UPDATE sensor SET aggr_version = (aggr_version+1) WHERE id = (SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)'" />
+        </exec>
+    </target>
 
 </project>

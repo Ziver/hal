@@ -7,8 +7,8 @@ import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.ui.Configurator;
 
 public class RPiTemperatureSensor implements HalSensorConfig {
-	
-	@Configurator.Configurable("1-Wire Address")
+
+    @Configurator.Configurable("1-Wire Address")
     private String w1Address;
 
 
@@ -41,13 +41,13 @@ public class RPiTemperatureSensor implements HalSensorConfig {
 
     @Override
     public boolean equals(Object obj){
-    	if(obj instanceof RPiTemperatureSensor && w1Address != null)
-    		return this.get1WAddress().equals(((RPiTemperatureSensor) obj).w1Address);
-    	return false;
+        if(obj instanceof RPiTemperatureSensor && w1Address != null)
+            return this.get1WAddress().equals(((RPiTemperatureSensor) obj).w1Address);
+        return false;
     }
 
-	public String get1WAddress() {
-		return w1Address;
-	}
+    public String get1WAddress() {
+        return w1Address;
+    }
 
 }

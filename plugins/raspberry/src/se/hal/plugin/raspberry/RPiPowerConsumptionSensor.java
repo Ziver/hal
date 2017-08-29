@@ -7,15 +7,15 @@ import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.ui.Configurator;
 
 public class RPiPowerConsumptionSensor implements HalSensorConfig {
-	
-	@Configurator.Configurable("GPIO-Pin")
+
+    @Configurator.Configurable("GPIO-Pin")
     private int gpioPin = -1;
 
-	
-	public RPiPowerConsumptionSensor(){	} //need to be empty for the framework to create an instance
- 	public RPiPowerConsumptionSensor(int gpioPin) {
-		this.gpioPin = gpioPin;
-	}
+
+    public RPiPowerConsumptionSensor(){	} //need to be empty for the framework to create an instance
+    public RPiPowerConsumptionSensor(int gpioPin) {
+        this.gpioPin = gpioPin;
+    }
 
 
 
@@ -41,14 +41,14 @@ public class RPiPowerConsumptionSensor implements HalSensorConfig {
 
     @Override
     public boolean equals(Object obj){
-    	if(obj instanceof RPiPowerConsumptionSensor)
-    		return ((RPiPowerConsumptionSensor)obj).gpioPin == gpioPin;
-    	return false;
+        if(obj instanceof RPiPowerConsumptionSensor)
+            return ((RPiPowerConsumptionSensor)obj).gpioPin == gpioPin;
+        return false;
     }
 
-	public int getGpioPin() {
-		return gpioPin;
-	}
+    public int getGpioPin() {
+        return gpioPin;
+    }
 
     public String toString(){
         return "gpioPin:" + gpioPin;

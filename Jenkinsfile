@@ -1,7 +1,7 @@
 // Jenkinsfile (Pipeline Script)
 node {
     // Configure environment
-    env.JAVA_HOME = tool name: 'JDK8'
+    env.JAVA_HOME = tool name: 'jdk8'
     env.REPO_URL = "repo.koc.se/hal.git" //scm.getUserRemoteConfigs()[0].getUrl()
     env.BUILD_NAME = "BUILD-" + env.BUILD_ID
 
@@ -34,10 +34,3 @@ node {
         }
     }
 }
-
-//stage('Deploy') {
-//    input message: 'Deploy?', submitter: 'ziver'
-//    node {
-//        sh 'ant deploy'
-//    }
-//}

@@ -21,11 +21,11 @@
                     <td><span class="timestamp">{{.getDeviceData().getTimestamp()}}</span></td>
                     <td>
                         <form method="POST">
-                            <input type="hidden" name="action" value="-">
+                            <input type="hidden" name="action" value="modify">
                             <input type="hidden" name="id" value="{{.getId()}}">
 
                             <div class="btn-toolbar pull-right">
-                                <input class="toggle-switch"  type="checkbox" name="data"
+                                <input class="toggle-switch" type="checkbox" name="enabled"
                                        data-size="mini" data-on-color="danger"
                                        {{#.getDeviceData().getData()}}checked{{/.getDeviceData().getData()}} >
                             </div>

@@ -41,7 +41,7 @@ public class EventOverviewHttpPage extends HalHttpPage {
         if(request.containsKey("action")){
             // change event data
             SwitchEventData eventData = new SwitchEventData();
-            if ( request.containsKey("data") && "on".equals(request.get("data")))
+            if ( request.containsKey("enabled") && "on".equals(request.get("enabled")))
                 eventData.turnOn();
             else
                 eventData.turnOff();

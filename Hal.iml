@@ -20,22 +20,6 @@
     <orderEntry type="module" module-name="wzwave" exported="" />
     <orderEntry type="module" module-name="Zutil" exported="" />
     <orderEntry type="module-library" exported="">
-      <library name="ZWave lib">
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/plugins/zwave/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <NATIVE>
-          <root url="file://$MODULE_DIR$/plugins/zwave/lib" />
-        </NATIVE>
-        <SOURCES>
-          <root url="jar://$USER_HOME$/.ideaLibSources/netty-all-4.0.46.Final-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ideaLibSources/wzwave-0.0.3-sources.jar!/" />
-        </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/plugins/zwave/lib" recursive="false" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
       <library name="lib">
         <CLASSES>
           <root url="file://$MODULE_DIR$/lib" />
@@ -51,7 +35,23 @@
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
+      <library name="lib ZWave">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/plugins/zwave/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <NATIVE>
+          <root url="file://$MODULE_DIR$/plugins/zwave/lib" />
+        </NATIVE>
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.ideaLibSources/netty-all-4.0.46.Final-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.ideaLibSources/wzwave-0.0.3-sources.jar!/" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/plugins/zwave/lib" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
       <library name="lib Raspberry">
         <CLASSES>
           <root url="file://$MODULE_DIR$/plugins/raspberry/lib" />

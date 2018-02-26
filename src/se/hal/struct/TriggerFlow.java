@@ -20,11 +20,13 @@ import java.util.logging.Logger;
 public class TriggerFlow extends DBBean {
     private static final Logger logger = LogUtil.getLogger();
 
+    private boolean enabled = true;
+    private String name = "";
+
     @DBLinkTable(beanClass=Trigger.class, table="trigger", idColumn = "flow_id")
     private List<Trigger> triggerList = new ArrayList<>();
     @DBLinkTable(beanClass=Action.class, table="action", idColumn = "flow_id")
     private List<Action> actionList = new ArrayList<>();
-
 
 
     public static List<TriggerFlow> getTriggerFlows(DBConnection db) throws SQLException {
@@ -57,6 +59,19 @@ public class TriggerFlow extends DBBean {
     }
 
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
 
     public void addTrigger(Trigger trigger) {
         triggerList.add(trigger);
@@ -84,7 +99,7 @@ public class TriggerFlow extends DBBean {
      *         Note: this method will not execute any actionList
      */
     public boolean evaluate(){
-        if (triggerList.isEmpty())
+        if (triggerList.isEmpty() || !enabled)
             return false;
         for(Trigger trigger : triggerList){
             if (!trigger.evaluate())
@@ -97,6 +112,8 @@ public class TriggerFlow extends DBBean {
      * Executes the associated actionList in this flow
      */
     public void execute(){
+        if (!enabled)
+            return;
         for(Action action : actionList){
             action.execute();
         }
@@ -110,6 +127,4 @@ public class TriggerFlow extends DBBean {
             trigger.reset();
         }
     }
-
-
 }

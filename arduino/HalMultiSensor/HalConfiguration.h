@@ -6,7 +6,7 @@
 
 #define TIMER_MILLISECOND 60000 // poling in minutes
 #define INDICATOR_PIN     13      // diode
-#define DEVICE_BASE_ID    20
+#define DEVICE_BASE_ID    98
 
 // POWER CONSUMPTION SENSOR
 //#define POWERCON_ENABLED // comment out to disable sensor
@@ -21,7 +21,7 @@
 #define TEMPERATURE_TIMER_MULTIPLIER 10
 
 // LIGHT SENSOR
-#define LIGHT_ENABLED // comment out to disable sensor
+//#define LIGHT_ENABLED // comment out to disable sensor
 #define LIGHT_SENSOR            SensorBH1750()
 #define LIGHT_PROTOCOL          ProtocolOregon(11, DEVICE_BASE_ID + 3)
 #define LIGHT_TIMER_MULTIPLIER  10

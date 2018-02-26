@@ -62,6 +62,11 @@ public class TriggerHttpPage extends HalHttpPage {
                     flow = new TriggerFlow();
                     flow.save(db);
                     break;
+                case "modify_flow":
+                    flow.setEnabled("on".equals(request.get("enabled")));
+                    flow.setName(request.get("name"));
+                    flow.save(db);
+                    break;
                 case "remove_flow":
                     flow.delete(db);
                     break;

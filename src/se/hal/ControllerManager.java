@@ -133,6 +133,13 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     /**
+     * Removes all auto detected sensors.
+     */
+    public void clearDetectedSensors(){
+        detectedSensors.clear();
+    }
+
+    /**
      * Called by Controllers to report received Sensor data
      */
     @Override

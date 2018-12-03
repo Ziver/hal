@@ -88,6 +88,10 @@ public class SensorConfigHttpPage extends HalHttpPage {
                     }
                     break;
 
+                case "remove_all_detected_sensors":
+                    ControllerManager.getInstance().clearDetectedSensors();
+                    break;
+
                 // External Users
                 case "create_external_user":
                     user = new User();

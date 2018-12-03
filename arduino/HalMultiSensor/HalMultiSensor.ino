@@ -10,6 +10,15 @@ the data to a central location.
 #include "Interrupt.h"
 
 
+#ifndef POWERCON_ENABLED
+    #define POWER_TIMER_MULTIPLIER 1
+#endif
+#ifndef TEMPERATURE_ENABLED
+    #define TEMPERATURE_TIMER_MULTIPLIER 1
+#endif
+#ifndef LIGHT_ENABLED
+    #define LIGHT_TIMER_MULTIPLIER 1
+#endif
 #define TIMER_MULTIPLIER_MAX \
     POWER_TIMER_MULTIPLIER * TEMPERATURE_TIMER_MULTIPLIER * LIGHT_TIMER_MULTIPLIER
 unsigned int timerMultiplier = 0;

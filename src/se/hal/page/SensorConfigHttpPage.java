@@ -9,6 +9,7 @@ import se.hal.page.HalAlertManager.HalAlert;
 import se.hal.struct.ClassConfigurationData;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
+import zutil.ObjectUtil;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
@@ -43,9 +44,10 @@ public class SensorConfigHttpPage extends HalHttpPage {
 
         // Save new input
         if(request.containsKey("action")){
-            int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
+            int id = (!ObjectUtil.isEmpty(request.get("id")) ? Integer.parseInt(request.get("id")) : -1);
             Sensor sensor;
             User user;
+
             switch(request.get("action")) {
                 // Local Sensors
                 case "create_local_sensor":

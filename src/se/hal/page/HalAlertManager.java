@@ -150,7 +150,7 @@ public class HalAlertManager implements HttpPage {
                 case DISMISSED: this.ttl = Integer.MAX_VALUE; break;
             }
         }
-        public void dissmiss(){
+        public void dismiss(){
             ttl = -1;
         }
 
@@ -159,7 +159,7 @@ public class HalAlertManager implements HttpPage {
             if (obj instanceof HalAlert)
                 return level == ((HalAlert) obj).level &&
                         title.equals(((HalAlert) obj).title);
-            return false;
+            return super.equals(obj);
         }
     }
 }

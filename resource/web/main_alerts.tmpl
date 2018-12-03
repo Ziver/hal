@@ -44,7 +44,7 @@
 <script>
     $(function(){
         $(".alert .close").click(function(event){
-            $.get("{{url}}?action=dismiss&id="+$(this).data("id"));
+            $.get("{{serviceUrl}}?action=dismiss&id="+$(this).data("id"));
         });
     });
 </script>

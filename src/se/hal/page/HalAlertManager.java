@@ -62,7 +62,7 @@ public class HalAlertManager implements HttpPage {
             }
 
             Templator tmpl = new Templator(FileUtil.find(TMPL_PATH));
-            tmpl.set("url", getUrl());
+            tmpl.set("serviceUrl", getUrl());
             tmpl.set("alerts", alertsClone);
             return tmpl;
         }catch (IOException e){

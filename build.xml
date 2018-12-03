@@ -29,29 +29,29 @@
         <fileset dir="${libDir}">
             <include name="**/*.jar"/>
         </fileset>
-		<pathelement location="${compileDir}" />
-	</path>
+        <pathelement location="${compileDir}" />
+    </path>
 
-	<path id="classpath.test">
-		<pathelement location="${compileTestDir}" />
-		<!--include libraries used for building-->
-		<path refid="classpath.build"/>
-	</path>
+    <path id="classpath.test">
+        <pathelement location="${compileTestDir}" />
+        <!--include libraries used for building-->
+        <path refid="classpath.build"/>
+    </path>
 
-	<!-- ________________________ EXECUTION TARGETS ________________________ -->
+    <!-- ________________________ EXECUTION TARGETS ________________________ -->
 
-	<target name="run" depends="package-all">
-		<java fork="true" failonerror="true" classname="se.hal.HalServer">
-			<classpath>
-				<pathelement path="${releaseDir}/${releaseJar}"/>
-				<pathelement path="${releaseDir}/plugins/*"/>
-				<pathelement path="${libDir}/*"/>
-			</classpath>
-		</java>
-	</target>
+    <target name="run" depends="package-all">
+        <java fork="true" failonerror="true" classname="se.hal.HalServer">
+            <classpath>
+                <pathelement path="${releaseDir}/${releaseJar}"/>
+                <pathelement path="${releaseDir}/plugins/*"/>
+                <pathelement path="${libDir}/*"/>
+            </classpath>
+        </java>
+    </target>
 
-	<target name="debug-remote" depends="package">
-		<java fork="true" failonerror="true" classname="se.hal.HalServer">
+    <target name="debug-remote" depends="package">
+        <java fork="true" failonerror="true" classname="se.hal.HalServer">
             <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005" />
             <classpath>
                 <pathelement path="${releaseDir}/${releaseJar}"/>
@@ -113,7 +113,7 @@
 
     <target name="build-dependencies">
         <mkdir dir="${compileDir}" />
-        <get src="http://ci.koc.se/jenkins/job/Zutil/180/artifact/se/koc/zutil/1.0.0-SNAPSHOT/zutil-1.0.0-SNAPSHOT.jar"
+        <get src="http://ci.koc.se/jenkins/job/Zutil/lastSuccessfulBuild/artifact/se/koc/zutil/1.0.2-230/zutil-1.0.2-230.jar"
              dest="${libDir}" verbose="true" usetimestamp="true"/>
     </target>
 

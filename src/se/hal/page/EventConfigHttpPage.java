@@ -85,6 +85,10 @@ public class EventConfigHttpPage extends HalHttpPage {
                                 AlertLevel.ERROR, "Unknown event id: "+id, AlertTTL.ONE_VIEW));
                     }
                     break;
+
+                case "remove_all_detected_events":
+                    ControllerManager.getInstance().clearDetectedEvents();
+                    break;
             }
         }
 

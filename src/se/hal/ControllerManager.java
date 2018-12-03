@@ -266,6 +266,13 @@ public class ControllerManager implements HalSensorReportListener,
     }
 
     /**
+     * Removes all auto detected events.
+     */
+    public void clearDetectedEvents(){
+        detectedEvents.clear();
+    }
+
+    /**
      * Called by Controllers to report received Event data
      */
     @Override

@@ -30,6 +30,7 @@
                             <div class="btn-toolbar pull-right">
                                 <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
                                         data-target="#eventModal"
+                                        data-action="modify_local_event"
                                         data-id="{{.getId()}}"
                                         data-name="{{.getName()}}"
                                         data-type="{{.getType()}}"
@@ -69,6 +70,7 @@
                         <div class="btn-toolbar pull-right">
                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
                                     data-target="#eventModal"
+                                    data-action="create_local_event"
                                     data-type="{{.getType()}}"
                                     {{#.getDeviceConfigurator().getConfiguration()}}
                                     data-{{.getName()}}="{{.getString()}}"

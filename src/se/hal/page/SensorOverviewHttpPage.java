@@ -2,7 +2,9 @@ package se.hal.page;
 
 import se.hal.HalContext;
 import se.hal.intf.HalHttpPage;
+import se.hal.struct.Event;
 import se.hal.struct.Sensor;
+import se.hal.util.DeviceNameComparator;
 import se.hal.util.HistoryDataListSqlResult;
 import se.hal.util.HistoryDataListSqlResult.HistoryData;
 import zutil.db.DBConnection;
@@ -10,6 +12,7 @@ import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
 
 import java.sql.PreparedStatement;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -51,8 +54,11 @@ public class SensorOverviewHttpPage extends HalHttpPage {
             return tmpl;
         }
         else {
+            Sensor[] sensors = Sensor.getLocalSensors(db).toArray(new Sensor[0]);
+            Arrays.sort(sensors, DeviceNameComparator.getInstance());
+
             Templator tmpl = new Templator(FileUtil.find(OVERVIEW_TEMPLATE));
-            tmpl.set("sensors", Sensor.getLocalSensors(db));
+            tmpl.set("sensors", sensors);
             return tmpl;
         }
     }

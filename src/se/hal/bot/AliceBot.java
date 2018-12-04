@@ -30,9 +30,6 @@ import zutil.io.file.FileUtil;
 
 import java.io.File;
 
-/**
- * Created by Ziver on 2015-05-07.
- */
 public class AliceBot implements HalBot{
     private Chat chatSession;
 

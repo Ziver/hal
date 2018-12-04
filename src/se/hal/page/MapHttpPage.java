@@ -16,9 +16,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
-/**
- * Created by Ziver on 2016-06-23.
- */
 public class MapHttpPage extends HalHttpPage {
     private static final String TEMPLATE = "resource/web/map.tmpl";
 

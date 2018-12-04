@@ -2,8 +2,6 @@ package se.hal.intf;
 
 /**
  * Interface representing sensor type specific configuration data.
- *
- * Created by Ziver on 2015-12-23.
  */
 public interface HalSensorConfig {
     enum AggregationMethod{

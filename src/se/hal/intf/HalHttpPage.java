@@ -16,9 +16,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Ziver on 2015-12-10.
- */
 public abstract class HalHttpPage implements HttpPage{
     private static final String TEMPLATE = "resource/web/main_index.tmpl";
     private static Navigation rootNav = Navigation.createRootNav();

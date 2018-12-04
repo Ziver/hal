@@ -7,9 +7,6 @@ import zutil.ui.Configurator.PreConfigurationActionListener;
 
 import java.text.SimpleDateFormat;
 
-/**
- *
- */
 public class DateTimeTrigger implements HalTrigger,Configurator.PostConfigurationActionListener {
 
     @Configurator.Configurable("Minute (Cron format)")

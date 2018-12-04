@@ -13,8 +13,6 @@ import java.util.Map;
 
 /**
  * TODO: This json endpoint might not be needed as we have SensorJsonPage?
- *
- * Created by Ziver on 2016-06-23.
  */
 public class MapJsonPage extends HalJsonPage {
 

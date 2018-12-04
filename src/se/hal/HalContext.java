@@ -31,18 +31,18 @@ public class HalContext {
     private static DBConnection db; // TODO: Should probably be a db pool as we have multiple threads accessing the DB
 
     private static Properties defaultFileConf;
-	private static Properties fileConf;
-	private static Properties dbConf;
+    private static Properties fileConf;
+    private static Properties dbConf;
 
 
-	static {
-		defaultFileConf = new Properties();
-		defaultFileConf.setProperty("http_port", ""+8080);
-		defaultFileConf.setProperty("sync_port", ""+6666);
-	}
-	
-	
-	public static void initialize(){
+    static {
+        defaultFileConf = new Properties();
+        defaultFileConf.setProperty("http_port", ""+8080);
+        defaultFileConf.setProperty("sync_port", ""+6666);
+    }
+
+
+    public static void initialize(){
         try {
             // Read conf
             fileConf = new Properties(defaultFileConf);
@@ -82,9 +82,9 @@ public class HalContext {
             if(defaultDBVersion > dbVersion ) {
                 logger.info("Starting DB upgrade...");
                 if(dbFile != null){
-	                File backupDB = FileUtil.getNextFile(dbFile);
-	                logger.fine("Backing up DB to: "+ backupDB);
-	                FileUtil.copy(dbFile, backupDB);
+                    File backupDB = FileUtil.getNextFile(dbFile);
+                    logger.fine("Backing up DB to: "+ backupDB);
+                    FileUtil.copy(dbFile, backupDB);
                 }
 
                 logger.fine(String.format("Upgrading DB (from: v%s, to: v%s)...", dbVersion, defaultDBVersion));
@@ -92,43 +92,43 @@ public class HalContext {
                 handler.addIgnoredTable("db_version_history");
                 handler.addIgnoredTable("sqlite_sequence");	//sqlite internal
                 handler.setTargetDB(db);
-                
+
                 logger.fine("Performing pre-upgrade activities");
                 //read upgrade path preferences from the reference database
                 referenceDB.exec("SELECT * FROM db_version_history"
-                		+ " WHERE db_version <= " + defaultDBVersion
-                		+ " AND db_version > " + dbVersion, 
-                		new SQLResultHandler<Object>() {
-					@Override
-					public Object handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
-						while(result.next()){
-							if(result.getBoolean("force_upgrade")){
+                        + " WHERE db_version <= " + defaultDBVersion
+                        + " AND db_version > " + dbVersion,
+                        new SQLResultHandler<Object>() {
+                    @Override
+                    public Object handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
+                        while(result.next()){
+                            if(result.getBoolean("force_upgrade")){
                                 logger.fine("Forced upgrade enabled");
-								handler.setForcedDBUpgrade(true);	//set to true if any of the intermediate db version requires it.
-							}
-						}
-						return null;
-					}
-				});
-                
+                                handler.setForcedDBUpgrade(true);	//set to true if any of the intermediate db version requires it.
+                            }
+                        }
+                        return null;
+                    }
+                });
+
                 handler.upgrade();
-                
+
                 logger.fine("Performing post-upgrade activities");
                 //read upgrade path preferences from the reference database
                 referenceDB.exec("SELECT * FROM db_version_history"
-                		+ " WHERE db_version <= " + defaultDBVersion
-                		+ " AND db_version > " + dbVersion, 
-                		new SQLResultHandler<Object>() {
-					@Override
-					public Object handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
+                        + " WHERE db_version <= " + defaultDBVersion
+                        + " AND db_version > " + dbVersion,
+                        new SQLResultHandler<Object>() {
+                    @Override
+                    public Object handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
                         boolean clearExternalAggrData = false;
                         boolean clearInternalAggrData = false;
-						while(result.next()){
-							if(result.getBoolean("clear_external_aggr_data"))
+                        while(result.next()){
+                            if(result.getBoolean("clear_external_aggr_data"))
                                 clearExternalAggrData = true;
-							if(result.getBoolean("clear_internal_aggr_data"))
+                            if(result.getBoolean("clear_internal_aggr_data"))
                                 clearInternalAggrData = true;
-						}
+                        }
 
                         if(clearExternalAggrData){
                             logger.fine("Clearing external aggregate data");
@@ -143,9 +143,9 @@ public class HalContext {
                             db.exec("UPDATE sensor SET aggr_version = (aggr_version+1) WHERE id = "
                                     + "(SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)");
                         }
-						return null;
-					}
-				});
+                        return null;
+                    }
+                });
                 if (dbVersion < 9) { // tellstick code has changed package
                     db.exec("UPDATE sensor SET type = 'se.hal.plugin.tellstick.device.Oregon0x1A2D' WHERE type = 'se.hal.plugin.tellstick.protocols.Oregon0x1A2D'");
                     db.exec("UPDATE event SET type = 'se.hal.plugin.tellstick.device.NexaSelfLearning' WHERE type = 'se.hal.plugin.tellstick.protocols.NexaSelfLearning'");
@@ -168,7 +168,7 @@ public class HalContext {
         } catch (Exception e){
             throw new RuntimeException(e);
         }
-	}
+    }
 
 
     public static String getStringProperty(String key){
@@ -217,13 +217,13 @@ public class HalContext {
     public static DBConnection getDB(){
         return db;
     }
-    
+
     /**
      * For testing purposes.
      * @param db
      */
     public static void setDB(DBConnection db){
-    	HalContext.db = db;
+        HalContext.db = db;
     }
 
 

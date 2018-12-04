@@ -15,9 +15,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by Ziver on 2016-05-25.
- */
 public class NutUpsController implements HalSensorController, HalAutoScannableController, Runnable{
     public static Logger logger = LogUtil.getLogger();
     private static final int SYNC_INTERVAL = 60 * 1000;

@@ -4,9 +4,6 @@ import se.hal.intf.HalTrigger;
 import zutil.Timer;
 import zutil.ui.Configurator;
 
-/**
- *
- */
 public class TimerTrigger implements HalTrigger {
 
     @Configurator.Configurable("Countdown time (in seconds)")

@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * type: sensor data type name
  *
  * Data filtering parameters:
- * aggr: Aggrigation periods, needs to be provided to retrieve data. Possible values: minute,hour,day,week
+ * aggr: Aggregation periods, needs to be provided to retrieve data. Possible values: minute,hour,day,week
  * </pre>
  */
 public class SensorJsonPage extends HalJsonPage {

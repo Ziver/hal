@@ -18,9 +18,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by Ziver on 2016-09-30.
- */
 public class NetScanController implements HalEventController, HalAutoScannableController, InetScanListener, Runnable{
     public static Logger logger = LogUtil.getLogger();
     private static final int NETWORK_SYNC_INTERVAL = 3 * 60 * 60 * 1000; // 3 hours

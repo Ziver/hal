@@ -30,9 +30,6 @@ import se.hal.intf.HalSpeechToText;
 import java.io.IOException;
 
 
-/**
- * Created by Ziver on 2015-05-08.
- */
 public class Sphinx4STTClient implements HalSpeechToText {
     private LiveSpeechRecognizer recognizer;
 

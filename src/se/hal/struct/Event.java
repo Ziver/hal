@@ -20,9 +20,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by Ziver on 2015-12-15.
- */
 @DBBean.DBTable(value="event", superBean=true)
 public class Event extends AbstractDevice<Event, HalEventConfig,HalEventData>{
     private static final Logger logger = LogUtil.getLogger();

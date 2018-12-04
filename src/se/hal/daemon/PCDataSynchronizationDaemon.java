@@ -28,54 +28,54 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implements HalDaemon {
-	private static final Logger logger = LogUtil.getLogger();
+    private static final Logger logger = LogUtil.getLogger();
     public static final int PROTOCOL_VERSION = 5; // Increment for protocol changes
 
 
-	public PCDataSynchronizationDaemon() {
-		super(HalContext.getIntegerProperty("sync_port"));
-	}
+    public PCDataSynchronizationDaemon() {
+        super(HalContext.getIntegerProperty("sync_port"));
+    }
 
-	@Override
-	public void initiate(ScheduledExecutorService executor){
-		this.start();
-	}
+    @Override
+    public void initiate(ScheduledExecutorService executor){
+        this.start();
+    }
 
 
 
-	@Override
-	protected ThreadedTCPNetworkServerThread getThreadInstance(Socket s) {
-		try {
-			return new DataSynchronizationDaemonThread(s);
-		} catch (IOException e) {
+    @Override
+    protected ThreadedTCPNetworkServerThread getThreadInstance(Socket s) {
+        try {
+            return new DataSynchronizationDaemonThread(s);
+        } catch (IOException e) {
             logger.log(Level.SEVERE, "Unable to create DataSynchronizationDaemonThread", e);
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
 
-	private class DataSynchronizationDaemonThread implements ThreadedTCPNetworkServerThread{
-		private Socket s;
-		private ObjectOutputStream out;
-		private ObjectInputStream in;
+    private class DataSynchronizationDaemonThread implements ThreadedTCPNetworkServerThread{
+        private Socket s;
+        private ObjectOutputStream out;
+        private ObjectInputStream in;
 
 
-		public DataSynchronizationDaemonThread(Socket s) throws IOException{
-			this.s = s;
-			this.out = new ObjectOutputStream(s.getOutputStream());
-			this.in = new ObjectInputStream(s.getInputStream());
-		}
+        public DataSynchronizationDaemonThread(Socket s) throws IOException{
+            this.s = s;
+            this.out = new ObjectOutputStream(s.getOutputStream());
+            this.in = new ObjectInputStream(s.getInputStream());
+        }
 
 
-		public void run(){ 
-			logger.fine("User connected: "+ s.getInetAddress().getHostName());
+        public void run(){
+            logger.fine("User connected: "+ s.getInetAddress().getHostName());
             DBConnection db = HalContext.getDB();
 
-			try {
-				Object obj = null;
+            try {
+                Object obj = null;
                 out.writeInt(PROTOCOL_VERSION); // send our protocol version to client
                 out.flush();
-				while((obj = in.readObject()) != null){
+                while((obj = in.readObject()) != null){
                     if(obj instanceof PeerDataReqDTO){
                         logger.fine("Client requesting peer data");
                         PeerDataRspDTO rsp = new PeerDataRspDTO();
@@ -97,20 +97,20 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                         }
                         out.writeObject(rsp);
                     }
-					if(obj instanceof SensorDataReqDTO){
-						SensorDataReqDTO req = (SensorDataReqDTO) obj;
+                    if(obj instanceof SensorDataReqDTO){
+                        SensorDataReqDTO req = (SensorDataReqDTO) obj;
                         Sensor sensor = Sensor.getSensor(db, req.sensorId);
                         if(sensor.isSynced()) {
-                        	PreparedStatement stmt = db.getPreparedStatement("SELECT * FROM sensor_data_aggr WHERE sensor_id == ? AND sequence_id > ?");
-                        	stmt.setLong(1, sensor.getId());
-                        	logger.fine("Client requesting sensor data: sensorId: " + req.sensorId + ", offset: " + req.offsetSequenceId + ", " + req.aggregationVersion);
-                        	if(req.aggregationVersion != sensor.getAggregationVersion()){
-                        		logger.fine("The requested aggregation version does not match the local version: " + sensor.getAggregationVersion() + ". Will re-send all aggregated data.");
-                        		stmt.setLong(2, 0);	//0 since we want to re-send all data to the peer
-                        	}else{
-                        		stmt.setLong(2, req.offsetSequenceId);
-                        	}
-                            
+                            PreparedStatement stmt = db.getPreparedStatement("SELECT * FROM sensor_data_aggr WHERE sensor_id == ? AND sequence_id > ?");
+                            stmt.setLong(1, sensor.getId());
+                            logger.fine("Client requesting sensor data: sensorId: " + req.sensorId + ", offset: " + req.offsetSequenceId + ", " + req.aggregationVersion);
+                            if(req.aggregationVersion != sensor.getAggregationVersion()){
+                                logger.fine("The requested aggregation version does not match the local version: " + sensor.getAggregationVersion() + ". Will re-send all aggregated data.");
+                                stmt.setLong(2, 0);	//0 since we want to re-send all data to the peer
+                            }else{
+                                stmt.setLong(2, req.offsetSequenceId);
+                            }
+
                             SensorDataListDTO rsp = DBConnection.exec(stmt, new SQLResultHandler<SensorDataListDTO>() {
                                 @Override
                                 public SensorDataListDTO handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
@@ -131,25 +131,25 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                             logger.fine("Sending " + rsp.size() + " sensor data items to client");
                             out.writeObject(rsp);
                         }
-						else{
+                        else{
                             logger.warning("Client requesting non synced sensor data: sensorId: " + req.sensorId + ", offset: " + req.offsetSequenceId);
                             SensorDataListDTO rsp = new SensorDataListDTO();
                             out.writeObject(rsp);
                         }
-					}
-				}
+                    }
+                }
                 out.close();
                 in.close();
-				s.close();
+                s.close();
 
-			} catch (Exception e) {
-				logger.log(Level.SEVERE, null, e);
-			}
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, null, e);
+            }
             logger.fine("User disconnected: "+ s.getInetAddress().getHostName());
-		}
-	}
+        }
+    }
 
-	///////////////  DTO ///////////////////////
+    ///////////////  DTO ///////////////////////
     protected static class PeerDataRspDTO implements Serializable{
         public String username;
         public String email;
@@ -165,18 +165,18 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
     }
 
 
-	protected static class SensorDataListDTO extends ArrayList<SensorDataDTO> implements Serializable{
-		private static final long serialVersionUID = -5701618637734020691L;	
-		
-		public long aggregationVersion = 0;
-	}
-	protected static class SensorDataDTO implements Serializable{
-		private static final long serialVersionUID = 8494331502087736809L;
-		
-		public long sequenceId;
-		public long timestampStart;
-		public long timestampEnd;
-		public int data;
-		public float confidence;
-	}
+    protected static class SensorDataListDTO extends ArrayList<SensorDataDTO> implements Serializable{
+        private static final long serialVersionUID = -5701618637734020691L;
+
+        public long aggregationVersion = 0;
+    }
+    protected static class SensorDataDTO implements Serializable{
+        private static final long serialVersionUID = 8494331502087736809L;
+
+        public long sequenceId;
+        public long timestampStart;
+        public long timestampEnd;
+        public int data;
+        public float confidence;
+    }
 }

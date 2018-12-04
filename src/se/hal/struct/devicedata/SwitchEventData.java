@@ -24,9 +24,6 @@ package se.hal.struct.devicedata;
 
 import se.hal.intf.HalEventData;
 
-/**
- * Created by Ziver on 2015-05-07.
- */
 public class SwitchEventData extends HalEventData {
 
     private boolean enabled;

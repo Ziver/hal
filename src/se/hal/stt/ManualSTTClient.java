@@ -31,19 +31,19 @@ import java.io.InputStreamReader;
 public class ManualSTTClient implements HalSpeechToText {
     private BufferedReader in;
 
-	@Override
-	public void initialize() {
+    @Override
+    public void initialize() {
         //  open up standard input
         in = new BufferedReader(new InputStreamReader(System.in));
-	}
+    }
 
-	@Override
-	public String listen() {
+    @Override
+    public String listen() {
         try {
             return in.readLine();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
         return null;
-	}
+    }
 }

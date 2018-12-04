@@ -8,9 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * Created by Ziver on 2016-08-22.
- */
 public class DeviceDataSqlResult implements SQLResultHandler<HalDeviceData> {
 
     private Class<? extends HalDeviceData> clazz;

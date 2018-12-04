@@ -6,9 +6,6 @@ import se.hal.intf.HalEventData;
 import se.hal.struct.devicedata.SwitchEventData;
 import zutil.ui.Configurator;
 
-/**
- * Created by Ziver on 2016-10-02.
- */
 public class NetworkDevice implements HalEventConfig {
 
     @Configurator.Configurable("IP Address")

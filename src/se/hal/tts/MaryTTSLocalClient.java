@@ -32,9 +32,6 @@ import se.hal.intf.HalTextToSpeech;
 import javax.sound.sampled.AudioInputStream;
 import java.util.Set;
 
-/**
- *
- */
 public class MaryTTSLocalClient implements HalTextToSpeech {
     private MaryInterface marytts;
 

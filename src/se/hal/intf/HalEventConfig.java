@@ -2,8 +2,6 @@ package se.hal.intf;
 
 /**
  * Interface representing event type specific configuration data.
- *
- * Created by Ziver on 2015-12-23.
  */
 public interface HalEventConfig {
 

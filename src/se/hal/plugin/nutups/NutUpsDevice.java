@@ -7,9 +7,6 @@ import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.osal.linux.app.NutUPSClient;
 import zutil.ui.Configurator;
 
-/**
- * Created by Ziver on 2016-05-25.
- */
 public class NutUpsDevice implements HalSensorConfig{
 
     @Configurator.Configurable("UPS id")

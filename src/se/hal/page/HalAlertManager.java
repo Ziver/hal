@@ -12,9 +12,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by ezivkoc on 2016-01-20.
- */
 public class HalAlertManager implements HttpPage {
     private static final Logger logger = LogUtil.getLogger();
     private static final String TMPL_PATH = "resource/web/main_alerts.tmpl";

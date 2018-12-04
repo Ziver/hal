@@ -1,8 +1,5 @@
 package se.hal.intf;
 
-/**
- * Created by Ziver on 2015-12-15.
- */
 public interface HalSensorController {
 
     /**

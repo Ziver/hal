@@ -4,6 +4,7 @@ import org.zwave4j.*;
 import se.hal.HalContext;
 import se.hal.intf.*;
 import se.hal.plugin.tellstick.TellstickDevice;
+import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
 
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class HalZWaveController implements HalSensorController, HalEventControll
 
 
     public static void main(String[] args) throws IOException {
+        LogUtil.setGlobalFormatter(new CompactLogFormatter());
         HalZWaveController controller = new HalZWaveController();
         controller.initialize(
                 "/dev/serial/by-id/usb-0658_0200-if00",
@@ -81,25 +83,22 @@ public class HalZWaveController implements HalSensorController, HalEventControll
     public void onNotification(Notification notification, Object context) {
         switch (notification.getType()) {
             case DRIVER_READY:
-                System.out.println(String.format("Driver ready\n" +
-                        "\thome id: %d",
-                        notification.getHomeId()
-                ));
                 homeId = notification.getHomeId();
+                logger.info("Driver ready (Home ID: " + homeId + ")");
                 break;
             case DRIVER_FAILED:
-                System.out.println("Driver failed");
+                logger.info("Driver failed");
                 break;
             case DRIVER_RESET:
-                System.out.println("Driver reset");
+                logger.info("Driver reset");
                 break;
             case AWAKE_NODES_QUERIED:
-                System.out.println("Awake nodes queried");
+                logger.info("Awake nodes queried");
                 break;
             case ALL_NODES_QUERIED_SOME_DEAD:
-                System.out.println("Some Nodes are dead");
+                logger.info("Some Nodes are dead");
             case ALL_NODES_QUERIED:
-                System.out.println("Finished querying nodes");
+                logger.info("All nodes queried");
                 manager.writeConfig(homeId);
                 // Controller is done initializing
                 break;

@@ -47,8 +47,11 @@ import java.util.logging.Logger;
  */
 public class TellstickSerialComm implements Runnable,
         HalSensorController, HalEventController, HalAutoScannableController {
-    private static final long TRANSMISSION_UNIQUENESS_TTL = 1000; // milliseconds
     private static final Logger logger = LogUtil.getLogger();
+
+    private static String CONFIG_TELLSTICK_COM_PORT = "tellstick.com_port";
+    private static final long TRANSMISSION_UNIQUENESS_TTL = 1000; // milliseconds
+
     private static TellstickSerialComm instance; // Todo: Don't like this but it is the best I could come up with
 
     private SerialPort serial;
@@ -57,11 +60,10 @@ public class TellstickSerialComm implements Runnable,
     private TimedHashSet<String> set; // To check for duplicate transmissions
 
     protected TellstickParser parser;
+
     private HalSensorReportListener sensorListener;
     private HalEventReportListener eventListener;
-
     private List<TellstickDevice> registeredDevices;
-
 
 
     public TellstickSerialComm() {
@@ -72,16 +74,11 @@ public class TellstickSerialComm implements Runnable,
 
     @Override
     public boolean isAvailable() {
-        return HalContext.getStringProperty("tellstick.com_port") != null;
+        return HalContext.getStringProperty(CONFIG_TELLSTICK_COM_PORT) != null;
     }
     @Override
     public void initialize() throws Exception {
-        // Read properties
-        String port = HalContext.getStringProperty("tellstick.com_port");
-        if (port == null)
-            port = "COM1"; // defaults
-
-        initialize(port);
+         initialize(HalContext.getStringProperty(CONFIG_TELLSTICK_COM_PORT));
     }
 
     public void initialize(String portName) throws Exception {
@@ -92,7 +89,7 @@ public class TellstickSerialComm implements Runnable,
         logger.info("Connecting to com port... ("+ portName +")");
         serial = SerialPort.getCommPort(portName);
         serial.setBaudRate(9600);
-        if(!serial.openPort())
+        if (!serial.openPort())
             throw new IOException("Could not open port: "+portName);
         serial.setComPortTimeouts(
                 SerialPort.TIMEOUT_READ_BLOCKING, 0, 0);
@@ -104,7 +101,7 @@ public class TellstickSerialComm implements Runnable,
     }
 
     public void close() {
-        if(serial != null) {
+        if (serial != null) {
             try {
                 serial.closePort();
                 in.close();

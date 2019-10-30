@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="ZWave Plugin" >
+<project name="Hal Zigbee Plugin" >
 
     <!-- ________________________ PROPERTIES AND SETTINGS ________________________ -->
 
@@ -13,7 +13,7 @@
     <property name="compileDir" value="${buildRoot}/production" />
     <property name="compileTestDir" value="${buildRoot}/test" />
     <property name="releaseDir" value="${buildRoot}/release" />
-    <property name="releaseJar" value="zwave.jar" />
+    <property name="releaseJar" value="hal-zigbee.jar" />
     <property name="reportsDir" value="../../${buildRoot}/reports" /> <!-- Use Hal reports folder -->
 
     <!-- ________________________ TARGETS ________________________ -->

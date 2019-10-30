@@ -1,0 +1,7 @@
+{
+	"version": 1.0,
+	"name": "Hal-Zigbee",
+	"interfaces": [
+		{"se.hal.intf.HalAutoScannableController": "se.hal.plugin.zigbee.HalZigbeeController"}
+	]
+}

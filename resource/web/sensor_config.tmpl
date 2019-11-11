@@ -4,7 +4,7 @@
     <div class="panel panel-default drop-shadow">
         <div class="panel-heading">Local Sensors</div>
         <div class="panel-body">
-            <p>List of local sensors.</p>
+            <p>This is a local list of sensors connected to this node.</p>
 
             <table class="table table-hover table-condensed">
                 <thead>
@@ -13,8 +13,8 @@
                     <th>Public</th>
                     <th>Configuration</th>
                     <th>
-                        <button class="btn btn-default btn-xs pull-right" data-toggle="modal"
-                                data-target="#sensorModal">
+                        <button class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#sensorModal"
+                                data-action="create_local_sensor">
                             <span class="glyphicon glyphicon-plus"></span>
                         </button>
                     </th>
@@ -30,8 +30,7 @@
                             <input type="hidden" name="id" value="{{.getId()}}">
 
                             <div class="btn-toolbar pull-right">
-                                <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
-                                        data-target="#sensorModal"
+                                <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#sensorModal"
                                         data-action="modify_local_sensor"
                                         data-id="{{.getId()}}"
                                         data-name="{{.getName()}}"
@@ -78,9 +77,8 @@
                     <td>{{.getDeviceConfig()}}</td>
                     <td>
                         <div class="btn-toolbar pull-right">
-                            <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
-                                    data-target="#sensorModal"
-                                    data-action="create_local_sensor"
+                            <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#sensorModal"
+                                    data-action="create_local_sensor">
                                     data-type="{{.getType()}}"
                                     {{#.getDeviceConfigurator().getConfiguration()}}
                                     data-{{.getName()}}="{{.getString()}}"
@@ -112,8 +110,8 @@
                 <th>Hostname</th>
                 <th>Port</th>
                 <th>
-                    <button class="btn btn-default btn-xs pull-right" data-toggle="modal"
-                            data-target="#userModal">
+                    <button class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#userModal"
+                            data-action="create_external_user">
                         <span class="glyphicon glyphicon-plus"></span>
                     </button>
                 </th>
@@ -130,8 +128,7 @@
                             <input type="hidden" name="id" value="{{.getId()}}">
 
                             <div class="btn-toolbar pull-right">
-                                <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
-                                        data-target="#userModal"
+                                <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#userModal"
                                         data-action="modify_external_user"
                                         data-id="{{.getId()}}"
                                         data-hostname="{{.getHostname()}}"
@@ -204,22 +201,7 @@
 <script>
     $(function(){
         initDynamicModalForm("sensorModal", "sensor-data-conf", "sensor-data-conf-template");
-
-        $("#userModal").on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var modal = $(this);
-            modal.find("input[type=text]").val(""); // Reset all inputs
-            if(button.data("id") >= 0){ // edit
-                modal.find("input[name=action]").val("modify_external_user");
-                modal.find("input[name=id]").val(button.data("id"));
-                modal.find("input[name=hostname]").val(button.data("hostname"));
-                modal.find("input[name=port]").val(button.data("port"));
-            }
-            else{ // create
-                modal.find("input[name=action]").val("create_external_user");
-                modal.find("input[name=id]").val(-1);
-            }
-        });
+        initDynamicModalForm("userModal");
     });
 </script>
 

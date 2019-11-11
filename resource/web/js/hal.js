@@ -130,22 +130,27 @@ function getChartData(json){
 ////////////// Dynamic forms
 var dynamicConf = {};
 
-function initDynamicModalForm(modalId, formTemplateId, templateID){
+function initDynamicModalForm(modalId, formTemplateId = null, templateID = null){
     // read in all configurations into global variable (to skip naming issues)
-    dynamicConf[formTemplateId] = [];
-    $("#"+templateID+" div").each(function(){
-        dynamicConf[formTemplateId][$(this).attr("id")] = $(this).html();
-    });
-    // Update dynamic inputs
-    $("#"+modalId+" select[name=type]").change(function(){
-        $("#"+modalId+" #"+formTemplateId).html(dynamicConf[formTemplateId][$(this).val()]);
-    });
+    if (formTemplateId != null) {
+        dynamicConf[formTemplateId] = [];
+        $("#"+templateID+" div").each(function(){
+            dynamicConf[formTemplateId][$(this).attr("id")] = $(this).html();
+        });
+        // Update dynamic inputs
+        $("#"+modalId+" select[name=type]").change(function(){
+            $("#"+modalId+" #"+formTemplateId).html(dynamicConf[formTemplateId][$(this).val()]);
+        });
+    }
+
     // click event
     $("#"+modalId).on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var modal = $(this);
+
         // Reset all inputs
-        modal.find("#"+formTemplateId).empty(); // clear form div
+        if (formTemplateId != null)
+            modal.find("#"+formTemplateId).empty(); // clear form div
 
         // select dynamic form
         var selector = modal.find("select[name=type]");

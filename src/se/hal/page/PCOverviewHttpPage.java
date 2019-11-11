@@ -20,15 +20,13 @@ public class PCOverviewHttpPage extends HalHttpPage {
     }
 
     @Override
-    public Templator httpRespond(
+    public Templator httpRespond (
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request)
             throws Exception {
 
         DBConnection db = HalContext.getDB();
-
-        List<User> users = User.getUsers(db);
         List<Sensor> sensors = Sensor.getSensors(db);
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));

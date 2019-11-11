@@ -35,24 +35,25 @@ public class HalAlertManager implements HttpPage {
     private HalAlertManager(){}
 
     public String getUrl(){
-        return "/"+PAGE_NAME;
+        return "/" + PAGE_NAME;
     }
 
-    public void addAlert(HalAlert alert){
+    public void addAlert(HalAlert alert) {
         alerts.remove(alert); // We don't want to flood the user with duplicate alerts
         alerts.add(alert);
     }
 
 
-    public Templator generateAlerts(){
+    public Templator generateAlerts() {
         try {
             // clone alert list and update ttl of alerts
             List<HalAlert> alertsClone = new ArrayList<>(alerts.size());
-            for(Iterator<HalAlert> it = alerts.iterator(); it.hasNext(); ){
+            for(Iterator<HalAlert> it = alerts.iterator(); it.hasNext(); ) {
                 HalAlert alert = it.next();
                 alertsClone.add(alert);
                 alert.ttl--;
-                if(alert.ttl <= 0) { // if alert is to old, remove it
+
+                if (alert.ttl <= 0) { // if alert is to old, remove it
                     logger.fine("Alert dismissed with end of life, alert id: "+ alert.id);
                     it.remove();
                 }
@@ -62,7 +63,7 @@ public class HalAlertManager implements HttpPage {
             tmpl.set("serviceUrl", getUrl());
             tmpl.set("alerts", alertsClone);
             return tmpl;
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.log(Level.SEVERE, null, e);
         }
         return null;
@@ -75,14 +76,14 @@ public class HalAlertManager implements HttpPage {
                         Map<String, String> cookie,
                         Map<String, String> request) throws IOException {
 
-        if (request.containsKey("action")){
-            if (request.get("action").equals("dismiss")){
+        if (request.containsKey("action")) {
+            if (request.get("action").equals("dismiss")) {
                 // parse alert id
                 int id = Integer.parseInt(request.get("id"));
                 //  Find alert
-                for(Iterator<HalAlert> it = alerts.iterator(); it.hasNext(); ){
+                for(Iterator<HalAlert> it = alerts.iterator(); it.hasNext(); ) {
                     HalAlert alert = it.next();
-                    if(alert.getId() == id) {
+                    if (alert.getId() == id) {
                         logger.fine("User dismissed alert id: "+ id);
                         it.remove();
                         break;
@@ -102,7 +103,7 @@ public class HalAlertManager implements HttpPage {
     }
 
 
-    public static class HalAlert{
+    public static class HalAlert {
         private static int nextId = 0;
 
         private int id;
@@ -141,7 +142,7 @@ public class HalAlertManager implements HttpPage {
             return msg;
         }
 
-        public void setTTL(AlertTTL ttl){
+        public void setTTL(AlertTTL ttl) {
             switch (ttl){
                 case ONE_VIEW:  this.ttl = 1; break;
                 case DISMISSED: this.ttl = Integer.MAX_VALUE; break;
@@ -152,7 +153,7 @@ public class HalAlertManager implements HttpPage {
         }
 
         @Override
-        public boolean equals(Object obj){
+        public boolean equals(Object obj) {
             if (obj instanceof HalAlert)
                 return level == ((HalAlert) obj).level &&
                         title.equals(((HalAlert) obj).title);

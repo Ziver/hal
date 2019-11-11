@@ -68,7 +68,7 @@ public class EventConfigHttpPage extends HalHttpPage {
 
                 case "modify_local_event":
                     event = Event.getEvent(db, id);
-                    if (event != null){
+                    if (event != null) {
                         event.setName(request.get("name"));
                         event.setType(request.get("type"));
                         event.setUser(localUser);

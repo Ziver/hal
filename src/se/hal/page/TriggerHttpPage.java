@@ -23,7 +23,7 @@ public class TriggerHttpPage extends HalHttpPage {
     private ArrayList<ClassConfigurationData> actionConfigurators;
 
 
-    public TriggerHttpPage(){
+    public TriggerHttpPage() {
         super("trigger");
         super.getRootNav().createSubNav("Events").createSubNav(this.getId(), "Triggers");
 
@@ -37,14 +37,14 @@ public class TriggerHttpPage extends HalHttpPage {
 
 
     @Override
-    public Templator httpRespond(
+    public Templator httpRespond (
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request)
-            throws Exception{
+            throws Exception {
         DBConnection db = HalContext.getDB();
 
-        if(request.containsKey("action")){
+        if (request.containsKey("action")) {
             TriggerFlow flow = null;
             if (request.containsKey("flow-id") && !request.get("flow-id").isEmpty())
                 flow = TriggerFlow.getTriggerFlow(db, Integer.parseInt(request.get("flow-id")));
@@ -62,11 +62,13 @@ public class TriggerHttpPage extends HalHttpPage {
                     flow = new TriggerFlow();
                     flow.save(db);
                     break;
+
                 case "modify_flow":
                     flow.setEnabled("on".equals(request.get("enabled")));
                     flow.setName(request.get("name"));
                     flow.save(db);
                     break;
+
                 case "remove_flow":
                     flow.delete(db);
                     break;
@@ -87,6 +89,7 @@ public class TriggerHttpPage extends HalHttpPage {
                     trigger.getObjectConfigurator().setValues(request).applyConfiguration();
                     trigger.save(db); // will save all sub beans also
                     break;
+
                 case "remove_trigger":
                     if (flow == null)
                         flow = TriggerFlow.getTriggerFlow(db, trigger);
@@ -110,6 +113,7 @@ public class TriggerHttpPage extends HalHttpPage {
                     action.getObjectConfigurator().setValues(request).applyConfiguration();
                     action.save(db); // will save all sub beans also
                     break;
+
                 case "remove_action":
                     if (flow == null)
                         flow = TriggerFlow.getTriggerFlow(db, action);

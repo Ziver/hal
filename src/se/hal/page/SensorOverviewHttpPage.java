@@ -7,6 +7,7 @@ import se.hal.struct.Sensor;
 import se.hal.util.DeviceNameComparator;
 import se.hal.util.HistoryDataListSqlResult;
 import se.hal.util.HistoryDataListSqlResult.HistoryData;
+import zutil.ObjectUtil;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
@@ -35,10 +36,10 @@ public class SensorOverviewHttpPage extends HalHttpPage {
             throws Exception{
 
         DBConnection db = HalContext.getDB();
-        int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
+        int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));
 
         // Save new input
-        if(id >= 0){
+        if (id >= 0) {
             Sensor sensor = Sensor.getSensor(db, id);
 
             // get history data
@@ -52,8 +53,7 @@ public class SensorOverviewHttpPage extends HalHttpPage {
             tmpl.set("sensor", sensor);
             tmpl.set("history", history);
             return tmpl;
-        }
-        else {
+        } else {
             Sensor[] sensors = Sensor.getLocalSensors(db).toArray(new Sensor[0]);
             Arrays.sort(sensors, DeviceNameComparator.getInstance());
 

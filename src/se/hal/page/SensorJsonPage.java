@@ -112,7 +112,7 @@ public class SensorJsonPage extends HalJsonPage {
         DataNode timestampNode = new DataNode(DataNode.DataType.List);
         DataNode dataNode = new DataNode(DataNode.DataType.List);
         // end timestamp
-        if (endTime != UTCTimeUtility.INFINITY){
+        if (endTime != UTCTimeUtility.INFINITY) {
             timestampNode.add(System.currentTimeMillis() - endTime);
             dataNode.add((String)null);
         }

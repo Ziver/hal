@@ -11,16 +11,20 @@ import se.hal.struct.devicedata.SwitchEventData;
 import se.hal.util.DeviceNameComparator;
 import se.hal.util.HistoryDataListSqlResult;
 import se.hal.util.HistoryDataListSqlResult.HistoryData;
+import zutil.ObjectUtil;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
+import zutil.log.LogUtil;
 import zutil.parser.Templator;
 
 import java.sql.PreparedStatement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class EventOverviewHttpPage extends HalHttpPage {
+    private static final Logger logger = LogUtil.getLogger();
     private static final int HISTORY_LIMIT = 200;
     private static final String OVERVIEW_TEMPLATE = "resource/web/event_overview.tmpl";
     private static final String DETAIL_TEMPLATE = "resource/web/event_detail.tmpl";
@@ -40,8 +44,8 @@ public class EventOverviewHttpPage extends HalHttpPage {
 
         DBConnection db = HalContext.getDB();
 
-        if(request.containsKey("action")){
-            int id = (request.containsKey("action_id") ? Integer.parseInt(request.get("action_id")) : -1);
+        if (request.containsKey("action")) {
+            int id = (ObjectUtil.isEmpty(request.get("action_id")) ? -1 : Integer.parseInt(request.get("action_id")));
 
             // change event data
             SwitchEventData eventData = new SwitchEventData();
@@ -55,10 +59,10 @@ public class EventOverviewHttpPage extends HalHttpPage {
             ControllerManager.getInstance().send(event);
         }
 
-        int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
+        int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));
 
         // Save new input
-        if(!request.containsKey("action") && id >= 0){
+        if (!request.containsKey("action") && id >= 0) {
             Event event = Event.getEvent(db, id);
 
             // get history data

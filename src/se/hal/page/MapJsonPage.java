@@ -28,6 +28,7 @@ public class MapJsonPage extends HalJsonPage {
                                  Map<String, String> request) throws Exception {
         DBConnection db = HalContext.getDB();
         DataNode root = new DataNode(DataNode.DataType.Map);
+
         if ("getdata".equals(request.get("action"))) {
             getDeviceNode(db, root);
         } else if ("save".equals(request.get("action"))) {

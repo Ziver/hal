@@ -27,13 +27,13 @@ public class UserConfigHttpPage extends HalHttpPage {
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request)
-            throws Exception{
+            throws Exception {
 
         DBConnection db = HalContext.getDB();
         User localUser = User.getLocalUser(db);
 
         // Save new input
-        if(request.containsKey("action")){
+        if (request.containsKey("action")) {
             User user;
             switch(request.get("action")) {
                 // Local User
@@ -46,6 +46,7 @@ public class UserConfigHttpPage extends HalHttpPage {
                     localUser.setEmail(request.get("email"));
                     localUser.setAddress(request.get("address"));
                     localUser.save(db);
+
                     HalAlertManager.getInstance().addAlert(new HalAlert(
                             AlertLevel.SUCCESS, "Successfully saved profile changes", AlertTTL.ONE_VIEW));
                     break;

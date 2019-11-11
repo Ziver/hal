@@ -63,7 +63,7 @@ public class EventOverviewHttpPage extends HalHttpPage {
         int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));
 
         // Save new input
-        if (!request.containsKey("action") && id >= 0) {
+        if (id >= 0) {
             Event event = Event.getEvent(db, id);
 
             // get history data

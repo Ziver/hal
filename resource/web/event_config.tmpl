@@ -13,7 +13,8 @@
                     <th>Configuration</th>
                     <th>
                         <button class="btn btn-default btn-xs pull-right" data-toggle="modal"
-                                data-target="#eventModal">
+                                data-target="#eventModal"
+                                data-action="create_local_event">
                             <span class="glyphicon glyphicon-plus"></span>
                         </button>
                     </th>
@@ -112,7 +113,7 @@
             </div>
             <form method="POST">
                 <div class="modal-body">
-                    <input type="hidden" id="action" name="action" value="">
+                    <input type="hidden" id="action" name="action">
                     <input type="hidden" id="id" name="id">
                     <div class="form-group">
                         <label class="control-label">Name:</label>

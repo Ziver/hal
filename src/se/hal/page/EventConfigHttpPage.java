@@ -12,12 +12,15 @@ import se.hal.struct.User;
 import zutil.ObjectUtil;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
+import zutil.log.LogUtil;
 import zutil.parser.Templator;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class EventConfigHttpPage extends HalHttpPage {
+    private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = "resource/web/event_config.tmpl";
 
     private ArrayList<ClassConfigurationData> eventConfigurations;
@@ -44,7 +47,7 @@ public class EventConfigHttpPage extends HalHttpPage {
 
         // Save new input
         if(request.containsKey("action")){
-            int id = (!ObjectUtil.isEmpty(request.get("id")) ? Integer.parseInt(request.get("id")) : -1);
+            int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));
             Event event;
 
             switch(request.get("action")) {
@@ -57,32 +60,42 @@ public class EventConfigHttpPage extends HalHttpPage {
                     event.getDeviceConfigurator().setValues(request).applyConfiguration();
                     event.save(db);
                     ControllerManager.getInstance().register(event);
+
+                    logger.info("Event created: " + event.getName());
                     HalAlertManager.getInstance().addAlert(new HalAlert(
-                            AlertLevel.SUCCESS, "Successfully created new event: "+event.getName(), AlertTTL.ONE_VIEW));
+                            AlertLevel.SUCCESS, "Successfully created new event: " + event.getName(), AlertTTL.ONE_VIEW));
                     break;
+
                 case "modify_local_event":
                     event = Event.getEvent(db, id);
-                    if(event != null){
+                    if (event != null){
                         event.setName(request.get("name"));
                         event.setType(request.get("type"));
                         event.setUser(localUser);
                         event.getDeviceConfigurator().setValues(request).applyConfiguration();
                         event.save(db);
+
+                        logger.info("Event modified: " + event.getName());
                         HalAlertManager.getInstance().addAlert(new HalAlert(
                                 AlertLevel.SUCCESS, "Successfully saved event: "+event.getName(), AlertTTL.ONE_VIEW));
                     } else {
+                        logger.warning("Unknown event id: " + id);
                         HalAlertManager.getInstance().addAlert(new HalAlert(
-                                AlertLevel.ERROR, "Unknown event id: "+id, AlertTTL.ONE_VIEW));
+                                AlertLevel.ERROR, "Unknown event id: " + id, AlertTTL.ONE_VIEW));
                     }
                     break;
+
                 case "remove_local_event":
                     event = Event.getEvent(db, id);
-                    if(event != null) {
+                    if (event != null) {
                         ControllerManager.getInstance().deregister(event);
                         event.delete(db);
+
+                        logger.info("Event deleted: " + event.getName());
                         HalAlertManager.getInstance().addAlert(new HalAlert(
                                 AlertLevel.SUCCESS, "Successfully deleted event: "+event.getName(), AlertTTL.ONE_VIEW));
-                    }else {
+                    } else {
+                        logger.warning("Unknown event id: " + id);
                         HalAlertManager.getInstance().addAlert(new HalAlert(
                                 AlertLevel.ERROR, "Unknown event id: "+id, AlertTTL.ONE_VIEW));
                     }
@@ -100,7 +113,6 @@ public class EventConfigHttpPage extends HalHttpPage {
         tmpl.set("localEvents", Event.getLocalEvents(db));
         tmpl.set("localEventConf", eventConfigurations);
         tmpl.set("detectedEvents", ControllerManager.getInstance().getDetectedEvents());
-
         tmpl.set("availableEvents", ControllerManager.getInstance().getAvailableEvents());
 
         return tmpl;

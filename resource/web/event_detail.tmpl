@@ -23,6 +23,21 @@
                     <th class="text-right">Owner:</th>
                     <td>{{event.getUser().getUsername()}} <p></td>
                 </tr>
+                <tr>
+                    <th class="text-right">State:</th>
+                    <td>
+                        <form method="POST">
+                            <input type="hidden" name="action" value="modify">
+                            <input type="hidden" name="action_id" value="{{.getId()}}">
+
+                            <div class="btn-toolbar pull-left">
+                                <input class="toggle-switch" type="checkbox" name="enabled"
+                                       data-size="mini" data-on-color="danger"
+                                       {{event.getDeviceData().getData()}}checked{{/event.getDeviceData().getData()}} >
+                            </div>
+                        </form>
+                    </td>
+                </tr>
                 {{#event.getDeviceConfigurator().getConfiguration()}}
                 <tr>
                     <th class="text-right">{{.getNiceName()}}:</th>
@@ -54,3 +69,11 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(function (){
+        $(".toggle-switch").on("switchChange.bootstrapSwitch", function (event, state) {
+            $(this).closest('form').submit();
+        });
+    });
+</script>

@@ -39,19 +39,23 @@ public class EventOverviewHttpPage extends HalHttpPage {
             throws Exception{
 
         DBConnection db = HalContext.getDB();
-        int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
 
         if(request.containsKey("action")){
+            int id = (request.containsKey("action_id") ? Integer.parseInt(request.get("action_id")) : -1);
+
             // change event data
             SwitchEventData eventData = new SwitchEventData();
-            if ( request.containsKey("enabled") && "on".equals(request.get("enabled")))
+            if (request.containsKey("enabled") && "on".equals(request.get("enabled")))
                 eventData.turnOn();
             else
                 eventData.turnOff();
+
             Event event = Event.getEvent(db, id);
             event.setDeviceData(eventData);
             ControllerManager.getInstance().send(event);
         }
+
+        int id = (request.containsKey("id") ? Integer.parseInt(request.get("id")) : -1);
 
         // Save new input
         if(!request.containsKey("action") && id >= 0){

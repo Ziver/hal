@@ -53,6 +53,7 @@ public class EventConfigHttpPage extends HalHttpPage {
             switch(request.get("action")) {
                 // Local events
                 case "create_local_event":
+                    logger.info("Creating new event: " + request.get("name"));
                     event = new Event();
                     event.setName(request.get("name"));
                     event.setType(request.get("type"));
@@ -61,7 +62,6 @@ public class EventConfigHttpPage extends HalHttpPage {
                     event.save(db);
                     ControllerManager.getInstance().register(event);
 
-                    logger.info("Event created: " + event.getName());
                     HalAlertManager.getInstance().addAlert(new HalAlert(
                             AlertLevel.SUCCESS, "Successfully created new event: " + event.getName(), AlertTTL.ONE_VIEW));
                     break;
@@ -69,13 +69,13 @@ public class EventConfigHttpPage extends HalHttpPage {
                 case "modify_local_event":
                     event = Event.getEvent(db, id);
                     if (event != null) {
+                        logger.info("Modifying event: " + event.getName());
                         event.setName(request.get("name"));
                         event.setType(request.get("type"));
                         event.setUser(localUser);
                         event.getDeviceConfigurator().setValues(request).applyConfiguration();
                         event.save(db);
 
-                        logger.info("Event modified: " + event.getName());
                         HalAlertManager.getInstance().addAlert(new HalAlert(
                                 AlertLevel.SUCCESS, "Successfully saved event: "+event.getName(), AlertTTL.ONE_VIEW));
                     } else {
@@ -88,12 +88,12 @@ public class EventConfigHttpPage extends HalHttpPage {
                 case "remove_local_event":
                     event = Event.getEvent(db, id);
                     if (event != null) {
+                        logger.info("Removing event: " + event.getName());
                         ControllerManager.getInstance().deregister(event);
                         event.delete(db);
 
-                        logger.info("Event deleted: " + event.getName());
                         HalAlertManager.getInstance().addAlert(new HalAlert(
-                                AlertLevel.SUCCESS, "Successfully deleted event: "+event.getName(), AlertTTL.ONE_VIEW));
+                                AlertLevel.SUCCESS, "Successfully removed event: "+event.getName(), AlertTTL.ONE_VIEW));
                     } else {
                         logger.warning("Unknown event id: " + id);
                         HalAlertManager.getInstance().addAlert(new HalAlert(

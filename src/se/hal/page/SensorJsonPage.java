@@ -30,10 +30,10 @@ import java.util.logging.Logger;
 public class SensorJsonPage extends HalJsonPage {
     private static final Logger logger = LogUtil.getLogger();
 
+
     public SensorJsonPage() {
         super("data/sensor");
     }
-
 
     @Override
     public DataNode jsonRespond(

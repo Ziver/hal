@@ -8,12 +8,14 @@ import se.hal.page.HalAlertManager.HalAlert;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
-import zutil.net.http.HttpHeader;
+import zutil.log.LogUtil;
 import zutil.parser.Templator;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class UserConfigHttpPage extends HalHttpPage {
+    private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = "resource/web/user_config.tmpl";
 
 
@@ -42,6 +44,7 @@ public class UserConfigHttpPage extends HalHttpPage {
                         localUser = new User();
                         localUser.setExternal(false);
                     }
+                    logger.info("Modifying user: " + localUser.getUsername());
                     localUser.setUsername(request.get("username"));
                     localUser.setEmail(request.get("email"));
                     localUser.setAddress(request.get("address"));

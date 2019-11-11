@@ -54,6 +54,7 @@ public class EventOverviewHttpPage extends HalHttpPage {
             else
                 eventData.turnOff();
 
+            logger.info("Modifying Event(" + id + ") state: " + eventData.toString());
             Event event = Event.getEvent(db, id);
             event.setDeviceData(eventData);
             ControllerManager.getInstance().send(event);

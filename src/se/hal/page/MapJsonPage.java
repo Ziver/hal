@@ -6,16 +6,18 @@ import se.hal.struct.AbstractDevice;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
+import zutil.log.LogUtil;
 import zutil.parser.DataNode;
 
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * TODO: This json endpoint might not be needed as we have SensorJsonPage?
  */
 public class MapJsonPage extends HalJsonPage {
-
+    private static final Logger logger = LogUtil.getLogger();
 
     public MapJsonPage() {
         super("data/map");
@@ -34,6 +36,9 @@ public class MapJsonPage extends HalJsonPage {
         } else if ("save".equals(request.get("action"))) {
             int id = Integer.parseInt(request.get("id"));
             AbstractDevice device = null;
+
+            logger.info("Saving Sensor coordinates.");
+
             if ("sensor".equals(request.get("type")))
                 device = Sensor.getSensor(db, id);
             else if ("event".equals(request.get("type")))
@@ -49,6 +54,7 @@ public class MapJsonPage extends HalJsonPage {
 
     private void getDeviceNode(DBConnection db, DataNode root) throws SQLException {
         DataNode sensorsNode = new DataNode(DataNode.DataType.List);
+
         for (Sensor sensor : Sensor.getLocalSensors(db)) {
             DataNode sensorNode = getDeviceNode(sensor);
             sensorNode.set("data", ""+sensor.getDeviceData());
@@ -57,6 +63,7 @@ public class MapJsonPage extends HalJsonPage {
         root.set("sensors", sensorsNode);
 
         DataNode eventsNode = new DataNode(DataNode.DataType.List);
+
         for (Event event : Event.getLocalEvents(db)) {
             DataNode eventNode = getDeviceNode(event);
             eventNode.set("data", ""+event.getDeviceData());

@@ -12,12 +12,15 @@ import se.hal.struct.User;
 import zutil.ObjectUtil;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
+import zutil.log.LogUtil;
 import zutil.parser.Templator;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class SensorConfigHttpPage extends HalHttpPage {
+    private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = "resource/web/sensor_config.tmpl";
 
     private ArrayList<ClassConfigurationData> sensorConfigurations;
@@ -51,6 +54,7 @@ public class SensorConfigHttpPage extends HalHttpPage {
             switch(request.get("action")) {
                 // Local Sensors
                 case "create_local_sensor":
+                    logger.info("Creating sensor: " + request.get("name"));
                     sensor = new Sensor();
                     sensor.setName(request.get("name"));
                     sensor.setType(request.get("type"));
@@ -67,6 +71,7 @@ public class SensorConfigHttpPage extends HalHttpPage {
                 case "modify_local_sensor":
                     sensor = Sensor.getSensor(db, id);
                     if(sensor != null){
+                        logger.info("Modifying sensor: " + sensor.getName());
                         sensor.setName(request.get("name"));
                         sensor.setType(request.get("type"));
                         sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
@@ -76,22 +81,25 @@ public class SensorConfigHttpPage extends HalHttpPage {
                         HalAlertManager.getInstance().addAlert(new HalAlert(
                                 AlertLevel.SUCCESS, "Successfully saved sensor: "+sensor.getName(), AlertTTL.ONE_VIEW));
                     } else {
+                        logger.warning("Unknown sensor id: " + id);
                         HalAlertManager.getInstance().addAlert(new HalAlert(
-                                AlertLevel.ERROR, "Unknown sensor id: "+id, AlertTTL.ONE_VIEW));
+                                AlertLevel.ERROR, "Unknown sensor id: " + id, AlertTTL.ONE_VIEW));
                     }
                     break;
 
                 case "remove_local_sensor":
                     sensor = Sensor.getSensor(db, id);
                     if(sensor != null) {
+                        logger.warning("Removing sensor: " + sensor.getName());
                         ControllerManager.getInstance().deregister(sensor);
                         sensor.delete(db);
 
                         HalAlertManager.getInstance().addAlert(new HalAlert(
-                                AlertLevel.SUCCESS, "Successfully deleted sensor: "+sensor.getName(), AlertTTL.ONE_VIEW));
+                                AlertLevel.SUCCESS, "Successfully removed sensor: "+sensor.getName(), AlertTTL.ONE_VIEW));
                     } else {
+                        logger.warning("Unknown sensor id: " + id);
                         HalAlertManager.getInstance().addAlert(new HalAlert(
-                                AlertLevel.ERROR, "Unknown sensor id: "+id, AlertTTL.ONE_VIEW));
+                                AlertLevel.ERROR, "Unknown sensor id: " + id, AlertTTL.ONE_VIEW));
                     }
                     break;
 
@@ -101,6 +109,7 @@ public class SensorConfigHttpPage extends HalHttpPage {
 
                 // External Users
                 case "create_external_user":
+                    logger.info("Creating external user: " + request.get("hostname"));
                     user = new User();
                     user.setHostname(request.get("hostname"));
                     user.setPort(Integer.parseInt(request.get("port")));
@@ -110,9 +119,11 @@ public class SensorConfigHttpPage extends HalHttpPage {
                     HalAlertManager.getInstance().addAlert(new HalAlert(
                             AlertLevel.SUCCESS, "Successfully created new external user with host: "+user.getHostname(), AlertTTL.ONE_VIEW));
                     break;
+
                 case "modify_external_user":
                     user = User.getUser(db, id);
                     if(user != null){
+                        logger.info("Modifying external user: " + user.getHostname());
                         user.setHostname(request.get("hostname"));
                         user.setPort(Integer.parseInt(request.get("port")));
                         user.save(db);
@@ -120,18 +131,21 @@ public class SensorConfigHttpPage extends HalHttpPage {
                         HalAlertManager.getInstance().addAlert(new HalAlert(
                                 AlertLevel.SUCCESS, "Successfully saved external user with host: "+user.getHostname(), AlertTTL.ONE_VIEW));
                     } else {
+                        logger.warning("Unknown user id: " + id);
                         HalAlertManager.getInstance().addAlert(new HalAlert(
-                                AlertLevel.ERROR, "Unknown user id: "+id, AlertTTL.ONE_VIEW));
+                                AlertLevel.ERROR, "Unknown user id: " + id, AlertTTL.ONE_VIEW));
                     }
                     break;
                 case "remove_external_user":
                     user = User.getUser(db, id);
                     if (user != null) {
+                        logger.info("Removing external user: " + user.getHostname());
                         user.delete(db);
 
                         HalAlertManager.getInstance().addAlert(new HalAlert(
-                                AlertLevel.SUCCESS, "Successfully deleted user with host: "+user.getHostname(), AlertTTL.ONE_VIEW));
+                                AlertLevel.SUCCESS, "Successfully removed user with host: "+user.getHostname(), AlertTTL.ONE_VIEW));
                     } else {
+                        logger.warning("Unknown user id: " + id);
                         HalAlertManager.getInstance().addAlert(new HalAlert(
                                 AlertLevel.ERROR, "Unknown user id: "+id, AlertTTL.ONE_VIEW));
                     }
@@ -141,12 +155,14 @@ public class SensorConfigHttpPage extends HalHttpPage {
                 case "modify_external_sensor":
                     sensor = Sensor.getSensor(db, id);
                     if(sensor != null){
+                        logger.warning("Modifying external sensor: " + sensor.getName());
                         sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
                         sensor.save(db);
 
                         HalAlertManager.getInstance().addAlert(new HalAlert(
                                 AlertLevel.SUCCESS, "Successfully saved external sensor: "+sensor.getName(), AlertTTL.ONE_VIEW));
                     } else {
+                        logger.warning("Unknown user id: " + id);
                         HalAlertManager.getInstance().addAlert(new HalAlert(
                                 AlertLevel.ERROR, "Unknown sensor id: "+id, AlertTTL.ONE_VIEW));
                     }

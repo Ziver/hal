@@ -2,21 +2,23 @@ package se.hal.page;
 
 import se.hal.HalContext;
 import se.hal.TriggerManager;
-import se.hal.intf.HalAction;
 import se.hal.intf.HalHttpPage;
-import se.hal.intf.HalTrigger;
 import se.hal.struct.Action;
 import se.hal.struct.ClassConfigurationData;
 import se.hal.struct.Trigger;
 import se.hal.struct.TriggerFlow;
+import zutil.ObjectUtil;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
+import zutil.log.LogUtil;
 import zutil.parser.Templator;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class TriggerHttpPage extends HalHttpPage {
+    private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = "resource/web/trigger.tmpl";
 
     private ArrayList<ClassConfigurationData> triggerConfigurators;
@@ -35,7 +37,6 @@ public class TriggerHttpPage extends HalHttpPage {
             actionConfigurators.add(new ClassConfigurationData(c));
     }
 
-
     @Override
     public Templator httpRespond (
             Map<String, Object> session,
@@ -45,46 +46,49 @@ public class TriggerHttpPage extends HalHttpPage {
         DBConnection db = HalContext.getDB();
 
         if (request.containsKey("action")) {
-            TriggerFlow flow = null;
-            if (request.containsKey("flow-id") && !request.get("flow-id").isEmpty())
-                flow = TriggerFlow.getTriggerFlow(db, Integer.parseInt(request.get("flow-id")));
-            Trigger trigger = null;
-            if (request.containsKey("trigger-id") && !request.get("trigger-id").isEmpty())
-                trigger = Trigger.getTrigger(db, Integer.parseInt(request.get("trigger-id")));
-            Action action = null;
-            if (request.containsKey("action-id") && !request.get("action-id").isEmpty())
-                action = Action.getAction(db, Integer.parseInt(request.get("action-id")));
-
+            TriggerFlow flow = (ObjectUtil.isEmpty(request.get("flow-id")) ? null :
+                    TriggerFlow.getTriggerFlow(db, Integer.parseInt(request.get("flow-id"))));
+            Trigger trigger = (ObjectUtil.isEmpty(request.get("trigger-id")) ? null :
+                    Trigger.getTrigger(db, Integer.parseInt(request.get("trigger-id"))));
+            Action action = (ObjectUtil.isEmpty(request.get("action-id")) ? null :
+                    Action.getAction(db, Integer.parseInt(request.get("action-id"))));
 
             switch(request.get("action")) {
                 // Flows
                 case "create_flow":
+                    logger.info("Creating new flow.");
                     flow = new TriggerFlow();
                     flow.save(db);
                     break;
 
                 case "modify_flow":
+                    logger.info("Modifying flow: " + flow.getName());
                     flow.setEnabled("on".equals(request.get("enabled")));
                     flow.setName(request.get("name"));
                     flow.save(db);
                     break;
 
                 case "remove_flow":
+                    logger.info("Removing flow: " + flow.getName());
                     flow.delete(db);
                     break;
 
                 // Triggers
                 case "create_trigger":
                     if (flow == null){
+                        logger.warning("Invalid flow id: " + request.get("flow-id"));
                         HalAlertManager.getInstance().addAlert(new HalAlertManager.HalAlert(
-                                HalAlertManager.AlertLevel.ERROR, "Invalid flow id", HalAlertManager.AlertTTL.ONE_VIEW));
+                                HalAlertManager.AlertLevel.ERROR, "Invalid flow id: " + request.get("flow-id"), HalAlertManager.AlertTTL.ONE_VIEW));
                         break;
                     }
+
+                    logger.info("Creating trigger associated to flow: " + flow.getName());
                     trigger = new Trigger();
                     flow.addTrigger(trigger);
                     flow.save(db);
                     /* FALLTHROUGH */
                 case "modify_trigger":
+                    logger.info("Modifying trigger: " + trigger.getId());
                     trigger.setObjectClass(request.get("type"));
                     trigger.getObjectConfigurator().setValues(request).applyConfiguration();
                     trigger.save(db); // will save all sub beans also
@@ -93,6 +97,7 @@ public class TriggerHttpPage extends HalHttpPage {
                 case "remove_trigger":
                     if (flow == null)
                         flow = TriggerFlow.getTriggerFlow(db, trigger);
+                    logger.info("Removing trigger: " + trigger.getId());
                     flow.removeTrigger(trigger);
                     trigger.delete(db);
                     break;
@@ -104,11 +109,14 @@ public class TriggerHttpPage extends HalHttpPage {
                                 HalAlertManager.AlertLevel.ERROR, "Invalid flow id", HalAlertManager.AlertTTL.ONE_VIEW));
                         break;
                     }
+
+                    logger.info("Creating action associated with flow: " + flow.getName());
                     action = new Action();
                     flow.addAction(action);
                     flow.save(db);
                     /* FALLTHROUGH */
                 case "modify_action":
+                    logger.info("Modifying action: " + action.getId());
                     action.setObjectClass(request.get("type"));
                     action.getObjectConfigurator().setValues(request).applyConfiguration();
                     action.save(db); // will save all sub beans also
@@ -117,6 +125,7 @@ public class TriggerHttpPage extends HalHttpPage {
                 case "remove_action":
                     if (flow == null)
                         flow = TriggerFlow.getTriggerFlow(db, action);
+                    logger.info("Removing action: " + action.getId());
                     flow.removeAction(action);
                     action.delete(db);
                     break;

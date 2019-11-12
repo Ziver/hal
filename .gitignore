@@ -2,4 +2,4 @@
 /hal.conf
 /hal.db*
 build
-/lib/Zutil.jar
+/lib/zutil-*

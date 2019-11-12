@@ -16,9 +16,6 @@
       <excludeFolder url="file://$MODULE_DIR$/plugins/hal-tellstick/build" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/hal-zigbee/build" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/hal-zwave/build" />
-      <excludeFolder url="file://$MODULE_DIR$/plugins/raspberry/build" />
-      <excludeFolder url="file://$MODULE_DIR$/plugins/tellstick/build" />
-      <excludeFolder url="file://$MODULE_DIR$/plugins/zwave/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

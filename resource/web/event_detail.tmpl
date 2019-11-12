@@ -33,7 +33,7 @@
                             <div class="btn-toolbar pull-left">
                                 <input class="toggle-switch" type="checkbox" name="enabled"
                                        data-size="mini" data-on-color="danger"
-                                       {{event.getDeviceData().getData()}}checked{{/event.getDeviceData().getData()}} >
+                                       {{#event.getDeviceData().getData()}}checked{{/event.getDeviceData().getData()}} >
                             </div>
                         </form>
                     </td>

@@ -3,7 +3,7 @@ package se.hal.plugin.zwave;
 import org.zwave4j.*;
 import se.hal.HalContext;
 import se.hal.intf.*;
-import se.hal.plugin.tellstick.TellstickDevice;
+import se.hal.struct.AbstractDevice;
 import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
 
@@ -29,7 +29,7 @@ public class HalZWaveController implements HalSensorController, HalEventControll
 
     private HalSensorReportListener sensorListener;
     private HalEventReportListener eventListener;
-    private List<TellstickDevice> registeredDevices;
+    private List<AbstractDevice> registeredDevices;
 
 
     public static void main(String[] args) throws IOException {
@@ -75,7 +75,7 @@ public class HalZWaveController implements HalSensorController, HalEventControll
         manager.removeWatcher(this, null);
         manager.removeDriver(serialPort);
         manager.destroy();
-	    Options.destroy();
+        Options.destroy();
     }
 
 

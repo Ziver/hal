@@ -13,7 +13,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 /**
- * @author zagumennikov
+ *
+ * <p>Reference: http://www.openzwave.com/dev/namespaceOpenZWave.html
+ *
+ * @author Ziver Koc
  */
 public class HalZWaveController implements HalSensorController, HalEventController, HalAutoScannableController, NotificationWatcher{
     private static final Logger logger = LogUtil.getLogger();
@@ -80,60 +83,47 @@ public class HalZWaveController implements HalSensorController, HalEventControll
         switch (notification.getType()) {
             case DRIVER_READY:
                 homeId = notification.getHomeId();
-                logger.info("Driver ready (Home ID: " + homeId + ")");
+                logger.info("Driver ready (Home ID: " + homeId + ").");
                 break;
             case DRIVER_FAILED:
-                logger.info("Driver failed");
+                logger.info("Driver failed.");
                 break;
             case DRIVER_RESET:
-                logger.info("Driver reset");
+                logger.info("Driver reset.");
                 break;
             case AWAKE_NODES_QUERIED:
-                logger.info("Awake nodes queried");
+                logger.info("Controller is done initializing, All awake nodes queried.");
+                manager.writeConfig(homeId);
                 break;
             case ALL_NODES_QUERIED_SOME_DEAD:
-                logger.info("Some Nodes are dead");
-            case ALL_NODES_QUERIED:
-                logger.info("All nodes queried");
+                logger.info("Controller is done initializing, All nodes queried but some are dead.");
                 manager.writeConfig(homeId);
-                logger.info(" Controller is done initializing");
+                break;
+            case ALL_NODES_QUERIED:
+                logger.info("Controller is done initializing, All nodes queried.");
+                manager.writeConfig(homeId);
                 break;
 
             case POLLING_ENABLED:
-                System.out.println("Polling enabled");
+                logger.fine("[NodeID: " + notification.getNodeId() + "] Polling enabled.");
                 break;
             case POLLING_DISABLED:
-                System.out.println("Polling disabled");
+                logger.fine("[NodeID: " + notification.getNodeId() + "] Polling disabled.");
                 break;
             case NODE_NEW:
-                System.out.println(String.format("Node new\n" +
-                        "\tnode id: %d",
-                        notification.getNodeId()
-                ));
+                logger.fine("[NodeID: " + notification.getNodeId() + "] New node detected.");
                 break;
             case NODE_ADDED:
-                System.out.println(String.format("Node added\n" +
-                        "\tnode id: %d",
-                        notification.getNodeId()
-                ));
+                logger.fine("[NodeID: " + notification.getNodeId() + "] Node registered to controller.");
                 break;
             case NODE_REMOVED:
-                System.out.println(String.format("Node removed\n" +
-                        "\tnode id: %d",
-                        notification.getNodeId()
-                ));
+                logger.fine("[NodeID: " + notification.getNodeId() + "] Node unregistered from controller.");
                 break;
             case ESSENTIAL_NODE_QUERIES_COMPLETE:
-                System.out.println(String.format("Node essential queries complete\n" +
-                        "\tnode id: %d",
-                        notification.getNodeId()
-                ));
+                logger.finest("[NodeID: " + notification.getNodeId() + "] Essential node queries complete.");
                 break;
             case NODE_QUERIES_COMPLETE:
-                System.out.println(String.format("Node queries complete\n" +
-                        "\tnode id: %d",
-                        notification.getNodeId()
-                ));
+                logger.finest("[NodeID: " + notification.getNodeId() + "] Node queries complete.");
                 break;
             case NODE_EVENT:
                 System.out.println(String.format("Node event\n" +
@@ -144,10 +134,10 @@ public class HalZWaveController implements HalSensorController, HalEventControll
                 ));
                 break;
             case NODE_NAMING:
-                System.out.println(String.format("Node naming\n" +
-                        "\tnode id: %d",
-                        notification.getNodeId()
-                ));
+                logger.fine("[NodeID: " + notification.getNodeId() + "] Node identified as: " +
+                        manager.getNodeManufacturerName(notification.getHomeId(), notification.getNodeId()) + ", " +
+                        manager.getNodeProductName(notification.getHomeId(), notification.getNodeId())
+                        );
                 break;
             case NODE_PROTOCOL_INFO:
                 System.out.println(String.format("Node protocol info\n" +
@@ -257,10 +247,12 @@ public class HalZWaveController implements HalSensorController, HalEventControll
                 ));
                 break;
             case NOTIFICATION:
-                System.out.println("Notification");
+                logger.fine("[NodeID: " + notification.getNodeId() + "] Received notification, will query dynamic state of node.");
+                //if (!manager.requestNodeDynamic(notification.getHomeId(), notification.getNodeId()))
+                //    logger.fine("[NodeID: " + notification.getNodeId() + "] Requesting dynamic state failed.");
                 break;
             default:
-                System.out.println(notification.getType().name());
+                logger.warning("Unknown notification type: " + notification.getType().name());
                 break;
         }
     }

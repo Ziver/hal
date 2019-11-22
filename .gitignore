@@ -3,3 +3,6 @@
 /hal.db*
 build
 /lib/zutil-*
+/OZW_Log.txt
+/zwscene.xml
+/zwcfg*.xml

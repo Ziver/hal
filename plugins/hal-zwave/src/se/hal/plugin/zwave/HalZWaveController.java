@@ -32,19 +32,10 @@ public class HalZWaveController implements HalSensorController, HalEventControll
     private List<AbstractDevice> registeredDevices;
 
 
-    public static void main(String[] args) throws IOException {
-        LogUtil.setGlobalFormatter(new CompactLogFormatter());
-        HalZWaveController controller = new HalZWaveController();
-        controller.initialize(
-                "/dev/serial/by-id/usb-0658_0200-if00",
-                "./");
-
-        System.in.read();
-    }
-
     public HalZWaveController() {
         NativeLibraryLoader.loadLibrary(ZWave4j.LIBRARY_NAME, ZWave4j.class);
     }
+
 
     @Override
     public boolean isAvailable() {
@@ -72,12 +63,17 @@ public class HalZWaveController implements HalSensorController, HalEventControll
 
     @Override
     public void close() {
+        logger.info("Shutting down OpenZWave Manager...");
         manager.removeWatcher(this, null);
         manager.removeDriver(serialPort);
-        manager.destroy();
+        Manager.destroy();
         Options.destroy();
     }
 
+
+    // --------------------------
+    // OpenZWave Overrides
+    // --------------------------
 
     @Override
     public void onNotification(Notification notification, Object context) {
@@ -100,8 +96,9 @@ public class HalZWaveController implements HalSensorController, HalEventControll
             case ALL_NODES_QUERIED:
                 logger.info("All nodes queried");
                 manager.writeConfig(homeId);
-                // Controller is done initializing
+                logger.info(" Controller is done initializing");
                 break;
+
             case POLLING_ENABLED:
                 System.out.println("Polling enabled");
                 break;
@@ -309,7 +306,9 @@ public class HalZWaveController implements HalSensorController, HalEventControll
         }
     }
 
-
+    // --------------------------
+    // Hal Overrides
+    // --------------------------
 
     @Override
     public void register(HalEventConfig event) {

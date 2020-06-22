@@ -13,7 +13,7 @@
     <property name="compileDir" value="${buildRoot}/production" />
     <property name="compileTestDir" value="${buildRoot}/test" />
     <property name="releaseDir" value="${buildRoot}/release" />
-    <property name="releaseJar" value="raspberry.jar" />
+    <property name="releaseJar" value="hal-raspberry.jar" />
     <property name="reportsDir" value="../../${buildRoot}/reports" /> <!-- Use Hal reports folder -->
 
     <!-- ________________________ TARGETS ________________________ -->

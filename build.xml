@@ -45,7 +45,7 @@
             <classpath>
                 <pathelement path="${releaseDir}/${releaseJar}"/>
                 <pathelement path="${releaseDir}/plugins/*"/>
-                <pathelement path="${libDir}/*"/>
+                <pathelement path="${releaseDir}/lib/*"/>
             </classpath>
         </java>
     </target>
@@ -113,7 +113,7 @@
 
     <target name="build-dependencies">
         <mkdir dir="${compileDir}" />
-        <get src="http://ci.koc.se/jenkins/job/Zutil/lastSuccessfulBuild/artifact/se/koc/zutil/1.0.237/zutil-1.0.237.jar"
+        <get src="http://ci.koc.se/jenkins/job/Zutil/lastSuccessfulBuild/artifact/se/koc/zutil/1.0.247/zutil-1.0.247.jar"
              dest="${libDir}" verbose="true" usetimestamp="true"/>
     </target>
 

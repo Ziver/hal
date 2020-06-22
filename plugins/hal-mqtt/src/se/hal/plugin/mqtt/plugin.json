@@ -1,0 +1,7 @@
+{
+	"version": 1.0,
+	"name": "Hal-MQTT",
+	"interfaces": [
+		{"se.hal.intf.HalAutoScannableController": "se.hal.plugin.mqtt.HalMqttController"}
+	]
+}

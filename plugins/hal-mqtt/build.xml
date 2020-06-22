@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Hal MQTT Plugin" >
+
+    <!-- ________________________ PROPERTIES AND SETTINGS ________________________ -->
+
+    <!--common properties-->
+    <property name="root" value="." />
+    <property name="srcDir" value="${root}/src" />
+    <property name="testDir" value="${root}/test" />
+    <property name="libDir" value="${root}/lib" />
+
+    <property name="buildRoot" value="${root}/build" />
+    <property name="compileDir" value="${buildRoot}/production" />
+    <property name="compileTestDir" value="${buildRoot}/test" />
+    <property name="releaseDir" value="${buildRoot}/release" />
+    <property name="releaseJar" value="hal-mqtt.jar" />
+    <property name="reportsDir" value="../../${buildRoot}/reports" /> <!-- Use Hal reports folder -->
+
+    <!-- ________________________ TARGETS ________________________ -->
+
+    <import file="../../build_plugin.xml"/>
+
+</project>

@@ -12,6 +12,7 @@
       <sourceFolder url="file://$MODULE_DIR$/plugins/hal-raspberry/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/plugins/hal-zigbee/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/plugins/hal-zwave/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/plugins/hal-mqtt/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/hal-raspberry/build" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/hal-tellstick/build" />

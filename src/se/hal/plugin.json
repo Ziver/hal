@@ -7,17 +7,16 @@
 
 
 		{"se.hal.intf.HalJsonPage": "se.hal.page.MapJsonPage"},
-		{"se.hal.intf.HalHttpPage": "se.hal.page.MapHttpPage"},
-
 		{"se.hal.intf.HalJsonPage": "se.hal.page.SensorJsonPage"},
-		{"se.hal.intf.HalHttpPage": "se.hal.page.SensorOverviewHttpPage"},
-		{"se.hal.intf.HalHttpPage": "se.hal.page.SensorConfigHttpPage"},
 
-		{"se.hal.intf.HalHttpPage": "se.hal.page.EventOverviewHttpPage"},
-		{"se.hal.intf.HalHttpPage": "se.hal.page.EventConfigHttpPage"},
-		{"se.hal.intf.HalHttpPage": "se.hal.page.TriggerHttpPage"},
-		{"se.hal.intf.HalHttpPage": "se.hal.page.UserConfigHttpPage"},
-		{"se.hal.intf.HalHttpPage": "se.hal.page.PropertySettingsPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.MapWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.SensorOverviewWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.SensorConfigWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.EventOverviewWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.EventConfigWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.TriggerWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.UserConfigWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.PropertySettingsPage"},
 
 
 		{"se.hal.intf.HalTrigger": "se.hal.trigger.DateTimeTrigger"},

@@ -1,30 +1,20 @@
 package se.hal.page;
 
-import se.hal.ControllerManager;
 import se.hal.HalContext;
-import se.hal.intf.HalHttpPage;
-import se.hal.struct.Event;
-import se.hal.struct.devicedata.SwitchEventData;
-import se.hal.util.DeviceNameComparator;
-import se.hal.util.HistoryDataListSqlResult;
-import se.hal.util.HistoryDataListSqlResult.HistoryData;
-import zutil.ObjectUtil;
+import se.hal.intf.HalWebPage;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
-import zutil.log.LogUtil;
 import zutil.parser.Templator;
 
-import java.sql.PreparedStatement;
 import java.util.*;
-import java.util.logging.Logger;
 
-public class PropertySettingsPage extends HalHttpPage {
+public class PropertyConfigWebPage extends HalWebPage {
     private static final String TEMPLATE = "resource/web/properties_config.tmpl";
 
 
-    public PropertySettingsPage(){
+    public PropertyConfigWebPage(){
         super("properties");
-        super.getRootNav().createSubNav("Settings").setWeight(100).createSubNav(this.getId(), "Properties");
+        super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Properties");
     }
 
     @Override

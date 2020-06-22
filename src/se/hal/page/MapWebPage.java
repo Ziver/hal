@@ -1,7 +1,7 @@
 package se.hal.page;
 
 import se.hal.HalContext;
-import se.hal.intf.HalHttpPage;
+import se.hal.intf.HalWebPage;
 import zutil.io.file.FileUtil;
 import zutil.net.http.HttpHeader;
 import zutil.net.http.HttpPrintStream;
@@ -16,14 +16,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
-public class MapHttpPage extends HalHttpPage {
+public class MapWebPage extends HalWebPage {
     private static final String TEMPLATE = "resource/web/map.tmpl";
 
     private String bgType;
     private byte[] bgImage;
 
 
-    public MapHttpPage() {
+    public MapWebPage() {
         super("map");
         super.getRootNav().createSubNav(this.getId(), "Map").setWeight(-100);
         super.showSubNav(false);

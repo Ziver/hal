@@ -2,7 +2,6 @@ package se.hal.intf;
 
 import zutil.log.LogUtil;
 import zutil.net.http.HttpHeader;
-import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
 import zutil.parser.DataNode;
 import zutil.parser.Templator;
@@ -16,7 +15,7 @@ import java.util.logging.Logger;
 /**
  * A interface defining a Hal json endpoint
  */
-public abstract class HalJsonPage extends HalHttpPage{
+public abstract class HalJsonPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
 
     public HalJsonPage(String id) {

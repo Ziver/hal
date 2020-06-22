@@ -1,7 +1,7 @@
 package se.hal.page;
 
 import se.hal.HalContext;
-import se.hal.intf.HalHttpPage;
+import se.hal.intf.HalWebPage;
 import se.hal.page.HalAlertManager.AlertLevel;
 import se.hal.page.HalAlertManager.AlertTTL;
 import se.hal.page.HalAlertManager.HalAlert;
@@ -14,12 +14,12 @@ import zutil.parser.Templator;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class UserConfigHttpPage extends HalHttpPage {
+public class UserConfigWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = "resource/web/user_config.tmpl";
 
 
-    public UserConfigHttpPage() {
+    public UserConfigWebPage() {
         super("user_profile");
         super.getUserNav().createSubNav(this.getId(), "Profile");
     }

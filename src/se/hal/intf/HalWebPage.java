@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public abstract class HalHttpPage implements HttpPage{
+public abstract class HalWebPage implements HttpPage{
     private static final String TEMPLATE = "resource/web/main_index.tmpl";
     private static Navigation rootNav = Navigation.createRootNav();
     private static Navigation userNav = Navigation.createRootNav();
@@ -24,7 +24,7 @@ public abstract class HalHttpPage implements HttpPage{
     private String pageId;
     private boolean showSubNav;
 
-    public HalHttpPage(String id){
+    public HalWebPage(String id){
         this.pageId = id;
         this.showSubNav = true;
     }

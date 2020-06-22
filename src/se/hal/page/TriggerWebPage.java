@@ -2,7 +2,7 @@ package se.hal.page;
 
 import se.hal.HalContext;
 import se.hal.TriggerManager;
-import se.hal.intf.HalHttpPage;
+import se.hal.intf.HalWebPage;
 import se.hal.struct.Action;
 import se.hal.struct.ClassConfigurationData;
 import se.hal.struct.Trigger;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class TriggerHttpPage extends HalHttpPage {
+public class TriggerWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = "resource/web/trigger.tmpl";
 
@@ -25,7 +25,7 @@ public class TriggerHttpPage extends HalHttpPage {
     private ArrayList<ClassConfigurationData> actionConfigurators;
 
 
-    public TriggerHttpPage() {
+    public TriggerWebPage() {
         super("trigger");
         super.getRootNav().createSubNav("Events").createSubNav(this.getId(), "Triggers");
 

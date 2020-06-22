@@ -1,8 +1,7 @@
 package se.hal.page;
 
 import se.hal.HalContext;
-import se.hal.intf.HalHttpPage;
-import se.hal.struct.Event;
+import se.hal.intf.HalWebPage;
 import se.hal.struct.Sensor;
 import se.hal.util.DeviceNameComparator;
 import se.hal.util.HistoryDataListSqlResult;
@@ -17,13 +16,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class SensorOverviewHttpPage extends HalHttpPage {
+public class SensorOverviewWebPage extends HalWebPage {
     private static final int HISTORY_LIMIT = 200;
     private static final String OVERVIEW_TEMPLATE = "resource/web/sensor_overview.tmpl";
     private static final String DETAIL_TEMPLATE = "resource/web/sensor_detail.tmpl";
 
 
-    public SensorOverviewHttpPage(){
+    public SensorOverviewWebPage(){
         super("sensor_overview");
         super.getRootNav().createSubNav("Sensors").createSubNav(this.getId(), "Overview");
     }

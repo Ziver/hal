@@ -1,7 +1,7 @@
 package se.hal.page;
 
 import se.hal.HalContext;
-import se.hal.intf.HalHttpPage;
+import se.hal.intf.HalWebPage;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
@@ -11,10 +11,10 @@ import zutil.parser.Templator;
 import java.util.List;
 import java.util.Map;
 
-public class PCOverviewHttpPage extends HalHttpPage {
+public class PCOverviewWebPage extends HalWebPage {
     private static final String TEMPLATE = "resource/web/pc_overview.tmpl";
 
-    public PCOverviewHttpPage() {
+    public PCOverviewWebPage() {
         super("pc_overview");
         super.getRootNav().createSubNav("Sensors").createSubNav(this.getId(), "Power;Challenge").setWeight(50);
     }

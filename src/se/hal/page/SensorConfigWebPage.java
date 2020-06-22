@@ -2,7 +2,7 @@ package se.hal.page;
 
 import se.hal.ControllerManager;
 import se.hal.HalContext;
-import se.hal.intf.HalHttpPage;
+import se.hal.intf.HalWebPage;
 import se.hal.page.HalAlertManager.AlertLevel;
 import se.hal.page.HalAlertManager.AlertTTL;
 import se.hal.page.HalAlertManager.HalAlert;
@@ -19,14 +19,14 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class SensorConfigHttpPage extends HalHttpPage {
+public class SensorConfigWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = "resource/web/sensor_config.tmpl";
 
     private ArrayList<ClassConfigurationData> sensorConfigurations;
 
 
-    public SensorConfigHttpPage() {
+    public SensorConfigWebPage() {
         super("sensor_config");
         super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Sensor Settings").setWeight(100);
 

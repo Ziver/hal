@@ -2,7 +2,7 @@ package se.hal;
 
 
 import se.hal.intf.HalDaemon;
-import se.hal.intf.HalHttpPage;
+import se.hal.intf.HalWebPage;
 import se.hal.intf.HalJsonPage;
 import se.hal.page.*;
 import se.hal.struct.Event;
@@ -29,7 +29,7 @@ public class HalServer {
     private static List<HalDaemon> daemons = new ArrayList<>();
 
     private static HttpServer http;
-    private static List<HalHttpPage> pages = new ArrayList<>();
+    private static List<HalWebPage> pages = new ArrayList<>();
 
 
 
@@ -68,17 +68,18 @@ public class HalServer {
             registerDaemon(it.next());
 
 
-        // init http server
-        HalHttpPage.getRootNav().createSubNav("Sensors");
-        HalHttpPage.getRootNav().createSubNav("Events").setWeight(100);
+        // Init http server
+        HalWebPage.getRootNav().createSubNav("Sensors");
+        HalWebPage.getRootNav().createSubNav("Events").setWeight(100);
+        HalWebPage.getRootNav().createSubNav("Settings").setWeight(200);
 
         http = new HttpServer(HalContext.getIntegerProperty("http_port"));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("resource/web/")));
         http.setPage("/", new HttpRedirectPage("/map"));
         http.setPage(HalAlertManager.getInstance().getUrl(), HalAlertManager.getInstance());
-        for (Iterator<HalHttpPage> it = pluginManager.getObjectIterator(HalJsonPage.class); it.hasNext(); )
+        for (Iterator<HalWebPage> it = pluginManager.getObjectIterator(HalJsonPage.class); it.hasNext(); )
             registerPage(it.next());
-        for (Iterator<HalHttpPage> it=pluginManager.getObjectIterator(HalHttpPage.class); it.hasNext(); )
+        for (Iterator<HalWebPage> it = pluginManager.getObjectIterator(HalWebPage.class); it.hasNext(); )
             registerPage(it.next());
         http.start();
     }
@@ -88,7 +89,7 @@ public class HalServer {
         daemons.add(daemon);
         daemon.initiate(daemonExecutor);
     }
-    public static void registerPage(HalHttpPage page){
+    public static void registerPage(HalWebPage page){
         pages.add(page);
         http.setPage(page.getId(), page);
     }

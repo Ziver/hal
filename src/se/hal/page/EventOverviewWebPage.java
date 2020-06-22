@@ -2,10 +2,7 @@ package se.hal.page;
 
 import se.hal.ControllerManager;
 import se.hal.HalContext;
-import se.hal.intf.HalEventConfig;
-import se.hal.intf.HalEventData;
-import se.hal.intf.HalHttpPage;
-import se.hal.struct.AbstractDevice;
+import se.hal.intf.HalWebPage;
 import se.hal.struct.Event;
 import se.hal.struct.devicedata.SwitchEventData;
 import se.hal.util.DeviceNameComparator;
@@ -23,14 +20,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class EventOverviewHttpPage extends HalHttpPage {
+public class EventOverviewWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
     private static final int HISTORY_LIMIT = 200;
     private static final String OVERVIEW_TEMPLATE = "resource/web/event_overview.tmpl";
     private static final String DETAIL_TEMPLATE = "resource/web/event_detail.tmpl";
 
 
-    public EventOverviewHttpPage(){
+    public EventOverviewWebPage(){
         super("event_overview");
         super.getRootNav().createSubNav("Events").createSubNav(this.getId(), "Overview");
     }

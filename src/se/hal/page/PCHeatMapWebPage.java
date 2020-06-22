@@ -1,17 +1,16 @@
 package se.hal.page;
 
-import se.hal.intf.HalHttpPage;
+import se.hal.intf.HalWebPage;
 import zutil.io.file.FileUtil;
-import zutil.net.http.HttpHeader;
 import zutil.parser.Templator;
 
 import java.util.Map;
 
-public class PCHeatMapHttpPage extends HalHttpPage {
+public class PCHeatMapWebPage extends HalWebPage {
     private static final String TEMPLATE = "resource/web/pc_heatmap.tmpl";
 
 
-    public PCHeatMapHttpPage() {
+    public PCHeatMapWebPage() {
         super("pc_heatmap");
         super.getRootNav().createSubNav("Sensors").createSubNav(this.getId(), "Heatmap").setWeight(60);
     }

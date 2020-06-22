@@ -28,7 +28,7 @@ public class EventConfigWebPage extends HalWebPage {
 
     public EventConfigWebPage() {
         super("event_config");
-        super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Event Settings").setWeight(100);
+        super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Event Settings").setWeight(200);
 
         eventConfigurations = new ArrayList<>();
         for(Class c : ControllerManager.getInstance().getAvailableEvents())

@@ -16,7 +16,8 @@
 		{"se.hal.intf.HalWebPage": "se.hal.page.EventConfigWebPage"},
 		{"se.hal.intf.HalWebPage": "se.hal.page.TriggerWebPage"},
 		{"se.hal.intf.HalWebPage": "se.hal.page.UserConfigWebPage"},
-		{"se.hal.intf.HalWebPage": "se.hal.page.PropertySettingsPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.PropertyConfigWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.PluginConfigWebPage"},
 
 
 		{"se.hal.intf.HalTrigger": "se.hal.trigger.DateTimeTrigger"},

@@ -31,6 +31,8 @@ public class HalServer {
     private static HttpServer http;
     private static List<HalWebPage> pages = new ArrayList<>();
 
+    private static PluginManager pluginManager;
+
 
 
     public static void main(String[] args) throws Exception {
@@ -40,7 +42,7 @@ public class HalServer {
         // init DB and other configurations
         HalContext.initialize();
         DBConnection db = HalContext.getDB();
-        PluginManager pluginManager = new PluginManager("./");
+        pluginManager = new PluginManager("./");
 
         // init Managers
         HalAlertManager.initialize();
@@ -84,6 +86,10 @@ public class HalServer {
         http.start();
     }
 
+
+    public static PluginManager getPluginManager() {
+        return pluginManager;
+    }
 
     public static void registerDaemon(HalDaemon daemon){
         daemons.add(daemon);

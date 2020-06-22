@@ -1,6 +1,6 @@
 {
 	"version": 1.0,
-	"name": "Tellstick",
+	"name": "Hal-Tellstick",
 	"interfaces": [
 		{"se.hal.intf.HalAutoScannableController": "se.hal.plugin.tellstick.TellstickSerialComm"},
 

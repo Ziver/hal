@@ -1,0 +1,22 @@
+<h1 class="page-header">Plugins</h1>
+
+<div class="col-md-12">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">Local Events</div>
+        <div class="panel-body">
+
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <th class="col-md-2">Name</th>
+                    <th class="col-md-8">Version</th>
+                </thead>
+                {{#plugins}}
+                <tr>
+                    <td>{{.getName()}}</td>
+                    <td>{{.getVersion()}}</td>
+                </tr>
+                {{/plugins}}
+            </table>
+        </div>
+    </div>
+</div>

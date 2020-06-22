@@ -3,6 +3,9 @@
 
     <!-- ________________________ PROPERTIES AND SETTINGS ________________________ -->
 
+    <!--plugin specific properties-->
+    <property name="releaseJar" value="hal-mqtt.jar" />
+
     <!--common properties-->
     <property name="root" value="." />
     <property name="srcDir" value="${root}/src" />
@@ -13,7 +16,6 @@
     <property name="compileDir" value="${buildRoot}/production" />
     <property name="compileTestDir" value="${buildRoot}/test" />
     <property name="releaseDir" value="${buildRoot}/release" />
-    <property name="releaseJar" value="hal-mqtt.jar" />
     <property name="reportsDir" value="../../${buildRoot}/reports" /> <!-- Use Hal reports folder -->
 
     <!-- ________________________ TARGETS ________________________ -->

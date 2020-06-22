@@ -14,8 +14,10 @@
       <sourceFolder url="file://$MODULE_DIR$/plugins/hal-zwave/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/plugins/hal-mqtt/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/plugins/hal-nutups/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugins/hal-netscan/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/hal-mqtt/build" />
+      <excludeFolder url="file://$MODULE_DIR$/plugins/hal-netscan/build" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/hal-nutups/build" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/hal-raspberry/build" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/hal-tellstick/build" />

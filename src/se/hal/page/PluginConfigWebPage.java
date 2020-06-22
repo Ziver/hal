@@ -17,7 +17,7 @@ public class PluginConfigWebPage extends HalWebPage {
 
     public PluginConfigWebPage(){
         super("plugins");
-        super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Plugins").setWeight(100);
+        super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Plugins").setWeight(500);
     }
 
     @Override

@@ -3,6 +3,9 @@
 
     <!-- ________________________ PROPERTIES AND SETTINGS ________________________ -->
 
+    <!--plugin specific properties-->
+    <property name="releaseJar" value="hal-raspberry.jar" />
+
     <!--common properties-->
     <property name="root" value="." />
     <property name="srcDir" value="${root}/src" />

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Hal Zigbee Plugin" >
+<project name="Hal MQTT Plugin" >
 
     <!-- ________________________ PROPERTIES AND SETTINGS ________________________ -->
 
     <!--plugin specific properties-->
-    <property name="releaseJar" value="hal-zigbee.jar" />
+    <property name="releaseJar" value="hal-nutups.jar" />
 
     <!--common properties-->
     <property name="root" value="." />

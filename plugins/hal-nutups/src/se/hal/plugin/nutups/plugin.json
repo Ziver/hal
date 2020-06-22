@@ -1,6 +1,6 @@
 {
 	"version": 1.0,
-	"name": "NutUps",
+	"name": "Hal-NutUps",
 	"interfaces": [
 		{"se.hal.intf.HalAutoScannableController": "se.hal.plugin.nutups.NutUpsController"},
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.nutups.NutUpsDevice"}

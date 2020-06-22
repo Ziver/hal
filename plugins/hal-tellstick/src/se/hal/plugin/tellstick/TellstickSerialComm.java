@@ -72,6 +72,10 @@ public class TellstickSerialComm implements Runnable,
         registeredDevices = Collections.synchronizedList(new ArrayList<TellstickDevice>());
     }
 
+    // --------------------------
+    // Lifecycle methods
+    // --------------------------
+
     @Override
     public boolean isAvailable() {
         return HalContext.getStringProperty(CONFIG_TELLSTICK_COM_PORT) != null;
@@ -127,6 +131,10 @@ public class TellstickSerialComm implements Runnable,
             logger.log(Level.SEVERE, null, e);
         }
     }
+
+    // --------------------------
+    // Tellstick methods
+    // --------------------------
 
     /**
      * There seems to be an issue with read(...) methods, only read() is working
@@ -212,6 +220,9 @@ public class TellstickSerialComm implements Runnable,
         }
     }
 
+    // --------------------------
+    // Hal methods
+    // --------------------------
 
     @Override
     public void register(HalEventConfig event) {

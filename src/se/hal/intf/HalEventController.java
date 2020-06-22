@@ -12,13 +12,13 @@ public interface HalEventController {
     /**
      * Will register an event type to be handled by this controller
      */
-    void register(HalEventConfig event);
+    void register(HalEventConfig eventConfig);
 
     /**
      * Deregisters an event from this controller, the controller
      * will no longer handle that type of event
      */
-    void deregister(HalEventConfig event);
+    void deregister(HalEventConfig eventConfig);
 
     /**
      * @param   eventConfig  the event configuration to target when sending

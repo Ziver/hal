@@ -10,11 +10,8 @@ import zutil.log.LogUtil;
 
 import java.io.File;
 import java.io.FileReader;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Properties;
+import java.sql.*;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class HalContext {
@@ -171,6 +168,14 @@ public class HalContext {
     }
 
 
+
+    public static HashMap<String,String> getProperties() {
+        HashMap map = new HashMap();
+        map.putAll(fileConf);
+        map.putAll(dbConf);
+        return map;
+
+    }
     public static String getStringProperty(String key){
         String value = null;
         if (fileConf != null)

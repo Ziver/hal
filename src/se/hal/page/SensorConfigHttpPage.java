@@ -28,7 +28,7 @@ public class SensorConfigHttpPage extends HalHttpPage {
 
     public SensorConfigHttpPage() {
         super("sensor_config");
-        super.getRootNav().createSubNav("Sensors").createSubNav(this.getId(), "Configuration").setWeight(100);
+        super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Sensor Settings").setWeight(100);
 
         sensorConfigurations = new ArrayList<>();
         for(Class c : ControllerManager.getInstance().getAvailableSensors())

@@ -114,8 +114,12 @@
 
     <target name="build-dependencies">
         <mkdir dir="${compileDir}" />
-        <get src="http://ci.koc.se/jenkins/job/Zutil/lastSuccessfulBuild/artifact/se/koc/zutil/${zutilVersion}/zutil-${zutilVersion}.jar"
-             dest="${libDir}/zutil.jar" verbose="true" usetimestamp="true"/>
+        <delete includeemptydirs="true" failonerror="false">
+            <fileset dir="${libDir}" includes="zutil-*"/>
+        </delete>
+
+        <get src="https://repo1.maven.org/maven2/se/koc/zutil/${zutilVersion}/zutil-${zutilVersion}.jar"
+             dest="${libDir}/" verbose="true" usetimestamp="true"/>
     </target>
 
     <target name="build-plugins" depends="build">

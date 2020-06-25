@@ -7,16 +7,37 @@
 
             <table class="table table-hover table-condensed">
                 <thead>
-                    <th class="col-md-2">Name</th>
+                    <th class="col-md-3">Name</th>
                     <th class="col-md-8">Version</th>
+                    <th class="col-md-1 text-right">Actions</th>
                 </thead>
                 {{#plugins}}
                 <tr>
                     <td>{{.getName()}}</td>
                     <td>{{.getVersion()}}</td>
+                    <td>
+                        <form method="POST">
+                            <input type="hidden" name="action" value="modify">
+                            <input type="hidden" name="action_id" value="{{.getName()}}">
+
+                            <div class="btn-toolbar pull-right">
+                                <input class="toggle-switch" type="checkbox" name="enabled"
+                                       data-size="mini" data-on-color="danger"
+                                       {{#.isEnabled()}}checked{{/.isEnabled()}} >
+                            </div>
+                        </form>
+                    </td>
                 </tr>
                 {{/plugins}}
             </table>
         </div>
     </div>
 </div>
+
+<script>
+    $(function (){
+        $(".toggle-switch").on("switchChange.bootstrapSwitch", function (event, state) {
+            $(this).closest('form').submit();
+        });
+    });
+</script>

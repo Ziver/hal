@@ -3,6 +3,11 @@ package se.hal.page;
 import se.hal.HalContext;
 import se.hal.HalServer;
 import se.hal.intf.HalWebPage;
+import se.hal.page.HalAlertManager.AlertLevel;
+import se.hal.page.HalAlertManager.AlertTTL;
+import se.hal.page.HalAlertManager.HalAlert;
+import se.hal.struct.devicedata.SwitchEventData;
+import zutil.ObjectUtil;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
@@ -27,12 +32,17 @@ public class PluginConfigWebPage extends HalWebPage {
             Map<String, String> request)
             throws Exception{
 
-        DBConnection db = HalContext.getDB();
+        if (request.containsKey("action")) {
+            String name = request.get("action_id");
+            HalServer.setPluginEnabled(name,
+                    (request.containsKey("enabled") && "on".equals(request.get("enabled"))));
 
-        PluginManager pluginManager = HalServer.getPluginManager();
+            HalAlertManager.getInstance().addAlert(new HalAlert(
+                    AlertLevel.SUCCESS, "Successfully updated plugin " + name + ", change will take affect after restart.", AlertTTL.ONE_VIEW));
+        }
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
-        tmpl.set("plugins", pluginManager.toArray());
+        tmpl.set("plugins", HalServer.getPlugins());
         return tmpl;
 
     }

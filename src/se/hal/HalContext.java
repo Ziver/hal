@@ -76,8 +76,9 @@ public class HalContext {
                                 Integer.parseInt(dbConf.getProperty(PROPERTY_DB_VERSION)) :
                                 -1);
             logger.info("DB version: "+ dbVersion);
+
             if(defaultDBVersion > dbVersion ) {
-                logger.info("Starting DB upgrade...");
+                logger.info("Starting DB upgrade from v" + dbVersion + " to v" + defaultDBVersion + "...");
                 if(dbFile != null){
                     File backupDB = FileUtil.getNextFile(dbFile);
                     logger.fine("Backing up DB to: "+ backupDB);
@@ -91,6 +92,7 @@ public class HalContext {
                 handler.setTargetDB(db);
 
                 logger.fine("Performing pre-upgrade activities");
+
                 //read upgrade path preferences from the reference database
                 referenceDB.exec("SELECT * FROM db_version_history"
                         + " WHERE db_version <= " + defaultDBVersion
@@ -111,6 +113,7 @@ public class HalContext {
                 handler.upgrade();
 
                 logger.fine("Performing post-upgrade activities");
+
                 //read upgrade path preferences from the reference database
                 referenceDB.exec("SELECT * FROM db_version_history"
                         + " WHERE db_version <= " + defaultDBVersion
@@ -225,7 +228,6 @@ public class HalContext {
 
     /**
      * For testing purposes.
-     * @param db
      */
     public static void setDB(DBConnection db){
         HalContext.db = db;

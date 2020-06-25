@@ -26,23 +26,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="Zutil" exported="" />
-    <orderEntry type="module-library" exported="">
-      <library name="lib">
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <NATIVE>
-          <root url="file://$MODULE_DIR$/lib" />
-        </NATIVE>
-        <SOURCES>
-          <root url="jar://$USER_HOME$/.ideaLibSources/wzwave-0.0.3-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ideaLibSources/netty-all-4.0.46.Final-sources.jar!/" />
-        </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
-      </library>
-    </orderEntry>
+    <orderEntry type="module" module-name="Zutil" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
@@ -71,6 +55,22 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="lib">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <NATIVE>
+          <root url="file://$MODULE_DIR$/lib" />
+        </NATIVE>
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.ideaLibSources/wzwave-0.0.3-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.ideaLibSources/netty-all-4.0.46.Final-sources.jar!/" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
   </component>

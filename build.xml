@@ -15,7 +15,7 @@
     <property name="releaseDir" value="${buildRoot}/release" />
     <property name="reportsDir" value="${buildRoot}/reports" />
     <property name="releaseJar" value="hal.jar" />
-    <property name="zutilVersion" value="1.0.249" />
+    <property name="zutilVersion" value="1.0.250" />
 
 
     <!-- ________________________ CLASSPATH ________________________ -->

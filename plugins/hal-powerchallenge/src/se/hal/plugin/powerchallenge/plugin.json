@@ -1,11 +1,11 @@
 {
-	"version": 1.0,
+	"version": 1.1,
 	"name": "Hal-Power;Challenge",
 	"interfaces": [
-		{"se.hal.intf.HalHttpPage": "se.hal.plugin.powerchallenge.page.PCOverviewHttpPage"},
-		{"se.hal.intf.HalHttpPage": "se.hal.plugin.powerchallenge.page.PCHeatMapHttpPage"},
-
         {"se.hal.intf.HalDaemon": "se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationClient"},
-        {"se.hal.intf.HalDaemon": "se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationDaemon"}
+        {"se.hal.intf.HalDaemon": "se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationDaemon"},
+
+		{"se.hal.intf.HalWebPage": "se.hal.plugin.powerchallenge.page.PCHeatMapWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.plugin.powerchallenge.page.PCOverviewWebPage"}
 	]
 }

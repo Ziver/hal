@@ -94,6 +94,9 @@
     </target>
 
     <target name="package" depends="build">
+        <copy todir="${releaseDir}/resource" failonerror="false">
+            <fileset dir="${resourceDir}" />
+        </copy>
         <jar destfile="${releaseDir}/${releaseJar}" basedir="${compileDir}" />
     </target>
 

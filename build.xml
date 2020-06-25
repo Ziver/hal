@@ -8,6 +8,7 @@
     <property name="srcDir" value="${root}/src" />
     <property name="testDir" value="${root}/test" />
     <property name="libDir" value="${root}/lib" />
+    <property name="resourceDir" value="${root}/resource" />
 
     <property name="buildRoot" value="${root}/build" />
     <property name="compileDir" value="${buildRoot}/production" />
@@ -153,8 +154,8 @@
         <copy todir="${releaseDir}/lib">
             <fileset dir="${libDir}" excludes="junit-*.jar,hamcrest-*.jar" />
         </copy>
-        <copy todir="${releaseDir}/resource/web">
-            <fileset dir="resource/web" />
+        <copy todir="${releaseDir}/resource">
+            <fileset dir="${resourceDir}" />
         </copy>
         <jar destfile="${releaseDir}/${releaseJar}" basedir="${compileDir}" />
     </target>
@@ -173,6 +174,12 @@
         <copy todir="${releaseDir}/lib" flatten="true" includeEmptyDirs="false">
             <fileset dir="plugins/">
                 <include name="*/lib/**"/>
+            </fileset>
+        </copy>
+        <!-- Copy plugin resources -->
+        <copy todir="${releaseDir}/resources" includeEmptyDirs="false">
+            <fileset dir="plugins/">
+                <include name="*/resources/**"/>
             </fileset>
         </copy>
     </target>

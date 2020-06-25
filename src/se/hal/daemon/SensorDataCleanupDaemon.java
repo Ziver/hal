@@ -31,7 +31,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
         try {
             List<Sensor> sensorList = Sensor.getSensors(HalContext.getDB());
             for(Sensor sensor : sensorList){
-                logger.fine("Deleting old data for sensor id: " + sensor.getId());
+                logger.fine("Deleting old aggregated data for sensor id: " + sensor.getId());
                 cleanupSensor(sensor);
             }
             logger.fine("Data cleanup done");

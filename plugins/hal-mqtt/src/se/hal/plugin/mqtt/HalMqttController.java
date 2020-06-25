@@ -57,11 +57,15 @@ public class HalMqttController implements HalAutoScannableController, MqttSubscr
         try {
             InetAddress serverIp = InetUtil.getLocalInet4Address().get(0);
 
+            logger.info("Starting up mDNS Server");
             mDns = new MulticastDnsServer();
             mDns.addEntry("_mqtt.tcp", serverIp);
             mDns.addEntry("hal.local", serverIp);
+            mDns.start();
 
+            logger.info("Starting up MQTT Server");
             mqttBroker = new MqttBroker();
+            mqttBroker.start();
 
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Unable to initialize MQTT plugin.", e);
@@ -72,17 +76,19 @@ public class HalMqttController implements HalAutoScannableController, MqttSubscr
 
     @Override
     public boolean isAvailable() {
-        return mDns != null && mqttBroker != null;
+        return true;
     }
 
     @Override
     public void close(){
         if (mDns != null) {
+            logger.info("Shutting down mDNS Server");
             mDns.close();
             mDns = null;
         }
 
         if (mqttBroker != null) {
+            logger.info("Shutting down MQTT Server");
             mqttBroker.close();
             mqttBroker = null;
         }

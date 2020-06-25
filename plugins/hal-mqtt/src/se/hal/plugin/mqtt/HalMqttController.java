@@ -59,8 +59,8 @@ public class HalMqttController implements HalAutoScannableController, MqttSubscr
 
             logger.info("Starting up mDNS Server");
             mDns = new MulticastDnsServer();
-            mDns.addEntry("_mqtt.tcp", serverIp);
-            mDns.addEntry("hal.local", serverIp);
+            mDns.addEntry("_mqtt._tcp.local", serverIp);
+            mDns.addEntry("_hal._tcp.local", serverIp);
             mDns.start();
 
             logger.info("Starting up MQTT Server");

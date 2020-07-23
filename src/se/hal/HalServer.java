@@ -114,7 +114,7 @@ public class HalServer {
         HalWebPage.getRootNav().createSubNav("Events").setWeight(100);
         HalWebPage.getRootNav().createSubNav("Settings").setWeight(200);
 
-        http = new HttpServer(HalContext.getIntegerProperty("http_port"));
+        http = new HttpServer(HalContext.getIntegerProperty(HalContext.PROPERTY_HTTP_PORT));
         http.setDefaultPage(new HttpFilePage(FileUtil.find("resource/web/")));
         http.setPage("/", new HttpRedirectPage("/map"));
         http.setPage(HalAlertManager.getInstance().getUrl(), HalAlertManager.getInstance());

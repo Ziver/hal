@@ -1,6 +1,7 @@
 package se.hal;
 
 import se.hal.struct.User;
+import zutil.ObjectUtil;
 import zutil.db.DBConnection;
 import zutil.db.DBUpgradeHandler;
 import zutil.db.SQLResultHandler;
@@ -14,11 +15,13 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Logger;
 
+
 public class HalContext {
     private static final Logger logger = LogUtil.getLogger();
 
     // Constants
-    private static final String PROPERTY_DB_VERSION = "db_version";
+    public static final String PROPERTY_DB_VERSION = "hal.db_version";
+    public static final String PROPERTY_HTTP_PORT = "hal.http_port";
 
     private static final String CONF_FILE = "hal.conf";
     private static final String DB_FILE = "hal.db";
@@ -27,42 +30,40 @@ public class HalContext {
     // Variables
     private static DBConnection db; // TODO: Should probably be a db pool as we have multiple threads accessing the DB
 
-    private static Properties defaultFileConf;
-    private static Properties fileConf;
-    private static Properties dbConf;
+    private static HashMap<String,String> registeredConf = new HashMap<>();
+    private static Properties fileConf = new Properties();
+    private static Properties dbConf = new Properties();;
 
 
     static {
-        defaultFileConf = new Properties();
-        defaultFileConf.setProperty("http_port", ""+8080);
-        defaultFileConf.setProperty("sync_port", ""+6666);
+        // Set default values to get Hal up and running
+        fileConf.setProperty(PROPERTY_HTTP_PORT, "" + 8080);
     }
 
 
     public static void initialize(){
         try {
             // Read conf
-            fileConf = new Properties(defaultFileConf);
             if (FileUtil.find(CONF_FILE) != null) {
                 FileReader in = new FileReader(CONF_FILE);
                 fileConf.load(in);
                 in.close();
+            } else {
+                logger.info("No hal.conf file found");
             }
-            else logger.info("No hal.conf file found");
 
             if (FileUtil.find(DEFAULT_DB_FILE) == null){
-                logger.severe("Unable to find default DB: "+DEFAULT_DB_FILE);
+                logger.severe("Unable to find default DB: " + DEFAULT_DB_FILE);
                 System.exit(1);
             }
 
             // Init DB
             File dbFile = FileUtil.find(DB_FILE);
             db = new DBConnection(DBConnection.DBMS.SQLite, DB_FILE);
+
             if(dbFile == null){
                 logger.info("No database file found, creating new DB...");
-                dbConf = new Properties();
-            }
-            else{
+            } else {
                 dbConf = db.exec("SELECT * FROM conf", new PropertiesSQLResult());
             }
 
@@ -70,6 +71,7 @@ public class HalContext {
             DBConnection referenceDB = new DBConnection(DBConnection.DBMS.SQLite, DEFAULT_DB_FILE);
             Properties defaultDBConf =
                     referenceDB.exec("SELECT * FROM conf", new PropertiesSQLResult());
+
             // Check DB version
             final int defaultDBVersion = Integer.parseInt(defaultDBConf.getProperty(PROPERTY_DB_VERSION));
             final int dbVersion = (dbConf.getProperty(PROPERTY_DB_VERSION) != null ?
@@ -88,12 +90,12 @@ public class HalContext {
                 logger.fine(String.format("Upgrading DB (from: v%s, to: v%s)...", dbVersion, defaultDBVersion));
                 final DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);
                 handler.addIgnoredTable("db_version_history");
-                handler.addIgnoredTable("sqlite_sequence");	//sqlite internal
+                handler.addIgnoredTable("sqlite_sequence");	// sqlite internal
                 handler.setTargetDB(db);
 
                 logger.fine("Performing pre-upgrade activities");
 
-                //read upgrade path preferences from the reference database
+                // Read upgrade path preferences from the reference database
                 referenceDB.exec("SELECT * FROM db_version_history"
                         + " WHERE db_version <= " + defaultDBVersion
                         + " AND db_version > " + dbVersion,
@@ -114,7 +116,7 @@ public class HalContext {
 
                 logger.fine("Performing post-upgrade activities");
 
-                //read upgrade path preferences from the reference database
+                // Read upgrade path preferences from the reference database
                 referenceDB.exec("SELECT * FROM db_version_history"
                         + " WHERE db_version <= " + defaultDBVersion
                         + " AND db_version > " + dbVersion,
@@ -123,6 +125,7 @@ public class HalContext {
                     public Object handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
                         boolean clearExternalAggrData = false;
                         boolean clearInternalAggrData = false;
+
                         while(result.next()){
                             if(result.getBoolean("clear_external_aggr_data"))
                                 clearExternalAggrData = true;
@@ -146,11 +149,6 @@ public class HalContext {
                         return null;
                     }
                 });
-                if (dbVersion < 9) { // tellstick code has changed package
-                    db.exec("UPDATE sensor SET type = 'se.hal.plugin.tellstick.device.Oregon0x1A2D' WHERE type = 'se.hal.plugin.tellstick.protocols.Oregon0x1A2D'");
-                    db.exec("UPDATE event SET type = 'se.hal.plugin.tellstick.device.NexaSelfLearning' WHERE type = 'se.hal.plugin.tellstick.protocols.NexaSelfLearning'");
-                }
-
 
                 // Check if there is a local user
                 User localUser = User.getLocalUser(db);
@@ -174,16 +172,22 @@ public class HalContext {
 
     public static Map<String,String> getProperties() {
         HashMap map = new HashMap();
-        map.putAll(fileConf);
+        map.putAll(registeredConf);
         map.putAll(dbConf);
+        map.putAll(fileConf);
         return map;
 
     }
+    public static void registerProperty(String key) {
+        registeredConf.put(key, "");
+    }
 
     public static boolean containsProperty(String key) {
-        return getStringProperty(key) != null;
+        return !ObjectUtil.isEmpty(getStringProperty(key));
     }
     public static String getStringProperty(String key){
+        registerProperty(key);
+
         String value = null;
         if (fileConf != null)
             value = fileConf.getProperty(key);

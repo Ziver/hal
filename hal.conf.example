@@ -1,8 +1,13 @@
-### Core settings
-http_port=8080
-sync_port=6666
+# ------------------------------------
+# Core settings
+# ------------------------------------
 
-### Plugin configurations
+hal.http_port=8080
+
+# ------------------------------------
+# Plugin configurations
+# ------------------------------------
+
 ## Tellstick plugin
 #tellstick.com_port=COM5
 #tellstick.com_port=/dev/serial/by-id/usb-Telldus_TellStick_Duo_A6XNNE6Z-if00-port0
@@ -17,3 +22,6 @@ sync_port=6666
 
 ## ZWave plugin
 #zwave.com_port=COM4
+
+## Power Challenge Plugin
+powerchallenge.sync_port=6666

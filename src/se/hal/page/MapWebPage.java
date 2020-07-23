@@ -77,7 +77,7 @@ public class MapWebPage extends HalWebPage {
 
 
     private void loadBgImage() {
-        String property = HalContext.getStringProperty("map_bgimage");
+        String property = HalContext.getStringProperty(HalContext.PROPERTY_MAP_BACKGROUND_IMAGE);
         if (property != null) {
             String[] split = property.split(",", 2);
             bgType = split[0];
@@ -86,6 +86,6 @@ public class MapWebPage extends HalWebPage {
     }
 
     private void saveBgImage(String type, byte[] data) throws SQLException {
-        HalContext.setProperty("map_bgimage", type + "," + Base64Encoder.encode(data));
+        HalContext.setProperty(HalContext.PROPERTY_MAP_BACKGROUND_IMAGE, type + "," + Base64Encoder.encode(data));
     }
 }

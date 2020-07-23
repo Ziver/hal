@@ -22,6 +22,7 @@ public class HalContext {
     // Constants
     public static final String PROPERTY_DB_VERSION = "hal.db_version";
     public static final String PROPERTY_HTTP_PORT = "hal.http_port";
+    public static final String PROPERTY_MAP_BACKGROUND_IMAGE = "hal.map_bgimage";
 
     private static final String CONF_FILE = "hal.conf";
     private static final String DB_FILE = "hal.db";

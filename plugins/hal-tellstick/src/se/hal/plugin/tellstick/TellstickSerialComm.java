@@ -78,7 +78,7 @@ public class TellstickSerialComm implements Runnable,
 
     @Override
     public boolean isAvailable() {
-        return HalContext.getStringProperty(CONFIG_TELLSTICK_COM_PORT) != null;
+        return HalContext.containsProperty(CONFIG_TELLSTICK_COM_PORT);
     }
     @Override
     public void initialize() throws Exception {

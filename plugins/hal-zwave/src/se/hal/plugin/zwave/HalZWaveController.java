@@ -42,8 +42,8 @@ public class HalZWaveController implements HalSensorController, HalEventControll
 
     @Override
     public boolean isAvailable() {
-        return HalContext.getStringProperty(CONFIG_ZWAVE_PORT) != null &&
-                HalContext.getStringProperty(CONFIG_ZWAVE_CFG_PATH) != null;
+        return HalContext.containsProperty(CONFIG_ZWAVE_PORT) &&
+                HalContext.containsProperty(CONFIG_ZWAVE_CFG_PATH);
     }
     @Override
     public void initialize() {

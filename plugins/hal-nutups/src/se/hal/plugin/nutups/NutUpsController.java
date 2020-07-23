@@ -65,7 +65,10 @@ import java.util.logging.Logger;
 
 public class NutUpsController implements HalSensorController, HalAutoScannableController, Runnable{
     public static Logger logger = LogUtil.getLogger();
+
     private static final int SYNC_INTERVAL = 60 * 1000;
+    public static final String PROPERTY_HOST = "nutups.host";
+    public static final String PROPERTY_PORT = "nutups.port";
 
     private HashMap<String, NutUpsDevice> registeredDevices = new HashMap<>();
     private NutUPSClient client;
@@ -76,15 +79,16 @@ public class NutUpsController implements HalSensorController, HalAutoScannableCo
 
     @Override
     public boolean isAvailable() {
-        return HalContext.getStringProperty("nutups.host") != null;
+        return HalContext.containsProperty(PROPERTY_HOST);
     }
     @Override
     public void initialize() throws Exception {
         if (client == null) {
             int port = NutUPSClient.DEFAULT_PORT;
-            if (HalContext.getStringProperty("nutups.port") != null)
-                port = Integer.parseInt(HalContext.getStringProperty("nutups.port"));
-            client = new NutUPSClient(HalContext.getStringProperty("nutups.host"), port);
+            if (HalContext.containsProperty(PROPERTY_PORT))
+                port = HalContext.getIntegerProperty(PROPERTY_PORT);
+
+            client = new NutUPSClient(HalContext.getStringProperty(PROPERTY_HOST), port);
 
             executor = Executors.newScheduledThreadPool(1);
             executor.scheduleAtFixedRate(this, 5000, SYNC_INTERVAL, TimeUnit.MILLISECONDS);

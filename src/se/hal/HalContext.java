@@ -179,6 +179,10 @@ public class HalContext {
         return map;
 
     }
+
+    public static boolean containsProperty(String key) {
+        return getStringProperty(key) != null;
+    }
     public static String getStringProperty(String key){
         String value = null;
         if (fileConf != null)
@@ -192,9 +196,7 @@ public class HalContext {
             return defaultValue;
         return getStringProperty(key);
     }
-    public static boolean containsProperty(String key) {
-        return getStringProperty(key) != null;
-    }
+
     public static int getIntegerProperty(String key){
         return Integer.parseInt(getStringProperty(key));
     }
@@ -203,6 +205,7 @@ public class HalContext {
             return defaultValue;
         return getIntegerProperty(key);
     }
+
     public static boolean getBooleanProperty(String key) {
         return Boolean.parseBoolean(getStringProperty(key));
     }
@@ -211,6 +214,7 @@ public class HalContext {
             return defaultValue;
         return getBooleanProperty(key);
     }
+
     public static void setProperty(String key, String value) throws SQLException {
         PreparedStatement stmt = db.getPreparedStatement("REPLACE INTO conf (key, value) VALUES (?, ?)");
         stmt.setObject(1, key);

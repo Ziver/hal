@@ -71,7 +71,7 @@ public class NutUpsDevice implements HalSensorConfig{
     protected HalSensorData read(NutUPSClient.UPSDevice ups){
         PowerConsumptionSensorData data = new PowerConsumptionSensorData();
         data.setTimestamp(System.currentTimeMillis());
-        data.setData(ups.getPowerUsage() * 1/60.0); // convert watt min to watt hour
+        data.setData(ups.getPowerUsage() * 1/60.0); // Convert watt minutes to watt hour
         return data;
     }
 

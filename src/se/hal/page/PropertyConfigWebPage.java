@@ -24,9 +24,7 @@ public class PropertyConfigWebPage extends HalWebPage {
             Map<String, String> request)
             throws Exception{
 
-        DBConnection db = HalContext.getDB();
-
-        HashMap properties = HalContext.getProperties();
+        Map<String,String> properties = HalContext.getProperties();
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("properties", properties.entrySet());

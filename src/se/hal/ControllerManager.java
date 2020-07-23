@@ -1,5 +1,6 @@
 package se.hal;
 
+import com.google.common.collect.Lists;
 import se.hal.intf.*;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
@@ -49,8 +50,7 @@ public class ControllerManager implements HalSensorReportListener,
 
 
     /** A map of all instantiated controllers **/
-    private HashMap<Class,Object> controllerMap = new HashMap<>();
-
+    private HashMap<Class,HalAbstractController> controllerMap = new HashMap<>();
 
 
     /////////////////////////////// SENSORS ///////////////////////////////////
@@ -332,6 +332,13 @@ public class ControllerManager implements HalSensorReportListener,
 
     /////////////////////////////// GENERAL ///////////////////////////////////
 
+    /**
+     * @return all instantiated controllers.
+     */
+    public List<HalAbstractController> getControllers() {
+        return new ArrayList(controllerMap.values());
+    }
+
     @Override
     public void preConfigurationAction(Configurator configurator, Object obj) {
         if(obj instanceof HalSensorConfig) {
@@ -368,38 +375,40 @@ public class ControllerManager implements HalSensorReportListener,
         }
     }
 
-    private <T> T getControllerInstance(Class<T> c){
-        Object controller;
-        if (controllerMap.containsKey(c))
+    private <T extends HalAbstractController> T getControllerInstance(Class<T> c){
+        HalAbstractController controller;
+
+        if (controllerMap.containsKey(c)) {
             controller = controllerMap.get(c);
-        else {
-            // Instantiate controller
+        } else {
             try {
+                // Instantiate controller
                 controller = c.newInstance();
+
                 if (controller instanceof HalAutoScannableController &&
-                        ! ((HalAutoScannableController)controller).isAvailable()) {
-                    logger.warning("Controller is not ready: "+c.getName());
+                        ! ((HalAutoScannableController) controller).isAvailable()) {
+                    logger.warning("Controller is not ready: " + c.getName());
                     return null;
                 }
+
                 logger.info("Instantiating new controller: " + c.getName());
+                controller.initialize();
 
                 if(controller instanceof HalSensorController) {
                     ((HalSensorController) controller).setListener(this);
-                    ((HalSensorController) controller).initialize();
                 }
                 if(controller instanceof HalEventController) {
                     ((HalEventController) controller).setListener(this);
-                    if( ! (controller instanceof HalSensorController))
-                        ((HalEventController) controller).initialize();
                 }
 
                 controllerMap.put(c, controller);
             } catch (Exception e){
-                logger.log(Level.SEVERE, "Unable to instantiate controller: "+c.getName(), e);
+                logger.log(Level.SEVERE, "Unable to instantiate controller: " + c.getName(), e);
                 return null;
             }
         }
-        return (T)controller;
+
+        return (T) controller;
     }
 
     private void removeControllerIfEmpty(Object controller){
@@ -414,7 +423,7 @@ public class ControllerManager implements HalSensorReportListener,
 
         if(size < 0){
             // Remove controller as it has no more registered sensors
-            logger.info("Closing controller as it has no more registered devices: "+controller.getClass().getName());
+            logger.info("Closing controller as it has no more registered devices: " + controller.getClass().getName());
             controllerMap.remove(controller.getClass());
 
             if(controller instanceof HalSensorController)
@@ -423,8 +432,6 @@ public class ControllerManager implements HalSensorReportListener,
                 ((HalEventController) controller).close();
         }
     }
-
-
 
 
     public static void initialize(PluginManager pluginManager){
@@ -440,10 +447,12 @@ public class ControllerManager implements HalSensorReportListener,
             manager.addAvailableEvent(it.next());
         }
 
-        for (Iterator<Class<? extends HalAutoScannableController>> it=
-                    pluginManager.getClassIterator(HalAutoScannableController.class);
+        for (Iterator<Class<? extends HalAutoScannableController>> it = pluginManager.getClassIterator(HalAutoScannableController.class);
                 it.hasNext(); ){
-            manager.getControllerInstance(it.next()); // Instantiate controller
+            Class controller = it.next();
+
+            if (controller.isAssignableFrom(HalAbstractController.class))
+                manager.getControllerInstance(controller); // Instantiate controller
         }
 
         instance = manager;
@@ -453,5 +462,4 @@ public class ControllerManager implements HalSensorReportListener,
     public static ControllerManager getInstance(){
         return instance;
     }
-
 }

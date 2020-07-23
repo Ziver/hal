@@ -1,5 +1,6 @@
 package se.hal.page;
 
+import se.hal.ControllerManager;
 import se.hal.HalContext;
 import se.hal.HalServer;
 import se.hal.intf.HalWebPage;
@@ -43,7 +44,7 @@ public class PluginConfigWebPage extends HalWebPage {
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("plugins", HalServer.getPlugins());
+        tmpl.set("controllers", ControllerManager.getInstance().getControllers());
         return tmpl;
-
     }
 }

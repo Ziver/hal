@@ -172,7 +172,7 @@ public class HalContext {
 
 
 
-    public static HashMap<String,String> getProperties() {
+    public static Map<String,String> getProperties() {
         HashMap map = new HashMap();
         map.putAll(fileConf);
         map.putAll(dbConf);

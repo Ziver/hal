@@ -34,6 +34,25 @@
     </div>
 </div>
 
+<div class="col-md-12">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">Active Controllers</div>
+        <div class="panel-body">
+
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <th class="col-md-3">Name</th>
+                </thead>
+                {{#controllers}}
+                <tr>
+                    <td>{{.getClass().getName()}}</td>
+                </tr>
+                {{/controllers}}
+            </table>
+        </div>
+    </div>
+</div>
+
 <script>
     $(function (){
         $(".toggle-switch").on("switchChange.bootstrapSwitch", function (event, state) {

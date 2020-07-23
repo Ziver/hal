@@ -92,7 +92,6 @@ public class HalServer {
             TriggerManager.getInstance().register(flow);
         }
 
-
         // ------------------------------------
         // Init daemons
         // ------------------------------------
@@ -101,8 +100,11 @@ public class HalServer {
 
         // We set only one thread for easier troubleshooting
         daemonExecutor = Executors.newScheduledThreadPool(1);
-        for (Iterator<HalDaemon> it = pluginManager.getSingletonIterator(HalDaemon.class); it.hasNext(); )
-            registerDaemon(it.next());
+        for (Iterator<HalDaemon> it = pluginManager.getSingletonIterator(HalDaemon.class); it.hasNext(); ) {
+            HalDaemon daemon = it.next();
+            logger.info("Registering daemon: " + daemon.getClass());
+            registerDaemon(daemon);
+        }
 
         // ------------------------------------
         // Init http server

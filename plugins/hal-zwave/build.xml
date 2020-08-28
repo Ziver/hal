@@ -23,7 +23,7 @@
   ~ THE SOFTWARE.
   -->
 
-<project name="ZWave Plugin" >
+<project name="Hal ZWave Plugin" >
 
     <!-- ________________________ PROPERTIES AND SETTINGS ________________________ -->
 

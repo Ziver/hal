@@ -1,0 +1,81 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+allprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        implementation 'se.koc:zutil:1.0.253'
+
+        testImplementation 'junit:junit:4.12'
+        testImplementation 'org.hamcrest:hamcrest-core:2.2'
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs 'src'
+            }
+            resources {
+                srcDir 'resource'
+            }
+        }
+        test {
+            java {
+                srcDirs 'test'
+            }
+        }
+    }
+}
+
+// ------------------------------------
+// Hal core configuration
+// ------------------------------------
+
+dependencies {
+    implementation 'org.xerial:sqlite-jdbc:3.32.3.2'
+}
+
+sourceSets {
+    main {
+        java {
+            exclude 'se/hal/SpeechManager.java'
+            exclude 'se/hal/tts/**'
+            exclude 'se/hal/bot/**'
+            exclude 'se/hal/stt/**'
+        }
+        resources {
+            exclude 'bots/**'
+            exclude 'marytts/**'
+            exclude 'sphinx-models/**'
+        }
+    }
+}
+
+distributions {
+    main {
+        contents {
+            from 'hal.conf.example'
+            from 'hal-default.db'
+            from 'logging.properties'
+        }
+    }
+}
+
+// ------------------------------------
+// Hal plugin common configuration
+// ------------------------------------
+
+subprojects {
+    dependencies {
+        implementation project(':')
+    }
+}

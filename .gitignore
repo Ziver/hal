@@ -1,8 +1,12 @@
-/screenlog.0*
+# Configuration and dependencies
 /hal.conf
 /hal.db*
-build
 /lib/zutil-*
+
+# Runtime files
+/screenlog.0*
 /OZW_Log.txt
-/zwscene.xml
-/zwcfg*.xml
+
+# Build and Ide files
+build
+.gradle

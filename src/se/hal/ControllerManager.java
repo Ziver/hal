@@ -1,6 +1,5 @@
 package se.hal;
 
-import com.google.common.collect.Lists;
 import se.hal.intf.*;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;

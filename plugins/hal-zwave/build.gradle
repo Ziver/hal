@@ -1,0 +1,3 @@
+dependencies {
+    implementation 'com.github.zgmnkv:zwave4j:0.3'
+}

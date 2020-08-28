@@ -3,28 +3,27 @@ node {
     // Configure environment
     env.JAVA_HOME = tool name: 'jdk8'
     env.REPO_URL = "repo.koc.se/hal.git" //scm.getUserRemoteConfigs()[0].getUrl()
-    env.BUILD_NAME = "BUILD-" + env.BUILD_ID
+    env.BUILD_NAME = "BUILD-${env.BUILD_ID}"
 
 
     checkout scm
 
     stage('Build') {
-        sh 'ant clean'
-        sh 'ant build-all'
+        sh './gradlew clean'
+        sh './gradle build'
     }
 
     stage('Test') {
         try {
-            sh 'ant test-all'
+            sh './gradlew test'
         } finally {
-            step([$class: 'JUnitResultArchiver', testResults: 'build/reports/*.xml'])
+            step([$class: 'JUnitResultArchiver', testResults: 'build/test-results/test/*.xml'])
         }
     }
 
-
     stage('Package') {
-        sh 'ant package-all'
-        archiveArtifacts artifacts: 'build/release/**', fingerprint: true
+        sh './gradlew distZip'
+        archiveArtifacts artifacts: 'build/distributions/Hal.zip', fingerprint: true
 
         // Tag artifact
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'f8e5f6c6-4adb-4ab2-bb5d-1c8535dff491',

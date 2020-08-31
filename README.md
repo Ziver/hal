@@ -1,13 +1,13 @@
 # Hal
 
 Hal is a home automation hub with sensor statistics with the functionality to 
-share that data between friends. It is developed to be very extensible so future 
+share that data between friends. It has been developed to be very extensible so future 
 Sensors and other input devices can be supported.
 
 Features:
-- **Map**, Set up a house map with sensor and events mapped on a floorplan
+- **Map**, Set up a house map with sensors and events mapped on a floorplan
 - **Triggers and Actions**, IFTTT type functionality
-- **Power;Challenge**, Sync power or sensor usage between friends to lower e.g Power usage 
+- **Power;Challenge**, Sync power or sensor usage between friends to challenge each other to lower the power usage 
 
 Currently supported devices:
 - **Network Scanner**, IP scanner to detect devices on local network
@@ -17,17 +17,22 @@ Currently supported devices:
     - Oregon0x1A2D
 - **Raspberry Pi**, GPIO connected sensors
 
+Under development (Not ready to be used yet)
+- **Zigbee**
+- **Z-Wave**
+- **Google Assistant**
+- **MQTT Devices**
 
 The project is currently in alpha state, and as such things will change and break.
 
 ### Screenshots
-![](screenshot_01.jpg)
+![Week Graph](screenshot_01.jpg)
 
-![](screenshot_02.jpg)
+![Home Map](screenshot_02.jpg)
 
-![](screenshot_03.jpg)
+![Sensor Overview](screenshot_03.jpg)
 
-![](screenshot_04.jpg)
+![Event Overview](screenshot_04.jpg)
 
 ## Installing
 
@@ -35,7 +40,7 @@ To run the Hal server you first need to clone the git repository and then run th
 ant command to build and run:
 
 ```
-ant run
+./gradlew run
 ```
 
 Check `hal.conf.example` for available configuration options.
@@ -46,7 +51,7 @@ The current test coverage is greatly lacking, but to run the available JUnit
 test-cases run:
 
 ```
-ant test
+./gradlew test
 ```
 
 ## Authors

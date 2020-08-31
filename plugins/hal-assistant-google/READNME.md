@@ -2,7 +2,7 @@ This lazy is a modified version of https://www.home-assistant.io/integrations/go
 
 To use Google Assistant, your server has to be externally accessible with a hostname and SSL certificate. If you haven’t already configured that, you should do so before continuing. If you make DNS changes to accomplish this, please ensure you have allowed up to the full 48 hours for DNS changes to propagate, otherwise Google may not be able to reach your server.
 
-You will need to create a service account Create Service account key which allows you to update devices without unlinking and relinking an account (see below). If you don’t provide the service account, the google_assistant.request_sync service is not exposed. It is recommended to set up this configuration key as it also allows the usage of the following command, “Ok Google, sync my devices”. Once you have set up this component, you will need to call this service (or command) each time you add a new device in Home Assistant that you wish to control via the Google Assistant integration. See Step 2 after the note for more details.
+You will need to create a service account Create Service account key which allows you to update devices without unlinking and relinking an account (see below). If you don’t provide the service account, the google_assistant.request_sync service is not exposed. It is recommended to set up this configuration key as it also allows the usage of the following command, “Ok Google, sync my devices”. Once you have set up this component, you will need to call this service (or command) each time you add a new device.
 
 ## Configure Google Assistant
 * Create a new project in the Actions on Google console.
@@ -13,8 +13,8 @@ You will need to create a service account Create Service account key which allow
 * Click Save.
 * Click on the Overview tab, which will lead you back to the app details screen.
 
-Account linking is required for your app to interact with Home Assistant.
-* Set this up by clicking on Setup account linking under the Quick Setup section of the Overview page.
+Account linking is required for your app to interact with the server.
+* Clicking on Setup account linking under the Quick Setup section of the Overview page.
     * If asked, leave options as they default No, I only want to allow account creation on my website and select Next.
     * Then if asked, for the Linking type select OAuth and Authorization Code. Click Next
 * Enter the following: 

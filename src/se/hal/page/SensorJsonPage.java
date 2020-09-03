@@ -9,6 +9,8 @@ import se.hal.util.UTCTimeUtility;
 import zutil.ArrayUtil;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
+import zutil.net.http.HttpHeader;
+import zutil.net.http.HttpPrintStream;
 import zutil.parser.DataNode;
 
 import java.util.ArrayList;
@@ -37,6 +39,8 @@ public class SensorJsonPage extends HalJsonPage {
 
     @Override
     public DataNode jsonRespond(
+            HttpPrintStream out,
+            HttpHeader headers,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request) throws Exception{

@@ -61,7 +61,7 @@ public abstract class HalWebPage implements HttpPage{
     }
 
     /**
-     * Sets if the subnavigation should be shown on the page
+     * Defines if the sub-navigation should be shown on the page
      */
     protected void showSubNav(boolean show) {
         this.showSubNav = show;

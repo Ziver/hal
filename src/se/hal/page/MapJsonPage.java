@@ -7,6 +7,8 @@ import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
+import zutil.net.http.HttpHeader;
+import zutil.net.http.HttpPrintStream;
 import zutil.parser.DataNode;
 
 import java.sql.SQLException;
@@ -25,9 +27,11 @@ public class MapJsonPage extends HalJsonPage {
 
 
     @Override
-    public DataNode jsonRespond(Map<String, Object> session,
-                                 Map<String, String> cookie,
-                                 Map<String, String> request) throws Exception {
+    public DataNode jsonRespond(HttpPrintStream out,
+                                HttpHeader headers,
+                                Map<String, Object> session,
+                                Map<String, String> cookie,
+                                Map<String, String> request) throws Exception {
         DBConnection db = HalContext.getDB();
         DataNode root = new DataNode(DataNode.DataType.Map);
 

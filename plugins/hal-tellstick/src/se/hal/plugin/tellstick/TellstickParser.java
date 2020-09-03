@@ -35,8 +35,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Ziver on 2015-02-18.
- *
  * Protocol Specification: http://developer.telldus.com/doxygen/TellStick.html
  */
 public class TellstickParser {
@@ -53,6 +51,7 @@ public class TellstickParser {
 
     /**
      * Will decode the given data and return a list with device and data objects
+     *
      * @param data
      * @return a list with decoded objects or empty list if there was an error
      */
@@ -114,7 +113,7 @@ public class TellstickParser {
 
     public static void registerProtocol(Class<? extends TellstickProtocol> protClass) {
         try {
-            registerProtocol( protClass.newInstance() );
+            registerProtocol(protClass.newInstance());
         } catch (Exception e) {
             logger.log(Level.SEVERE, null, e);
         }

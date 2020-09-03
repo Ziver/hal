@@ -79,18 +79,18 @@ public interface DeConzRestConfig {
 
 
     /**
-     * Change the Password of the Gateway. The parameter must be a Base64 encoded combination of “<username>:<password>”.
+     * Change the Password of the Gateway. The parameter must be a Base64 encoded combination of "<username>:<password>".
      *
-     * @param username      The user name (currently only “delight” is supported). (required)
-     * @param oldHash   	String 	The Base64 encoded combination of “username:old password”. (required)
-     * @param newHash 	    String 	The Base64 encoded combination of “username:new password”. (required)
+     * @param username      The user name (currently only "delight" is supported). (required)
+     * @param oldHash   	String 	The Base64 encoded combination of "username:old password". (required)
+     * @param newHash 	    String 	The Base64 encoded combination of "username:new password". (required)
      */
     @WSRequestType(HTTP_PUT)
     @WSPath("/api/{{requestApiKey}}/config/password")
     void setPassword(String requestApiKey, String username, String oldHash, String newHash);
 
     /**
-     * Resets the username and password to default (“delight”,”delight”). Only possible within 10 minutes after gateway start.
+     * Resets the username and password to default ("delight","delight"). Only possible within 10 minutes after gateway start.
      */
     @WSRequestType(HTTP_DELETE)
     @WSPath("/api/{{requestApiKey}}/config/password")

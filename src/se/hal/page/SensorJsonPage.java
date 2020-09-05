@@ -39,8 +39,6 @@ public class SensorJsonPage extends HalJsonPage {
 
     @Override
     public DataNode jsonRespond(
-            HttpPrintStream out,
-            HttpHeader headers,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request) throws Exception{

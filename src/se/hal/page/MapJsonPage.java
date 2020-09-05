@@ -27,11 +27,11 @@ public class MapJsonPage extends HalJsonPage {
 
 
     @Override
-    public DataNode jsonRespond(HttpPrintStream out,
-                                HttpHeader headers,
-                                Map<String, Object> session,
-                                Map<String, String> cookie,
-                                Map<String, String> request) throws Exception {
+    public DataNode jsonRespond(
+            Map<String, Object> session,
+            Map<String, String> cookie,
+            Map<String, String> request) throws Exception {
+
         DBConnection db = HalContext.getDB();
         DataNode root = new DataNode(DataNode.DataType.Map);
 

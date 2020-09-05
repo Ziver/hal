@@ -37,7 +37,7 @@ public abstract class HalJsonPage extends HalWebPage {
         JSONWriter writer = new JSONWriter(out);
         try{
             writer.write(
-                    jsonRespond(out, headers, session, cookie, request));
+                    jsonRespond(session, cookie, request));
         } catch (Exception e){
             logger.log(Level.SEVERE, null, e);
             DataNode root = new DataNode(DataNode.DataType.Map);
@@ -58,8 +58,6 @@ public abstract class HalJsonPage extends HalWebPage {
 
 
     protected abstract DataNode jsonRespond(
-            HttpPrintStream out,
-            HttpHeader headers,
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request) throws Exception;

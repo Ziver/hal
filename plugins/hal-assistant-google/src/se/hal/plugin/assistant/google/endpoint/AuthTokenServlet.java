@@ -40,40 +40,47 @@
 
 package se.hal.plugin.assistant.google.endpoint;
 
+import java.io.IOException;
 import java.util.Map;
 
-import se.hal.intf.HalJsonPage;
+import se.hal.plugin.assistant.google.SmartHomeImpl;
 import zutil.net.http.HttpHeader;
+import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
 import zutil.parser.DataNode;
+import zutil.parser.json.JSONWriter;
 
 
-public class FakeTokenServlet extends HalJsonPage {
-    private static int secondsInDay = 86400;
+public class AuthTokenServlet implements HttpPage {
+    private static final int SECONDS_IN_DAY = 86400;
+    public static final String ENDPOINT_URL = "api/assistant/google/auth_token";
 
-    public FakeTokenServlet() {
-        super("api/assistant/google/auth_token");
-    }
+
+    public AuthTokenServlet(SmartHomeImpl smartHome) {}
+
 
     @Override
-    protected DataNode jsonRespond(
+    public void respond(
             HttpPrintStream out,
             HttpHeader headers,
-            Map<String,Object> session,
-            Map<String,String> cookie,
-            Map<String,String> request) throws Exception {
+            Map<String, Object> session,
+            Map<String, String> cookie,
+            Map<String, String> request) throws IOException {
 
         String grantType = request.get("grant_type");
 
         DataNode jsonRes = new DataNode(DataNode.DataType.Map);
         jsonRes.set("token_type", "bearer");
         jsonRes.set("access_token", "123access");
-        jsonRes.set("expires_in", secondsInDay);
+        jsonRes.set("expires_in", SECONDS_IN_DAY);
 
         if (grantType.equals("authorization_code")) {
             jsonRes.set("refresh_token", "123refresh");
         }
 
-        return jsonRes;
+        out.setHeader("Content-Type", "application/json");
+        out.setHeader("Access-Control-Allow-Origin", "*");
+        out.setHeader("Pragma", "no-cache");
+        out.println(JSONWriter.toString(jsonRes));
     }
 }

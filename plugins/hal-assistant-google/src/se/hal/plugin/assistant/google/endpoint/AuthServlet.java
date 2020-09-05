@@ -41,29 +41,32 @@
 package se.hal.plugin.assistant.google.endpoint;
 
 import se.hal.intf.HalJsonPage;
+import se.hal.plugin.assistant.google.SmartHomeImpl;
 import zutil.net.http.HttpHeader;
+import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
 import zutil.parser.DataNode;
 
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 
-public class FakeAuthServlet extends HalJsonPage {
+public class AuthServlet implements HttpPage {
+    public static final String ENDPOINT_URL = "api/assistant/google/auth";
 
-    public FakeAuthServlet() {
-        super("api/assistant/google/auth");
-    }
+    public AuthServlet(SmartHomeImpl smartHome) {}
+
 
     @Override
-    protected DataNode jsonRespond(
+    public void respond(
             HttpPrintStream out,
             HttpHeader headers,
-            Map<String,Object> session,
-            Map<String,String> cookie,
-            Map<String,String> request) throws Exception {
+            Map<String, Object> session,
+            Map<String, String> cookie,
+            Map<String, String> request) throws IOException {
 
         StringBuilder redirectURL = new StringBuilder();
         redirectURL.append(URLDecoder.decode(request.get("redirect_uri"), StandardCharsets.UTF_8));
@@ -73,7 +76,5 @@ public class FakeAuthServlet extends HalJsonPage {
 
         out.setStatusCode(302);
         out.setHeader("Location", URLEncoder.encode("/login?responseurl=" + redirectURL.toString(), StandardCharsets.UTF_8));
-
-        return new DataNode(DataNode.DataType.Map);
     }
 }

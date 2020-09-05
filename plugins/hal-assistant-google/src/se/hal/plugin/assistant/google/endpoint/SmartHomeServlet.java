@@ -41,68 +41,56 @@
 package se.hal.plugin.assistant.google.endpoint;
 
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import com.google.actions.api.smarthome.SmartHomeApp;
-import com.google.auth.oauth2.GoogleCredentials;
-import se.hal.intf.HalJsonPage;
-import se.hal.plugin.assistant.google.MySmartHomeApp;
+import se.hal.plugin.assistant.google.SmartHomeImpl;
 import zutil.io.IOUtil;
 import zutil.log.LogUtil;
 import zutil.net.http.HttpHeader;
+import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
-import zutil.parser.DataNode;
 
 /**
  * Handles request received via HTTP POST and delegates it to your Actions app. See: [Request
  * handling in Google App
  * Engine](https://cloud.google.com/appengine/docs/standard/java/how-requests-are-handled).
  */
-public class SmartHomeServlet extends HalJsonPage {
+public class SmartHomeServlet implements HttpPage {
     private static final Logger logger = LogUtil.getLogger();
-    private final SmartHomeApp actionsApp = new MySmartHomeApp();
+    public static final String ENDPOINT_URL = "api/assistant/google/smarthome";
 
-    {
-        try {
-            GoogleCredentials credentials =
-                    GoogleCredentials.fromStream(getClass().getResourceAsStream("/smart-home-key.json"));
-            actionsApp.setCredentials(credentials);
-        } catch (Exception e) {
-            logger.severe("couldn't load credentials");
-        }
-    }
+    private SmartHomeImpl smartHome;
 
 
-    public SmartHomeServlet() {
-        super("api/assistant/google/smarthome");
+    public SmartHomeServlet(SmartHomeImpl smartHome) {
+        this.smartHome = smartHome;
     }
 
 
     @Override
-    protected DataNode jsonRespond(
+    public void respond(
             HttpPrintStream out,
             HttpHeader headers,
-            Map<String,Object> session,
-            Map<String,String> cookie,
-            Map<String,String> request) throws Exception {
+            Map<String, Object> session,
+            Map<String, String> cookie,
+            Map<String, String> request) throws IOException {
 
         String body = IOUtil.readContentAsString(headers.getInputStream());
         logger.info("doPost, body = " + body);
 
         try {
-            String response = actionsApp.handleRequest(body, request).get();
+            String response = smartHome.handleRequest(body, request).get();
 
-            System.out.println("response = " + asJson);
-            res.getWriter().write(asJson);
-            res.getWriter().flush();
-        } catch (ExecutionException | InterruptedException e) {
-            logger.log(Level.SEVERE, "Failed to handle fulfillment request", e);
+            out.setHeader("Content-Type", "application/json");
+            out.setHeader("Access-Control-Allow-Origin", "*");
+            out.setHeader("Pragma", "no-cache");
+            out.println(response);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Was unable to handle SmartHome request.", e);
         }
     }
 }

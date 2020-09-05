@@ -23,20 +23,44 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.google.actions.api.smarthome.*;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.gson.Gson;
 import com.google.home.graph.v1.DeviceProto;
 import com.google.protobuf.Struct;
 import com.google.protobuf.util.JsonFormat;
+import se.hal.HalContext;
+import se.hal.plugin.assistant.google.endpoint.AuthServlet;
+import se.hal.plugin.assistant.google.endpoint.AuthTokenServlet;
+import se.hal.plugin.assistant.google.endpoint.SmartHomeServlet;
 import zutil.log.LogUtil;
+import zutil.net.http.HttpServer;
 
 
-public class MySmartHomeApp extends SmartHomeApp {
+public class SmartHomeImpl extends SmartHomeApp {
     private static final Logger logger = LogUtil.getLogger();
+    private static final String PARAM_PORT = "assistant.google.api_port";
+
+    private HttpServer httpServer;
+
+
+    public SmartHomeImpl() {
+        try {
+            GoogleCredentials credentials = GoogleCredentials.fromStream(getClass().getResourceAsStream("assistant_google.conf"));
+            this.setCredentials(credentials);
+        } catch (Exception e) {
+            logger.severe("couldn't load credentials");
+            throw new RuntimeException(e);
+        }
+
+        httpServer = new HttpServer(HalContext.getIntegerProperty(PARAM_PORT));
+        httpServer.setPage(AuthServlet.ENDPOINT_URL, new AuthServlet(this));
+        httpServer.setPage(AuthTokenServlet.ENDPOINT_URL, new AuthTokenServlet(this));
+        httpServer.setPage(SmartHomeServlet.ENDPOINT_URL, new SmartHomeServlet(this));
+    }
 
 
     @Override
     public SyncResponse onSync(SyncRequest syncRequest, Map<?, ?> headers) {
-
         SyncResponse res = new SyncResponse();
         res.setRequestId(syncRequest.requestId);
         res.setPayload(new SyncResponse.Payload());
@@ -44,7 +68,6 @@ public class MySmartHomeApp extends SmartHomeApp {
         int numOfDevices = 0;
         res.payload.devices = new SyncResponse.Payload.Device[numOfDevices];
         for (int i = 0; i < numOfDevices; i++) {
-
             SyncResponse.Payload.Device.Builder deviceBuilder =
                     new SyncResponse.Payload.Device.Builder()
                             .setId(device.getId())

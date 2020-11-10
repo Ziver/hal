@@ -44,22 +44,6 @@ dependencies {
     implementation 'org.xerial:sqlite-jdbc:3.32.3.2'
 }
 
-sourceSets {
-    main {
-        java {
-            exclude 'se/hal/SpeechManager.java'
-            exclude 'se/hal/tts/**'
-            exclude 'se/hal/bot/**'
-            exclude 'se/hal/stt/**'
-        }
-        resources {
-            exclude 'bots/**'
-            exclude 'marytts/**'
-            exclude 'sphinx-models/**'
-        }
-    }
-}
-
 distributions {
     main {
         contents {

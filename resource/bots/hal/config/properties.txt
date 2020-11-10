@@ -1,8 +1,0 @@
-url:http://ziver.koc.se
-name:HAL
-email:ziver@koc.se
-gender:male
-botmaster:Ziver Koc
-organization:
-version:0.0.1
-

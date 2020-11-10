@@ -1,4 +1,5 @@
 dependencies {
+    implementation project(':hal-core')
     implementation 'com.pi4j:pi4j-core:1.1'
     implementation 'com.pi4j:pi4j-device:1.1'
     implementation 'com.pi4j:pi4j-gpio-extension:1.1'

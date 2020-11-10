@@ -3,14 +3,20 @@ plugins {
     id 'application'
 }
 
-allprojects {
-    apply plugin: 'java'
+// ------------------------------------
+// Hal common configuration
+// ------------------------------------
 
+allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
         jcenter()
     }
+}
+
+subprojects {
+    apply plugin: 'java-library'
 
     dependencies {
         implementation 'se.koc:zutil:1.0.0-SNAPSHOT'
@@ -41,7 +47,9 @@ allprojects {
 // ------------------------------------
 
 dependencies {
-    implementation 'org.xerial:sqlite-jdbc:3.32.3.2'
+    project.subprojects.each { subProject ->
+        runtime subProject
+    }
 }
 
 distributions {
@@ -50,26 +58,10 @@ distributions {
             from 'hal.conf.example'
             from 'hal-default.db'
             from 'logging.properties'
-
-            project.subprojects.each { sub ->
-                into('lib') {
-                    from sub.jar
-                }
-            }
         }
     }
 }
 
 application {
     mainClass = 'se.hal.HalServer'
-}
-
-// ------------------------------------
-// Hal plugin common configuration
-// ------------------------------------
-
-subprojects {
-    dependencies {
-        implementation project(':')
-    }
 }

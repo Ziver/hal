@@ -2,6 +2,8 @@ import static groovy.io.FileType.*
 
 rootProject.name = "Hal"
 
+include "hal-core"
+
 new File(rootDir, "plugins").traverse(type: DIRECTORIES) {dir->
     if (new File(dir, '/build.gradle').exists()) {
         include "plugins:${dir.getName()}"

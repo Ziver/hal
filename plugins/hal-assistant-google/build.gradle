@@ -1,3 +1,4 @@
 dependencies {
+    implementation project(':hal-core')
     implementation 'com.google.actions:actions-on-google:1.8.0'
 }

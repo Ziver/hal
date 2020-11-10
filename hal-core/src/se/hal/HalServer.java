@@ -18,6 +18,7 @@ import zutil.net.http.page.HttpRedirectPage;
 import zutil.plugin.PluginData;
 import zutil.plugin.PluginManager;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -49,6 +50,8 @@ public class HalServer {
             // init DB and other configurations
             HalContext.initialize();
             DBConnection db = HalContext.getDB();
+
+            logger.info("Working directory: " + FileUtil.find(".").getAbsolutePath());
 
             // ------------------------------------
             // Init Plugins
@@ -118,8 +121,12 @@ public class HalServer {
             HalWebPage.getRootNav().createSubNav("Events").setWeight(100);
             HalWebPage.getRootNav().createSubNav("Settings").setWeight(200);
 
+            File webResourceRoot = FileUtil.find("hal-core/resource/resource/web/");
+            if (webResourceRoot == null)
+                webResourceRoot = FileUtil.find("resource/web/");
+
             http = new HttpServer(HalContext.getIntegerProperty(HalContext.PROPERTY_HTTP_PORT));
-            http.setDefaultPage(new HttpFilePage(FileUtil.find("resource/web/")));
+            http.setDefaultPage(new HttpFilePage(webResourceRoot));
             http.setPage("/", new HttpRedirectPage("/map"));
             http.setPage(HalAlertManager.getInstance().getUrl(), HalAlertManager.getInstance());
             for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalJsonPage.class); it.hasNext(); )

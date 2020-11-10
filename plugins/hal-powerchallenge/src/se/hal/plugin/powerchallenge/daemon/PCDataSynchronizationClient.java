@@ -42,10 +42,7 @@ import zutil.parser.json.JSONParser;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.ConnectException;
-import java.net.NoRouteToHostException;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -74,6 +71,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
                     logger.fine("Hostname not defined for user: "+ user.getUsername());
                     continue;
                 }
+
                 logger.fine("Synchronizing user: "+ user.getUsername() +" ("+user.getHostname()+":"+user.getPort()+")");
                 try (Socket s = new Socket(user.getHostname(), user.getPort());){
                     ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
@@ -157,7 +155,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
                     }
                     out.writeObject(null); // Tell server we are disconnecting
 
-                } catch (NoRouteToHostException|UnknownHostException|ConnectException e) {
+                } catch (NoRouteToHostException|UnknownHostException|ConnectException|SocketTimeoutException e) {
                     logger.warning("Unable to connect to "+ user.getHostname()+":"+user.getPort() +", "+ e.getMessage());
                     HalAlertManager.getInstance().addAlert(new HalAlert(HalAlertManager.AlertLevel.WARNING,
                             "Unable to connect to user with host: "+user.getHostname(), AlertTTL.DISMISSED));

@@ -30,9 +30,9 @@ subprojects {
             java {
                 srcDirs 'src'
             }
-            resources {
-                srcDir 'resource'
-            }
+            //resources {
+            //    srcDir 'resource'
+            //}
         }
         test {
             java {
@@ -58,6 +58,10 @@ distributions {
             from 'hal.conf.example'
             from 'hal-default.db'
             from 'logging.properties'
+
+            project.subprojects.each { subProject ->
+                from 'plugins/' + subProject.name + '/resource'
+            }
         }
     }
 }

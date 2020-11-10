@@ -13,7 +13,7 @@ allprojects {
     }
 
     dependencies {
-        implementation 'se.koc:zutil:1.0.253'
+        implementation 'se.koc:zutil:1.0.0-SNAPSHOT'
 
         testImplementation 'junit:junit:4.12'
         testImplementation 'org.hamcrest:hamcrest-core:2.2'
@@ -50,8 +50,18 @@ distributions {
             from 'hal.conf.example'
             from 'hal-default.db'
             from 'logging.properties'
+
+            project.subprojects.each { sub ->
+                into('lib') {
+                    from sub.jar
+                }
+            }
         }
     }
+}
+
+application {
+    mainClass = 'se.hal.HalServer'
 }
 
 // ------------------------------------

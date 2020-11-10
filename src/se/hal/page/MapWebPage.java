@@ -55,7 +55,7 @@ public class MapWebPage extends HalWebPage {
             if (bgImage == null)
                 loadBgImage();
             if (bgImage == null)
-                out.setStatusCode(404);
+                out.setResponseStatusCode(404);
             else {
                 out.setHeader("Content-Type", "image/" + bgType);
                 out.setHeader("Content-Length", "" + bgImage.length);

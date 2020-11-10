@@ -28,6 +28,8 @@ import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 import com.google.protobuf.util.JsonFormat;
 import zutil.log.LogUtil;
+import zutil.parser.DataNode;
+import zutil.parser.json.JSONParser;
 
 /**
  * A singleton class to encapsulate state reporting behavior with changing ColorSetting state
@@ -39,6 +41,7 @@ final class ReportState {
 
     private ReportState() {}
 
+
     /**
      * Creates and completes a ReportStateAndNotification request
      *
@@ -48,34 +51,7 @@ final class ReportState {
      * @param states     A Map of state keys and their values for the provided device ID
      */
     public static void makeRequest(SmartHomeApp actionsApp, String userId, String deviceId, Map<String, Object> states) {
-        // Convert a Map of states to a JsonObject
-        JsonObject jsonStates = (JsonObject) JsonParser.parseString(new Gson().toJson(states));
-        ReportState.makeRequest(actionsApp, userId, deviceId, jsonStates);
-    }
-
-    /**
-     * Creates and completes a ReportStateAndNotification request
-     *
-     * @param actionsApp The SmartHomeApp instance to use to make the gRPC request
-     * @param userId     The agent user ID
-     * @param deviceId   The device ID
-     * @param states     A JSON object of state keys and their values for the provided device ID
-     */
-    public static void makeRequest(SmartHomeApp actionsApp, String userId, String deviceId, JsonObject states) {
-        // Do state name replacement for ColorSetting trait
-        // See https://developers.google.com/assistant/smarthome/traits/colorsetting#device-states
-        JsonObject colorJson = states.getAsJsonObject("color");
-        if (colorJson != null && colorJson.has("spectrumRgb")) {
-            colorJson.add("spectrumRGB", colorJson.get("spectrumRgb"));
-            colorJson.remove("spectrumRgb");
-        }
         Struct.Builder statesStruct = Struct.newBuilder();
-        try {
-            JsonFormat.parser().ignoringUnknownFields().merge(new Gson().toJson(states), statesStruct);
-        } catch (Exception e) {
-            logger.severe("Failed to build json");
-            e.printStackTrace();
-        }
 
         HomeGraphApiServiceProto.ReportStateAndNotificationDevice.Builder deviceBuilder =
                 HomeGraphApiServiceProto.ReportStateAndNotificationDevice.newBuilder()

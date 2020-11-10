@@ -74,7 +74,7 @@ public class AuthServlet implements HttpPage {
         redirectURL.append("code=").append("xxxxxx");
         redirectURL.append("state=").append(request.get("state"));
 
-        out.setStatusCode(302);
+        out.setResponseStatusCode(302);
         out.setHeader("Location", URLEncoder.encode("/login?responseurl=" + redirectURL.toString(), StandardCharsets.UTF_8));
     }
 }

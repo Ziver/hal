@@ -32,13 +32,16 @@ import se.hal.HalContext;
 import se.hal.plugin.assistant.google.endpoint.AuthServlet;
 import se.hal.plugin.assistant.google.endpoint.AuthTokenServlet;
 import se.hal.plugin.assistant.google.endpoint.SmartHomeServlet;
+import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
 import zutil.net.http.HttpServer;
 
 
 public class SmartHomeImpl extends SmartHomeApp {
     private static final Logger logger = LogUtil.getLogger();
-    private static final String PARAM_PORT = "assistant.google.api_port";
+    private static final String PARAM_PORT = "assistant.google.port";
+    private static final String PARAM_KEYSTORE_PATH = "assistant.google.keystore";
+    private static final String PARAM_KEYSTORE_PASSWORD = "assistant.google.keystore_psw";
 
     private HttpServer httpServer;
 
@@ -52,7 +55,10 @@ public class SmartHomeImpl extends SmartHomeApp {
             throw new RuntimeException(e);
         }
 
-        httpServer = new HttpServer(HalContext.getIntegerProperty(PARAM_PORT));
+        httpServer = new HttpServer(
+                HalContext.getIntegerProperty(PARAM_PORT),
+                FileUtil.find(HalContext.getStringProperty(PARAM_KEYSTORE_PATH)),
+                HalContext.getStringProperty(PARAM_KEYSTORE_PASSWORD));
         httpServer.setPage(AuthServlet.ENDPOINT_URL, new AuthServlet(this));
         httpServer.setPage(AuthTokenServlet.ENDPOINT_URL, new AuthTokenServlet(this));
         httpServer.setPage(SmartHomeServlet.ENDPOINT_URL, new SmartHomeServlet(this));
@@ -67,7 +73,7 @@ public class SmartHomeImpl extends SmartHomeApp {
 
         int numOfDevices = 0;
         res.payload.devices = new SyncResponse.Payload.Device[numOfDevices];
-        for (int i = 0; i < numOfDevices; i++) {
+/*        for (int i = 0; i < numOfDevices; i++) {
             SyncResponse.Payload.Device.Builder deviceBuilder =
                     new SyncResponse.Payload.Device.Builder()
                             .setId(device.getId())
@@ -112,7 +118,7 @@ public class SmartHomeImpl extends SmartHomeApp {
             }
             res.payload.devices[i] = deviceBuilder.build();
         }
-
+*/
         return res;
     }
 
@@ -122,7 +128,7 @@ public class SmartHomeImpl extends SmartHomeApp {
         QueryResponse res = new QueryResponse();
         res.setRequestId(queryRequest.requestId);
         res.setPayload(new QueryResponse.Payload());
-
+/*
         Map<String, Map<String, Object>> deviceStates = new HashMap<>();
         for (QueryRequest.Inputs.Payload.Device device : devices) {
             try {
@@ -137,7 +143,7 @@ public class SmartHomeImpl extends SmartHomeApp {
                 deviceStates.put(device.id, failedDevice);
             }
         }
-        res.payload.setDevices(deviceStates);
+        res.payload.setDevices(deviceStates);*/
         return res;
     }
 
@@ -151,7 +157,7 @@ public class SmartHomeImpl extends SmartHomeApp {
 
         ExecuteRequest.Inputs.Payload.Commands[] commands =
                 ((ExecuteRequest.Inputs) executeRequest.inputs[0]).payload.commands;
-        for (ExecuteRequest.Inputs.Payload.Commands command : commands) {
+/*        for (ExecuteRequest.Inputs.Payload.Commands command : commands) {
             for (ExecuteRequest.Inputs.Payload.Commands.Devices device : command.devices) {
                 try {
                     states = database.execute(userId, device.id, command.execution[0]);
@@ -218,7 +224,7 @@ public class SmartHomeImpl extends SmartHomeApp {
                     commandsResponse.add(failedDevice);
                 }
             }
-        }
+        }*/
 
         ExecuteResponse.Payload.Commands successfulCommands = new ExecuteResponse.Payload.Commands();
         successfulCommands.status = "SUCCESS";
@@ -227,8 +233,7 @@ public class SmartHomeImpl extends SmartHomeApp {
         commandsResponse.add(successfulCommands);
 
         res.requestId = executeRequest.requestId;
-        ExecuteResponse.Payload payload =
-                new ExecuteResponse.Payload(
+        ExecuteResponse.Payload payload = new ExecuteResponse.Payload(
                         commandsResponse.toArray(new ExecuteResponse.Payload.Commands[]{}));
         res.setPayload(payload);
 

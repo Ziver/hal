@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class HalWebPage implements HttpPage{
-    private static final String TEMPLATE = "resource/web/main_index.tmpl";
+    private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/main_index.tmpl";
     private static Navigation rootNav = Navigation.createRootNav();
     private static Navigation userNav = Navigation.createRootNav();
 

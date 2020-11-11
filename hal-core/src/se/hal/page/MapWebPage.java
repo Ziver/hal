@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 public class MapWebPage extends HalWebPage {
-    private static final String TEMPLATE = "resource/web/map.tmpl";
+    private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/map.tmpl";
 
     private String bgType;
     private byte[] bgImage;

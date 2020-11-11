@@ -24,8 +24,20 @@ public class HalContext {
     public static final String PROPERTY_HTTP_PORT = "hal.http_port";
     public static final String PROPERTY_MAP_BACKGROUND_IMAGE = "hal.map_bgimage";
 
-    private static final String CONF_FILE = "hal.conf";
-    private static final String DB_FILE = "hal.db";
+    public static final String RESOURCE_ROOT;
+    static {
+        if (FileUtil.find("build/resources/") != null)
+            RESOURCE_ROOT = "build/resources";
+        else if (FileUtil.find("resource/resource/") != null)
+            RESOURCE_ROOT = "resource";
+        else
+            RESOURCE_ROOT = ".";
+    }
+
+    public static final String RESOURCE_WEB_ROOT = HalContext.RESOURCE_ROOT + "/resource/web";
+
+    private static final String CONF_FILE       = "hal.conf";
+    private static final String DB_FILE         = "hal.db";
     private static final String DEFAULT_DB_FILE = "hal-default.db";
 
     // Variables

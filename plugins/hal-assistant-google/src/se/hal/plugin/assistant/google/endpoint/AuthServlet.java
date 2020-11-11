@@ -57,6 +57,7 @@ import java.util.Map;
 public class AuthServlet implements HttpPage {
     public static final String ENDPOINT_URL = "api/assistant/google/auth";
 
+
     public AuthServlet(SmartHomeImpl smartHome) {}
 
 
@@ -66,7 +67,7 @@ public class AuthServlet implements HttpPage {
             HttpHeader headers,
             Map<String, Object> session,
             Map<String, String> cookie,
-            Map<String, String> request) throws IOException {
+            Map<String, String> request) {
 
         StringBuilder redirectURL = new StringBuilder();
         redirectURL.append(URLDecoder.decode(request.get("redirect_uri"), StandardCharsets.UTF_8));

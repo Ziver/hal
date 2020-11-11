@@ -1,5 +1,6 @@
 package se.hal.page;
 
+import se.hal.HalContext;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
 import zutil.net.http.HttpHeader;
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
 
 public class HalAlertManager implements HttpPage {
     private static final Logger logger = LogUtil.getLogger();
-    private static final String TMPL_PATH = "resource/web/main_alerts.tmpl";
+    private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/main_alerts.tmpl";
     private static final String PAGE_NAME = "alert";
     private static HalAlertManager instance;
 
@@ -59,7 +60,7 @@ public class HalAlertManager implements HttpPage {
                 }
             }
 
-            Templator tmpl = new Templator(FileUtil.find(TMPL_PATH));
+            Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
             tmpl.set("serviceUrl", getUrl());
             tmpl.set("alerts", alertsClone);
             return tmpl;

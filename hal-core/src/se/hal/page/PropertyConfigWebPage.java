@@ -9,7 +9,7 @@ import zutil.parser.Templator;
 import java.util.*;
 
 public class PropertyConfigWebPage extends HalWebPage {
-    private static final String TEMPLATE = "resource/web/property_config.tmpl";
+    private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/property_config.tmpl";
 
 
     public PropertyConfigWebPage(){

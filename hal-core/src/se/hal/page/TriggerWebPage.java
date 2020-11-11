@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 
 public class TriggerWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
-    private static final String TEMPLATE = "resource/web/trigger.tmpl";
+    private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/trigger.tmpl";
 
     private ArrayList<ClassConfigurationData> triggerConfigurators;
     private ArrayList<ClassConfigurationData> actionConfigurators;

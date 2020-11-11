@@ -40,7 +40,6 @@
 
 package se.hal.plugin.assistant.google.endpoint;
 
-import java.io.IOException;
 import java.util.Map;
 
 import se.hal.plugin.assistant.google.SmartHomeImpl;
@@ -65,7 +64,7 @@ public class AuthTokenServlet implements HttpPage {
             HttpHeader headers,
             Map<String, Object> session,
             Map<String, String> cookie,
-            Map<String, String> request) throws IOException {
+            Map<String, String> request) {
 
         String grantType = request.get("grant_type");
 

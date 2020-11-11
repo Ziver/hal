@@ -59,12 +59,24 @@ distributions {
             from 'hal-default.db'
             from 'logging.properties'
 
-            project.subprojects.each { subProject ->
-                from 'plugins/' + subProject.name + '/resource'
-            }
+            from "${buildDir}/resources"
         }
     }
 }
+
+task copyRecources(type: Copy) {
+    doFirst{
+        System.out.println("Copying resource files...")
+    }
+
+    project.subprojects.each { subProject ->
+        from "${subProject.projectDir}/resource"
+    }
+
+    into("${buildDir}/resources")
+}
+
+processResources.finalizedBy(copyRecources)
 
 application {
     mainClass = 'se.hal.HalServer'

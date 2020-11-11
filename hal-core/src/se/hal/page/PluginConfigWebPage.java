@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PluginConfigWebPage extends HalWebPage {
-    private static final String TEMPLATE = "resource/web/plugin_config.tmpl";
+    private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/plugin_config.tmpl";
 
 
     public PluginConfigWebPage(){

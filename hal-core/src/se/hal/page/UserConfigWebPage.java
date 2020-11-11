@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 public class UserConfigWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
-    private static final String TEMPLATE = "resource/web/user_config.tmpl";
+    private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/user_config.tmpl";
 
 
     public UserConfigWebPage() {

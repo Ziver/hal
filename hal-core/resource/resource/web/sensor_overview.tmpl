@@ -1,0 +1,34 @@
+<h1 class="page-header">Sensor Overview</h1>
+
+<div class="col-md-12">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">Local Sensors</div>
+        <div class="panel-body">
+
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <th class="col-md-4">Name</th>
+                    <th class="col-md-3">Type</th>
+                    <th class="col-md-2">Data</th>
+                    <th class="col-md-2">Last Update</th>
+                </thead>
+                {{#sensors}}
+                <tr>
+                    <td><a href="?id={{.getId()}}">{{.getName()}}</a></td>
+                    <td>{{.getDeviceConfig().getClass().getSimpleName()}}</td>
+                    <td>{{.getDeviceData()}}</td>
+                    <td><span class="timestamp">{{.getDeviceData().getTimestamp()}}</span></td>
+                </tr>
+                {{/sensors}}
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function (){
+        $(".toggle-switch").on("switchChange.bootstrapSwitch", function (event, state) {
+            $(this).closest('form').submit();
+        });
+    });
+</script>

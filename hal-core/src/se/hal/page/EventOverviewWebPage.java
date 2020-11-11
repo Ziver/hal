@@ -23,8 +23,8 @@ import java.util.logging.Logger;
 public class EventOverviewWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
     private static final int HISTORY_LIMIT = 200;
-    private static final String OVERVIEW_TEMPLATE = "resource/web/event_overview.tmpl";
-    private static final String DETAIL_TEMPLATE = "resource/web/event_detail.tmpl";
+    private static final String OVERVIEW_TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/event_overview.tmpl";
+    private static final String DETAIL_TEMPLATE   = HalContext.RESOURCE_WEB_ROOT + "/event_detail.tmpl";
 
 
     public EventOverviewWebPage(){

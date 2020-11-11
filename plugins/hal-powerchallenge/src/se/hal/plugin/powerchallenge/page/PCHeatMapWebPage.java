@@ -24,6 +24,7 @@
 
 package se.hal.plugin.powerchallenge.page;
 
+import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
@@ -31,7 +32,7 @@ import zutil.parser.Templator;
 import java.util.Map;
 
 public class PCHeatMapWebPage extends HalWebPage {
-    private static final String TEMPLATE = "resource/web/pc_heatmap.tmpl";
+    private static final String TEMPLATE = HalContext.RESOURCE_ROOT + "/resource/web/pc_heatmap.tmpl";
 
 
     public PCHeatMapWebPage() {

@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 public class SensorConfigWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
-    private static final String TEMPLATE = "resource/web/sensor_config.tmpl";
+    private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/sensor_config.tmpl";
 
     private ArrayList<ClassConfigurationData> sensorConfigurations;
 

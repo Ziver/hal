@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 public class EventConfigWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
-    private static final String TEMPLATE = "resource/web/event_config.tmpl";
+    private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/event_config.tmpl";
 
     private ArrayList<ClassConfigurationData> eventConfigurations;
 

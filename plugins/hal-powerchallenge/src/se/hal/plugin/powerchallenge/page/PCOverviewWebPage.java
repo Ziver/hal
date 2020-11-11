@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PCOverviewWebPage extends HalWebPage {
-    private static final String TEMPLATE = "resource/web/pc_overview.tmpl";
+    private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/pc_overview.tmpl";
 
     public PCOverviewWebPage() {
         super("pc_overview");

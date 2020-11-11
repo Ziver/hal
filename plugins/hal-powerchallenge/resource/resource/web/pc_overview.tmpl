@@ -1,0 +1,29 @@
+<h1 class="page-header">Overview</h1>
+
+<div class="row placeholders">
+    <H1>Last 24 hours (kWh/5min)</H1>
+    <div id="minute-power-chart" style="height:450px;"></div>
+</div>
+<div class="row placeholders">
+    <H1>Last Week (kWh/h)</H1>
+    <div id="hour-power-chart" style="height:450px;"></div>
+</div>
+<div class="row placeholders">
+    <H1>All History (kWh/day)</H1>
+    <div id="day-power-chart" style="height:450px;"></div>
+</div>
+<div class="row placeholders">
+    <H1>All History (kWh/week)</H1>
+    <div id="week-power-chart" style="height:450px;"></div>
+</div>
+
+<script>
+
+    $(function(){
+		createChart("#minute-power-chart", "/data/sensor?aggr=minute", 5*60*1000);
+		createChart("#hour-power-chart", "/data/sensor?aggr=hour", 60*60*1000);
+		createChart("#day-power-chart", "/data/sensor?aggr=day", 24*60*60*1000);
+		createChart("#week-power-chart", "/data/sensor?aggr=week", 7*24*60*60*1000);
+	});
+</script>
+

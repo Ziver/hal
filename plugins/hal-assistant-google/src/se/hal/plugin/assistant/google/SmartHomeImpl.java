@@ -16,6 +16,7 @@
 
 package se.hal.plugin.assistant.google;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,29 +40,25 @@ import zutil.net.http.HttpServer;
 
 public class SmartHomeImpl extends SmartHomeApp {
     private static final Logger logger = LogUtil.getLogger();
-    private static final String PARAM_PORT = "assistant.google.port";
-    private static final String PARAM_KEYSTORE_PATH = "assistant.google.keystore";
-    private static final String PARAM_KEYSTORE_PASSWORD = "assistant.google.keystore_psw";
 
     private HttpServer httpServer;
 
 
-    public SmartHomeImpl() {
-        try {
-            GoogleCredentials credentials = GoogleCredentials.fromStream(getClass().getResourceAsStream("assistant_google.conf"));
+    public SmartHomeImpl(int port, File cert, String certPass, String googleCredentials) {
+        /*try {
+            GoogleCredentials credentials = GoogleCredentials.fromStream(FileUtil.getInputStream(googleCredentials));
             this.setCredentials(credentials);
         } catch (Exception e) {
-            logger.severe("couldn't load credentials");
+            logger.severe("Could not load google credentials");
             throw new RuntimeException(e);
-        }
+        }*/
 
-        httpServer = new HttpServer(
-                HalContext.getIntegerProperty(PARAM_PORT),
-                FileUtil.find(HalContext.getStringProperty(PARAM_KEYSTORE_PATH)),
-                HalContext.getStringProperty(PARAM_KEYSTORE_PASSWORD));
+        //httpServer = new HttpServer(port, cert, certPass);
+        httpServer = new HttpServer(port);
         httpServer.setPage(AuthServlet.ENDPOINT_URL, new AuthServlet(this));
         httpServer.setPage(AuthTokenServlet.ENDPOINT_URL, new AuthTokenServlet(this));
         httpServer.setPage(SmartHomeServlet.ENDPOINT_URL, new SmartHomeServlet(this));
+        httpServer.start();
     }
 
 

@@ -24,6 +24,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.home.graph.v1.HomeGraphApiServiceProto;
+import com.google.home.graph.v1.HomeGraphApiServiceProto.ReportStateAndNotificationDevice;
+import com.google.home.graph.v1.HomeGraphApiServiceProto.ReportStateAndNotificationRequest;
+import com.google.home.graph.v1.HomeGraphApiServiceProto.StateAndNotificationPayload;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 import com.google.protobuf.util.JsonFormat;
@@ -32,14 +35,14 @@ import zutil.parser.DataNode;
 import zutil.parser.json.JSONParser;
 
 /**
- * A singleton class to encapsulate state reporting behavior with changing ColorSetting state
- * values.
+ * A singleton class to encapsulate state reporting behavior with changing ColorSetting state values.
  */
 final class ReportState {
     private static final Logger logger = LogUtil.getLogger();
 
 
-    private ReportState() {}
+    private ReportState() {
+    }
 
 
     /**
@@ -53,19 +56,17 @@ final class ReportState {
     public static void makeRequest(SmartHomeApp actionsApp, String userId, String deviceId, Map<String, Object> states) {
         Struct.Builder statesStruct = Struct.newBuilder();
 
-        HomeGraphApiServiceProto.ReportStateAndNotificationDevice.Builder deviceBuilder =
-                HomeGraphApiServiceProto.ReportStateAndNotificationDevice.newBuilder()
-                        .setStates(
-                                Struct.newBuilder()
-                                        .putFields(deviceId, Value.newBuilder().setStructValue(statesStruct).build()));
+        ReportStateAndNotificationDevice.Builder deviceBuilder =
+                ReportStateAndNotificationDevice.newBuilder().setStates(
+                        Struct.newBuilder().putFields(deviceId,
+                                Value.newBuilder().setStructValue(statesStruct).build()
+                        ));
 
-        HomeGraphApiServiceProto.ReportStateAndNotificationRequest request =
-                HomeGraphApiServiceProto.ReportStateAndNotificationRequest.newBuilder()
+        ReportStateAndNotificationRequest request =
+                ReportStateAndNotificationRequest.newBuilder()
                         .setRequestId(String.valueOf(Math.random()))
                         .setAgentUserId(userId) // our single user's id
-                        .setPayload(
-                                HomeGraphApiServiceProto.StateAndNotificationPayload.newBuilder()
-                                        .setDevices(deviceBuilder))
+                        .setPayload(StateAndNotificationPayload.newBuilder().setDevices(deviceBuilder))
                         .build();
 
         actionsApp.reportState(request);

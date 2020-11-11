@@ -44,22 +44,21 @@ import java.util.Map;
 
 import se.hal.plugin.assistant.google.SmartHomeImpl;
 import zutil.net.http.HttpHeader;
-import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
+import zutil.net.http.page.HttpJsonPage;
 import zutil.parser.DataNode;
-import zutil.parser.json.JSONWriter;
 
 
-public class AuthTokenServlet implements HttpPage {
+public class AuthTokenServlet extends HttpJsonPage {
     private static final int SECONDS_IN_DAY = 86400;
-    public static final String ENDPOINT_URL = "api/assistant/google/auth_token";
+    public static final String ENDPOINT_URL = "api/assistant/google/auth/token";
 
 
     public AuthTokenServlet(SmartHomeImpl smartHome) {}
 
 
     @Override
-    public void respond(
+    public DataNode jsonRespond(
             HttpPrintStream out,
             HttpHeader headers,
             Map<String, Object> session,
@@ -77,9 +76,8 @@ public class AuthTokenServlet implements HttpPage {
             jsonRes.set("refresh_token", "123refresh");
         }
 
-        out.setHeader("Content-Type", "application/json");
         out.setHeader("Access-Control-Allow-Origin", "*");
         out.setHeader("Pragma", "no-cache");
-        out.println(JSONWriter.toString(jsonRes));
+        return jsonRes;
     }
 }

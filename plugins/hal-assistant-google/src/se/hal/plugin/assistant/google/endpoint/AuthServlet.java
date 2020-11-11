@@ -40,14 +40,11 @@
 
 package se.hal.plugin.assistant.google.endpoint;
 
-import se.hal.intf.HalJsonPage;
 import se.hal.plugin.assistant.google.SmartHomeImpl;
 import zutil.net.http.HttpHeader;
 import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
-import zutil.parser.DataNode;
 
-import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -55,7 +52,7 @@ import java.util.Map;
 
 
 public class AuthServlet implements HttpPage {
-    public static final String ENDPOINT_URL = "api/assistant/google/auth";
+    public static final String ENDPOINT_URL = "api/assistant/google/auth/authorize";
 
 
     public AuthServlet(SmartHomeImpl smartHome) {}
@@ -69,13 +66,18 @@ public class AuthServlet implements HttpPage {
             Map<String, String> cookie,
             Map<String, String> request) {
 
-        StringBuilder redirectURL = new StringBuilder();
-        redirectURL.append(URLDecoder.decode(request.get("redirect_uri"), StandardCharsets.UTF_8));
-        redirectURL.append("?");
-        redirectURL.append("code=").append("xxxxxx");
-        redirectURL.append("state=").append(request.get("state"));
+        if (request.containsKey("redirect_uri")) {
+            StringBuilder redirectURL = new StringBuilder();
+            redirectURL.append(URLDecoder.decode(request.get("redirect_uri"), StandardCharsets.UTF_8));
+            redirectURL.append("?");
+            redirectURL.append("code=").append("xxxxxx");
+            redirectURL.append("state=").append(request.get("state"));
 
-        out.setResponseStatusCode(302);
-        out.setHeader("Location", URLEncoder.encode("/login?responseurl=" + redirectURL.toString(), StandardCharsets.UTF_8));
+            out.setResponseStatusCode(302);
+            out.setHeader("Location", URLEncoder.encode("/login?responseurl=" + redirectURL.toString(), StandardCharsets.UTF_8));
+        } else {
+            out.setResponseStatusCode(400);
+            out.println("400: Bad Request, missing property: redirect_uri");
+        }
     }
 }

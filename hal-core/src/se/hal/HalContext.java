@@ -215,7 +215,11 @@ public class HalContext {
     }
 
     public static int getIntegerProperty(String key){
-        return Integer.parseInt(getStringProperty(key));
+        String value = getStringProperty(key);
+
+        if (getStringProperty(key) == null)
+            return 0;
+        return Integer.parseInt(value);
     }
     public static int getIntegerProperty(String key, int defaultValue){
         if (!HalContext.containsProperty(key))

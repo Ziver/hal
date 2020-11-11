@@ -2,5 +2,6 @@
 	"version": 0.1,
 	"name": "Hal-Assistant-Google",
 	"interfaces": [
+		{"se.hal.intf.HalDaemon":  "se.hal.plugin.assistant.google.SmartHomeDaemon"}
 	]
 }

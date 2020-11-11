@@ -80,7 +80,7 @@ public class SmartHomeServlet implements HttpPage {
             Map<String, String> request) throws IOException {
 
         String body = IOUtil.readContentAsString(headers.getInputStream());
-        logger.info("doPost, body = " + body);
+        logger.fine("doPost, body = " + body);
 
         try {
             String response = smartHome.handleRequest(body, request).get();

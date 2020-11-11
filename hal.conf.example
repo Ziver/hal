@@ -4,8 +4,12 @@
 
 hal.http_port=8080
 
-# ------------------------------------
+# ------------------------------------------------------------------------
 # Plugin configurations
+# ------------------------------------------------------------------------
+
+# ------------------------------------
+# Sensors and Events
 # ------------------------------------
 
 ## Tellstick plugin
@@ -25,3 +29,12 @@ hal.http_port=8080
 
 ## Power Challenge Plugin
 powerchallenge.sync_port=6666
+
+# ------------------------------------
+# Assistants
+# ------------------------------------
+
+## Google Assistant
+assistant.google.port=8081
+assistant.google.keystore=resource/conf/selfsigned.jks
+assistant.google.keystore_psw=123456789

@@ -40,22 +40,35 @@
 
 package se.hal.plugin.assistant.google.endpoint;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.google.actions.api.smarthome.SmartHomeApp;
 import se.hal.plugin.assistant.google.SmartHomeImpl;
+import zutil.io.IOUtil;
+import zutil.log.LogUtil;
 import zutil.net.http.HttpHeader;
 import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
 
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
+/**
+ * Handles request received via HTTP POST and delegates it to your Actions app. See: [Request
+ * handling in Google App
+ * Engine](https://cloud.google.com/appengine/docs/standard/java/how-requests-are-handled).
+ */
+public class SmartHomePage implements HttpPage {
+    private static final Logger logger = LogUtil.getLogger();
+    public static final String ENDPOINT_URL = "api/assistant/google/smarthome";
+
+    private SmartHomeImpl smartHome;
 
 
-public class AuthServlet implements HttpPage {
-    public static final String ENDPOINT_URL = "api/assistant/google/auth/authorize";
-
-
-    public AuthServlet(SmartHomeImpl smartHome) {}
+    public SmartHomePage(SmartHomeImpl smartHome) {
+        this.smartHome = smartHome;
+    }
 
 
     @Override
@@ -64,20 +77,20 @@ public class AuthServlet implements HttpPage {
             HttpHeader headers,
             Map<String, Object> session,
             Map<String, String> cookie,
-            Map<String, String> request) {
+            Map<String, String> request) throws IOException {
 
-        if (request.containsKey("redirect_uri")) {
-            StringBuilder redirectURL = new StringBuilder();
-            redirectURL.append(URLDecoder.decode(request.get("redirect_uri"), StandardCharsets.UTF_8));
-            redirectURL.append("?");
-            redirectURL.append("code=").append("xxxxxx");
-            redirectURL.append("state=").append(request.get("state"));
+        String body = IOUtil.readContentAsString(headers.getInputStream());
+        logger.fine("doPost, body = " + body);
 
-            out.setResponseStatusCode(302);
-            out.setHeader("Location", URLEncoder.encode("/login?responseurl=" + redirectURL.toString(), StandardCharsets.UTF_8));
-        } else {
-            out.setResponseStatusCode(400);
-            out.println("400: Bad Request, missing property: redirect_uri");
+        try {
+            String response = smartHome.handleRequest(body, request).get();
+
+            out.setHeader("Content-Type", "application/json");
+            out.setHeader("Access-Control-Allow-Origin", "*");
+            out.setHeader("Pragma", "no-cache");
+            out.println(response);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Was unable to handle SmartHome request.", e);
         }
     }
 }

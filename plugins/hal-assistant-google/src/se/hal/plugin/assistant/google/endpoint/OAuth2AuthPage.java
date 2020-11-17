@@ -40,44 +40,62 @@
 
 package se.hal.plugin.assistant.google.endpoint;
 
-import java.util.Map;
-
 import se.hal.plugin.assistant.google.SmartHomeImpl;
 import zutil.net.http.HttpHeader;
+import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
-import zutil.net.http.page.HttpJsonPage;
-import zutil.parser.DataNode;
+import zutil.net.http.HttpURL;
+
+import java.net.MalformedURLException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
+/**
+ * This endpoint is the first step in the OAuth 2 procedure.
+ * The purpose of this page is get authorization from the user to share a resource.
+ */
+public class OAuth2AuthPage implements HttpPage {
+    public static final String ENDPOINT_URL = "api/assistant/google/auth/authorize";
+
+    protected static final String SECRET_CODE = "SUPER-SECURE-CODE";
 
 
-public class AuthTokenServlet extends HttpJsonPage {
-    private static final int SECONDS_IN_DAY = 86400;
-    public static final String ENDPOINT_URL = "api/assistant/google/auth/token";
-
-
-    public AuthTokenServlet(SmartHomeImpl smartHome) {}
+    public OAuth2AuthPage(SmartHomeImpl smartHome) {}
 
 
     @Override
-    public DataNode jsonRespond(
+    public void respond(
             HttpPrintStream out,
             HttpHeader headers,
             Map<String, Object> session,
             Map<String, String> cookie,
-            Map<String, String> request) {
+            Map<String, String> request) throws MalformedURLException {
 
-        String grantType = request.get("grant_type");
-
-        DataNode jsonRes = new DataNode(DataNode.DataType.Map);
-        jsonRes.set("token_type", "bearer");
-        jsonRes.set("access_token", "123access");
-        jsonRes.set("expires_in", SECONDS_IN_DAY);
-
-        if (grantType.equals("authorization_code")) {
-            jsonRes.set("refresh_token", "123refresh");
+        if (!request.containsKey("redirect_uri")) {
+            out.setResponseStatusCode(400);
+            out.println("400: Bad Request, missing property: redirect_uri");
+            return;
         }
 
-        out.setHeader("Access-Control-Allow-Origin", "*");
-        out.setHeader("Pragma", "no-cache");
-        return jsonRes;
+        HttpURL url = new HttpURL(URLDecoder.decode(request.get("redirect_uri"), StandardCharsets.UTF_8));
+
+        if (!"HTTPS".equalsIgnoreCase(url.getProtocol())) {
+            out.setResponseStatusCode(400);
+            out.println("Bad redirect protocol: " + url.getProtocol());
+            return;
+        }
+
+        if ("code".equals(request.get("response_type"))) { // response types: code, password, client_credentials
+            url.setParameter("state", request.get("state"));
+            url.setParameter("code", SECRET_CODE);
+
+            out.setResponseStatusCode(302);
+            out.setHeader(HttpHeader.HEADER_LOCATION, url.toString());
+        } else {
+            out.setResponseStatusCode(400);
+            out.println("400: Bad Request, unsupported response_type: " + request.get("response_type"));
+            return;
+        }
     }
 }

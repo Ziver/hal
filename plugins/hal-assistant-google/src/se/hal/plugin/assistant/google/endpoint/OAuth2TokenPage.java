@@ -40,57 +40,65 @@
 
 package se.hal.plugin.assistant.google.endpoint;
 
-import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.google.actions.api.smarthome.SmartHomeApp;
 import se.hal.plugin.assistant.google.SmartHomeImpl;
-import zutil.io.IOUtil;
-import zutil.log.LogUtil;
 import zutil.net.http.HttpHeader;
-import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
+import zutil.net.http.page.HttpJsonPage;
+import zutil.parser.DataNode;
 
 /**
- * Handles request received via HTTP POST and delegates it to your Actions app. See: [Request
- * handling in Google App
- * Engine](https://cloud.google.com/appengine/docs/standard/java/how-requests-are-handled).
+ * This endpoint is the second step in the OAuth 2 procedure.
+ * The purpose of this page is give a token that should be used for all consequent HTTP.
  */
-public class SmartHomeServlet implements HttpPage {
-    private static final Logger logger = LogUtil.getLogger();
-    public static final String ENDPOINT_URL = "api/assistant/google/smarthome";
+public class OAuth2TokenPage extends HttpJsonPage {
+    private static final int SECONDS_IN_DAY = 86400;
+    public static final String ENDPOINT_URL = "api/assistant/google/auth/token";
 
-    private SmartHomeImpl smartHome;
+    protected final String ACCESS_TOKEN = "SUPER-SECURE-TOKEN";
 
 
-    public SmartHomeServlet(SmartHomeImpl smartHome) {
-        this.smartHome = smartHome;
-    }
+    public OAuth2TokenPage(SmartHomeImpl smartHome) {}
 
 
     @Override
-    public void respond(
+    public DataNode jsonRespond(
             HttpPrintStream out,
             HttpHeader headers,
             Map<String, Object> session,
             Map<String, String> cookie,
-            Map<String, String> request) throws IOException {
+            Map<String, String> request) {
 
-        String body = IOUtil.readContentAsString(headers.getInputStream());
-        logger.fine("doPost, body = " + body);
+        // POST
 
-        try {
-            String response = smartHome.handleRequest(body, request).get();
+        out.setHeader("Access-Control-Allow-Origin", "*");
+        out.setHeader("Pragma", "no-cache");
 
-            out.setHeader("Content-Type", "application/json");
-            out.setHeader("Access-Control-Allow-Origin", "*");
-            out.setHeader("Pragma", "no-cache");
-            out.println(response);
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Was unable to handle SmartHome request.", e);
+        DataNode jsonRes = new DataNode(DataNode.DataType.Map);
+
+        if (OAuth2AuthPage.SECRET_CODE.equals(request.get("code"))) {
+            jsonRes.set("refresh_token", "123refresh");
+        } else {
+            out.setResponseStatusCode(400);
+            DataNode jsonErr = new DataNode(DataNode.DataType.Map);
+            jsonRes.set("error", "Invalid code value provided.");
+            return jsonErr;
         }
+
+        if ("authorization_code".equals(request.get("grant_type"))) {
+            jsonRes.set("refresh_token", "123refresh");
+        } else {
+            out.setResponseStatusCode(400);
+            DataNode jsonErr = new DataNode(DataNode.DataType.Map);
+            jsonRes.set("error", "Unsupported grant_type: " + request.containsKey("grant_type"));
+            return jsonErr;
+        }
+
+        jsonRes.set("access_token", ACCESS_TOKEN);
+        jsonRes.set("token_type", "bearer");
+        jsonRes.set("expires_in", SECONDS_IN_DAY);
+
+        return jsonRes;
     }
 }

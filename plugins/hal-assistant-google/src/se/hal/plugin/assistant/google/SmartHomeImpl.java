@@ -16,7 +16,6 @@
 
 package se.hal.plugin.assistant.google;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,27 +23,14 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.google.actions.api.smarthome.*;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.gson.Gson;
-import com.google.home.graph.v1.DeviceProto;
-import com.google.protobuf.Struct;
-import com.google.protobuf.util.JsonFormat;
-import se.hal.HalContext;
-import se.hal.plugin.assistant.google.endpoint.AuthServlet;
-import se.hal.plugin.assistant.google.endpoint.AuthTokenServlet;
-import se.hal.plugin.assistant.google.endpoint.SmartHomeServlet;
-import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
-import zutil.net.http.HttpServer;
 
 
 public class SmartHomeImpl extends SmartHomeApp {
     private static final Logger logger = LogUtil.getLogger();
 
-    private HttpServer httpServer;
 
-
-    public SmartHomeImpl(int port, File cert, String certPass, String googleCredentials) {
+    public SmartHomeImpl(String googleCredentials) {
         /*try {
             GoogleCredentials credentials = GoogleCredentials.fromStream(FileUtil.getInputStream(googleCredentials));
             this.setCredentials(credentials);
@@ -52,13 +38,6 @@ public class SmartHomeImpl extends SmartHomeApp {
             logger.severe("Could not load google credentials");
             throw new RuntimeException(e);
         }*/
-
-        //httpServer = new HttpServer(port, cert, certPass);
-        httpServer = new HttpServer(port);
-        httpServer.setPage(AuthServlet.ENDPOINT_URL, new AuthServlet(this));
-        httpServer.setPage(AuthTokenServlet.ENDPOINT_URL, new AuthTokenServlet(this));
-        httpServer.setPage(SmartHomeServlet.ENDPOINT_URL, new SmartHomeServlet(this));
-        httpServer.start();
     }
 
 

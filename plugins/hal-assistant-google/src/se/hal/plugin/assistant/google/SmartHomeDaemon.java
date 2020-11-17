@@ -26,8 +26,11 @@ package se.hal.plugin.assistant.google;
 
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
-import zutil.io.file.FileUtil;
+import se.hal.plugin.assistant.google.endpoint.OAuth2AuthPage;
+import se.hal.plugin.assistant.google.endpoint.OAuth2TokenPage;
+import se.hal.plugin.assistant.google.endpoint.SmartHomePage;
 import zutil.log.LogUtil;
+import zutil.net.http.HttpServer;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Logger;
@@ -41,6 +44,7 @@ public class SmartHomeDaemon implements HalDaemon {
     private static final String PARAM_KEYSTORE_PASSWORD = "assistant.google.keystore_psw";
     private static final String PARAM_GOOGLE_CREDENTIALS = "assistant.google.credentials";
 
+    private HttpServer httpServer;
     private SmartHomeImpl smartHome;
 
     @Override
@@ -54,11 +58,14 @@ public class SmartHomeDaemon implements HalDaemon {
             }
 
             smartHome = new SmartHomeImpl(
-                    HalContext.getIntegerProperty(PARAM_PORT),
-                    FileUtil.find(HalContext.RESOURCE_ROOT + "/" + HalContext.getStringProperty(PARAM_KEYSTORE_PATH)),
-                    HalContext.getStringProperty(PARAM_KEYSTORE_PASSWORD),
                     HalContext.RESOURCE_ROOT + "/" + HalContext.getStringProperty(PARAM_GOOGLE_CREDENTIALS)
             );
+
+            httpServer = new HttpServer(HalContext.getIntegerProperty(PARAM_PORT));
+            httpServer.setPage(OAuth2AuthPage.ENDPOINT_URL, new OAuth2AuthPage(smartHome));
+            httpServer.setPage(OAuth2TokenPage.ENDPOINT_URL, new OAuth2TokenPage(smartHome));
+            httpServer.setPage(SmartHomePage.ENDPOINT_URL, new SmartHomePage(smartHome));
+            httpServer.start();
         }
     }
 

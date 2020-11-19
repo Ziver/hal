@@ -62,7 +62,8 @@ public class SmartHomeDaemon implements HalDaemon {
             );
 
             httpServer = new HttpServer(HalContext.getIntegerProperty(PARAM_PORT));
-            httpServer.setPage(OAuth2AuthPage.ENDPOINT_URL, new OAuth2AuthPage(smartHome));
+            httpServer.setPage(OAuth2AuthPage.ENDPOINT_URL, new OAuth2AuthPage(smartHome,
+                    "https://oauth-redirect.googleusercontent.com/r/optimal-comfort-93608"));
             httpServer.setPage(OAuth2TokenPage.ENDPOINT_URL, new OAuth2TokenPage(smartHome));
             httpServer.setPage(SmartHomePage.ENDPOINT_URL, new SmartHomePage(smartHome));
             httpServer.start();

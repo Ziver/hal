@@ -26,12 +26,14 @@ package se.hal.plugin.assistant.google;
 
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
-import se.hal.plugin.assistant.google.endpoint.OAuth2AuthPage;
-import se.hal.plugin.assistant.google.endpoint.OAuth2TokenPage;
 import se.hal.plugin.assistant.google.endpoint.SmartHomePage;
 import zutil.log.LogUtil;
 import zutil.net.http.HttpServer;
+import zutil.net.http.page.oauth.OAuth2AuthorizationPage;
+import zutil.net.http.page.oauth.OAuth2Registry;
+import zutil.net.http.page.oauth.OAuth2TokenPage;
 
+import java.util.Date;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Logger;
 
@@ -39,32 +41,33 @@ import java.util.logging.Logger;
 public class SmartHomeDaemon implements HalDaemon {
     private static final Logger logger = LogUtil.getLogger();
 
-    private static final String PARAM_PORT = "assistant.google.port";
-    private static final String PARAM_KEYSTORE_PATH = "assistant.google.keystore";
-    private static final String PARAM_KEYSTORE_PASSWORD = "assistant.google.keystore_psw";
-    private static final String PARAM_GOOGLE_CREDENTIALS = "assistant.google.credentials";
+    public static final String ENDPOINT_AUTH = "api/assistant/google/auth/token";
+    public static final String ENDPOINT_TOKEN = "api/assistant/google/auth/authorize";
 
-    private HttpServer httpServer;
+    private static final String PARAM_PORT = "assistant.google.port";
+    private static final String PARAM_CLIENT_ID = "assistant.google.client_id";
+
     private SmartHomeImpl smartHome;
+    private OAuth2Registry oAuth2Registry;
+    private HttpServer httpServer;
 
     @Override
     public void initiate(ScheduledExecutorService executor) {
         if (smartHome == null) {
             if (!HalContext.containsProperty(PARAM_PORT) ||
-                    !HalContext.containsProperty(PARAM_KEYSTORE_PATH) ||
-                    !HalContext.containsProperty(PARAM_KEYSTORE_PASSWORD) ||
-                    !HalContext.containsProperty(PARAM_GOOGLE_CREDENTIALS)) {
+                    !HalContext.containsProperty(PARAM_CLIENT_ID)) {
                 logger.severe("Missing configuration, abort initializations.");
+                return;
             }
 
-            smartHome = new SmartHomeImpl(
-                    HalContext.RESOURCE_ROOT + "/" + HalContext.getStringProperty(PARAM_GOOGLE_CREDENTIALS)
-            );
+            smartHome = new SmartHomeImpl("token", new Date(System.currentTimeMillis() + 24*60*60*1000));
+
+            oAuth2Registry = new OAuth2Registry();
+            oAuth2Registry.addWhitelist(HalContext.getStringProperty(PARAM_CLIENT_ID));
 
             httpServer = new HttpServer(HalContext.getIntegerProperty(PARAM_PORT));
-            httpServer.setPage(OAuth2AuthPage.ENDPOINT_URL, new OAuth2AuthPage(smartHome,
-                    "https://oauth-redirect.googleusercontent.com/r/optimal-comfort-93608"));
-            httpServer.setPage(OAuth2TokenPage.ENDPOINT_URL, new OAuth2TokenPage(smartHome));
+            httpServer.setPage(ENDPOINT_AUTH, new OAuth2AuthorizationPage(oAuth2Registry));
+            httpServer.setPage(ENDPOINT_TOKEN, new OAuth2TokenPage(oAuth2Registry));
             httpServer.setPage(SmartHomePage.ENDPOINT_URL, new SmartHomePage(smartHome));
             httpServer.start();
         }

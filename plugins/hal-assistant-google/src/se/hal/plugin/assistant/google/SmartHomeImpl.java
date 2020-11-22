@@ -16,13 +16,12 @@
 
 package se.hal.plugin.assistant.google;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 import com.google.actions.api.smarthome.*;
+import com.google.auth.oauth2.AccessToken;
+import com.google.auth.oauth2.GoogleCredentials;
 import zutil.log.LogUtil;
 
 
@@ -30,9 +29,9 @@ public class SmartHomeImpl extends SmartHomeApp {
     private static final Logger logger = LogUtil.getLogger();
 
 
-    public SmartHomeImpl(String googleCredentials) {
-        /*try {
-            GoogleCredentials credentials = GoogleCredentials.fromStream(FileUtil.getInputStream(googleCredentials));
+    public SmartHomeImpl(String accessToken, Date accessExpirationTime) {
+/*        try {
+            GoogleCredentials credentials = GoogleCredentials.create(new AccessToken(accessToken, accessExpirationTime));
             this.setCredentials(credentials);
         } catch (Exception e) {
             logger.severe("Could not load google credentials");
@@ -43,6 +42,8 @@ public class SmartHomeImpl extends SmartHomeApp {
 
     @Override
     public SyncResponse onSync(SyncRequest syncRequest, Map<?, ?> headers) {
+        logger.fine("Received sync request.");
+
         SyncResponse res = new SyncResponse();
         res.setRequestId(syncRequest.requestId);
         res.setPayload(new SyncResponse.Payload());
@@ -100,6 +101,8 @@ public class SmartHomeImpl extends SmartHomeApp {
 
     @Override
     public QueryResponse onQuery(QueryRequest queryRequest, Map<?, ?> headers) {
+        logger.fine("Received query request.");
+
         QueryRequest.Inputs.Payload.Device[] devices = ((QueryRequest.Inputs) queryRequest.getInputs()[0]).payload.devices;
         QueryResponse res = new QueryResponse();
         res.setRequestId(queryRequest.requestId);
@@ -125,6 +128,8 @@ public class SmartHomeImpl extends SmartHomeApp {
 
     @Override
     public ExecuteResponse onExecute(ExecuteRequest executeRequest, Map<?, ?> headers) {
+        logger.fine("Received execute request.");
+
         ExecuteResponse res = new ExecuteResponse();
 
         List<ExecuteResponse.Payload.Commands> commandsResponse = new ArrayList<>();
@@ -218,6 +223,6 @@ public class SmartHomeImpl extends SmartHomeApp {
 
     @Override
     public void onDisconnect(DisconnectRequest disconnectRequest, Map<?, ?> headers) {
-
+        logger.fine("Received disconnect request.");
     }
 }

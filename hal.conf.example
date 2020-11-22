@@ -36,3 +36,4 @@ powerchallenge.sync_port=6666
 
 ## Google Assistant
 assistant.google.port=8081
+assistant.google.client_id=https://oauth-redirect.googleusercontent.com/r/optimal-comfort-XXXXX

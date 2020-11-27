@@ -17,26 +17,35 @@
 package se.hal.plugin.assistant.google;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.actions.api.smarthome.*;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import zutil.log.LogUtil;
+import zutil.net.http.page.oauth.OAuth2Registry.TokenRegistrationListener;
 
 
-public class SmartHomeImpl extends SmartHomeApp {
+public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationListener {
     private static final Logger logger = LogUtil.getLogger();
 
 
-    public SmartHomeImpl(String accessToken, Date accessExpirationTime) {
-/*        try {
-            GoogleCredentials credentials = GoogleCredentials.create(new AccessToken(accessToken, accessExpirationTime));
+    public SmartHomeImpl() { }
+
+
+    @Override
+    public void onTokenRegistration(String clientId, String token, long timeoutMillis) {
+        try {
+            GoogleCredentials credentials = GoogleCredentials.create(new AccessToken(
+                    token,
+                    new Date(System.currentTimeMillis() + timeoutMillis)
+            ));
             this.setCredentials(credentials);
+            logger.fine("New OAuth2 token registered.");
         } catch (Exception e) {
-            logger.severe("Could not load google credentials");
-            throw new RuntimeException(e);
-        }*/
+            logger.log(Level.SEVERE, "Could not load google credentials", e);
+        }
     }
 
 

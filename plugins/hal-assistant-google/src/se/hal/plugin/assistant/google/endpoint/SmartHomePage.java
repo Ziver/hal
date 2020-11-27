@@ -61,7 +61,6 @@ import zutil.net.http.HttpPrintStream;
  */
 public class SmartHomePage implements HttpPage {
     private static final Logger logger = LogUtil.getLogger();
-    public static final String ENDPOINT_URL = "api/assistant/google/smarthome";
 
     private SmartHomeImpl smartHome;
 

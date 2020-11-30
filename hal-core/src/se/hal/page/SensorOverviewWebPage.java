@@ -13,6 +13,7 @@ import zutil.parser.Templator;
 
 import java.sql.PreparedStatement;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -53,8 +54,8 @@ public class SensorOverviewWebPage extends HalWebPage {
             tmpl.set("history", history);
             return tmpl;
         } else {
-            Sensor[] sensors = Sensor.getLocalSensors(db).toArray(new Sensor[0]);
-            Arrays.sort(sensors, DeviceNameComparator.getInstance());
+            List<Sensor> sensors = Sensor.getLocalSensors(db);
+            Collections.sort(sensors, DeviceNameComparator.getInstance());
 
             Templator tmpl = new Templator(FileUtil.find(OVERVIEW_TEMPLATE));
             tmpl.set("sensors", sensors);

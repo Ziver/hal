@@ -16,6 +16,7 @@ import zutil.parser.Templator;
 
 import java.sql.PreparedStatement;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -76,8 +77,8 @@ public class EventOverviewWebPage extends HalWebPage {
             return tmpl;
         }
         else {
-            Event[] events = Event.getLocalEvents(db).toArray(new Event[0]);
-            Arrays.sort(events, DeviceNameComparator.getInstance());
+            List<Event> events = Event.getLocalEvents(db);
+            Collections.sort(events, DeviceNameComparator.getInstance());
 
             Templator tmpl = new Templator(FileUtil.find(OVERVIEW_TEMPLATE));
             tmpl.set("events", events);

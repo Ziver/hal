@@ -22,25 +22,10 @@
  * THE SOFTWARE.
  */
 
-/*
- * Copyright 2019 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package se.hal.plugin.assistant.google.endpoint;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -55,9 +40,7 @@ import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
 
 /**
- * Handles request received via HTTP POST and delegates it to your Actions app. See: [Request
- * handling in Google App
- * Engine](https://cloud.google.com/appengine/docs/standard/java/how-requests-are-handled).
+ * Handles Google SMartHome request received via HTTP POST.
  */
 public class SmartHomePage implements HttpPage {
     private static final Logger logger = LogUtil.getLogger();
@@ -78,7 +61,11 @@ public class SmartHomePage implements HttpPage {
             Map<String, String> cookie,
             Map<String, String> request) throws IOException {
 
-        String body = IOUtil.readContentAsString(headers.getInputStream());
+        int contentLength = 0;
+        if (headers.containsHeader(HttpHeader.HEADER_CONTENT_LENGTH))
+            contentLength = Integer.parseInt(headers.getHeader(HttpHeader.HEADER_CONTENT_LENGTH));
+
+        String body = IOUtil.readContentAsString(headers.getInputStream(), contentLength);
         logger.fine("doPost, body = " + body);
 
         try {
@@ -87,6 +74,7 @@ public class SmartHomePage implements HttpPage {
             out.setHeader("Content-Type", "application/json");
             out.setHeader("Access-Control-Allow-Origin", "*");
             out.setHeader("Pragma", "no-cache");
+            logger.fine("doPost, response body = " + response);
             out.println(response);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Was unable to handle SmartHome request.", e);

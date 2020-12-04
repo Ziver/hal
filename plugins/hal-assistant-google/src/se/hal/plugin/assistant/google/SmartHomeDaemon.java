@@ -26,7 +26,6 @@ package se.hal.plugin.assistant.google;
 
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
-import se.hal.plugin.assistant.google.endpoint.SmartHomePage;
 import zutil.log.LogUtil;
 import zutil.net.http.HttpServer;
 import zutil.net.http.page.oauth.OAuth2AuthorizationPage;

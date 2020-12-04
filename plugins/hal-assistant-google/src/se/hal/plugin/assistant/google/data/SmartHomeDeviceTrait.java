@@ -48,6 +48,11 @@
 
 package se.hal.plugin.assistant.google.data;
 
+import se.hal.struct.Sensor;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Enum for https://developers.google.com/assistant/smarthome/traits
  */
@@ -101,5 +106,33 @@ public enum SmartHomeDeviceTrait {
 
     public String getString() {
         return typeId;
+    }
+
+
+    public static SmartHomeDeviceTrait[] getTraits(Sensor sensor) {
+        switch (sensor.getDeviceData().getClass().getName()) {
+            case "se.hal.struct.devicedata.DimmerEventData":
+            case "se.hal.struct.devicedata.SwitchEventData":
+                return new SmartHomeDeviceTrait[]{OnOff};
+
+            case "se.hal.struct.devicedata.PowerConsumptionSensorData":
+            case "se.hal.struct.devicedata.TemperatureSensorData":
+            case "se.hal.struct.devicedata.HumiditySensorData":
+            case "se.hal.struct.devicedata.LightSensorData":
+                return new SmartHomeDeviceTrait[]{SensorState};
+
+            default:
+                throw new IllegalArgumentException("Unregistered Sensor device data: " + sensor.getDeviceData());
+        }
+    }
+
+    public static List<String> getTraitIds(Sensor sensor) {
+        List<String> list = new ArrayList<>();
+
+        for (SmartHomeDeviceTrait trait : getTraits(sensor)) {
+            list.add(trait.toString());
+        }
+
+        return list;
     }
 }

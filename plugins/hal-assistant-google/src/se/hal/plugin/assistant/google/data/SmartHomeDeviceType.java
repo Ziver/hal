@@ -48,6 +48,8 @@
 
 package se.hal.plugin.assistant.google.data;
 
+import se.hal.struct.Sensor;
+
 /**
  * Enum for https://developers.google.com/assistant/smarthome/types
  */
@@ -71,7 +73,7 @@ public enum SmartHomeDeviceType {
     CURTAIN("action.devices.types.CURTAIN"),
     DEHUMIDIFIER("action.devices.types.DEHUMIDIFIER"),
     DEHYDRATOR("action.devices.types.DEHYDRATOR"),
-    DISHWASHERv("action.devices.types.DISHWASHER"),
+    DISHWASHER("action.devices.types.DISHWASHER"),
     DOOR("action.devices.types.DOOR"),
     DRAWER("action.devices.types.DRAWER"),
     DRYER("action.devices.types.DRYER"),
@@ -141,5 +143,23 @@ public enum SmartHomeDeviceType {
 
     public String getString() {
         return typeId;
+    }
+
+
+    public static SmartHomeDeviceType getType(Sensor sensor) {
+        switch (sensor.getDeviceData().getClass().getName()) {
+            case "se.hal.struct.devicedata.DimmerEventData":
+            case "se.hal.struct.devicedata.SwitchEventData":
+                return LIGHT;
+
+            case "se.hal.struct.devicedata.PowerConsumptionSensorData":
+            case "se.hal.struct.devicedata.TemperatureSensorData":
+            case "se.hal.struct.devicedata.HumiditySensorData":
+            case "se.hal.struct.devicedata.LightSensorData":
+                return SENSOR;
+
+            default:
+                throw new IllegalArgumentException("Unregistered Sensor device data: " + sensor.getDeviceData());
+        }
     }
 }

@@ -16,6 +16,7 @@
 
 package se.hal.plugin.assistant.google;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,13 +24,19 @@ import java.util.logging.Logger;
 import com.google.actions.api.smarthome.*;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.home.graph.v1.DeviceProto;
+import se.hal.HalContext;
+import se.hal.plugin.assistant.google.data.SmartHomeDeviceType;
+import se.hal.struct.Sensor;
+import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.net.http.page.oauth.OAuth2Registry.TokenRegistrationListener;
-
+import se.hal.plugin.assistant.google.data.SmartHomeDeviceTrait;
+import se.hal.plugin.assistant.google.data.SmartHomeDeviceType;
 
 public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationListener {
     private static final Logger logger = LogUtil.getLogger();
-
+    private static final String AGENT_USER_ID = "Hal-" + (int)(Math.random()*10000);
 
     public SmartHomeImpl() { }
 
@@ -57,30 +64,39 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
         res.setRequestId(syncRequest.requestId);
         res.setPayload(new SyncResponse.Payload());
 
-        int numOfDevices = 0;
-        res.payload.devices = new SyncResponse.Payload.Device[numOfDevices];
-/*        for (int i = 0; i < numOfDevices; i++) {
+        List<Sensor> sensors = Collections.EMPTY_LIST;
+
+        try {
+            DBConnection db = HalContext.getDB();
+            sensors = Sensor.getLocalSensors(db);
+        } catch (SQLException e) {
+            logger.log(Level.WARNING, "Unable to retrieve sensor list.", e);
+        }
+
+        res.payload.agentUserId = AGENT_USER_ID;
+        res.payload.devices = new SyncResponse.Payload.Device[sensors.size()];
+        for (int i = 0; i < res.payload.devices.length; i++) {
+            Sensor sensor = sensors.get(i);
+
             SyncResponse.Payload.Device.Builder deviceBuilder =
                     new SyncResponse.Payload.Device.Builder()
-                            .setId(device.getId())
-                            .setType((String) device.get("type"))
-                            .setTraits((List<String>) device.get("traits"))
+                            .setId("Sensor-" + sensor.getId())
+                            .setType(SmartHomeDeviceType.getType(sensor).toString())
+                            .setTraits(SmartHomeDeviceTrait.getTraitIds(sensor))
                             .setName(
                                     DeviceProto.DeviceNames.newBuilder()
-                                            .addAllDefaultNames((List<String>) device.get("defaultNames"))
-                                            .setName((String) device.get("name"))
-                                            .addAllNicknames((List<String>) device.get("nicknames"))
+                                            .setName(sensor.getName())
                                             .build())
-                            .setWillReportState((Boolean) device.get("willReportState"))
-                            .setRoomHint((String) device.get("roomHint"))
+                            .setWillReportState(true)
+                            //.setRoomHint(sensor.getRoom().getName())
                             .setDeviceInfo(
                                     DeviceProto.DeviceInfo.newBuilder()
-                                            .setManufacturer((String) device.get("manufacturer"))
-                                            .setModel((String) device.get("model"))
-                                            .setHwVersion((String) device.get("hwVersion"))
-                                            .setSwVersion((String) device.get("swVersion"))
+                                            //.setManufacturer((String) device.get("manufacturer"))
+                                            //.setModel((String) device.get("model"))
+                                            //.setHwVersion((String) device.get("hwVersion"))
+                                            //.setSwVersion((String) device.get("swVersion"))
                                             .build());
-            if (device.contains("attributes")) {
+            /*if (device.contains("attributes")) {
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.putAll((Map<String, Object>) device.get("attributes"));
                 String attributesJson = new Gson().toJson(attributes);
@@ -91,20 +107,17 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
                     logger.error("FAILED TO BUILD");
                 }
                 deviceBuilder.setAttributes(attributeBuilder.build());
-            }
-            if (device.contains("customData")) {
+            }*/
+            /*if (device.contains("customData")) {
                 Map<String, Object> customData = new HashMap<>();
                 customData.putAll((Map<String, Object>) device.get("customData"));
 
                 String customDataJson = new Gson().toJson(customData);
                 deviceBuilder.setCustomData(customDataJson);
-            }
-            if (device.contains("otherDeviceIds")) {
-                deviceBuilder.setOtherDeviceIds((List) device.get("otherDeviceIds"));
-            }
+            }*/
             res.payload.devices[i] = deviceBuilder.build();
         }
-*/
+
         return res;
     }
 

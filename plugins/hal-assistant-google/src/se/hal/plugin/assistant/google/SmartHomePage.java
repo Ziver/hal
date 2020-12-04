@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.assistant.google.endpoint;
+package se.hal.plugin.assistant.google;
 
 import java.io.IOException;
 import java.io.InputStream;

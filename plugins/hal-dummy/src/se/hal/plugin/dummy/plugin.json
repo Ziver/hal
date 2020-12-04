@@ -1,0 +1,9 @@
+{
+    "version": 0.1,
+    "name": "Hal-Dummy Devices",
+    "description": "Dummy devices with simulated data, can be used for demo or testing purposes.",
+    "interfaces": [
+        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.dummy.DummyTemperatureSensor"},
+        {"se.hal.intf.HalEventConfig":  "se.hal.plugin.dummy.DummySwitchEvent"}
+    ]
+}

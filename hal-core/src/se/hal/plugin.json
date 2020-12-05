@@ -1,10 +1,10 @@
 {
 	"version": 1.0,
-	"name": "Hal Core",
+	"name": "Hal-Core",
+	"description": "Plugin contains core logic for running Hal.",
 	"interfaces": [
         {"se.hal.intf.HalDaemon": "se.hal.daemon.SensorDataAggregatorDaemon"},
         {"se.hal.intf.HalDaemon": "se.hal.daemon.SensorDataCleanupDaemon"},
-
 
 		{"se.hal.intf.HalJsonPage": "se.hal.page.MapJsonPage"},
 		{"se.hal.intf.HalJsonPage": "se.hal.page.SensorJsonPage"},

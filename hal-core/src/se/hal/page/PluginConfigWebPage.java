@@ -7,14 +7,9 @@ import se.hal.intf.HalWebPage;
 import se.hal.page.HalAlertManager.AlertLevel;
 import se.hal.page.HalAlertManager.AlertTTL;
 import se.hal.page.HalAlertManager.HalAlert;
-import se.hal.struct.devicedata.SwitchEventData;
-import zutil.ObjectUtil;
-import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
-import zutil.plugin.PluginManager;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class PluginConfigWebPage extends HalWebPage {
@@ -35,7 +30,7 @@ public class PluginConfigWebPage extends HalWebPage {
 
         if (request.containsKey("action")) {
             String name = request.get("action_id");
-            HalServer.setPluginEnabled(name,
+            HalServer.enablePlugin(name,
                     (request.containsKey("enabled") && "on".equals(request.get("enabled"))));
 
             HalAlertManager.getInstance().addAlert(new HalAlert(
@@ -43,7 +38,7 @@ public class PluginConfigWebPage extends HalWebPage {
         }
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
-        tmpl.set("plugins", HalServer.getPlugins());
+        tmpl.set("plugins", HalServer.getAllPlugins());
         tmpl.set("controllers", ControllerManager.getInstance().getControllers());
         return tmpl;
     }

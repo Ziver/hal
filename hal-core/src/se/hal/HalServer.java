@@ -18,7 +18,6 @@ import zutil.net.http.page.HttpRedirectPage;
 import zutil.plugin.PluginData;
 import zutil.plugin.PluginManager;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -42,7 +41,7 @@ public class HalServer {
 
 
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         try {
             // init logging
             LogUtil.readConfiguration("logging.properties");
@@ -61,10 +60,10 @@ public class HalServer {
             pluginManager = new PluginManager();
 
             // Disable plugins based on settings
-            for (PluginData plugin : getPlugins()) {
+            for (PluginData plugin : getAllPlugins()) {
                 PluginConfig pluginConfig = PluginConfig.getPluginConfig(db, plugin.getName());
 
-                if (pluginConfig != null && !pluginConfig.isEnabled()) {
+                if (pluginConfig != null && !pluginConfig.isEnabled() && !plugin.getName().equals("Hal-Core")) {
                     logger.info("Disabling plugin '" + plugin.getName() + "'.");
                     plugin.setEnabled(false);
                 }
@@ -138,7 +137,10 @@ public class HalServer {
     }
 
 
-    public static void setPluginEnabled(String name, boolean enabled) throws SQLException {
+    public static void enablePlugin(String name, boolean enabled) throws SQLException {
+        if (name.equals("Hal-Core"))
+            throw new IllegalArgumentException("Hal-Core cannot be disabled as it is critical component of Hal.");
+
         DBConnection db = HalContext.getDB();
         PluginConfig pluginConfig = PluginConfig.getPluginConfig(db, name);
 
@@ -152,8 +154,12 @@ public class HalServer {
         pluginConfig.save(db);
     }
 
-    public static List<PluginData> getPlugins() {
+    public static List<PluginData> getEnabledPlugins() {
         return pluginManager.toArray();
+    }
+
+    public static List<PluginData> getAllPlugins() {
+        return pluginManager.toArrayAll();
     }
 
 

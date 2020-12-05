@@ -66,15 +66,15 @@ public class SmartHomePage implements HttpPage {
             contentLength = Integer.parseInt(headers.getHeader(HttpHeader.HEADER_CONTENT_LENGTH));
 
         String body = IOUtil.readContentAsString(headers.getInputStream(), contentLength);
-        logger.fine("doPost, body = " + body);
+        logger.finest("Request body = " + body);
 
         try {
             String response = smartHome.handleRequest(body, request).get();
+            logger.finest("Response body = " + response);
 
             out.setHeader("Content-Type", "application/json");
             out.setHeader("Access-Control-Allow-Origin", "*");
             out.setHeader("Pragma", "no-cache");
-            logger.fine("doPost, response body = " + response);
             out.println(response);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Was unable to handle SmartHome request.", e);

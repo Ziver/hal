@@ -104,7 +104,7 @@ public enum SmartHomeDeviceTrait {
     }
 
 
-    public String getString() {
+    public String toString() {
         return typeId;
     }
 
@@ -116,10 +116,12 @@ public enum SmartHomeDeviceTrait {
                 return new SmartHomeDeviceTrait[]{OnOff};
 
             case "se.hal.struct.devicedata.PowerConsumptionSensorData":
-            case "se.hal.struct.devicedata.TemperatureSensorData":
             case "se.hal.struct.devicedata.HumiditySensorData":
             case "se.hal.struct.devicedata.LightSensorData":
                 return new SmartHomeDeviceTrait[]{SensorState};
+
+            case "se.hal.struct.devicedata.TemperatureSensorData":
+                return new SmartHomeDeviceTrait[]{TemperatureSetting};
 
             default:
                 throw new IllegalArgumentException("Unregistered Sensor device data: " + sensor.getDeviceData());

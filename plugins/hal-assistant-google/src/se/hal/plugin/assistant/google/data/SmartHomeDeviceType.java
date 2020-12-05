@@ -141,7 +141,7 @@ public enum SmartHomeDeviceType {
     }
 
 
-    public String getString() {
+    public String toString() {
         return typeId;
     }
 

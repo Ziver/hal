@@ -55,7 +55,11 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
         }
     }
 
-
+    /**
+     * https://developers.google.com/assistant/smarthome/reference/intent/sync
+     *
+     * TODO: https://developers.google.com/assistant/smarthome/traits/temperaturesetting
+     */
     @Override
     public SyncResponse onSync(SyncRequest syncRequest, Map<?, ?> headers) {
         logger.fine("Received sync request.");
@@ -121,30 +125,62 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
         return res;
     }
 
+    /**
+     * https://developers.google.com/assistant/smarthome/reference/intent/query
+     */
     @Override
     public QueryResponse onQuery(QueryRequest queryRequest, Map<?, ?> headers) {
         logger.fine("Received query request.");
 
-        QueryRequest.Inputs.Payload.Device[] devices = ((QueryRequest.Inputs) queryRequest.getInputs()[0]).payload.devices;
+        DBConnection db = HalContext.getDB();
+
         QueryResponse res = new QueryResponse();
         res.setRequestId(queryRequest.requestId);
         res.setPayload(new QueryResponse.Payload());
-/*
         Map<String, Map<String, Object>> deviceStates = new HashMap<>();
-        for (QueryRequest.Inputs.Payload.Device device : devices) {
-            try {
-                Map<String, Object> deviceState = database.getState(userId, device.id);
-                deviceState.put("status", "SUCCESS");
-                deviceStates.put(device.id, deviceState);
-            } catch (Exception e) {
-                logger.error("QUERY FAILED: {}", e);
-                Map<String, Object> failedDevice = new HashMap<>();
-                failedDevice.put("status", "ERROR");
-                failedDevice.put("errorCode", "deviceOffline");
-                deviceStates.put(device.id, failedDevice);
+
+        for (SmartHomeRequest.RequestInputs input : queryRequest.getInputs()) {
+            if (!"action.devices.QUERY".equals(input.intent))
+                continue;
+
+            for (QueryRequest.Inputs.Payload.Device device : ((QueryRequest.Inputs) input).payload.devices) {
+                try {
+                    if (!device.getId().startsWith("Sensor-"))
+                        throw new IllegalArgumentException("Invalid device ID supplied: " + device.getId());
+
+                    long sensorId = Long.parseLong(device.getId().substring(7)); // Get the number in the id "Sensor-<number>"
+                    Sensor sensor = Sensor.getSensor(db, sensorId);
+
+                    Map<String, Object> deviceState = new HashMap<>();
+
+                    switch (sensor.getDeviceData().getClass().getName()) {
+                        case "se.hal.struct.devicedata.HumiditySensorData":
+                            deviceState.put("humidity", sensor.getDeviceData().getData());
+                            break;
+                        case "se.hal.struct.devicedata.LightSensorData":
+                            deviceState.put("light", sensor.getDeviceData().getData());
+                            break;
+                        case "se.hal.struct.devicedata.PowerConsumptionSensorData":
+                            deviceState.put("power", sensor.getDeviceData().getData());
+                            break;
+                        case "se.hal.struct.devicedata.TemperatureSensorData":
+                            deviceState.put("temperature", sensor.getDeviceData().getData());
+                            break;
+                    }
+
+                    deviceState.put("status", "SUCCESS");
+                    deviceStates.put(device.id, deviceState);
+                } catch (Exception e) {
+                    logger.log(Level.SEVERE, "Query request failed for sensor: " + device.getId(), e);
+                    Map<String, Object> failedDevice = new HashMap<>();
+                    failedDevice.put("status", "ERROR");
+                    failedDevice.put("errorCode", "deviceOffline");
+                    deviceStates.put(device.id, failedDevice);
+                }
             }
         }
-        res.payload.setDevices(deviceStates);*/
+
+        res.payload.setDevices(deviceStates);
         return res;
     }
 

@@ -1,7 +1,6 @@
 package se.hal.plugin.dummy;
 
 import se.hal.intf.*;
-import se.hal.struct.devicedata.TemperatureSensorData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.concurrent.*;
 
 
 public class DummyController implements HalSensorController, HalEventController, Runnable {
-    private List registeredDevices = new ArrayList();
+    private List<DummyDevice> registeredDevices = new ArrayList();
     private ScheduledExecutorService executor;
     private HalSensorReportListener sensorListener;
     private HalEventReportListener eventListener;
@@ -28,15 +27,15 @@ public class DummyController implements HalSensorController, HalEventController,
     @Override
     public void run() {
         if (registeredDevices != null) {
-            for (Object device : registeredDevices) {
-                if (sensorListener != null && device instanceof DummyTemperatureSensor) {
-                    sensorListener.reportReceived(
-                            (HalSensorConfig) device,
-                            new TemperatureSensorData(
-                                    (int)(Math.random()*30),
-                                    System.currentTimeMillis()
-                            )
-                    );
+            for (DummyDevice device : registeredDevices) {
+                if (sensorListener != null) {
+                    HalDeviceData data = device.generateData();
+
+                    if (data instanceof HalSensorData) {
+                        sensorListener.reportReceived((HalSensorConfig) device, (HalSensorData) data);
+                    } else if (data instanceof HalEventData) {
+                        eventListener.reportReceived((HalEventConfig) device, (HalEventData) data);
+                    }
                 }
             }
         }
@@ -44,15 +43,15 @@ public class DummyController implements HalSensorController, HalEventController,
 
     @Override
     public void register(HalSensorConfig sensorConfig) {
-        if (sensorConfig instanceof DummyTemperatureSensor) {
-            registeredDevices.add(sensorConfig);
+        if (sensorConfig instanceof DummyDevice) {
+            registeredDevices.add((DummyDevice) sensorConfig);
         }
     }
 
     @Override
     public void register(HalEventConfig eventConfig) {
-        if (eventConfig instanceof DummySwitchEvent) {
-            registeredDevices.add(eventConfig);
+        if (eventConfig instanceof DummyDevice) {
+            registeredDevices.add((DummyDevice) eventConfig);
         }
     }
 

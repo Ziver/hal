@@ -25,14 +25,16 @@ import com.google.actions.api.smarthome.*;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.home.graph.v1.DeviceProto;
+import org.json.JSONObject;
 import se.hal.HalContext;
-import se.hal.plugin.assistant.google.data.SmartHomeDeviceType;
+import se.hal.plugin.assistant.google.trait.DeviceTrait;
+import se.hal.plugin.assistant.google.trait.DeviceTraitFactory;
+import se.hal.plugin.assistant.google.type.DeviceType;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.net.http.page.oauth.OAuth2Registry.TokenRegistrationListener;
-import se.hal.plugin.assistant.google.data.SmartHomeDeviceTrait;
-import se.hal.plugin.assistant.google.data.SmartHomeDeviceType;
+
 
 public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationListener {
     private static final Logger logger = LogUtil.getLogger();
@@ -81,12 +83,16 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
         res.payload.devices = new SyncResponse.Payload.Device[sensors.size()];
         for (int i = 0; i < res.payload.devices.length; i++) {
             Sensor sensor = sensors.get(i);
+            DeviceType type = DeviceType.getType(sensor);
+            DeviceTrait[] traits = DeviceTraitFactory.getTraits(sensor);
+
+            //  Generate payload
 
             SyncResponse.Payload.Device.Builder deviceBuilder =
                     new SyncResponse.Payload.Device.Builder()
                             .setId("Sensor-" + sensor.getId())
-                            .setType(SmartHomeDeviceType.getType(sensor).toString())
-                            .setTraits(SmartHomeDeviceTrait.getTraitIds(sensor))
+                            .setType(type.toString())
+                            .setTraits(DeviceTraitFactory.getTraitIds(traits))
                             .setName(
                                     DeviceProto.DeviceNames.newBuilder()
                                             .setName(sensor.getName())
@@ -100,21 +106,17 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
                                             //.setHwVersion((String) device.get("hwVersion"))
                                             //.setSwVersion((String) device.get("swVersion"))
                                             .build());
-            /*if (device.contains("attributes")) {
-                Map<String, Object> attributes = new HashMap<>();
-                attributes.putAll((Map<String, Object>) device.get("attributes"));
-                String attributesJson = new Gson().toJson(attributes);
-                Struct.Builder attributeBuilder = Struct.newBuilder();
-                try {
-                    JsonFormat.parser().ignoringUnknownFields().merge(attributesJson, attributeBuilder);
-                } catch (Exception e) {
-                    logger.error("FAILED TO BUILD");
+
+            JSONObject attribJson = new JSONObject();
+            for (DeviceTrait trait : traits) {
+                for (Map.Entry<String,Object> entry : trait.generateSyncResponse(sensor.getDeviceConfig()).entrySet()) {
+                    attribJson.put(entry.getKey(), entry.getValue());
                 }
-                deviceBuilder.setAttributes(attributeBuilder.build());
-            }*/
+            }
+            deviceBuilder.setAttributes(attribJson);
+
             /*if (device.contains("customData")) {
                 Map<String, Object> customData = new HashMap<>();
-                customData.putAll((Map<String, Object>) device.get("customData"));
 
                 String customDataJson = new Gson().toJson(customData);
                 deviceBuilder.setCustomData(customDataJson);
@@ -150,22 +152,12 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
 
                     long sensorId = Long.parseLong(device.getId().substring(7)); // Get the number in the id "Sensor-<number>"
                     Sensor sensor = Sensor.getSensor(db, sensorId);
+                    DeviceTrait[] traits = DeviceTraitFactory.getTraits(sensor);
 
                     Map<String, Object> deviceState = new HashMap<>();
 
-                    switch (sensor.getDeviceData().getClass().getName()) {
-                        case "se.hal.struct.devicedata.HumiditySensorData":
-                            deviceState.put("humidity", sensor.getDeviceData().getData());
-                            break;
-                        case "se.hal.struct.devicedata.LightSensorData":
-                            deviceState.put("light", sensor.getDeviceData().getData());
-                            break;
-                        case "se.hal.struct.devicedata.PowerConsumptionSensorData":
-                            deviceState.put("power", sensor.getDeviceData().getData());
-                            break;
-                        case "se.hal.struct.devicedata.TemperatureSensorData":
-                            deviceState.put("temperature", sensor.getDeviceData().getData());
-                            break;
+                    for (DeviceTrait trait : traits) {
+                        deviceState.putAll(trait.generateQueryResponse(sensor.getDeviceData()));
                     }
 
                     deviceState.put("status", "SUCCESS");

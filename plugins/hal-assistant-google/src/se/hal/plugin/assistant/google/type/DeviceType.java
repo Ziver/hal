@@ -46,14 +46,14 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.assistant.google.data;
+package se.hal.plugin.assistant.google.type;
 
 import se.hal.struct.Sensor;
 
 /**
  * Enum for https://developers.google.com/assistant/smarthome/types
  */
-public enum SmartHomeDeviceType {
+public enum DeviceType {
     AC_UNIT("action.devices.types.AC_UNIT"),
     AIRCOOLER("action.devices.types.AIRCOOLER"),
     AIRFRESHENER("action.devices.types.AIRFRESHENER"),
@@ -136,7 +136,7 @@ public enum SmartHomeDeviceType {
     private final String typeId;
 
 
-    private SmartHomeDeviceType(String typeId) {
+    private DeviceType(String typeId) {
         this.typeId = typeId;
     }
 
@@ -146,7 +146,7 @@ public enum SmartHomeDeviceType {
     }
 
 
-    public static SmartHomeDeviceType getType(Sensor sensor) {
+    public static DeviceType getType(Sensor sensor) {
         switch (sensor.getDeviceData().getClass().getName()) {
             case "se.hal.struct.devicedata.DimmerEventData":
             case "se.hal.struct.devicedata.SwitchEventData":

@@ -1,5 +1,6 @@
 package se.hal.plugin.dummy;
 
+import se.hal.HalServer;
 import se.hal.intf.*;
 
 import java.util.ArrayList;
@@ -7,9 +8,8 @@ import java.util.List;
 import java.util.concurrent.*;
 
 
-public class DummyController implements HalSensorController, HalEventController, Runnable {
+public class DummyController implements HalSensorController, HalEventController, Runnable, HalDaemon {
     private List<DummyDevice> registeredDevices = new ArrayList();
-    private ScheduledExecutorService executor;
     private HalSensorReportListener sensorListener;
     private HalEventReportListener eventListener;
 
@@ -19,54 +19,57 @@ public class DummyController implements HalSensorController, HalEventController,
 
     @Override
     public void initialize() {
-        executor = Executors.newScheduledThreadPool(1);
+        HalServer.registerDaemon(this);
+    }
+
+    @Override
+    public void initiate(ScheduledExecutorService executor) {
         executor.scheduleAtFixedRate(this, 0, 60, TimeUnit.SECONDS);
     }
 
-
     @Override
-    public void run() {
-        if (registeredDevices != null) {
+    public synchronized void run() {
+        try {
             for (DummyDevice device : registeredDevices) {
-                if (sensorListener != null) {
-                    HalDeviceData data = device.generateData();
+                HalDeviceData data = device.generateData();
 
-                    if (data instanceof HalSensorData) {
-                        sensorListener.reportReceived((HalSensorConfig) device, (HalSensorData) data);
-                    } else if (data instanceof HalEventData) {
-                        eventListener.reportReceived((HalEventConfig) device, (HalEventData) data);
-                    }
+                if (sensorListener != null && data instanceof HalSensorData) {
+                    sensorListener.reportReceived((HalSensorConfig) device, (HalSensorData) data);
+                } else if (eventListener != null && data instanceof HalEventData) {
+                    eventListener.reportReceived((HalEventConfig) device, (HalEventData) data);
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
-    public void register(HalSensorConfig sensorConfig) {
+    public synchronized void register(HalSensorConfig sensorConfig) {
         if (sensorConfig instanceof DummyDevice) {
             registeredDevices.add((DummyDevice) sensorConfig);
         }
     }
 
     @Override
-    public void register(HalEventConfig eventConfig) {
+    public synchronized void register(HalEventConfig eventConfig) {
         if (eventConfig instanceof DummyDevice) {
             registeredDevices.add((DummyDevice) eventConfig);
         }
     }
 
     @Override
-    public void deregister(HalSensorConfig sensorConfig) {
+    public synchronized void deregister(HalSensorConfig sensorConfig) {
         registeredDevices.remove(sensorConfig);
     }
 
     @Override
-    public void deregister(HalEventConfig eventConfig) {
+    public synchronized void deregister(HalEventConfig eventConfig) {
         registeredDevices.remove(eventConfig);
     }
 
     @Override
-    public void send(HalEventConfig eventConfig, HalEventData eventData) {
+    public synchronized void send(HalEventConfig eventConfig, HalEventData eventData) {
         // Nothing to do as this is a dummy
     }
 
@@ -82,7 +85,7 @@ public class DummyController implements HalSensorController, HalEventController,
     public void setListener(HalEventReportListener listener) { eventListener = listener; }
 
     @Override
-    public void close() {
-        executor.shutdown();
+    public synchronized void close() {
+        registeredDevices = new ArrayList();
     }
 }

@@ -43,21 +43,30 @@ public class HalServer {
 
     public static void main(String[] args) {
         try {
+            // ------------------------------------
+            // Initialize Hal
+            // ------------------------------------
+
             // init logging
             LogUtil.readConfiguration("logging.properties");
 
             // init DB and other configurations
             HalContext.initialize();
-            DBConnection db = HalContext.getDB();
 
             logger.info("Working directory: " + FileUtil.find(".").getAbsolutePath());
 
+            // init variables
+            pluginManager = new PluginManager();
+            daemonExecutor = Executors.newScheduledThreadPool(1); // We set only one thread for easier troubleshooting
+            http = new HttpServer(HalContext.getIntegerProperty(HalContext.PROPERTY_HTTP_PORT));
+
+            DBConnection db = HalContext.getDB();
+
             // ------------------------------------
-            // Init Plugins
+            // Initialize Plugins
             // ------------------------------------
 
             logger.info("Looking for plugins.");
-            pluginManager = new PluginManager();
 
             // Disable plugins based on settings
             for (PluginData plugin : getAllPlugins()) {
@@ -70,7 +79,7 @@ public class HalServer {
             }
 
             // ------------------------------------
-            // Init Managers
+            // Initialize Managers
             // ------------------------------------
 
             logger.info("Initializing managers.");
@@ -102,11 +111,8 @@ public class HalServer {
 
             logger.info("Initializing daemons.");
 
-            // We set only one thread for easier troubleshooting
-            daemonExecutor = Executors.newScheduledThreadPool(1);
             for (Iterator<HalDaemon> it = pluginManager.getSingletonIterator(HalDaemon.class); it.hasNext(); ) {
                 HalDaemon daemon = it.next();
-                logger.info("Registering daemon: " + daemon.getClass());
                 registerDaemon(daemon);
             }
 
@@ -120,7 +126,6 @@ public class HalServer {
             HalWebPage.getRootNav().createSubNav("Events").setWeight(100);
             HalWebPage.getRootNav().createSubNav("Settings").setWeight(200);
 
-            http = new HttpServer(HalContext.getIntegerProperty(HalContext.PROPERTY_HTTP_PORT));
             http.setDefaultPage(new HttpFilePage(FileUtil.find(HalContext.RESOURCE_WEB_ROOT)));
             http.setPage("/", new HttpRedirectPage("/map"));
             http.setPage(HalAlertManager.getInstance().getUrl(), HalAlertManager.getInstance());
@@ -164,6 +169,7 @@ public class HalServer {
 
 
     public static void registerDaemon(HalDaemon daemon){
+        logger.info("Registering daemon: " + daemon.getClass());
         daemons.add(daemon);
         daemon.initiate(daemonExecutor);
     }

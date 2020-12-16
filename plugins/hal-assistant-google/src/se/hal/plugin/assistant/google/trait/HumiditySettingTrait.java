@@ -26,7 +26,7 @@ package se.hal.plugin.assistant.google.trait;
 
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalSensorConfig;
-import se.hal.struct.devicedata.TemperatureSensorData;
+import se.hal.struct.devicedata.HumiditySensorData;
 
 import java.util.HashMap;
 
@@ -41,11 +41,11 @@ public class HumiditySettingTrait extends DeviceTrait {
     public HashMap<String, Object> generateSyncResponse(HalSensorConfig config) {
         HashMap<String, Object> response = new HashMap<>();
         //response.put("humiditySetpointRange", new HashMap<String, Object>() {{
-        //    put("minPercent", -20);
-        //    put("maxPercent", 60);
+        //    put("minPercent", 0);
+        //    put("maxPercent", 100);
         //}});
         //response.put("commandOnlyHumiditySetting", false);
-        response.put("queryOnlyHumiditySetting", false);
+        response.put("queryOnlyHumiditySetting", true);
         return response;
     }
 
@@ -53,7 +53,7 @@ public class HumiditySettingTrait extends DeviceTrait {
     public HashMap<String, Object> generateQueryResponse(HalDeviceData data) {
         HashMap<String, Object> response = new HashMap<>();
 
-        if (data instanceof TemperatureSensorData) {
+        if (data instanceof HumiditySensorData) {
             //response.put("humiditySetpointPercent", data.getData());
             response.put("humidityAmbientPercent", data.getData());
         }

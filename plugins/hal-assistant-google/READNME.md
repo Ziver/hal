@@ -34,10 +34,6 @@ Account linking is required for your app to interact with the server.
 * Then in the upper right hand corner select the Test button to generate the draft version Test App.
 * Add the google_assistant integration configuration to your configuration.yaml file and restart Home Assistant following the configuration guide below.
 
-#### Create Self signed Certificate (does not work with Google as they require a proper cert)
-Run the command:
-${JAVA_HOME}/bin/keytool -genkey -keyalg RSA -alias tomcat -keystore selfsigned.jks -validity <days> -keysize 2048
-
 ### On Phone
 * Open the Google Home app and go to Settings.
 * Click Add..., + Set up or add, + Set up device, and click Have something already setup?. You should have [test] your app name listed under ‘Add new'. Selecting that should lead you to a browser to login your Home Assistant instance, then redirect back to a screen where you can set rooms and nicknames for your devices if you wish.

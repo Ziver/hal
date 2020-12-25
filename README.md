@@ -7,7 +7,8 @@ Sensors and other input devices can be supported.
 Features:
 - **Map**, Set up a house map with sensors and events mapped on a floorplan
 - **Triggers and Actions**, IFTTT type functionality
-- **Power;Challenge**, Sync power or sensor usage between friends to challenge each other to lower the power usage 
+- **Power;Challenge**, Sync power or sensor usage between friends to challenge each other to lower the power usage
+- **[Google Assistant Integration](plugins/hal-assistant-google/READNME.md)**
 
 Currently supported devices:
 - **Network Scanner**, IP scanner to detect devices on local network
@@ -18,7 +19,7 @@ Currently supported devices:
 - **Raspberry Pi**, GPIO connected sensors
 
 Under development (Not ready to be used yet)
-- **Zigbee**
+- **[Zigbee](plugins/hal-zigbee/README.md)**
 - **Z-Wave**
 - **Google Assistant**
 - **MQTT Devices**

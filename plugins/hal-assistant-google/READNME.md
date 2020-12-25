@@ -1,6 +1,8 @@
+# Initial Setup
+
 This lazy is a modified version of https://www.home-assistant.io/integrations/google_assistant/
 
-To use Google Assistant, your server has to be externally accessible with a hostname and SSL certificate. If you haven't already configured that, you should do so before continuing. If you make DNS changes to accomplish this, please ensure you have allowed up to the full 48 hours for DNS changes to propagate, otherwise Google may not be able to reach your server.
+To use Google Assistant, your server has to be **externally accessible with a hostname and SSL certificate**. If you haven't already configured that, you should do so before continuing. If you make DNS changes to accomplish this, please ensure you have allowed up to the full 48 hours for DNS changes to propagate, otherwise Google may not be able to reach your server.
 
 You will need to create a service account Create Service account key which allows you to update devices without unlinking and relinking an account (see below). If you don't provide the service account, the google_assistant.request_sync service is not exposed. It is recommended to set up this configuration key as it also allows the usage of the following command, “Ok Google, sync my devices”. Once you have set up this component, you will need to call this service (or command) each time you add a new device.
 
@@ -30,13 +32,10 @@ Account linking is required for your app to interact with the server.
     * Do NOT check Google to transmit clientID and secret via HTTP basic auth header.
     * Click Next, then click Save
 
-* Select the "Develop" tab at the top of the page.
-* Then in the upper right hand corner select the Test button to generate the draft version Test App.
-* Add the google_assistant integration configuration to your configuration.yaml file and restart Home Assistant following the configuration guide below.
 
 ### On Phone
 * Open the Google Home app and go to Settings.
-* Click Add..., + Set up or add, + Set up device, and click Have something already setup?. You should have [test] your app name listed under ‘Add new'. Selecting that should lead you to a browser to login your Home Assistant instance, then redirect back to a screen where you can set rooms and nicknames for your devices if you wish.
+* Click Add... --> Set up or add --> Set up device --> and click Have something already setup?. You should have [test] your app name listed under ‘Add new'. Selecting that should lead you to a browser to login your Home Assistant instance, then redirect back to a screen where you can set rooms and nicknames for your devices if you wish.
 
 ## Active Reporting
 If you want to support actively reporting of state to Google's server (configuration option report_state) and support google_assistant.request_sync, you need to generate a service account.
@@ -64,3 +63,9 @@ If you want to allow other household users to control the devices:
     * When the new user opens the link with their own Google account, it will enable your draft test app under their account.
 * Have the new user go to their Google Assistant app to add [test] your app name to their account.
 
+# Plugin Configuration
+
+|Config Parameter           |Value           |Description |
+|---------------------------|----------------|------------|
+|assistant.google.port      |Port number     |The port where radio dongle is connected|
+|assistant.google.client_id |String client ID|A value matching client ID configured in Google Actions Console|

@@ -24,6 +24,9 @@ hal.http_port=8080
 # Network scanning should probably be disabled in some networks (default on)
 #netscan.ipscan=false
 
+## Zigbee plugin
+#zigbee.com_port=COM4
+
 ## ZWave plugin
 #zwave.com_port=COM4
 

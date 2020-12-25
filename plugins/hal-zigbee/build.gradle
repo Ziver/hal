@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':hal-core')
+
+    implementation 'org.bubblecloud.zigbee4java:zigbee-api:3.0.3'
+}

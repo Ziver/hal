@@ -1,5 +1,12 @@
+repositories {
+    maven {
+        url "https://dl.bintray.com/tlaukkan/bubblecloud"
+    }
+}
+
 dependencies {
     implementation project(':hal-core')
 
+    implementation 'com.fazecast:jSerialComm:2.6.2'
     implementation 'org.bubblecloud.zigbee4java:zigbee-api:3.0.3'
 }

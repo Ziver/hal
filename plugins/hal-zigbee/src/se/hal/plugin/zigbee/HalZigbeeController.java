@@ -1,5 +1,9 @@
 package se.hal.plugin.zigbee;
 
+import org.bubblecloud.zigbee.v3.SerialPort;
+import org.bubblecloud.zigbee.v3.ZigBeeApiDongleImpl;
+import org.bubblecloud.zigbee.v3.ZigBeeDevice;
+import org.bubblecloud.zigbee.v3.ZigBeeDongleTiCc2531Impl;
 import se.hal.HalContext;
 import se.hal.intf.*;
 import se.hal.struct.AbstractDevice;
@@ -14,7 +18,7 @@ import java.util.logging.Logger;
 public class HalZigbeeController implements HalSensorController, HalEventController, HalAutoScannableController {
     private static final Logger logger = LogUtil.getLogger();
 
-    private static final String CONFIG_ZIGBEE_PORT = "";
+    private static final String CONFIG_ZIGBEE_PORT = "zigbee.com_port";
 
     private SerialPort port;
     private ZigBeeApiDongleImpl zigbeeApi;
@@ -37,29 +41,21 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
     }
     public void initialize(String comPort) {
         byte[] networkKey = null; // Default network key
-        port = new SerialPortImpl(comPort);
+        port = new SerialPortJSC(comPort);
         zigbeeApi = new ZigBeeApiDongleImpl(
-                new ZigBeeDongleTiCc2531Impl(port, 4951, 11, networkKey, false),
+                new ZigBeeDongleTiCc2531Impl(port, -6480, 11, networkKey, false),
                 false);
 
         zigbeeApi.startup();
 
-        ZigBeeDevice device = zigbeeApi.getZigBeeDevices().get(3);
-
-        zigbeeApi.on(device);
-        Thread.sleep(1000);
-        zigbeeApi.color(device, 1.0, 0.0, 0.0, 1.0);
-        Thread.sleep(1000);
-        zigbeeApi.color(device, 0.0, 1.0, 0.0, 1.0);
-        Thread.sleep(1000);
-        zigbeeApi.color(device, 0.0, 0.0, 1.0, 1.0);
-        Thread.sleep(1000);
-        zigbeeApi.off(device);
+        for (ZigBeeDevice device : zigbeeApi.getDevices()) {
+            System.out.println("Device: " + device.getLabel());
+        }
     }
 
     @Override
     public void close() {
-        logger.info("Shutting down Zigbee port...");
+        logger.info("Shutting down Zigbee port.");
 
         zigbeeApi.shutdown();
         port.close();

@@ -3,6 +3,7 @@
 |Config Parameter |Value                        |Description |
 |-----------------|-----------------------------|------------|
 |zwave.com_port   |Name or location of com port |The port where radio dongle is connected|
+|zigbee.pan_id    |Integer |The PAN ID for the radio module|
 
 # Hardware
 

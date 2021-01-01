@@ -19,6 +19,7 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
     private static final Logger logger = LogUtil.getLogger();
 
     private static final String CONFIG_ZIGBEE_PORT = "zigbee.com_port";
+    private static final String CONFIG_ZIGBEE_PANID = "zigbee.pan_id";
 
     private SerialPort port;
     private ZigBeeApiDongleImpl zigbeeApi;
@@ -33,13 +34,16 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
 
     @Override
     public boolean isAvailable() {
-        return HalContext.containsProperty(CONFIG_ZIGBEE_PORT);
+        return HalContext.containsProperty(CONFIG_ZIGBEE_PORT) &&
+                HalContext.containsProperty(CONFIG_ZIGBEE_PANID);
     }
     @Override
     public void initialize() {
-        initialize(HalContext.getStringProperty(CONFIG_ZIGBEE_PORT));
+        initialize(
+                HalContext.getStringProperty(CONFIG_ZIGBEE_PORT),
+                HalContext.getIntegerProperty(CONFIG_ZIGBEE_PANID));
     }
-    public void initialize(String comPort) {
+    public void initialize(String comPort, int panId) {
         byte[] networkKey = null; // Default network key
         port = new SerialPortJSC(comPort);
         zigbeeApi = new ZigBeeApiDongleImpl(
@@ -102,6 +106,4 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
     public void setListener(HalSensorReportListener listener) {
         sensorListener = listener;
     }
-
-
 }

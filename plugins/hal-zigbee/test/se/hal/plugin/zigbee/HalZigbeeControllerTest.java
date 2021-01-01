@@ -24,6 +24,7 @@
 
 package se.hal.plugin.zigbee;
 
+import org.bubblecloud.zigbee.v3.ZigBeeDevice;
 import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
 
@@ -32,13 +33,23 @@ import java.util.logging.Level;
 
 public class HalZigbeeControllerTest {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         LogUtil.setGlobalFormatter(new CompactLogFormatter());
         LogUtil.setGlobalLevel(Level.ALL);
 
         HalZigbeeController controller = new HalZigbeeController();
-        controller.initialize(
-                "COM3");
+        controller.initialize("COM3", -6);
+
+        System.out.println("Enable pairing.");
+        controller.zigbeeApi.permitJoin(true);
+
+        //controller.zigbeeApi
+
+        Thread.sleep(10000);
+
+        for (ZigBeeDevice device : controller.zigbeeApi.getDevices()) {
+            System.out.println("Device: " + device);
+        }
 
         System.out.println("Press ENTER to exit application.");
         System.in.read();

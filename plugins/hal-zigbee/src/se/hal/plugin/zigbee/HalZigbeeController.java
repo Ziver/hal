@@ -22,7 +22,7 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
     private static final String CONFIG_ZIGBEE_PANID = "zigbee.pan_id";
 
     private SerialPort port;
-    private ZigBeeApiDongleImpl zigbeeApi;
+    protected ZigBeeApiDongleImpl zigbeeApi;
 
     private HalSensorReportListener sensorListener;
     private HalEventReportListener eventListener;
@@ -51,10 +51,6 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
                 false);
 
         zigbeeApi.startup();
-
-        for (ZigBeeDevice device : zigbeeApi.getDevices()) {
-            System.out.println("Device: " + device.getLabel());
-        }
     }
 
     @Override

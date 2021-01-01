@@ -25,6 +25,9 @@ import com.google.actions.api.smarthome.*;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.home.graph.v1.DeviceProto;
+import com.google.home.graph.v1.HomeGraphApiServiceProto;
+import com.google.protobuf.Struct;
+import com.google.protobuf.Value;
 import org.json.JSONObject;
 import se.hal.HalContext;
 import se.hal.plugin.assistant.google.trait.DeviceTrait;
@@ -128,6 +131,32 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
     }
 
     /**
+     * Creates a and sends a request for a sync from Google
+     *
+     * @param userId     The agent user ID
+     * @param deviceId   The device ID
+     * @param states     A Map of state keys and their values for the provided device ID
+     */
+    public void syncRequest(String userId, String deviceId, Map<String, Object> states) {
+        Struct.Builder statesStruct = Struct.newBuilder();
+
+        HomeGraphApiServiceProto.ReportStateAndNotificationDevice.Builder deviceBuilder =
+                HomeGraphApiServiceProto.ReportStateAndNotificationDevice.newBuilder().setStates(
+                        Struct.newBuilder().putFields(deviceId,
+                                Value.newBuilder().setStructValue(statesStruct).build()
+                        ));
+
+        HomeGraphApiServiceProto.ReportStateAndNotificationRequest request =
+                HomeGraphApiServiceProto.ReportStateAndNotificationRequest.newBuilder()
+                        .setRequestId(String.valueOf(Math.random()))
+                        .setAgentUserId(userId) // our single user's id
+                        .setPayload(HomeGraphApiServiceProto.StateAndNotificationPayload.newBuilder().setDevices(deviceBuilder))
+                        .build();
+
+        this.reportState(request);
+    }
+
+    /**
      * https://developers.google.com/assistant/smarthome/reference/intent/query
      */
     @Override
@@ -177,6 +206,9 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
         return res;
     }
 
+    /**
+     * TODO:
+     */
     @Override
     public ExecuteResponse onExecute(ExecuteRequest executeRequest, Map<?, ?> headers) {
         logger.fine("Received execute request.");

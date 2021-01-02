@@ -1,12 +1,14 @@
-repositories {
-    maven {
-        url "https://dl.bintray.com/tlaukkan/bubblecloud"
-    }
-}
-
 dependencies {
+    def ZIGBEE_LIB_VERSION = "1.3.10"
+
     implementation project(':hal-core')
 
+    implementation "com.zsmartsystems.zigbee:com.zsmartsystems.zigbee:${ZIGBEE_LIB_VERSION}"
+    implementation "com.zsmartsystems.zigbee:com.zsmartsystems.zigbee.serial:${ZIGBEE_LIB_VERSION}"
+    implementation "com.zsmartsystems.zigbee:com.zsmartsystems.zigbee.dongle.cc2531:${ZIGBEE_LIB_VERSION}"
+    implementation "com.zsmartsystems.zigbee:com.zsmartsystems.zigbee.dongle.xbee:${ZIGBEE_LIB_VERSION}"
+    implementation "com.zsmartsystems.zigbee:com.zsmartsystems.zigbee.dongle.conbee:${ZIGBEE_LIB_VERSION}"
+
     implementation 'com.fazecast:jSerialComm:2.6.2'
-    implementation 'org.bubblecloud.zigbee4java:zigbee-api:3.0.3'
+    implementation 'org.slf4j:slf4j-jdk14:1.7.30'
 }

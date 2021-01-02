@@ -1,9 +1,13 @@
 package se.hal.plugin.zigbee;
 
-import org.bubblecloud.zigbee.v3.SerialPort;
-import org.bubblecloud.zigbee.v3.ZigBeeApiDongleImpl;
-import org.bubblecloud.zigbee.v3.ZigBeeDevice;
-import org.bubblecloud.zigbee.v3.ZigBeeDongleTiCc2531Impl;
+
+import com.zsmartsystems.zigbee.ZigBeeNetworkManager;
+import com.zsmartsystems.zigbee.ZigBeeStatus;
+import com.zsmartsystems.zigbee.dongle.cc2531.ZigBeeDongleTiCc2531;
+import com.zsmartsystems.zigbee.dongle.conbee.ZigBeeDongleConBee;
+import com.zsmartsystems.zigbee.dongle.xbee.ZigBeeDongleXBee;
+import com.zsmartsystems.zigbee.transport.ZigBeePort;
+import com.zsmartsystems.zigbee.transport.ZigBeeTransportTransmit;
 import se.hal.HalContext;
 import se.hal.intf.*;
 import se.hal.struct.AbstractDevice;
@@ -19,10 +23,10 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
     private static final Logger logger = LogUtil.getLogger();
 
     private static final String CONFIG_ZIGBEE_PORT = "zigbee.com_port";
-    private static final String CONFIG_ZIGBEE_PANID = "zigbee.pan_id";
 
-    private SerialPort port;
-    protected ZigBeeApiDongleImpl zigbeeApi;
+    private ZigBeePort serialPort;
+    private ZigBeeDataStore dataStore;
+    private ZigBeeNetworkManager networkManager;
 
     private HalSensorReportListener sensorListener;
     private HalEventReportListener eventListener;
@@ -34,31 +38,55 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
 
     @Override
     public boolean isAvailable() {
-        return HalContext.containsProperty(CONFIG_ZIGBEE_PORT) &&
-                HalContext.containsProperty(CONFIG_ZIGBEE_PANID);
+        return HalContext.containsProperty(CONFIG_ZIGBEE_PORT);
     }
     @Override
     public void initialize() {
         initialize(
-                HalContext.getStringProperty(CONFIG_ZIGBEE_PORT),
-                HalContext.getIntegerProperty(CONFIG_ZIGBEE_PANID));
+                HalContext.getStringProperty(CONFIG_ZIGBEE_PORT));
     }
-    public void initialize(String comPort, int panId) {
-        byte[] networkKey = null; // Default network key
-        port = new SerialPortJSC(comPort);
-        zigbeeApi = new ZigBeeApiDongleImpl(
-                new ZigBeeDongleTiCc2531Impl(port, -6480, 11, networkKey, false),
-                false);
+    public void initialize(String comPort) {
+        serialPort = new ZigBeeJSerialCommPort(comPort);
+        dataStore = new ZigBeeDataStore();
 
-        zigbeeApi.startup();
+        ZigBeeTransportTransmit dongle = getDongle("CC2531");
+        ZigBeeNetworkManager networkManager = new ZigBeeNetworkManager(dongle);
+        networkManager.setNetworkDataStore(dataStore);
+
+        ZigBeeStatus initResponse = networkManager.initialize();
+        System.out.println("NetworkManager.initialize() returned " + initResponse);
+
+        System.out.println("PAN ID          = " + networkManager.getZigBeePanId());
+        System.out.println("Extended PAN ID = " + networkManager.getZigBeeExtendedPanId());
+        System.out.println("Channel         = " + networkManager.getZigBeeChannel());
+
+        if (dongle instanceof ZigBeeDongleTiCc2531) {
+            ZigBeeDongleTiCc2531 tiDongle = (ZigBeeDongleTiCc2531) dongle;
+            tiDongle.setLedMode(1, false);
+            tiDongle.setLedMode(2, false);
+        }
+    }
+
+    private ZigBeeTransportTransmit getDongle(String name) {
+        switch (name) {
+        case "CC2531":
+            return new ZigBeeDongleTiCc2531(serialPort);
+        case "XBEE":
+            return new ZigBeeDongleXBee(serialPort);
+        case "CONBEE":
+            return new ZigBeeDongleConBee(serialPort);
+        default:
+            logger.severe("Unknown ZigBee dongle: " + name);
+            return null;
+        }
     }
 
     @Override
     public void close() {
         logger.info("Shutting down Zigbee port.");
 
-        zigbeeApi.shutdown();
-        port.close();
+        networkManager.shutdown();
+        serialPort.close();
     }
 
 

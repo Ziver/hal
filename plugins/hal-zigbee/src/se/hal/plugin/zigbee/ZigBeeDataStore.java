@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2020 Ziver Koc
+ * Copyright (c) 2021 Ziver Koc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,25 +24,34 @@
 
 package se.hal.plugin.zigbee;
 
-import zutil.log.CompactLogFormatter;
-import zutil.log.LogUtil;
+import com.zsmartsystems.zigbee.IeeeAddress;
+import com.zsmartsystems.zigbee.database.ZigBeeNetworkDataStore;
+import com.zsmartsystems.zigbee.database.ZigBeeNodeDao;
 
-import java.io.IOException;
-import java.util.logging.Level;
+import java.util.HashSet;
+import java.util.Set;
 
+public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
 
-public class HalZigbeeControllerTest {
+    @Override
+    public Set<IeeeAddress> readNetworkNodes() {
+        System.out.println("ZigBeeDataStore.readNetworkNodes()");
+        return new HashSet<>();
+    }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        LogUtil.setGlobalFormatter(new CompactLogFormatter());
-        LogUtil.setGlobalLevel(Level.ALL);
+    @Override
+    public ZigBeeNodeDao readNode(IeeeAddress address) {
+        System.out.println("ZigBeeDataStore.readNetworkNodes(" + address + ")");
+        return null;
+    }
 
-        HalZigbeeController controller = new HalZigbeeController();
-        controller.initialize("COM3");
+    @Override
+    public void writeNode(ZigBeeNodeDao node) {
+        System.out.println("ZigBeeDataStore.writeNode(" + node + ")");
+    }
 
-        System.out.println("Press ENTER to exit application.");
-        System.in.read();
-
-        controller.close();
+    @Override
+    public void removeNode(IeeeAddress address) {
+        System.out.println("ZigBeeDataStore.removeNode(" + address + ")");
     }
 }

@@ -40,6 +40,11 @@ public class HalZigbeeControllerTest {
         HalZigbeeController controller = new HalZigbeeController();
         controller.initialize("COM3");
 
+        System.out.println("PAN ID          = " + controller.networkManager.getZigBeePanId());
+        System.out.println("Extended PAN ID = " + controller.networkManager.getZigBeeExtendedPanId());
+        System.out.println("Channel         = " + controller.networkManager.getZigBeeChannel());
+        controller.networkManager.permitJoin(50);
+
         System.out.println("Press ENTER to exit application.");
         System.in.read();
 

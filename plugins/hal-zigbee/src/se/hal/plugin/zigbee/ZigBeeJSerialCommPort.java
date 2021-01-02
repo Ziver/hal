@@ -179,7 +179,7 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
 
     @Override
     public void write(int value) {
-        if (serialPort != null)
+        if (serialPort == null)
             throw new RuntimeException("Unable to write, Serial port is not open.");
 
         try {
@@ -196,10 +196,13 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
 
     @Override
     public int read(int timeout) {
-        if (serialPort != null)
+        if (serialPort == null)
             throw new RuntimeException("Unable to read, Serial port is not open.");
 
         try {
+            if (serialPort.getReadTimeout() != timeout)
+                serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, 0);
+
             return serialInputstream.read();
         } catch (IOException e) {
             logger.error("Was unable to read from serial port.", e);
@@ -209,7 +212,7 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
 
     @Override
     public void purgeRxBuffer() {
-        if (serialPort != null)
+        if (serialPort == null)
             return;
 
         try {

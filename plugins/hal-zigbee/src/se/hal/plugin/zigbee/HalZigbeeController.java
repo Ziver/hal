@@ -26,7 +26,7 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
 
     private ZigBeePort serialPort;
     private ZigBeeDataStore dataStore;
-    private ZigBeeNetworkManager networkManager;
+    protected ZigBeeNetworkManager networkManager;
 
     private HalSensorReportListener sensorListener;
     private HalEventReportListener eventListener;
@@ -50,15 +50,11 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
         dataStore = new ZigBeeDataStore();
 
         ZigBeeTransportTransmit dongle = getDongle("CC2531");
-        ZigBeeNetworkManager networkManager = new ZigBeeNetworkManager(dongle);
+        networkManager = new ZigBeeNetworkManager(dongle);
         networkManager.setNetworkDataStore(dataStore);
 
         ZigBeeStatus initResponse = networkManager.initialize();
         System.out.println("NetworkManager.initialize() returned " + initResponse);
-
-        System.out.println("PAN ID          = " + networkManager.getZigBeePanId());
-        System.out.println("Extended PAN ID = " + networkManager.getZigBeeExtendedPanId());
-        System.out.println("Channel         = " + networkManager.getZigBeeChannel());
 
         if (dongle instanceof ZigBeeDongleTiCc2531) {
             ZigBeeDongleTiCc2531 tiDongle = (ZigBeeDongleTiCc2531) dongle;
@@ -88,7 +84,6 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
         networkManager.shutdown();
         serialPort.close();
     }
-
 
     // --------------------------
     // Hal Overrides

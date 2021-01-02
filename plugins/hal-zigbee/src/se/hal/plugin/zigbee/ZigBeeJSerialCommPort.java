@@ -30,6 +30,10 @@ import org.slf4j.LoggerFactory;
 
 import com.fazecast.jSerialComm.SerialPort;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
  * ZigBeePort implementation using jSerialComm library
  *
@@ -52,7 +56,10 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
     private final String portName;
     private final int baudRate;
     private final FlowControl flowControl;
+
     private SerialPort serialPort;
+    private InputStream serialInputstream;
+    private OutputStream serialOutputstream;
 
 
     /**
@@ -132,6 +139,9 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
             throw new RuntimeException("Error opening serial port: " + portName);
         }
 
+        serialInputstream = serialPort.getInputStream();
+        serialOutputstream = serialPort.getOutputStream();
+
         switch (flowControl) {
             case FLOWCONTROL_OUT_NONE:
                 serialPort.setFlowControl(SerialPort.FLOW_CONTROL_DISABLED);
@@ -156,7 +166,11 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
 
         try {
             logger.info("Closing Serial port: '" + portName + "'");
+            purgeRxBuffer();
             serialPort.closePort();
+
+            serialInputstream = null;
+            serialOutputstream = null;
             serialPort = null;
         } catch (Exception e) {
             logger.warn("Error closing portName portName: '" + portName + "'", e);
@@ -165,7 +179,14 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
 
     @Override
     public void write(int value) {
-        serialPort.writeBytes(new byte[]{(byte) value}, 1);
+        if (serialPort != null)
+            throw new RuntimeException("Unable to write, Serial port is not open.");
+
+        try {
+            serialOutputstream.write(value);
+        } catch (IOException e) {
+            logger.error("Was unable to write to serial port.", e);
+        }
     }
 
     @Override
@@ -175,16 +196,26 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
 
     @Override
     public int read(int timeout) {
-        byte[] buff = new byte[1];
-        serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, 0);
-        serialPort.readBytes(buff, 1);
-        return buff[0];
+        if (serialPort != null)
+            throw new RuntimeException("Unable to read, Serial port is not open.");
+
+        try {
+            return serialInputstream.read();
+        } catch (IOException e) {
+            logger.error("Was unable to read from serial port.", e);
+        }
+        return -1;
     }
 
     @Override
     public void purgeRxBuffer() {
-        while(serialPort.bytesAwaitingWrite() != 0) {
-            try {Thread.sleep(100);} catch (InterruptedException e) {e.printStackTrace();}
+        if (serialPort != null)
+            return;
+
+        try {
+            serialOutputstream.flush();
+        } catch (IOException e) {
+            logger.error("Was unable to flush serial data.", e);
         }
     }
 }

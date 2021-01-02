@@ -40,7 +40,7 @@ public class DeviceTraitFactory {
     public static DeviceTrait[] getTraits(Sensor sensor) {
         switch (sensor.getDeviceData().getClass().getName()) {
             case "se.hal.struct.devicedata.DimmerEventData":
-            case "se.hal.struct.devicedata.SwitchEventData":
+            case "se.hal.struct.devicedata.OnOffEventData":
                 return new DeviceTrait[]{};
 
             case "se.hal.struct.devicedata.PowerConsumptionSensorData":

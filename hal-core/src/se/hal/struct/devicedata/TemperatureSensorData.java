@@ -2,6 +2,7 @@ package se.hal.struct.devicedata;
 
 import se.hal.intf.HalSensorData;
 
+
 public class TemperatureSensorData extends HalSensorData {
 
     private double temperature;
@@ -14,6 +15,15 @@ public class TemperatureSensorData extends HalSensorData {
     }
 
 
+    @Override
+    public String toString(){
+        return temperature + " C";
+    }
+
+    // ----------------------------------------
+    // Storage methods
+    // ----------------------------------------
+
     /**
      * @return temperature in degrees C
      */
@@ -21,17 +31,12 @@ public class TemperatureSensorData extends HalSensorData {
     public double getData() {
         return temperature;
     }
+
     /**
      * @param   temperature     the temperature to set in degrees C
      */
     @Override
     public void setData(double temperature) {
         this.temperature = temperature;
-    }
-
-
-    @Override
-    public String toString(){
-        return temperature + " C";
     }
 }

@@ -4,8 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import se.hal.intf.*;
 import se.hal.struct.devicedata.DimmerEventData;
-import se.hal.struct.devicedata.SwitchEventData;
-import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.converter.Converter;
 
 import java.util.ArrayList;

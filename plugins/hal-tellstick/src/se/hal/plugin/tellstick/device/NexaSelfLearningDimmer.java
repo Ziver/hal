@@ -26,11 +26,9 @@ import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalEventData;
 import se.hal.plugin.tellstick.TellstickDevice;
-import se.hal.plugin.tellstick.TellstickDeviceGroup;
 import se.hal.plugin.tellstick.TellstickSerialComm;
 import se.hal.plugin.tellstick.protocol.NexaSelfLearningProtocol;
 import se.hal.struct.devicedata.DimmerEventData;
-import se.hal.struct.devicedata.SwitchEventData;
 import zutil.ui.Configurator;
 
 /**

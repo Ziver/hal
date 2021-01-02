@@ -4,7 +4,7 @@ import se.hal.ControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
 import se.hal.struct.Event;
-import se.hal.struct.devicedata.SwitchEventData;
+import se.hal.struct.devicedata.OnOffEventData;
 import se.hal.util.DeviceNameComparator;
 import se.hal.util.HistoryDataListSqlResult;
 import se.hal.util.HistoryDataListSqlResult.HistoryData;
@@ -15,7 +15,6 @@ import zutil.log.LogUtil;
 import zutil.parser.Templator;
 
 import java.sql.PreparedStatement;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +45,7 @@ public class EventOverviewWebPage extends HalWebPage {
             int id = (ObjectUtil.isEmpty(request.get("action_id")) ? -1 : Integer.parseInt(request.get("action_id")));
 
             // change event data
-            SwitchEventData eventData = new SwitchEventData();
+            OnOffEventData eventData = new OnOffEventData();
             if (request.containsKey("enabled") && "on".equals(request.get("enabled")))
                 eventData.turnOn();
             else

@@ -149,7 +149,7 @@ public enum DeviceType {
     public static DeviceType getType(Sensor sensor) {
         switch (sensor.getDeviceData().getClass().getName()) {
             case "se.hal.struct.devicedata.DimmerEventData":
-            case "se.hal.struct.devicedata.SwitchEventData":
+            case "se.hal.struct.devicedata.OnOffEventData":
                 return LIGHT;
 
             case "se.hal.struct.devicedata.PowerConsumptionSensorData":

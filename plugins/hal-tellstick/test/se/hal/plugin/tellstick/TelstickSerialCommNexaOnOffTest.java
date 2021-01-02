@@ -1,8 +1,7 @@
 package se.hal.plugin.tellstick;
 
 import se.hal.plugin.tellstick.device.NexaSelfLearning;
-import se.hal.plugin.tellstick.protocol.NexaSelfLearningProtocol;
-import se.hal.struct.devicedata.SwitchEventData;
+import se.hal.struct.devicedata.OnOffEventData;
 
 /**
  * Created by Ziver on 2015-11-19.
@@ -25,7 +24,7 @@ public class TelstickSerialCommNexaOnOffTest {
             nexaDevice.setGroup(false);
             nexaDevice.setUnit(1);
 
-            SwitchEventData nexaData = new SwitchEventData();
+            OnOffEventData nexaData = new OnOffEventData();
 
             System.out.println("Up and Running");
             while(true) {

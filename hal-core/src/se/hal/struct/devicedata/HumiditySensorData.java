@@ -16,16 +16,20 @@ public class HumiditySensorData extends HalSensorData {
 
 
     @Override
+    public String toString(){
+        return humidity+"%";
+    }
+
+    // ----------------------------------------
+    // Storage methods
+    // ----------------------------------------
+
+    @Override
     public double getData() {
         return humidity;
     }
     @Override
     public void setData(double humidity) {
         this.humidity = humidity;
-    }
-
-    @Override
-    public String toString(){
-        return humidity+"%";
     }
 }

@@ -14,6 +14,15 @@ public class LightSensorData extends HalSensorData {
     }
 
 
+    @Override
+    public String toString(){
+        return lux+" lux";
+    }
+
+    // ----------------------------------------
+    // Storage methods
+    // ----------------------------------------
+
     /**
      * @return the light intensity in lux
      */
@@ -21,16 +30,12 @@ public class LightSensorData extends HalSensorData {
     public double getData() {
         return lux;
     }
+
     /**
      * @param   lux     set the light intensity in lux
      */
     @Override
     public void setData(double lux) {
         this.lux = lux;
-    }
-
-    @Override
-    public String toString(){
-        return lux+" lux";
     }
 }

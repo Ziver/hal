@@ -24,39 +24,48 @@ package se.hal.struct.devicedata;
 
 import se.hal.intf.HalEventData;
 
-public class SwitchEventData extends HalEventData {
 
-    private boolean enabled;
+public class OpenClosedEventData extends HalEventData {
+
+    private boolean isOpen;
 
 
-    public SwitchEventData() { }
-    public SwitchEventData(boolean enabled, long timestamp) {
-        this.enabled = enabled;
+    public OpenClosedEventData() { }
+    public OpenClosedEventData(boolean isOpen, long timestamp) {
+        this.isOpen = isOpen;
         this.setTimestamp(timestamp);
     }
 
-    public void turnOn(){
-        enabled = true;
+    public void open(){
+        isOpen = true;
     }
-    public void turnOff(){
-        enabled = false;
+    public void close(){
+        isOpen = false;
+    }
+    public void toggle(){
+        isOpen = !isOpen;
     }
 
-    public boolean isOn(){
-        return enabled;
-    }
-
-    @Override
-    public double getData() {
-        return (enabled ? 1.0 : 0.0);
-    }
-    @Override
-    public void setData(double enabled) {
-        this.enabled = enabled > 0;
+    public boolean isOpen(){
+        return isOpen;
     }
 
     @Override
     public String toString(){
-        return enabled ? "ON" : "OFF";
+        return isOpen ? "Open" : "Closed";
+    }
+
+    // ----------------------------------------
+    // Storage methods
+    // ----------------------------------------
+
+    @Override
+    public double getData() {
+        return (isOpen ? 1.0 : 0.0);
+    }
+
+    @Override
+    public void setData(double enabled) {
+        this.isOpen = enabled > 0;
     }
 }

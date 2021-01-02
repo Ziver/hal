@@ -25,37 +25,48 @@ package se.hal.struct.devicedata;
 import se.hal.intf.HalEventData;
 
 
-public class DimmerEventData extends HalEventData {
+public class OnOffEventData extends HalEventData {
 
-    private double dimmValue;
+    private boolean isOn;
 
 
-    public DimmerEventData() { }
-    public DimmerEventData(double dimmValue, long timestamp) {
-        this.dimmValue = dimmValue;
+    public OnOffEventData() { }
+    public OnOffEventData(boolean isOn, long timestamp) {
+        this.isOn = isOn;
         this.setTimestamp(timestamp);
     }
 
 
+    public void turnOn(){
+        isOn = true;
+    }
+    public void turnOff(){
+        isOn = false;
+    }
+    public void toggle(){
+        isOn = !isOn;
+    }
+
+    public boolean isOn(){
+        return isOn;
+    }
+
     @Override
     public String toString(){
-        return dimmValue+"%";
+        return isOn ? "ON" : "OFF";
     }
 
     // ----------------------------------------
     // Storage methods
     // ----------------------------------------
 
-    /**
-     * @return the dim level from 0.0 to 1.0
-     */
     @Override
     public double getData() {
-        return dimmValue;
+        return (isOn ? 1.0 : 0.0);
     }
 
     @Override
-    public void setData(double dimmValue) {
-        this.dimmValue = dimmValue;
+    public void setData(double enabled) {
+        this.isOn = enabled > 0;
     }
 }

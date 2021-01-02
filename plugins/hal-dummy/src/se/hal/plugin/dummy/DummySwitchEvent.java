@@ -1,16 +1,14 @@
 package se.hal.plugin.dummy;
 
 import se.hal.intf.*;
-import se.hal.struct.devicedata.HumiditySensorData;
-import se.hal.struct.devicedata.SwitchEventData;
-import se.hal.struct.devicedata.TemperatureSensorData;
+import se.hal.struct.devicedata.OnOffEventData;
 
 public class DummySwitchEvent implements DummyDevice, HalEventConfig {
 
 
     @Override
     public HalDeviceData generateData() {
-        return new SwitchEventData(
+        return new OnOffEventData(
                 (int) (Math.random() * 10) < 5,
                 System.currentTimeMillis()
         );
@@ -24,6 +22,6 @@ public class DummySwitchEvent implements DummyDevice, HalEventConfig {
 
     @Override
     public Class<? extends HalEventData> getEventDataClass() {
-        return SwitchEventData.class;
+        return OnOffEventData.class;
     }
 }

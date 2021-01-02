@@ -2,10 +2,10 @@ package se.hal.struct.devicedata;
 
 import se.hal.intf.HalSensorData;
 
+
 public class PowerConsumptionSensorData extends HalSensorData {
 
     private double wattHours;
-
 
 
     public PowerConsumptionSensorData() { }
@@ -15,6 +15,15 @@ public class PowerConsumptionSensorData extends HalSensorData {
     }
 
 
+    @Override
+    public String toString(){
+        return wattHours+" Wh";
+    }
+
+    // ----------------------------------------
+    // Storage methods
+    // ----------------------------------------
+
     /**
      * @return int representing Watt/Hour
      */
@@ -22,13 +31,9 @@ public class PowerConsumptionSensorData extends HalSensorData {
     public double getData() {
         return wattHours;
     }
+
     @Override
     public void setData(double wattHours){
         this.wattHours = wattHours;
-    }
-
-    @Override
-    public String toString(){
-        return wattHours+" Wh";
     }
 }

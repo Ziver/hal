@@ -3,7 +3,6 @@ package se.hal.plugin.tellstick;
 import org.junit.Before;
 import org.junit.Test;
 import se.hal.intf.*;
-import se.hal.struct.devicedata.SwitchEventData;
 import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.converter.Converter;
 
@@ -21,7 +20,7 @@ public class TelstickSerialCommSensorTest {
     public void init(){
         TellstickParser.registerProtocol(TestSensor.class);
     }
-    
+
 
     //############ Normal TCs
 

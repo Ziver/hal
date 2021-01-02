@@ -3,7 +3,7 @@ package se.hal.plugin.netscan;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalEventData;
-import se.hal.struct.devicedata.SwitchEventData;
+import se.hal.struct.devicedata.OnOffEventData;
 import zutil.ui.Configurator;
 
 public class NetworkDevice implements HalEventConfig {
@@ -40,6 +40,6 @@ public class NetworkDevice implements HalEventConfig {
     }
     @Override
     public Class<? extends HalEventData> getEventDataClass() {
-        return SwitchEventData.class;
+        return OnOffEventData.class;
     }
 }

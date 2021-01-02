@@ -26,7 +26,6 @@ hal.http_port=8080
 
 ## Zigbee plugin
 #zigbee.com_port=COM4
-#zigbee.pan_id=-6480
 
 ## ZWave plugin
 #zwave.com_port=COM4

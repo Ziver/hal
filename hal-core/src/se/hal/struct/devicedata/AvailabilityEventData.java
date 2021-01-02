@@ -25,37 +25,47 @@ package se.hal.struct.devicedata;
 import se.hal.intf.HalEventData;
 
 
-public class DimmerEventData extends HalEventData {
+public class AvailabilityEventData extends HalEventData {
 
-    private double dimmValue;
+    private boolean available;
 
 
-    public DimmerEventData() { }
-    public DimmerEventData(double dimmValue, long timestamp) {
-        this.dimmValue = dimmValue;
+    public AvailabilityEventData() { }
+    public AvailabilityEventData(boolean available, long timestamp) {
+        this.available = available;
         this.setTimestamp(timestamp);
     }
 
+    public void setAvailable(){
+        available = true;
+    }
+    public void setUnavailable(){
+        available = false;
+    }
+    public void toggle(){
+        available = !available;
+    }
+
+    public boolean isAvailable(){
+        return available;
+    }
 
     @Override
     public String toString(){
-        return dimmValue+"%";
+        return available ? "Available" : "Unavailable";
     }
 
     // ----------------------------------------
     // Storage methods
     // ----------------------------------------
 
-    /**
-     * @return the dim level from 0.0 to 1.0
-     */
     @Override
     public double getData() {
-        return dimmValue;
+        return (available ? 1.0 : 0.0);
     }
 
     @Override
-    public void setData(double dimmValue) {
-        this.dimmValue = dimmValue;
+    public void setData(double enabled) {
+        this.available = enabled > 0;
     }
 }

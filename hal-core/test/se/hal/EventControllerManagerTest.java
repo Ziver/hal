@@ -3,7 +3,7 @@ package se.hal;
 import org.junit.Test;
 import se.hal.intf.*;
 import se.hal.struct.Event;
-import se.hal.struct.devicedata.SwitchEventData;
+import se.hal.struct.devicedata.OnOffEventData;
 
 import java.util.Collections;
 
@@ -15,7 +15,7 @@ public class EventControllerManagerTest {
 
     private ControllerManager manager = new ControllerManager();
 
-    
+
     @Test
     public void addAvailableEvent(){
         assertEquals(0, manager.getAvailableEvents().size());
@@ -90,7 +90,7 @@ public class EventControllerManagerTest {
 
         @Override
         public Class<? extends HalEventData> getEventDataClass() {
-            return SwitchEventData.class;
+            return OnOffEventData.class;
         }
     }
 
@@ -103,7 +103,7 @@ public class EventControllerManagerTest {
 
         @Override
         public Class<? extends HalEventData> getEventDataClass() {
-            return SwitchEventData.class;
+            return OnOffEventData.class;
         }
     }
 
@@ -135,7 +135,7 @@ public class EventControllerManagerTest {
 
         @Override
         public void setListener(HalEventReportListener listener) { }
-        
+
         @Override
         public void close() { }
     }

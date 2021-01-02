@@ -2,7 +2,8 @@ package se.hal.plugin.netscan;
 
 import se.hal.HalContext;
 import se.hal.intf.*;
-import se.hal.struct.devicedata.SwitchEventData;
+import se.hal.struct.devicedata.AvailabilityEventData;
+import se.hal.struct.devicedata.OnOffEventData;
 import zutil.InetUtil;
 import zutil.log.LogUtil;
 import zutil.net.InetScanner;
@@ -27,7 +28,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
     private ScheduledExecutorService executor;
     private HalEventReportListener listener;
     /** A register and a cache of previous state **/
-    private HashMap<NetworkDevice,SwitchEventData> devices = new HashMap<>();
+    private HashMap<NetworkDevice, AvailabilityEventData> devices = new HashMap<>();
 
 
 
@@ -61,9 +62,9 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
     @Override
     public void run() {
         try(MultiCommandExecutor executor = new MultiCommandExecutor()){
-            for (Map.Entry<NetworkDevice,SwitchEventData> entry : devices.entrySet()) {
+            for (Map.Entry<NetworkDevice, AvailabilityEventData> entry : devices.entrySet()) {
                 NetworkDevice device = entry.getKey();
-                SwitchEventData prevData = entry.getValue();
+                AvailabilityEventData prevData = entry.getValue();
                 if (listener != null) {
                     // We ping two times to increase reliability
                     boolean ping = false;
@@ -72,10 +73,10 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
                         ping |= InetScanner.isReachable(device.getHost(), executor);
 
                     // Should we report?
-                    if (prevData == null || prevData.isOn() != ping) {
-                        SwitchEventData newData = new SwitchEventData(ping, System.currentTimeMillis());
+                    if (prevData == null || prevData.isAvailable() != ping) {
+                        AvailabilityEventData newData = new AvailabilityEventData(ping, System.currentTimeMillis());
                         entry.setValue(newData);
-                        logger.fine("IP "+device.getHost() +" state has changed to "+ newData.isOn());
+                        logger.fine("IP " + device.getHost() + " state has changed to " + newData);
                         listener.reportReceived(device, newData);
                     }
                 }
@@ -90,7 +91,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
         if (listener != null)
             listener.reportReceived(
                     new NetworkDevice(ip.getHostAddress()),
-                    new SwitchEventData(true, System.currentTimeMillis()));
+                    new OnOffEventData(true, System.currentTimeMillis()));
     }
 
 

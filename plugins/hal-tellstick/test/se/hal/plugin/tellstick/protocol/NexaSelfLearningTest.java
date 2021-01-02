@@ -22,12 +22,11 @@
 
 package se.hal.plugin.tellstick.protocol;
 
-import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.plugin.tellstick.TellstickProtocol.TellstickDecodedEntry;
 import se.hal.plugin.tellstick.device.NexaSelfLearning;
 import se.hal.plugin.tellstick.device.NexaSelfLearningDimmer;
 import se.hal.struct.devicedata.DimmerEventData;
-import se.hal.struct.devicedata.SwitchEventData;
+import se.hal.struct.devicedata.OnOffEventData;
 import zutil.converter.Converter;
 
 import java.nio.charset.StandardCharsets;
@@ -42,7 +41,7 @@ public class NexaSelfLearningTest {
         NexaSelfLearning nexaDevice = new NexaSelfLearning();
         nexaDevice.setHouse(11_772_006);
         nexaDevice.setUnit(3);
-        SwitchEventData nexaData = new SwitchEventData(true, System.currentTimeMillis());
+        OnOffEventData nexaData = new OnOffEventData(true, System.currentTimeMillis());
 
         byte[] expected = Converter.toBytes(new char[]{
                         84, // T
@@ -99,7 +98,7 @@ public class NexaSelfLearningTest {
 
         assertEquals("House Code", 11772006, ((NexaSelfLearning)nexa.getDevice()).getHouse());
         assertEquals("Unit Code", 0, ((NexaSelfLearning)nexa.getDevice()).getUnit());
-        assertTrue("Enabled", ((SwitchEventData)nexa.getData()).isOn());
+        assertTrue("Enabled", ((OnOffEventData)nexa.getData()).isOn());
     }
 
     @org.junit.Test
@@ -108,7 +107,7 @@ public class NexaSelfLearningTest {
 
         assertEquals("House Code", 11772006, ((NexaSelfLearning)nexa.getDevice()).getHouse());
         assertEquals("Unit Code", 0, ((NexaSelfLearning)nexa.getDevice()).getUnit());
-        assertFalse("Enabled", ((SwitchEventData)nexa.getData()).isOn());
+        assertFalse("Enabled", ((OnOffEventData)nexa.getData()).isOn());
     }
 
     private TellstickDecodedEntry decode(String data){

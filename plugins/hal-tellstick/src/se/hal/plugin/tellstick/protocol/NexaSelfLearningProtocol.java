@@ -24,14 +24,13 @@ package se.hal.plugin.tellstick.protocol;
 
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventData;
-import se.hal.plugin.tellstick.TellstickSerialComm;
 import se.hal.plugin.tellstick.cmd.TellstickCmd;
 import se.hal.plugin.tellstick.cmd.TellstickCmdExtendedSend;
 import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.plugin.tellstick.device.NexaSelfLearning;
 import se.hal.plugin.tellstick.device.NexaSelfLearningDimmer;
 import se.hal.struct.devicedata.DimmerEventData;
-import se.hal.struct.devicedata.SwitchEventData;
+import se.hal.struct.devicedata.OnOffEventData;
 import zutil.ByteUtil;
 import zutil.log.LogUtil;
 import zutil.parser.binary.BinaryStruct;
@@ -84,8 +83,8 @@ public class NexaSelfLearningProtocol extends TellstickProtocol {
             logger.severe("Device config is not instance of NexaSelfLearning: "+deviceConfig.getClass());
             return null;
         }
-        if ( ! (deviceData instanceof SwitchEventData || deviceData instanceof DimmerEventData)){
-            logger.severe("Device data is not an instance of SwitchEventData or DimmerEventData: "+deviceData.getClass());
+        if ( ! (deviceData instanceof OnOffEventData || deviceData instanceof DimmerEventData)){
+            logger.severe("Device data is not an instance of OnOffEventData or DimmerEventData: "+deviceData.getClass());
             return null;
         }
 
@@ -102,7 +101,7 @@ public class NexaSelfLearningProtocol extends TellstickProtocol {
             struct.house = ((NexaSelfLearning) deviceConfig).getHouse();
             struct.group = ((NexaSelfLearning) deviceConfig).getGroup();
             struct.unit = ((NexaSelfLearning) deviceConfig).getUnit();
-            struct.enable = ((SwitchEventData) deviceData).isOn();
+            struct.enable = ((OnOffEventData) deviceData).isOn();
         }
 
 
@@ -163,7 +162,7 @@ public class NexaSelfLearningProtocol extends TellstickProtocol {
 */
             list.add(new TellstickDecodedEntry(
                     new NexaSelfLearning(struct.house, struct.group, struct.unit),
-                    new SwitchEventData(struct.enable, System.currentTimeMillis())
+                    new OnOffEventData(struct.enable, System.currentTimeMillis())
             ));
 /*        }*/
         return list;

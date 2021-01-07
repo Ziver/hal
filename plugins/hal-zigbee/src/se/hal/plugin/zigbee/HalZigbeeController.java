@@ -2,12 +2,19 @@ package se.hal.plugin.zigbee;
 
 
 import com.zsmartsystems.zigbee.ZigBeeNetworkManager;
+import com.zsmartsystems.zigbee.ZigBeeProfileType;
 import com.zsmartsystems.zigbee.ZigBeeStatus;
+import com.zsmartsystems.zigbee.app.basic.ZigBeeBasicServerExtension;
+import com.zsmartsystems.zigbee.app.discovery.ZigBeeDiscoveryExtension;
+import com.zsmartsystems.zigbee.app.iasclient.ZigBeeIasCieExtension;
+import com.zsmartsystems.zigbee.app.otaserver.ZigBeeOtaUpgradeExtension;
 import com.zsmartsystems.zigbee.dongle.cc2531.ZigBeeDongleTiCc2531;
 import com.zsmartsystems.zigbee.dongle.conbee.ZigBeeDongleConBee;
 import com.zsmartsystems.zigbee.dongle.xbee.ZigBeeDongleXBee;
-import com.zsmartsystems.zigbee.transport.ZigBeePort;
-import com.zsmartsystems.zigbee.transport.ZigBeeTransportTransmit;
+import com.zsmartsystems.zigbee.security.ZigBeeKey;
+import com.zsmartsystems.zigbee.serialization.DefaultDeserializer;
+import com.zsmartsystems.zigbee.serialization.DefaultSerializer;
+import com.zsmartsystems.zigbee.transport.*;
 import se.hal.HalContext;
 import se.hal.intf.*;
 import se.hal.struct.AbstractDevice;
@@ -49,21 +56,58 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
         serialPort = new ZigBeeJSerialCommPort(comPort);
         dataStore = new ZigBeeDataStore();
 
-        ZigBeeTransportTransmit dongle = getDongle("CC2531");
+        // ----------------------------
+        // Initialize Transport Network
+        // ----------------------------
+
+        ZigBeeTransportTransmit dongle = getDongle("CC2531", serialPort);
         networkManager = new ZigBeeNetworkManager(dongle);
         networkManager.setNetworkDataStore(dataStore);
+        networkManager.setSerializer(DefaultSerializer.class, DefaultDeserializer.class);
 
+        // Initialize Network
+
+        logger.info("Initializing ZigBee Network...");
         ZigBeeStatus initResponse = networkManager.initialize();
-        System.out.println("NetworkManager.initialize() returned " + initResponse);
+        logger.info("ZigBee Network initialization finished with: " + initResponse);
 
-        if (dongle instanceof ZigBeeDongleTiCc2531) {
+        // ------------------------
+        // Startup Network
+        // ------------------------
+
+        networkManager.setDefaultProfileId(ZigBeeProfileType.ZIGBEE_HOME_AUTOMATION.getKey());
+
+        TransportConfig transportOptions = new TransportConfig();
+        transportOptions.addOption(TransportConfigOption.RADIO_TX_POWER, 3);
+        transportOptions.addOption(TransportConfigOption.TRUST_CENTRE_JOIN_MODE, TrustCentreJoinMode.TC_JOIN_SECURE);
+        transportOptions.addOption(TransportConfigOption.TRUST_CENTRE_LINK_KEY, new ZigBeeKey(new int[] {
+                0x5A, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6C, 0x6C, 0x69, 0x61, 0x6E, 0x63, 0x65, 0x30, 0x39 }));
+        dongle.updateTransportConfig(transportOptions);
+
+        // Register extensions
+
+        networkManager.addExtension(new ZigBeeOtaUpgradeExtension());
+        networkManager.addExtension(new ZigBeeBasicServerExtension());
+        networkManager.addExtension(new ZigBeeDiscoveryExtension());
+
+        // Startup Network
+
+        logger.info("Starting up ZigBee Network...");
+        ZigBeeStatus startResponse = networkManager.startup(false);
+        logger.info("ZigBee Network startup finished with: " + startResponse);
+
+        // -----------
+        // Other stuff
+        // -----------
+
+        /*if (dongle instanceof ZigBeeDongleTiCc2531) {
             ZigBeeDongleTiCc2531 tiDongle = (ZigBeeDongleTiCc2531) dongle;
             tiDongle.setLedMode(1, false);
             tiDongle.setLedMode(2, false);
-        }
+        }*/
     }
 
-    private ZigBeeTransportTransmit getDongle(String name) {
+    private static ZigBeeTransportTransmit getDongle(String name, ZigBeePort serialPort) {
         switch (name) {
         case "CC2531":
             return new ZigBeeDongleTiCc2531(serialPort);

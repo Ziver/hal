@@ -27,31 +27,42 @@ package se.hal.plugin.zigbee;
 import com.zsmartsystems.zigbee.IeeeAddress;
 import com.zsmartsystems.zigbee.database.ZigBeeNetworkDataStore;
 import com.zsmartsystems.zigbee.database.ZigBeeNodeDao;
+import zutil.log.LogUtil;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
+
 
 public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
+    private static final Logger logger = LogUtil.getLogger();
+    private HashMap<IeeeAddress,ZigBeeNodeDao> devices = new HashMap<>();
+
 
     @Override
     public Set<IeeeAddress> readNetworkNodes() {
-        System.out.println("ZigBeeDataStore.readNetworkNodes()");
-        return new HashSet<>();
+        return devices.keySet();
     }
 
     @Override
     public ZigBeeNodeDao readNode(IeeeAddress address) {
         System.out.println("ZigBeeDataStore.readNetworkNodes(" + address + ")");
-        return null;
+
+        return devices.get(address);
     }
 
     @Override
     public void writeNode(ZigBeeNodeDao node) {
         System.out.println("ZigBeeDataStore.writeNode(" + node + ")");
+
+        devices.put(node.getIeeeAddress(), node);
     }
 
     @Override
     public void removeNode(IeeeAddress address) {
         System.out.println("ZigBeeDataStore.removeNode(" + address + ")");
+
+        devices.remove(address);
     }
 }

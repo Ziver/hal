@@ -111,7 +111,7 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
 
             return true;
         } catch (Exception e) {
-            logger.warn("Unable to open serial port: " + e.getMessage());
+            logger.error("Unable to open serial port: " + e.getMessage());
             return false;
         }
     }

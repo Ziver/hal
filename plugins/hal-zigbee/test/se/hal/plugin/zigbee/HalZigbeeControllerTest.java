@@ -24,6 +24,8 @@
 
 package se.hal.plugin.zigbee;
 
+import com.zsmartsystems.zigbee.ZigBeeNetworkManager;
+import com.zsmartsystems.zigbee.ZigBeeNode;
 import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
 
@@ -34,6 +36,7 @@ import java.util.logging.Level;
 public class HalZigbeeControllerTest {
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        LogUtil.readConfiguration("logging.properties");
         LogUtil.setGlobalFormatter(new CompactLogFormatter());
         LogUtil.setGlobalLevel(Level.ALL);
 
@@ -43,11 +46,52 @@ public class HalZigbeeControllerTest {
         System.out.println("PAN ID          = " + controller.networkManager.getZigBeePanId());
         System.out.println("Extended PAN ID = " + controller.networkManager.getZigBeeExtendedPanId());
         System.out.println("Channel         = " + controller.networkManager.getZigBeeChannel());
-        controller.networkManager.permitJoin(50);
 
-        System.out.println("Press ENTER to exit application.");
-        System.in.read();
+        handleConsoleInput('h', controller.networkManager);
+
+        while(true) {
+            char input = waitForInout();
+            handleConsoleInput(input, controller.networkManager);
+
+            if (input == 'q') break;
+        }
 
         controller.close();
+    }
+
+
+    private static void handleConsoleInput(char input, ZigBeeNetworkManager networkManager) {
+        switch (input) {
+            case 'l':
+                for (ZigBeeNode node : networkManager.getNodes()) {
+                    System.out.println(node);
+                }
+                System.out.println("Number of ZigBee Nodes: " + networkManager.getNodes().size());
+                break;
+
+            case 'p':
+                System.out.println("Enabling pairing.");
+                networkManager.permitJoin(200);
+                break;
+
+            case 'q':
+                System.out.println("Shutting down.");
+                break;
+
+            case 'h':
+            default:
+                System.out.println("Available commands:");
+                System.out.println("  l: List available ZigBee Nodes");
+                System.out.println("  p: Enable pairing of ZigBee devices");
+                System.out.println("  q: Quit");
+                System.out.println("  h: Help text");
+                break;
+        }
+    }
+
+    private static char waitForInout() throws IOException {
+        System.out.print("Input command and finish with ENTER: ");
+
+        return (char) System.in.read();
     }
 }

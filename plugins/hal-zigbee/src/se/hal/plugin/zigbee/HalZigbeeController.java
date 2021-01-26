@@ -29,7 +29,12 @@ import java.util.logging.Logger;
 public class HalZigbeeController implements HalSensorController, HalEventController, HalAutoScannableController {
     private static final Logger logger = LogUtil.getLogger();
 
+    public static final String ZIGBEE_DONGLE_CC2531 = "CC2531";
+    public static final String ZIGBEE_DONGLE_CONBEE = "CONBEE";
+    public static final String ZIGBEE_DONGLE_XBEE   = "XBEE";
+
     private static final String CONFIG_ZIGBEE_PORT = "zigbee.com_port";
+    private static final String CONFIG_ZIGBEE_DONGLE = "zigbee.dongle";
 
     private ZigBeePort serialPort;
     private ZigBeeDataStore dataStore;
@@ -45,22 +50,23 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
 
     @Override
     public boolean isAvailable() {
-        return HalContext.containsProperty(CONFIG_ZIGBEE_PORT);
+        return HalContext.containsProperty(CONFIG_ZIGBEE_PORT) &&
+                HalContext.containsProperty(CONFIG_ZIGBEE_DONGLE);
     }
     @Override
     public void initialize() {
-        initialize(
-                HalContext.getStringProperty(CONFIG_ZIGBEE_PORT));
+        initialize(HalContext.getStringProperty(CONFIG_ZIGBEE_PORT), HalContext.getStringProperty(CONFIG_ZIGBEE_DONGLE));
     }
-    public void initialize(String comPort) {
+    public void initialize(String comPort, String dongleName) {
         serialPort = new ZigBeeJSerialCommPort(comPort);
         dataStore = new ZigBeeDataStore();
+        TransportConfig transportOptions = new TransportConfig();
 
         // ----------------------------
         // Initialize Transport Network
         // ----------------------------
 
-        ZigBeeTransportTransmit dongle = getDongle("CC2531", serialPort);
+        ZigBeeTransportTransmit dongle = getDongle(dongleName, serialPort, transportOptions);
         networkManager = new ZigBeeNetworkManager(dongle);
         networkManager.setNetworkDataStore(dataStore);
         networkManager.setSerializer(DefaultSerializer.class, DefaultDeserializer.class);
@@ -77,10 +83,9 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
 
         networkManager.setDefaultProfileId(ZigBeeProfileType.ZIGBEE_HOME_AUTOMATION.getKey());
 
-        TransportConfig transportOptions = new TransportConfig();
         transportOptions.addOption(TransportConfigOption.RADIO_TX_POWER, 3);
         transportOptions.addOption(TransportConfigOption.TRUST_CENTRE_JOIN_MODE, TrustCentreJoinMode.TC_JOIN_SECURE);
-        transportOptions.addOption(TransportConfigOption.TRUST_CENTRE_LINK_KEY, new ZigBeeKey(new int[] {
+        transportOptions.addOption(TransportConfigOption.TRUST_CENTRE_LINK_KEY, new ZigBeeKey(new int[] { // Add the default ZigBeeAlliance09 HA link key
                 0x5A, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6C, 0x6C, 0x69, 0x61, 0x6E, 0x63, 0x65, 0x30, 0x39 }));
         dongle.updateTransportConfig(transportOptions);
 
@@ -100,21 +105,22 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
         // Other stuff
         // -----------
 
-        /*if (dongle instanceof ZigBeeDongleTiCc2531) {
+        if (dongle instanceof ZigBeeDongleTiCc2531) {
             ZigBeeDongleTiCc2531 tiDongle = (ZigBeeDongleTiCc2531) dongle;
             tiDongle.setLedMode(1, false);
             tiDongle.setLedMode(2, false);
-        }*/
+        }
     }
 
-    private static ZigBeeTransportTransmit getDongle(String name, ZigBeePort serialPort) {
+    private static ZigBeeTransportTransmit getDongle(String name, ZigBeePort serialPort, TransportConfig transportOptions) {
         switch (name) {
-        case "CC2531":
+        case ZIGBEE_DONGLE_CC2531:
+            transportOptions.addOption(TransportConfigOption.RADIO_TX_POWER, 3);
             return new ZigBeeDongleTiCc2531(serialPort);
-        case "XBEE":
-            return new ZigBeeDongleXBee(serialPort);
-        case "CONBEE":
+        case ZIGBEE_DONGLE_CONBEE:
             return new ZigBeeDongleConBee(serialPort);
+        case ZIGBEE_DONGLE_XBEE:
+            return new ZigBeeDongleXBee(serialPort);
         default:
             logger.severe("Unknown ZigBee dongle: " + name);
             return null;

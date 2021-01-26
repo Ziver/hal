@@ -107,7 +107,7 @@ public class EventControllerManagerTest {
         }
     }
 
-    public static class TestController implements HalEventController{
+    public static class TestController implements HalEventController {
         int size;
 
         @Override

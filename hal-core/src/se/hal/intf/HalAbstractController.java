@@ -24,7 +24,8 @@
 
 package se.hal.intf;
 
-public interface HalAbstractController {
+
+public interface HalAbstractController<C, L> {
 
     /**
      * The framework might create dummy objects so any type of
@@ -33,12 +34,10 @@ public interface HalAbstractController {
      */
     void initialize() throws Exception;
 
-
     /**
      * @return the number of registered devices.
      */
     int size();
-
 
     /**
      * Close any resources associated with this controller.

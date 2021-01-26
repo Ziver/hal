@@ -1,5 +1,8 @@
 package se.hal.intf;
 
+/**
+ * Controller interface for handling event based devices.
+ */
 public interface HalEventController extends HalAbstractController {
 
     /**

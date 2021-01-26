@@ -116,7 +116,6 @@ public class EventConfigWebPage extends HalWebPage {
         tmpl.set("availableEvents", ControllerManager.getInstance().getAvailableEvents());
 
         return tmpl;
-
     }
 
 }

@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 /**
  * This class manages all SensorController and EventController objects
  */
-@SuppressWarnings("RedundantCast")
 public class ControllerManager implements HalSensorReportListener,
         HalEventReportListener,
         PreConfigurationActionListener,
@@ -31,21 +30,21 @@ public class ControllerManager implements HalSensorReportListener,
     /** All available sensor plugins **/
     private List<Class<? extends HalSensorConfig>> availableSensors = new ArrayList<>();
     /** List of all registered sensors **/
-    private List<Sensor> registeredSensors = Collections.synchronizedList(new ArrayList<Sensor>());
+    private List<Sensor> registeredSensors = Collections.synchronizedList(new ArrayList<>());
     /** List of auto detected sensors **/
-    private List<Sensor> detectedSensors = Collections.synchronizedList(new ArrayList<Sensor>());
+    private List<Sensor> detectedSensors = Collections.synchronizedList(new ArrayList<>());
     /** List of sensors that are currently being reconfigured **/
-    private List<Sensor> limboSensors = Collections.synchronizedList(new LinkedList<Sensor>());
+    private List<Sensor> limboSensors = Collections.synchronizedList(new LinkedList<>());
 
 
     /** All available event plugins **/
     private List<Class<? extends HalEventConfig>> availableEvents = new ArrayList<>();
     /** List of all registered events **/
-    private List<Event> registeredEvents = Collections.synchronizedList(new ArrayList<Event>());
+    private List<Event> registeredEvents = Collections.synchronizedList(new ArrayList<>());
     /** List of auto detected events **/
-    private List<Event> detectedEvents = Collections.synchronizedList(new ArrayList<Event>());
+    private List<Event> detectedEvents = Collections.synchronizedList(new ArrayList<>());
     /** List of all registered events **/
-    private List<Event> limboEvents = Collections.synchronizedList(new LinkedList<Event>());
+    private List<Event> limboEvents = Collections.synchronizedList(new LinkedList<>());
 
 
     /** A map of all instantiated controllers **/

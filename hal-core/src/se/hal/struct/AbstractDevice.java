@@ -2,6 +2,7 @@ package se.hal.struct;
 
 import se.hal.ControllerManager;
 import se.hal.HalContext;
+import se.hal.intf.HalAbstractController;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalDeviceReportListener;
 import zutil.db.DBConnection;
@@ -50,7 +51,9 @@ public abstract class AbstractDevice<T extends AbstractDevice, C,D extends HalDe
     protected transient List<HalDeviceReportListener<T>> listeners = new LinkedList<>();
 
 
-    /**************** DEVICE CONFIG ******************/
+    // ----------------------------------------------------
+    // Device config methods
+    // ----------------------------------------------------
 
     public Configurator<C> getDeviceConfigurator() {
         C obj = getDeviceConfig();
@@ -123,9 +126,11 @@ public abstract class AbstractDevice<T extends AbstractDevice, C,D extends HalDe
         }
     }
 
-    public abstract Class<?> getController();
+    public abstract Class<? extends HalAbstractController> getController();
 
-    /**************** DEVICE DATA ******************/
+    // ----------------------------------------------------
+    // Device data methods
+    // ----------------------------------------------------
 
     /**
      * @return the latest known data from the device
@@ -143,7 +148,9 @@ public abstract class AbstractDevice<T extends AbstractDevice, C,D extends HalDe
      */
     protected abstract D getLatestDeviceData(DBConnection db);
 
-    /**************** OTHER ******************/
+    // ----------------------------------------------------
+    // Other methods
+    // ----------------------------------------------------
 
     public String getName() {
         return name;

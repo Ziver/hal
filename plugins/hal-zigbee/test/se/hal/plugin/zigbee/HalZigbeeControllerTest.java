@@ -41,7 +41,7 @@ public class HalZigbeeControllerTest {
         LogUtil.setGlobalLevel(Level.ALL);
 
         HalZigbeeController controller = new HalZigbeeController();
-        controller.initialize("COM3");
+        controller.initialize("COM4", HalZigbeeController.ZIGBEE_DONGLE_CONBEE);
 
         System.out.println("PAN ID          = " + controller.networkManager.getZigBeePanId());
         System.out.println("Extended PAN ID = " + controller.networkManager.getZigBeeExtendedPanId());
@@ -90,8 +90,14 @@ public class HalZigbeeControllerTest {
     }
 
     private static char waitForInout() throws IOException {
+        System.out.print("");
         System.out.print("Input command and finish with ENTER: ");
 
-        return (char) System.in.read();
+        while (true) {
+            char input=(char)System.in.read();
+            if (input != '\n')
+                return input;
+        }
+
     }
 }

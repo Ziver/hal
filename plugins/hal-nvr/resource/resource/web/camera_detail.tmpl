@@ -1,0 +1,42 @@
+<h1 class="page-header">Details for <a href="#">{{camera.getName()}}</a></h1>
+
+<div class="col-md-12">
+    <video width="100%" height="480" controls>
+        <source src="rtsp://admin:xxxx@192.168.10.223:554/H.264">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<div class="col-md-5">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">Configuration</div>
+        <div class="panel-body">
+            <table class="table table-hover table-condensed">
+                <thead>
+                <tr>
+                    <th class="text-right">Camera ID:</th>
+                    <th>{{camera.getId()}}</th>
+                </tr>
+                <tr>
+                    <th class="text-right">Name:</th>
+                    <th>{{camera.getName()}}</th>
+                </tr>
+                </thead>
+                <tr>
+                    <th class="text-right">Type:</th>
+                    <td>{{camera.getDeviceData().getClass().getSimpleName()}}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Owner:</th>
+                    <td>{{camera.getUser().getUsername()}} <p></td>
+                </tr>
+                {{#camera.getDeviceConfigurator().getConfiguration()}}
+                <tr>
+                    <th class="text-right">{{.getNiceName()}}:</th>
+                    <td>{{.getString()}}</td>
+                </tr>
+                {{/camera.getDeviceConfigurator().getConfiguration()}}
+            </table>
+        </div>
+    </div>
+</div>

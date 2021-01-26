@@ -1,0 +1,12 @@
+repositories {
+    maven {
+        url 'https://jitpack.io' // Needed for ffmpeg4j project
+    }
+}
+
+dependencies {
+    implementation project(':hal-core')
+
+    implementation 'com.github.Manevolent:ffmpeg4j:4.1-1.4.4-2' // https://github.com/Manevolent/ffmpeg4j
+    //implementation 'net.bramp.ffmpeg:ffmpeg:0.6.2' // https://github.com/bramp/ffmpeg-cli-wrapper
+}

@@ -1,0 +1,10 @@
+{
+    "version": 0.1,
+    "name": "Hal-NVR",
+    "description": "A Network Video Recorder plugin for recording network streams.",
+    "interfaces": [
+        {"se.hal.intf.HalWebPage": "se.hal.plugin.nvr.page.CameraConfigWebPage"},
+        {"se.hal.intf.HalWebPage": "se.hal.plugin.nvr.page.CameraOverviewWebPage"},
+        {"se.hal.intf.HalWebPage": "se.hal.plugin.nvr.page.MonitoringWebPage"}
+    ]
+}

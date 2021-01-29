@@ -26,17 +26,16 @@ package se.hal.plugin.nvr.page;
 
 import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
-import se.hal.plugin.nvr.device.Camera;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
 
 import java.util.Map;
 
-public class MonitoringWebPage extends HalWebPage {
+public class MonitorWebPage extends HalWebPage {
     private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/camera_monitor.tmpl";
 
-    public MonitoringWebPage() {
+    public MonitorWebPage() {
         super("camera_monitor");
         super.getRootNav().createSubNav("Surveillance").createSubNav(this.getId(), "Monitoring").setWeight(-100);
     }
@@ -46,7 +45,10 @@ public class MonitoringWebPage extends HalWebPage {
         DBConnection db = HalContext.getDB();
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
-        //tmpl.set("cameras", Camera.getCameras(db));
+        tmpl.set("stream1", "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8");
+        tmpl.set("stream2", "http://vjs.zencdn.net/v/oceans.mp4");
+        tmpl.set("stream3", "http://vjs.zencdn.net/v/oceans.mp4");
+        tmpl.set("stream4", "http://vjs.zencdn.net/v/oceans.mp4");
 
         return tmpl;
     }

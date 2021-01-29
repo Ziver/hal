@@ -38,14 +38,20 @@ import com.github.manevolent.ffmpeg4j.source.VideoSourceSubstream;
 import com.github.manevolent.ffmpeg4j.stream.output.FFmpegTargetStream;
 import com.github.manevolent.ffmpeg4j.stream.source.FFmpegSourceStream;
 import com.github.manevolent.ffmpeg4j.transcoder.Transcoder;
+import zutil.log.CompactLogFormatter;
+import zutil.log.LogUtil;
 
 import java.io.FileOutputStream;
+import java.util.logging.Level;
 
 
 public class RecorderFFmpeg4J {
 
     public static void main(String[] args) throws Exception {
-        FFmpegIO input = FFmpegIO.openNativeUrlInput("admin:TCZRTY@192.168.10.223:554/H.264");
+        LogUtil.setGlobalLevel(Level.ALL);
+        LogUtil.setGlobalFormatter(new CompactLogFormatter());
+
+        FFmpegIO input = FFmpegIO.openNativeUrlInput("rtsp://admin:TCZRTY@192.168.10.223:554/H.264");
         FFmpegIO output = FFmpegIO.openOutputStream(new FileOutputStream("./video.mp4"), FFmpegIO.DEFAULT_BUFFER_SIZE);
 
         // Open input

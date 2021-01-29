@@ -5,6 +5,6 @@
     "interfaces": [
         {"se.hal.intf.HalWebPage": "se.hal.plugin.nvr.page.CameraConfigWebPage"},
         {"se.hal.intf.HalWebPage": "se.hal.plugin.nvr.page.CameraOverviewWebPage"},
-        {"se.hal.intf.HalWebPage": "se.hal.plugin.nvr.page.MonitoringWebPage"}
+        {"se.hal.intf.HalWebPage": "se.hal.plugin.nvr.page.MonitorWebPage"}
     ]
 }

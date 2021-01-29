@@ -2,38 +2,45 @@
 
 <style>
     .monitor-view {
-        padding: 0px;
-        line-height: 0px;
+        width: 100%;
+        height: 600px;
     }
 </style>
 
-<div class="container">
-    <div class="row">
-        <div class="monitor-view col-md-6">
-            <video width="100%" height="480" controls>
-                <source src="rtsp://admin:xxxx@192.168.10.223:554/H.264">
-                Your browser does not support the video tag.
+<table class="monitor-view">
+    <tr>
+        <td>
+            <video id="view1" class="video-js vjs-fill" preload="auto" data-setup='{}' controls autoplay muted >
+                <source src="{{stream1}}">
+                <p class="vjs-no-js">
+                    To view this video please enable JavaScript, and consider upgrading to a web browser that
+                    <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video.</a>
+                </p>
             </video>
-        </div>
-        <div class="monitor-view col-md-6">
-            <video width="100%" height="480" controls>
-                <source src="rtsp://admin:xxxx@192.168.10.223:554/H.264">
-                Your browser does not support the video tag.
+        </td>
+
+        <td>
+            <video id="view2" class="video-js vjs-fill" preload="auto" data-setup='{}' controls autoplay muted >
+                <source src="{{stream2}}">
             </video>
-        </div>
-    </div>
-    <div class="row">
-        <div class="monitor-view col-md-6">
-            <video width="100%" height="480" controls>
-                <source src="rtsp://admin:xxxx@192.168.10.223:554/H.264">
-                Your browser does not support the video tag.
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <video id="view3" class="video-js vjs-fill" preload="auto" data-setup='{}' controls autoplay muted >
+                <source src="{{stream3}}">
             </video>
-        </div>
-        <div class="monitor-view col-md-6">
-            <video width="100%" height="480" controls>
-                <source src="rtsp://admin:xxx@192.168.10.223:554/H.264">
-                Your browser does not support the video tag.
+        </td>
+
+        <td>
+            <video id="view4" class="video-js vjs-fill" preload="auto" data-setup='{}' controls autoplay muted >
+                <source src="{{stream4}}">
             </video>
-        </div>
-    </div>
-</div>
+        </td>
+    </tr>
+</table>
+
+<link href="css/video-js.min.css" rel="stylesheet">
+<script src="js/video.min.js"></script>
+<script src="js/videojs-http-streaming.min.js"></script>

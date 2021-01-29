@@ -38,7 +38,7 @@ public class HalContext {
 
     private static final String CONF_FILE       = "hal.conf";
     private static final String DB_FILE         = "hal.db";
-    private static final String DEFAULT_DB_FILE = "hal-default.db";
+    private static final String DEFAULT_DB_FILE = HalContext.RESOURCE_ROOT + "/resource/hal-default.db";
 
     // Variables
     private static DBConnection db; // TODO: Should probably be a db pool as we have multiple threads accessing the DB

@@ -9,11 +9,10 @@ import se.hal.HalContext;
 import se.hal.util.UTCTimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.DBUpgradeHandler;
-import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
 
 public class SensorDataAggregationDaemonTest {
-    private static final String DEFAULT_DB_FILE = "../hal-default.db";
+    private static final String DEFAULT_DB_FILE = "resource/resource/hal-default.db";
 
     private static DBConnection db;
 

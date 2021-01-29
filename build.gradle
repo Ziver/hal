@@ -12,6 +12,10 @@ allprojects {
         mavenLocal()
         mavenCentral()
         jcenter()
+
+        maven {
+            url 'https://jitpack.io' // Needed for ffmpeg4j project
+        }
     }
 }
 
@@ -56,7 +60,6 @@ distributions {
     main {
         contents {
             from 'hal.conf.example'
-            from 'hal-default.db'
             from 'logging.properties'
 
             from "${buildDir}/resources"

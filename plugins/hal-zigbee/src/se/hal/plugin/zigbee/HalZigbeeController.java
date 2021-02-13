@@ -105,11 +105,11 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
         // Other stuff
         // -----------
 
-        if (dongle instanceof ZigBeeDongleTiCc2531) {
+        /*if (dongle instanceof ZigBeeDongleTiCc2531) {
             ZigBeeDongleTiCc2531 tiDongle = (ZigBeeDongleTiCc2531) dongle;
             tiDongle.setLedMode(1, false);
             tiDongle.setLedMode(2, false);
-        }
+        }*/
     }
 
     private static ZigBeeTransportTransmit getDongle(String name, ZigBeePort serialPort, TransportConfig transportOptions) {

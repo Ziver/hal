@@ -24,6 +24,7 @@
 
 package se.hal.plugin.zigbee;
 
+import com.zsmartsystems.zigbee.ZigBeeEndpoint;
 import com.zsmartsystems.zigbee.ZigBeeNetworkManager;
 import com.zsmartsystems.zigbee.ZigBeeNode;
 import zutil.log.CompactLogFormatter;
@@ -35,17 +36,13 @@ import java.util.logging.Level;
 
 public class HalZigbeeControllerTest {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         LogUtil.readConfiguration("logging.properties");
         LogUtil.setGlobalFormatter(new CompactLogFormatter());
         LogUtil.setGlobalLevel(Level.ALL);
 
         HalZigbeeController controller = new HalZigbeeController();
-        controller.initialize("COM4", HalZigbeeController.ZIGBEE_DONGLE_CONBEE);
-
-        System.out.println("PAN ID          = " + controller.networkManager.getZigBeePanId());
-        System.out.println("Extended PAN ID = " + controller.networkManager.getZigBeeExtendedPanId());
-        System.out.println("Channel         = " + controller.networkManager.getZigBeeChannel());
+        controller.initialize("COM5", HalZigbeeController.ZIGBEE_DONGLE_CC2531);
 
         handleConsoleInput('h', controller.networkManager);
 
@@ -62,9 +59,21 @@ public class HalZigbeeControllerTest {
 
     private static void handleConsoleInput(char input, ZigBeeNetworkManager networkManager) {
         switch (input) {
+            case 'i':
+                System.out.println("PAN ID          = " + networkManager.getZigBeePanId());
+                System.out.println("Extended PAN ID = " + networkManager.getZigBeeExtendedPanId());
+                System.out.println("Channel         = " + networkManager.getZigBeeChannel());
+                break;
+
             case 'l':
                 for (ZigBeeNode node : networkManager.getNodes()) {
                     System.out.println(node);
+
+                    for (ZigBeeEndpoint endpoint : node.getEndpoints()) {
+                        System.out.println("  - " + endpoint);
+                    }
+
+                    System.out.println("  Number of Endpoints: " + node.getEndpoints().size());
                 }
                 System.out.println("Number of ZigBee Nodes: " + networkManager.getNodes().size());
                 break;
@@ -81,6 +90,7 @@ public class HalZigbeeControllerTest {
             case 'h':
             default:
                 System.out.println("Available commands:");
+                System.out.println("  i: List network info");
                 System.out.println("  l: List available ZigBee Nodes");
                 System.out.println("  p: Enable pairing of ZigBee devices");
                 System.out.println("  q: Quit");

@@ -21,15 +21,16 @@ Instructions are originally from: https://www.zigbee2mqtt.io/information/flashin
 
 ### Windows
 1. Download and install the "SmartRF Flash Programmer" **(Not v2)** application from https://www.ti.com/tool/FLASH-PROGRAMMER
+2. Download Z-STACK software (We do not actually need the software just the firmware binary that is included in the installation) from https://www.ti.com/tool/Z-STACK (You will need to create an account to download)
 
 
-2. Connect CC debugger to the CC2531 USB sniffer.
-3. Connect **BOTH** the CC2531 USB sniffer and the CC debugger to your PC using USB. 
+3. Connect CC debugger to the CC2531 USB sniffer.
+4. Connect **BOTH** the CC2531 USB sniffer and the CC debugger to your PC using USB. 
    * If the light on the CC debugger is RED press set reset button on the CC debugger. The light on the CC debugger should now turn GREEN. If not use [CC debugger user guide](http://www.ti.com/lit/ug/swru197h/swru197h.pdf) to troubleshoot your problem.
-4. Download the firmware [CC2531_DEFAULT_20190608.zip](https://github.com/Koenkk/Z-Stack-firmware/raw/master/coordinator/Z-Stack_Home_1.2/bin/default/CC2531_DEFAULT_20190608.zip)
-4. Start SmartRF Flash Programmer, with the properties below:
-    * Flash image: Make sure to select the .hex file and not the .bin file.
-    * Uncheck "Retain IEEE address when reprogramming the chip.
+6. Start SmartRF Flash Programmer, with the properties below:
+    * Flash image: Locate the binary at <Z-Stack install dir>\Projects\zstack\ZNP\CC253x\dev\ (Make sure to select the .hex file and not the .bin file).
+    * Uncheck "Retain IEEE address when reprogramming the chip".
+7. Press "Perform Action" to start flashing.
 
 ### Linux or MacOS
 
@@ -50,8 +51,11 @@ Instructions are originally from: https://www.zigbee2mqtt.io/information/flashin
 
 3. Connect **BOTH** the CC2531 USB sniffer and the CC debugger to your PC using USB.
     * If the light on the CC debugger is RED press set reset button on the CC debugger. The light on the CC debugger should now turn GREEN. If not use [CC debugger user guide](http://www.ti.com/lit/ug/swru197h/swru197h.pdf) to troubleshoot your problem.
-4. Download the firmware [CC2531_DEFAULT_20190608.zip](https://github.com/Koenkk/Z-Stack-firmware/raw/master/coordinator/Z-Stack_Home_1.2/bin/default/CC2531_DEFAULT_20190608.zip)
+4. Download the firmware [CC2531_DEFAULT_xxxxxxx.zip](https://github.com/Koenkk/Z-Stack-firmware/raw/master/coordinator/Z-Stack_Home_1.2/bin/default/CC2531_DEFAULT_20201127.zip) (If link is dead try latest version [here](https://github.com/Koenkk/Z-Stack-firmware/tree/master/coordinator/Z-Stack_Home_1.2/bin/default))
 5. Flash your firmware:
 
         sudo ./cc-tool -e -w CC2531ZNP-Prod.hex
 
+## References
+
+* CCDEBUGGER user guide: http://www.ti.com/lit/ug/swru197h/swru197h.pdf

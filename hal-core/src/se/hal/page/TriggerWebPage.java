@@ -12,10 +12,13 @@ import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
 import zutil.parser.Templator;
+import zutil.ui.UserMessageManager;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import static zutil.ui.UserMessageManager.*;
 
 public class TriggerWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
@@ -77,8 +80,8 @@ public class TriggerWebPage extends HalWebPage {
                 case "create_trigger":
                     if (flow == null){
                         logger.warning("Invalid flow id: " + request.get("flow-id"));
-                        HalAlertManager.getInstance().addAlert(new HalAlertManager.HalAlert(
-                                HalAlertManager.AlertLevel.ERROR, "Invalid flow id: " + request.get("flow-id"), HalAlertManager.AlertTTL.ONE_VIEW));
+                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                                MessageLevel.ERROR, "Invalid flow id: " + request.get("flow-id"), MessageTTL.ONE_VIEW));
                         break;
                     }
 
@@ -105,8 +108,8 @@ public class TriggerWebPage extends HalWebPage {
                 // Triggers
                 case "create_action":
                     if (flow == null){
-                        HalAlertManager.getInstance().addAlert(new HalAlertManager.HalAlert(
-                                HalAlertManager.AlertLevel.ERROR, "Invalid flow id", HalAlertManager.AlertTTL.ONE_VIEW));
+                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                                MessageLevel.ERROR, "Invalid flow id", MessageTTL.ONE_VIEW));
                         break;
                     }
 

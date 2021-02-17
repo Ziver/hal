@@ -31,13 +31,12 @@ import se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationDaemon.SensorDat
 import se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationDaemon.SensorDataListDTO;
 import se.hal.intf.HalDaemon;
 import se.hal.page.HalAlertManager;
-import se.hal.page.HalAlertManager.AlertTTL;
-import se.hal.page.HalAlertManager.HalAlert;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.parser.json.JSONParser;
+import zutil.ui.UserMessageManager;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -50,6 +49,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static zutil.ui.UserMessageManager.*;
 
 public class PCDataSynchronizationClient implements HalDaemon {
     private static final Logger logger = LogUtil.getLogger();
@@ -157,8 +158,8 @@ public class PCDataSynchronizationClient implements HalDaemon {
 
                 } catch (NoRouteToHostException|UnknownHostException|ConnectException|SocketTimeoutException e) {
                     logger.warning("Unable to connect to "+ user.getHostname()+":"+user.getPort() +", "+ e.getMessage());
-                    HalAlertManager.getInstance().addAlert(new HalAlert(HalAlertManager.AlertLevel.WARNING,
-                            "Unable to connect to user with host: "+user.getHostname(), AlertTTL.DISMISSED));
+                    HalAlertManager.getInstance().addAlert(new UserMessage(MessageLevel.WARNING,
+                            "Unable to connect to user with host: "+user.getHostname(), MessageTTL.DISMISSED));
                 } catch (Exception e) {
                     logger.log(Level.SEVERE, null, e);
                 }
@@ -170,8 +171,9 @@ public class PCDataSynchronizationClient implements HalDaemon {
     }
 
 
-
-    ///////////////  DTO ///////////////////////
+    // ----------------------------------------------------
+    //                     DTO
+    // ----------------------------------------------------
 
     /**
      * Request Peer information and isAvailable sensors

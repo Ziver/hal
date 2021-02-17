@@ -2,17 +2,17 @@ package se.hal.page;
 
 import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
-import se.hal.page.HalAlertManager.AlertLevel;
-import se.hal.page.HalAlertManager.AlertTTL;
-import se.hal.page.HalAlertManager.HalAlert;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
 import zutil.parser.Templator;
+import zutil.ui.UserMessageManager;
 
 import java.util.Map;
 import java.util.logging.Logger;
+
+import static zutil.ui.UserMessageManager.*;
 
 public class UserConfigWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
@@ -50,8 +50,8 @@ public class UserConfigWebPage extends HalWebPage {
                     localUser.setAddress(request.get("address"));
                     localUser.save(db);
 
-                    HalAlertManager.getInstance().addAlert(new HalAlert(
-                            AlertLevel.SUCCESS, "Successfully saved profile changes", AlertTTL.ONE_VIEW));
+                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                            MessageLevel.SUCCESS, "Successfully saved profile changes", MessageTTL.ONE_VIEW));
                     break;
             }
         }

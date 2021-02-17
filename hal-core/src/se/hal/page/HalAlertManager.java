@@ -7,6 +7,8 @@ import zutil.net.http.HttpHeader;
 import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
 import zutil.parser.Templator;
+import zutil.ui.UserMessageManager;
+import zutil.ui.UserMessageManager.UserMessage;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,50 +21,31 @@ public class HalAlertManager implements HttpPage {
     private static final String PAGE_NAME = "alert";
     private static HalAlertManager instance;
 
-    public enum AlertLevel{
-        ERROR,
-        WARNING,
-        SUCCESS,
-        INFO
-    }
-    public enum AlertTTL{
-        ONE_VIEW,
-        DISMISSED
-    }
-
-    private List<HalAlert> alerts = new LinkedList<>();
+    private UserMessageManager messageManager = new UserMessageManager();
 
 
     private HalAlertManager(){}
+
 
     public String getUrl(){
         return "/" + PAGE_NAME;
     }
 
-    public void addAlert(HalAlert alert) {
-        alerts.remove(alert); // We don't want to flood the user with duplicate alerts
-        alerts.add(alert);
+    public void addAlert(UserMessage alert) {
+        messageManager.add(alert);
     }
 
 
     public Templator generateAlerts() {
         try {
-            // clone alert list and update ttl of alerts
-            List<HalAlert> alertsClone = new ArrayList<>(alerts.size());
-            for(Iterator<HalAlert> it = alerts.iterator(); it.hasNext(); ) {
-                HalAlert alert = it.next();
-                alertsClone.add(alert);
-                alert.ttl--;
-
-                if (alert.ttl <= 0) { // if alert is to old, remove it
-                    logger.fine("Alert dismissed with end of life, alert id: "+ alert.id);
-                    it.remove();
-                }
+            List<UserMessage> messages = messageManager.getMessages();
+            for (UserMessage msg : messages) {
+                msg.decreaseTTL();
             }
 
             Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
             tmpl.set("serviceUrl", getUrl());
-            tmpl.set("alerts", alertsClone);
+            tmpl.set("alerts", messages);
             return tmpl;
         } catch (IOException e) {
             logger.log(Level.SEVERE, null, e);
@@ -82,14 +65,9 @@ public class HalAlertManager implements HttpPage {
                 // parse alert id
                 int id = Integer.parseInt(request.get("id"));
                 //  Find alert
-                for(Iterator<HalAlert> it = alerts.iterator(); it.hasNext(); ) {
-                    HalAlert alert = it.next();
-                    if (alert.getId() == id) {
-                        logger.fine("User dismissed alert id: "+ id);
-                        it.remove();
-                        break;
-                    }
-                }
+                UserMessage msg = messageManager.get(id);
+                if (msg != null)
+                    msg.dismiss();
             }
         }
     }
@@ -101,64 +79,5 @@ public class HalAlertManager implements HttpPage {
     }
     public static HalAlertManager getInstance(){
         return instance;
-    }
-
-
-    public static class HalAlert {
-        private static int nextId = 0;
-
-        private int id;
-        private AlertLevel level;
-        private String title;
-        private String msg;
-        private int ttl;
-
-
-        public HalAlert(AlertLevel level, String title, AlertTTL ttl) {
-            this(level, title, null, ttl);
-        }
-        public HalAlert(AlertLevel level, String title, String msg, AlertTTL ttl) {
-            this.id = nextId++;
-            this.level = level;
-            this.title = title;
-            this.msg = msg;
-            setTTL(ttl);
-        }
-
-
-        public int getId() {
-            return id;
-        }
-        public AlertLevel getLevel() {
-            return level;
-        }
-        public boolean isError(){   return level == AlertLevel.ERROR; }
-        public boolean isWarning(){ return level == AlertLevel.WARNING; }
-        public boolean isSuccess(){ return level == AlertLevel.SUCCESS; }
-        public boolean isInfo(){    return level == AlertLevel.INFO; }
-        public String getTitle() {
-            return title;
-        }
-        public String getMessage() {
-            return msg;
-        }
-
-        public void setTTL(AlertTTL ttl) {
-            switch (ttl){
-                case ONE_VIEW:  this.ttl = 1; break;
-                case DISMISSED: this.ttl = Integer.MAX_VALUE; break;
-            }
-        }
-        public void dismiss(){
-            ttl = -1;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof HalAlert)
-                return level == ((HalAlert) obj).level &&
-                        title.equals(((HalAlert) obj).title);
-            return super.equals(obj);
-        }
     }
 }

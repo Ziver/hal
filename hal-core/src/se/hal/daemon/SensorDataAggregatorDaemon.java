@@ -4,9 +4,6 @@ import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
 import se.hal.intf.HalSensorConfig.AggregationMethod;
 import se.hal.page.HalAlertManager;
-import se.hal.page.HalAlertManager.AlertLevel;
-import se.hal.page.HalAlertManager.AlertTTL;
-import se.hal.page.HalAlertManager.HalAlert;
 import se.hal.struct.Sensor;
 import se.hal.util.UTCTimePeriod;
 import se.hal.util.UTCTimeUtility;
@@ -14,6 +11,8 @@ import zutil.db.DBConnection;
 import zutil.db.SQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
 import zutil.log.LogUtil;
+import zutil.ui.UserMessageManager;
+import zutil.ui.UserMessageManager.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,7 +40,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
         YEAR
     }
 
-    private HashMap<Long, HalAlert> alertMap = new HashMap<>();
+    private HashMap<Long, UserMessage> alertMap = new HashMap<>();
 
 
     public void initiate(ScheduledExecutorService executor){
@@ -114,10 +113,10 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
                     if (alertMap.containsKey(sensor.getId()))
                         alertMap.get(sensor.getId()).dismiss();
 
-                    HalAlert alert = new HalAlert(AlertLevel.WARNING,
+                    UserMessage alert = new UserMessage(UserMessageManager.MessageLevel.WARNING,
                             "Sensor \"" + sensor.getName() + "\" stopped responding",
                             "at <span class=\"timestamp\">"+dbMaxRawTimestamp+"</span>",
-                            AlertTTL.DISMISSED);
+                            MessageTTL.DISMISSED);
                     alertMap.put(sensor.getId(), alert);
                     HalAlertManager.getInstance().addAlert(alert);
                 }

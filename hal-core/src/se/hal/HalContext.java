@@ -45,7 +45,7 @@ public class HalContext {
 
     private static HashMap<String,String> registeredConf = new HashMap<>();
     private static Properties fileConf = new Properties();
-    private static Properties dbConf = new Properties();;
+    private static Properties dbConf = new Properties();
 
 
     static {
@@ -209,7 +209,7 @@ public class HalContext {
         return value;
     }
     public static String getStringProperty(String key, String defaultValue){
-        if (!HalContext.containsProperty(key))
+        if (!containsProperty(key))
             return defaultValue;
         return getStringProperty(key);
     }
@@ -222,7 +222,7 @@ public class HalContext {
         return Integer.parseInt(value);
     }
     public static int getIntegerProperty(String key, int defaultValue){
-        if (!HalContext.containsProperty(key))
+        if (!containsProperty(key))
             return defaultValue;
         return getIntegerProperty(key);
     }
@@ -231,7 +231,7 @@ public class HalContext {
         return Boolean.parseBoolean(getStringProperty(key));
     }
     public static boolean getBooleanProperty(String key, boolean defaultValue) {
-        if (!HalContext.containsProperty(key))
+        if (!containsProperty(key))
             return defaultValue;
         return getBooleanProperty(key);
     }
@@ -257,6 +257,5 @@ public class HalContext {
     public static void setDB(DBConnection db){
         HalContext.db = db;
     }
-
 
 }

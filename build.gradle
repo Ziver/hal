@@ -12,10 +12,6 @@ allprojects {
         mavenLocal()
         mavenCentral()
         jcenter()
-
-        maven {
-            url 'https://jitpack.io' // Needed for ffmpeg4j project
-        }
     }
 }
 

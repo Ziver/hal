@@ -12,8 +12,8 @@
 {{#flows}}
 <div class="col-md-12">
     <div class="panel panel-default drop-shadow">
-        <div class="panel-heading clearfix">
-            <b>{{.getName()}}</b>
+        <div class="panel-heading clearfix" style="padding: 4px 15px;">
+            <b class="panel-title">{{.getName()}}</b>
             <div class="pull-right">
                 <button type="button" class="btn btn-default btn-xs" data-toggle="modal" style="padding: 1px 20px;"
                         data-target="#flowModal"
@@ -51,8 +51,8 @@
                             {{#.getTriggers()}}
                             <tr><td>
                                 <div class="panel panel-default drop-shadow {{#.evaluate()}}panel-success{{/.evaluate()}}">
-                                    <div class="panel-heading" style="padding: 2px 15px;">
-                                        <small>{{.getObjectClass()}}</small>
+                                    <div class="panel-heading clearfix" style="padding: 2px 15px;">
+                                        <small class="pull-left">{{.getObjectClass()}}</small>
                                         <form method="POST">
                                             <input type="hidden" name="trigger-id" value="{{.getId()}}">
 
@@ -65,10 +65,10 @@
                                                         {{#.getObjectConfigurator().getConfiguration()}}
                                                         data-{{.getName()}}="{{.getString()}}"
                                                         {{/.getObjectConfigurator().getConfiguration()}} >
-                                                    <span class="glyphicon glyphicon-pencil"></span>
+                                                    <small class="glyphicon glyphicon-pencil"></small>
                                                 </button>
                                                 <button type="submit" class="btn btn-danger btn-xs" name="action" value="remove_trigger">
-                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                    <small class="glyphicon glyphicon-trash"></small>
                                                 </button>
                                             </div>
                                         </form>
@@ -85,6 +85,7 @@
                     </td>
                     <td class="text-center text-vert-middle">
                         <span class="glyphicon glyphicon-arrow-right"></span><br />
+                        <span class="glyphicon glyphicon-arrow-right"></span><br />
                         <span class="glyphicon glyphicon-arrow-right"></span>
                     </td>
                     <td>
@@ -93,8 +94,8 @@
                             {{#.getActions()}}
                             <tr><td>
                                 <div class="panel panel-default drop-shadow">
-                                    <div class="panel-heading" style="padding: 2px 15px;">
-                                        <small>{{.getObjectClass()}}</small>
+                                    <div class="panel-heading clearfix" style="padding: 2px 15px;">
+                                        <small class="pull-left">{{.getObjectClass()}}</small>
                                         <form method="POST">
                                             <input type="hidden" name="action-id" value="{{.getId()}}">
 
@@ -107,10 +108,10 @@
                                                         {{#.getObjectConfigurator().getConfiguration()}}
                                                         data-{{.getName()}}="{{.getString()}}"
                                                         {{/.getObjectConfigurator().getConfiguration()}} >
-                                                <span class="glyphicon glyphicon-pencil"></span>
+                                                <small class="glyphicon glyphicon-pencil"></small>
                                                 </button>
                                                 <button type="submit" class="btn btn-danger btn-xs" name="action" value="remove_action">
-                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                    <small class="glyphicon glyphicon-trash"></small>
                                                 </button>
                                             </div>
                                         </form>

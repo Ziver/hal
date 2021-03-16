@@ -1,6 +1,6 @@
 package se.hal.page;
 
-import se.hal.ControllerManager;
+import se.hal.EventControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
 import se.hal.struct.ClassConfigurationData;
@@ -30,7 +30,7 @@ public class EventConfigWebPage extends HalWebPage {
         super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Event Settings").setWeight(200);
 
         eventConfigurations = new ArrayList<>();
-        for(Class c : ControllerManager.getInstance().getAvailableEvents())
+        for(Class c : EventControllerManager.getInstance().getAvailableDeviceConfigs())
             eventConfigurations.add(new ClassConfigurationData(c));
     }
 
@@ -59,7 +59,7 @@ public class EventConfigWebPage extends HalWebPage {
                     event.setUser(localUser);
                     event.getDeviceConfigurator().setValues(request).applyConfiguration();
                     event.save(db);
-                    ControllerManager.getInstance().register(event);
+                    EventControllerManager.getInstance().register(event);
 
                     HalAlertManager.getInstance().addAlert(new UserMessage(
                             MessageLevel.SUCCESS, "Successfully created new event: " + event.getName(), MessageTTL.ONE_VIEW));
@@ -88,7 +88,7 @@ public class EventConfigWebPage extends HalWebPage {
                     event = Event.getEvent(db, id);
                     if (event != null) {
                         logger.info("Removing event: " + event.getName());
-                        ControllerManager.getInstance().deregister(event);
+                        EventControllerManager.getInstance().deregister(event);
                         event.delete(db);
 
                         HalAlertManager.getInstance().addAlert(new UserMessage(
@@ -101,7 +101,7 @@ public class EventConfigWebPage extends HalWebPage {
                     break;
 
                 case "remove_all_detected_events":
-                    ControllerManager.getInstance().clearDetectedEvents();
+                    EventControllerManager.getInstance().clearDetectedDevices();
                     break;
             }
         }
@@ -111,8 +111,8 @@ public class EventConfigWebPage extends HalWebPage {
         tmpl.set("user", localUser);
         tmpl.set("localEvents", Event.getLocalEvents(db));
         tmpl.set("localEventConf", eventConfigurations);
-        tmpl.set("detectedEvents", ControllerManager.getInstance().getDetectedEvents());
-        tmpl.set("availableEvents", ControllerManager.getInstance().getAvailableEvents());
+        tmpl.set("detectedEvents", EventControllerManager.getInstance().getDetectedDevices());
+        tmpl.set("availableEvents", EventControllerManager.getInstance().getAvailableDeviceConfigs());
 
         return tmpl;
     }

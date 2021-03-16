@@ -24,8 +24,9 @@
 
 package se.hal.plugin.nvr.rtsp;
 
-import se.hal.plugin.nvr.HalCameraController;
-import se.hal.plugin.nvr.device.HalCameraConfig;
+import se.hal.intf.HalDeviceData;
+import se.hal.plugin.nvr.intf.HalCameraController;
+import se.hal.plugin.nvr.intf.HalCameraConfig;
 
 public class RTSPCameraConfig implements HalCameraConfig {
 
@@ -38,8 +39,18 @@ public class RTSPCameraConfig implements HalCameraConfig {
     }
 
 
+    public String getRtspUrl() {
+        return rtspUrl;
+    }
+
+
     @Override
-    public Class<? extends HalCameraController> getCameraControllerClass() {
+    public Class<? extends HalCameraController> getDeviceControllerClass() {
         return RTSPController.class;
+    }
+
+    @Override
+    public Class<? extends HalDeviceData> getDeviceDataClass() {
+        return null; // TODO:
     }
 }

@@ -1,6 +1,8 @@
 package se.hal.plugin.dummy;
 
+import se.hal.EventControllerManager;
 import se.hal.HalServer;
+import se.hal.SensorControllerManager;
 import se.hal.intf.*;
 
 import java.util.ArrayList;
@@ -10,8 +12,8 @@ import java.util.concurrent.*;
 
 public class DummyController implements HalSensorController, HalEventController, Runnable, HalDaemon {
     private List<DummyDevice> registeredDevices = new ArrayList();
-    private HalSensorReportListener sensorListener;
-    private HalEventReportListener eventListener;
+    private HalDeviceReportListener sensorListener;
+    private HalDeviceReportListener eventListener;
 
 
     public DummyController() {}
@@ -45,27 +47,14 @@ public class DummyController implements HalSensorController, HalEventController,
     }
 
     @Override
-    public synchronized void register(HalSensorConfig sensorConfig) {
-        if (sensorConfig instanceof DummyDevice) {
-            registeredDevices.add((DummyDevice) sensorConfig);
-        }
+    public synchronized void register(HalDeviceConfig deviceConfig) {
+        if (deviceConfig instanceof DummyDevice)
+            registeredDevices.add((DummyDevice) deviceConfig);
     }
 
     @Override
-    public synchronized void register(HalEventConfig eventConfig) {
-        if (eventConfig instanceof DummyDevice) {
-            registeredDevices.add((DummyDevice) eventConfig);
-        }
-    }
-
-    @Override
-    public synchronized void deregister(HalSensorConfig sensorConfig) {
-        registeredDevices.remove(sensorConfig);
-    }
-
-    @Override
-    public synchronized void deregister(HalEventConfig eventConfig) {
-        registeredDevices.remove(eventConfig);
+    public synchronized void deregister(HalDeviceConfig deviceConfig) {
+        registeredDevices.remove(deviceConfig);
     }
 
     @Override
@@ -79,10 +68,12 @@ public class DummyController implements HalSensorController, HalEventController,
     }
 
     @Override
-    public void setListener(HalSensorReportListener listener) { sensorListener = listener; }
-
-    @Override
-    public void setListener(HalEventReportListener listener) { eventListener = listener; }
+    public void setListener(HalDeviceReportListener listener) {
+        if (listener instanceof SensorControllerManager)
+            sensorListener = listener;
+        else if (listener instanceof EventControllerManager)
+            eventListener = listener;
+    }
 
     @Override
     public synchronized void close() {

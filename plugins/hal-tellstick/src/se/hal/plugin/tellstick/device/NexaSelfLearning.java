@@ -101,11 +101,11 @@ public class NexaSelfLearning implements HalEventConfig,TellstickDevice,Tellstic
 
 
     @Override
-    public Class<? extends HalEventController> getEventControllerClass() {
+    public Class<? extends HalEventController> getDeviceControllerClass() {
         return TellstickSerialComm.class;
     }
     @Override
-    public Class<? extends HalEventData> getEventDataClass() {
+    public Class<? extends HalEventData> getDeviceDataClass() {
         return OnOffEventData.class;
     }
 

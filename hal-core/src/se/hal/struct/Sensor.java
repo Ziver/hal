@@ -1,8 +1,7 @@
 package se.hal.struct;
 
 import se.hal.HalContext;
-import se.hal.intf.HalDeviceReportListener;
-import se.hal.intf.HalSensorController;
+import se.hal.intf.HalAbstractController;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorData;
 import se.hal.util.DeviceDataSqlResult;
@@ -20,7 +19,7 @@ import java.util.logging.Logger;
 
 
 @DBBean.DBTable(value="sensor", superBean=true)
-public class Sensor extends AbstractDevice<Sensor, HalSensorConfig,HalSensorData>{
+public class Sensor extends AbstractDevice<Sensor,HalSensorConfig,HalSensorData> {
     private static final Logger logger = LogUtil.getLogger();
 
     private long external_id = -1;
@@ -111,14 +110,14 @@ public class Sensor extends AbstractDevice<Sensor, HalSensorConfig,HalSensorData
 
 
     @Override
-    public Class<? extends HalSensorController> getController(){
-        return getDeviceConfig().getSensorControllerClass();
+    public Class<? extends HalAbstractController> getController(){
+        return (Class<? extends HalAbstractController>) getDeviceConfig().getDeviceControllerClass();
     }
 
     @Override
     protected HalSensorData getLatestDeviceData(DBConnection db) {
         try {
-            Class deviceDataClass = getDeviceConfig().getSensorDataClass();
+            Class deviceDataClass = getDeviceConfig().getDeviceDataClass();
             if (deviceDataClass == null)
                 throw new ClassNotFoundException("Unknown sensor data class for: " + getDeviceConfig().getClass());
 

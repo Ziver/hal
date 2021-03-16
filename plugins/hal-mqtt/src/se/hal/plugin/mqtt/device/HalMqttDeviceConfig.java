@@ -71,12 +71,12 @@ public class HalMqttDeviceConfig implements HalEventConfig {
     // --------------------------
 
     @Override
-    public Class<? extends HalEventController> getEventControllerClass() {
+    public Class<? extends HalEventController> getDeviceControllerClass() {
         return HalMqttController.class;
     }
 
     @Override
-    public Class<? extends HalEventData> getEventDataClass() {
+    public Class<? extends HalEventData> getDeviceDataClass() {
         return HalMqttDeviceData.class;
     }
 }

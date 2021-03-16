@@ -26,7 +26,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
     private static final String PARAM_IPSCAN = "netscan.ipscan";
 
     private ScheduledExecutorService executor;
-    private HalEventReportListener listener;
+    private HalDeviceReportListener listener;
     /** A register and a cache of previous state **/
     private HashMap<NetworkDevice, AvailabilityEventData> devices = new HashMap<>();
 
@@ -97,14 +97,16 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
 
 
     @Override
-    public void register(HalEventConfig event) {
-        if (event instanceof NetworkDevice)
-            devices.put((NetworkDevice) event, null);
+    public void register(HalDeviceConfig deviceConfig) {
+        if (deviceConfig instanceof NetworkDevice)
+            devices.put((NetworkDevice) deviceConfig, null);
     }
+
     @Override
-    public void deregister(HalEventConfig event) {
-        devices.remove(event);
+    public void deregister(HalDeviceConfig deviceConfig) {
+        devices.remove(deviceConfig);
     }
+
     @Override
     public int size() {
         return devices.size();
@@ -116,7 +118,7 @@ public class NetScanController implements HalEventController, HalAutoScannableCo
 
 
     @Override
-    public void setListener(HalEventReportListener listener) {
+    public void setListener(HalDeviceReportListener listener) {
         this.listener = listener;
     }
 

@@ -17,14 +17,14 @@ public interface DeConzRestLights {
     /**
      * Returns a list of all lights.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/lights")
     void getLights(String requestApiKey);
 
     /**
      * Returns the full state of a light.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/lights/{{lightId}")
     void getLight(String requestApiKey, int lightId);
 
@@ -33,7 +33,7 @@ public interface DeConzRestLights {
      *
      * @param name  Set the name of the light. (required)
      */
-    @WSRequestType(HTTP_PUT)
+    @WSRequestType(PUT)
     @WSPath("/api/{{requestApiKey}}/lights/{{lightId}")
     void setLight(String requestApiKey, int lightId, String name);
 
@@ -52,7 +52,7 @@ public interface DeConzRestLights {
      * @param colorLoopSpeed    Specifies the speed of a colorloop. 1 = very fast, 255 = very slow (default: 15). This parameter only has an effect when it is called together with effect colorloop. (optional)
      * @param transitionTime    Transition time in 1/10 seconds between two states. (optional)
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/lights/{{lightId}/state")
     void setLightState(String requestApiKey, int lightId, boolean on, boolean toggle, int bri, int hue, int sat, int ct, List xy, String alert, String effect, int colorLoopSpeed, int transitionTime);
 
@@ -61,21 +61,21 @@ public interface DeConzRestLights {
      *
      * @param reset     If true sends a network leave command to the light device (may not supported by each manufacturer). (optional)
      */
-    @WSRequestType(HTTP_PUT)
+    @WSRequestType(PUT)
     @WSPath("/api/{{requestApiKey}}/lights/{{lightId}")
     void deleteLight(String requestApiKey, int lightId, boolean reset);
 
     /**
      * Remove the light from all groups it is a member of.
      */
-    @WSRequestType(HTTP_DELETE)
+    @WSRequestType(DELETE)
     @WSPath("/api/{{requestApiKey}}/lights/{{lightId}/groups")
     void deleteGroups(String requestApiKey, int lightId);
 
     /**
      * Remove the light from all scenes it is a member of.
      */
-    @WSRequestType(HTTP_DELETE)
+    @WSRequestType(DELETE)
     @WSPath("/api/{{requestApiKey}}/lights/{{lightId}/scenes")
     void deleteScenes(String requestApiKey, int lightId);
 }

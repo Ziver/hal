@@ -35,14 +35,14 @@ public interface DeConzRestRules {
     /**
      * Returns a list of all rules. If there are no rules in the system then an empty object {} will be returned.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/rules")
     void getRules(String requestApiKey);
 
     /**
      * Returns the rule with the specified id.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/rules/{{ruleId}}")
     void getRule(String requestApiKey, int ruleId);
 
@@ -65,7 +65,7 @@ public interface DeConzRestRules {
     //@WSPath("/api/{{requestApiKey}}/rules/{{ruleId}}")
     //void setRule(String requestApiKey, int ruleId, String name, int periodic, String status, List actions, List conditions);
 
-    @WSRequestType(HTTP_DELETE)
+    @WSRequestType(DELETE)
     @WSPath("/api/{{requestApiKey}}/rules/{{ruleId}}")
     void deleteRule(String requestApiKey, int ruleId);
 }

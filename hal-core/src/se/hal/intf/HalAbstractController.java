@@ -25,7 +25,7 @@
 package se.hal.intf;
 
 
-public interface HalAbstractController<C, L> {
+public interface HalAbstractController {
 
     /**
      * The framework might create dummy objects so any type of
@@ -35,9 +35,25 @@ public interface HalAbstractController<C, L> {
     void initialize() throws Exception;
 
     /**
+     * Will register an device type to be handled by this controller
+     */
+    void register(HalDeviceConfig deviceConfig);
+
+    /**
+     * Deregisters an device from this controller, the controller
+     * will no longer handle that type of event
+     */
+    void deregister(HalDeviceConfig deviceConfig);
+
+    /**
      * @return the number of registered devices.
      */
     int size();
+
+    /**
+     * Set a listener that will receive all reports from the the registered devices
+     */
+    void setListener(HalDeviceReportListener listener);
 
     /**
      * Close any resources associated with this controller.

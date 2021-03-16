@@ -35,11 +35,11 @@ public class NetworkDevice implements HalEventConfig {
     }
 
     @Override
-    public Class<? extends HalEventController> getEventControllerClass() {
+    public Class<? extends HalEventController> getDeviceControllerClass() {
         return NetScanController.class;
     }
     @Override
-    public Class<? extends HalEventData> getEventDataClass() {
+    public Class<? extends HalEventData> getDeviceDataClass() {
         return OnOffEventData.class;
     }
 }

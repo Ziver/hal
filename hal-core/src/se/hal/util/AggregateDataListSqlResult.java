@@ -94,7 +94,7 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
                      list.add(new AggregateData(id, previousTimestampEnd + 1, null /*Float.NaN*/, username));
             }
 
-            if (sensor.getDeviceConfig().getSensorDataClass() == PowerConsumptionSensorData.class)
+            if (sensor.getDeviceConfig().getDeviceDataClass() == PowerConsumptionSensorData.class)
                 estimatedData = (estimatedData/1000f);
             list.add(new AggregateData(id, timestampEnd, estimatedData, username));	//add this data point to list
 

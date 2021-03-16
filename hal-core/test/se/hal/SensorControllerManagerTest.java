@@ -1,10 +1,11 @@
 package se.hal;
 
 import org.junit.Test;
+import se.hal.intf.HalAbstractController;
+import se.hal.intf.HalDeviceReportListener;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
-import se.hal.intf.HalSensorReportListener;
 import se.hal.struct.Sensor;
 import se.hal.struct.devicedata.HumiditySensorData;
 import se.hal.struct.devicedata.TemperatureSensorData;
@@ -16,52 +17,52 @@ import static org.junit.Assert.*;
 
 public class SensorControllerManagerTest {
 
-    private ControllerManager manager = new ControllerManager();
+    private SensorControllerManager manager = new SensorControllerManager();
 
 
     @Test
-    public void addAvailableSensor(){
-        assertEquals(Collections.EMPTY_LIST, manager.getAvailableSensors());
+    public void addAvailableDevice(){
+        assertEquals(Collections.EMPTY_LIST, manager.getAvailableDeviceConfigs());
 
-        manager.addAvailableSensor(TestSensor1.class);
-        assertEquals(1, manager.getAvailableSensors().size());
-        assertTrue(manager.getAvailableSensors().contains(TestSensor1.class));
+        manager.addAvailableDevice(TestSensor1.class);
+        assertEquals(1, manager.getAvailableDeviceConfigs().size());
+        assertTrue(manager.getAvailableDeviceConfigs().contains(TestSensor1.class));
 
-        manager.addAvailableSensor(TestSensor2.class);
-        assertEquals(2, manager.getAvailableSensors().size());
-        assertTrue(manager.getAvailableSensors().contains(TestSensor1.class));
-        assertTrue(manager.getAvailableSensors().contains(TestSensor2.class));
+        manager.addAvailableDevice(TestSensor2.class);
+        assertEquals(2, manager.getAvailableDeviceConfigs().size());
+        assertTrue(manager.getAvailableDeviceConfigs().contains(TestSensor1.class));
+        assertTrue(manager.getAvailableDeviceConfigs().contains(TestSensor2.class));
 
         // Add duplicate sensor
-        manager.addAvailableSensor(TestSensor1.class);
-        assertEquals("No duplicate check",2, manager.getAvailableSensors().size());
+        manager.addAvailableDevice(TestSensor1.class);
+        assertEquals("No duplicate check",2, manager.getAvailableDeviceConfigs().size());
     }
 
 
     @Test
     public void registerUnavailableSensor(){
-        assertEquals(Collections.EMPTY_LIST, manager.getAvailableSensors());
+        assertEquals(Collections.EMPTY_LIST, manager.getAvailableDeviceConfigs());
 
         Sensor sensor = new Sensor();
         sensor.setDeviceConfig(new TestSensor1());
         manager.register(sensor);
-        assertEquals("No Sensor registered", Collections.EMPTY_LIST, manager.getRegisteredSensors());
+        assertEquals("No Sensor registered", Collections.EMPTY_LIST, manager.getRegisteredDevices());
     }
 
 
     @Test
     public void registerOneSensor() {
         Sensor sensor1 = registerSensor(new TestSensor1());
-        assertEquals(1, manager.getRegisteredSensors().size());
-        assertTrue(manager.getRegisteredSensors().contains(sensor1));
+        assertEquals(1, manager.getRegisteredDevices().size());
+        assertTrue(manager.getRegisteredDevices().contains(sensor1));
     }
     @Test
     public void registerTwoSensors(){
         Sensor sensor1 = registerSensor(new TestSensor1());
         Sensor sensor2 = registerSensor(new TestSensor2());
-        assertEquals(2, manager.getRegisteredSensors().size());
-        assertTrue(manager.getRegisteredSensors().contains(sensor1));
-        assertTrue(manager.getRegisteredSensors().contains(sensor2));
+        assertEquals(2, manager.getRegisteredDevices().size());
+        assertTrue(manager.getRegisteredDevices().contains(sensor1));
+        assertTrue(manager.getRegisteredDevices().contains(sensor2));
     }
 
 
@@ -69,7 +70,7 @@ public class SensorControllerManagerTest {
     public void deregisterSensor(){
         Sensor sensor1 = registerSensor(new TestSensor1());
         manager.deregister(sensor1);
-        assertEquals(Collections.EMPTY_LIST, manager.getRegisteredEvents());
+        assertEquals(Collections.EMPTY_LIST, manager.getRegisteredDevices());
     }
 
 
@@ -80,7 +81,7 @@ public class SensorControllerManagerTest {
     private Sensor registerSensor(HalSensorConfig config){
         Sensor sensor = new Sensor();
         sensor.setDeviceConfig(config);
-        manager.addAvailableSensor(config.getClass());
+        manager.addAvailableDevice(config.getClass());
         manager.register(sensor);
         return sensor;
     }
@@ -99,12 +100,12 @@ public class SensorControllerManagerTest {
         }
 
         @Override
-        public Class<? extends HalSensorController> getSensorControllerClass() {
+        public Class<? extends HalAbstractController> getDeviceControllerClass() {
             return TestController.class;
         }
 
         @Override
-        public Class<? extends HalSensorData> getSensorDataClass() {
+        public Class<? extends HalSensorData> getDeviceDataClass() {
             return TemperatureSensorData.class;
         }
     }
@@ -122,21 +123,21 @@ public class SensorControllerManagerTest {
         }
 
         @Override
-        public Class<? extends HalSensorController> getSensorControllerClass() {
+        public Class<? extends HalAbstractController> getDeviceControllerClass() {
             return TestController.class;
         }
 
         @Override
-        public Class<? extends HalSensorData> getSensorDataClass() {
+        public Class<? extends HalSensorData> getDeviceDataClass() {
             return HumiditySensorData.class;
         }
     }
 
-    public static class TestController implements HalSensorController{
+    public static class TestController implements HalSensorController {
         int size;
 
         @Override
-        public void initialize() throws Exception { }
+        public void initialize() { }
 
         @Override
         public void register(HalSensorConfig sensor) {
@@ -152,7 +153,7 @@ public class SensorControllerManagerTest {
         }
 
         @Override
-        public void setListener(HalSensorReportListener listener) { }
+        public void setListener(HalDeviceReportListener listener) { }
 
         @Override
         public void close() { }

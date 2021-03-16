@@ -1,14 +1,14 @@
 package se.hal.intf;
 
-import se.hal.struct.AbstractDevice;
 
 /**
  * A listener interface that will be called when the
  * Event or Sensor that it is registered to receives a report
  *
- * @param   <T>     is the device type
+ * @param   <C>     is the device configuration class
+ * @param   <D>     is the device data class
  */
-public interface HalDeviceReportListener<T extends AbstractDevice> {
+public interface HalDeviceReportListener<C extends HalDeviceConfig, D extends HalDeviceData> {
 
-    void receivedReport(T device);
+    void reportReceived(C deviceConfig, D deviceData);
 }

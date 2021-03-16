@@ -1,6 +1,6 @@
 package se.hal.action;
 
-import se.hal.ControllerManager;
+import se.hal.EventControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalAction;
 import se.hal.intf.HalEventData;
@@ -30,11 +30,11 @@ public class SendEventAction implements HalAction {
             DBConnection db = HalContext.getDB();
             Event event = Event.getEvent(db, eventId);
             if (event != null) {
-                HalEventData dataObj = event.getDeviceConfig().getEventDataClass().newInstance();
+                HalEventData dataObj = (HalEventData) event.getDeviceConfig().getDeviceDataClass().newInstance();
                 dataObj.setData(data);
                 event.setDeviceData(dataObj);
                 // Send
-                ControllerManager.getInstance().send(event);
+                EventControllerManager.getInstance().send(event);
             }
             else
                 logger.warning("Unable to find event with id: "+ eventId);
@@ -49,7 +49,7 @@ public class SendEventAction implements HalAction {
         Event event = null;
         try{ event = Event.getEvent(db, eventId); } catch (Exception e){} //ignore exception
         return "Send event: "+ eventId +
-                " ("+(event!=null ? event.getName() : null)+")" +
+                " (" + (event!=null ? event.getName() : null) + ")" +
                 " with data: "+ data;
     }
 }

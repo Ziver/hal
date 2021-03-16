@@ -13,7 +13,7 @@ public class RPiController implements HalSensorController {
     private static final Logger logger = LogUtil.getLogger();
 
     private HashMap<String, RPiSensor> pinToSensorMap = new HashMap<>();
-    private HalSensorReportListener sensorListener;
+    private HalDeviceReportListener sensorListener;
 
     public RPiController(){
         
@@ -25,9 +25,9 @@ public class RPiController implements HalSensorController {
     }
 
     @Override
-    public void register(HalSensorConfig sensor) {
-        if(sensor instanceof RPiPowerConsumptionSensor){
-            RPiPowerConsumptionSensor powerConsumptionSensor = (RPiPowerConsumptionSensor) sensor;
+    public void register(HalDeviceConfig deviceConfig) {
+        if(deviceConfig instanceof RPiPowerConsumptionSensor){
+            RPiPowerConsumptionSensor powerConsumptionSensor = (RPiPowerConsumptionSensor) deviceConfig;
             int gpioPin = powerConsumptionSensor.getGpioPin();
             if(!pinToSensorMap.containsKey("GPIO_"+gpioPin)){
                 RPiInteruptPulseFlankCounter impulseCounter = new RPiInteruptPulseFlankCounter(gpioPin, this);
@@ -35,8 +35,8 @@ public class RPiController implements HalSensorController {
             }else{
                 logger.warning("Cannot create a RPiPowerConsumptionSensor on GPIO pin " + gpioPin + " since is already is in use by another sensor.");
             }
-        } else if(sensor instanceof RPiTemperatureSensor){
-            RPiTemperatureSensor temperatureSensor = (RPiTemperatureSensor) sensor;
+        } else if(deviceConfig instanceof RPiTemperatureSensor){
+            RPiTemperatureSensor temperatureSensor = (RPiTemperatureSensor) deviceConfig;
             String w1Address = temperatureSensor.get1WAddress();
             if(!pinToSensorMap.containsKey("W1_"+w1Address)){
                 RPiDS18B20 ds12b20 = new RPiDS18B20(w1Address, this);
@@ -50,15 +50,15 @@ public class RPiController implements HalSensorController {
     }
 
     @Override
-    public void deregister(HalSensorConfig sensor) {
-        if(sensor instanceof RPiPowerConsumptionSensor){
-            RPiPowerConsumptionSensor powerConsumprtionSensor = (RPiPowerConsumptionSensor) sensor;
-            RPiSensor sensorToDeregister = pinToSensorMap.remove("GPIO_"+powerConsumprtionSensor.getGpioPin());
+    public void deregister(HalDeviceConfig deviceConfig) {
+        if(deviceConfig instanceof RPiPowerConsumptionSensor){
+            RPiPowerConsumptionSensor powerConsumptionSensor = (RPiPowerConsumptionSensor) deviceConfig;
+            RPiSensor sensorToDeregister = pinToSensorMap.remove("GPIO_"+powerConsumptionSensor.getGpioPin());
             if(sensorToDeregister != null){
                 sensorToDeregister.close();
             }
-        } else if(sensor instanceof RPiTemperatureSensor){
-            RPiTemperatureSensor temperatureSensor = (RPiTemperatureSensor) sensor;
+        } else if(deviceConfig instanceof RPiTemperatureSensor){
+            RPiTemperatureSensor temperatureSensor = (RPiTemperatureSensor) deviceConfig;
             RPiSensor sensorToDeregister = pinToSensorMap.remove("W1_"+temperatureSensor.get1WAddress());
             if(sensorToDeregister != null){
                 sensorToDeregister.close();
@@ -75,7 +75,7 @@ public class RPiController implements HalSensorController {
     }
 
     @Override
-    public void setListener(HalSensorReportListener listener) {
+    public void setListener(HalDeviceReportListener listener) {
         sensorListener = listener;
     }
 

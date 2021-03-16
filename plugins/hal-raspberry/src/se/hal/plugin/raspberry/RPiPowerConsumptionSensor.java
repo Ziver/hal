@@ -30,12 +30,12 @@ public class RPiPowerConsumptionSensor implements HalSensorConfig {
     }
 
     @Override
-    public Class<? extends HalSensorController> getSensorControllerClass() {
+    public Class<? extends HalSensorController> getDeviceControllerClass() {
         return RPiController.class;
     }
 
     @Override
-    public Class<? extends HalSensorData> getSensorDataClass() {
+    public Class<? extends HalSensorData> getDeviceDataClass() {
         return PowerConsumptionSensorData.class;
     }
 

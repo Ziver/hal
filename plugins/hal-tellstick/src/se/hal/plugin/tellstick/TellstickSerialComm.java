@@ -61,8 +61,7 @@ public class TellstickSerialComm implements Runnable,
 
     protected TellstickParser parser;
 
-    private HalSensorReportListener sensorListener;
-    private HalEventReportListener eventListener;
+    private HalDeviceReportListener deviceListener;
     private List<TellstickDevice> registeredDevices;
 
 
@@ -186,10 +185,8 @@ public class TellstickSerialComm implements Runnable,
         set.add(data);
     }
     private void reportEvent(TellstickDevice tellstickDevice, HalDeviceData deviceData){
-        if (sensorListener != null && tellstickDevice instanceof HalSensorConfig)
-                sensorListener.reportReceived((HalSensorConfig) tellstickDevice, (HalSensorData) deviceData);
-        else if (eventListener != null && tellstickDevice instanceof HalEventConfig)
-                eventListener.reportReceived((HalEventConfig) tellstickDevice, (HalEventData) deviceData);
+        if (deviceListener != null)
+            deviceListener.reportReceived((HalDeviceConfig) tellstickDevice, deviceData);
     }
 
     @Override
@@ -225,18 +222,11 @@ public class TellstickSerialComm implements Runnable,
     // --------------------------
 
     @Override
-    public void register(HalEventConfig event) {
-        if(event instanceof TellstickDevice)
-            registeredDevices.add((TellstickDevice) event);
+    public void register(HalDeviceConfig deviceConfig) {
+        if(deviceConfig instanceof TellstickDevice)
+            registeredDevices.add((TellstickDevice) deviceConfig);
         else throw new IllegalArgumentException(
-                "Device config is not an instance of "+TellstickDevice.class+": "+event.getClass());
-    }
-    @Override
-    public void register(HalSensorConfig sensor) {
-        if(sensor instanceof TellstickDevice)
-            registeredDevices.add((TellstickDevice) sensor);
-        else throw new IllegalArgumentException(
-                "Device config is not an instance of "+TellstickDevice.class+": "+sensor.getClass());
+                "Device config is not an instance of " + TellstickDevice.class + ": " + deviceConfig.getClass());
     }
 
     public <T> List<T> getRegisteredDevices(Class<T> clazz){
@@ -249,12 +239,8 @@ public class TellstickSerialComm implements Runnable,
     }
 
     @Override
-    public void deregister(HalEventConfig event) {
-        registeredDevices.remove(event);
-    }
-    @Override
-    public void deregister(HalSensorConfig sensor) {
-        registeredDevices.remove(sensor);
+    public void deregister(HalDeviceConfig deviceConfig) {
+        registeredDevices.remove(deviceConfig);
     }
 
     @Override
@@ -263,12 +249,8 @@ public class TellstickSerialComm implements Runnable,
     }
 
     @Override
-    public void setListener(HalEventReportListener listener) {
-        eventListener = listener;
-    }
-    @Override
-    public void setListener(HalSensorReportListener listener) {
-        sensorListener = listener;
+    public void setListener(HalDeviceReportListener listener) {
+        deviceListener = listener;
     }
 
 

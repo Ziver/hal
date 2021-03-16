@@ -4,10 +4,8 @@ import org.zwave4j.*;
 import se.hal.HalContext;
 import se.hal.intf.*;
 import se.hal.struct.AbstractDevice;
-import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
@@ -30,8 +28,8 @@ public class HalZWaveController implements HalSensorController, HalEventControll
     private Options options;
     private Manager manager;
 
-    private HalSensorReportListener sensorListener;
-    private HalEventReportListener eventListener;
+    private HalDeviceReportListener sensorListener;
+    private HalDeviceReportListener deviceListener;
     private List<AbstractDevice> registeredDevices;
 
 
@@ -303,21 +301,13 @@ public class HalZWaveController implements HalSensorController, HalEventControll
     // --------------------------
 
     @Override
-    public void register(HalEventConfig event) {
-
-    }
-    @Override
-    public void register(HalSensorConfig sensor) {
+    public void register(HalDeviceConfig deviceConfig) {
 
     }
 
     @Override
-    public void deregister(HalEventConfig event) {
-        registeredDevices.remove(event);
-    }
-    @Override
-    public void deregister(HalSensorConfig sensor) {
-        registeredDevices.remove(sensor);
+    public void deregister(HalDeviceConfig deviceConfig) {
+        registeredDevices.remove(deviceConfig);
     }
 
     @Override
@@ -331,13 +321,8 @@ public class HalZWaveController implements HalSensorController, HalEventControll
     }
 
     @Override
-    public void setListener(HalEventReportListener listener) {
-        eventListener = listener;
+    public void setListener(HalDeviceReportListener listener) {
+        deviceListener = listener;
     }
-    @Override
-    public void setListener(HalSensorReportListener listener) {
-        sensorListener = listener;
-    }
-
 
 }

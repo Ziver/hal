@@ -1,27 +1,20 @@
 package se.hal.struct;
 
-import se.hal.intf.HalDeviceData;
-import se.hal.intf.HalEventController;
-import se.hal.intf.HalEventConfig;
-import se.hal.intf.HalEventData;
+import se.hal.intf.*;
 import se.hal.util.DeviceDataSqlResult;
 import zutil.db.DBConnection;
-import zutil.db.SQLResultHandler;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
-import zutil.db.handler.SimpleSQLResult;
 import zutil.log.LogUtil;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @DBBean.DBTable(value="event", superBean=true)
-public class Event extends AbstractDevice<Event, HalEventConfig,HalEventData>{
+public class Event extends AbstractDevice<Event,HalEventConfig,HalEventData> {
     private static final Logger logger = LogUtil.getLogger();
 
 
@@ -39,13 +32,13 @@ public class Event extends AbstractDevice<Event, HalEventConfig,HalEventData>{
 
     @Override
     public Class<? extends HalEventController> getController(){
-        return getDeviceConfig().getEventControllerClass();
+        return (Class<? extends HalEventController>) getDeviceConfig().getDeviceControllerClass();
     }
 
     @Override
     protected HalEventData getLatestDeviceData(DBConnection db) {
         try {
-            Class deviceDataClass = getDeviceConfig().getEventDataClass();
+            Class deviceDataClass = getDeviceConfig().getDeviceDataClass();
             if (deviceDataClass == null)
                 throw new ClassNotFoundException("Unknown event data class for: " + getDeviceConfig().getClass());
 

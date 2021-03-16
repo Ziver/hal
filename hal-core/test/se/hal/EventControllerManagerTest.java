@@ -13,51 +13,51 @@ import static org.junit.Assert.assertTrue;
 
 public class EventControllerManagerTest {
 
-    private ControllerManager manager = new ControllerManager();
+    private EventControllerManager manager = new EventControllerManager();
 
 
     @Test
-    public void addAvailableEvent(){
-        assertEquals(0, manager.getAvailableEvents().size());
+    public void addAvailableEventDevice(){
+        assertEquals(0, manager.getAvailableDeviceConfigs().size());
 
-        manager.addAvailableEvent(TestEvent1.class);
-        assertEquals(1, manager.getAvailableEvents().size());
-        assertTrue(manager.getAvailableEvents().contains(TestEvent1.class));
+        manager.addAvailableDevice(TestEvent1.class);
+        assertEquals(1, manager.getAvailableDeviceConfigs().size());
+        assertTrue(manager.getAvailableDeviceConfigs().contains(TestEvent1.class));
 
-        manager.addAvailableEvent(TestEvent2.class);
-        assertEquals(2, manager.getAvailableEvents().size());
-        assertTrue(manager.getAvailableEvents().contains(TestEvent1.class));
-        assertTrue(manager.getAvailableEvents().contains(TestEvent2.class));
+        manager.addAvailableDevice(TestEvent2.class);
+        assertEquals(2, manager.getAvailableDeviceConfigs().size());
+        assertTrue(manager.getAvailableDeviceConfigs().contains(TestEvent1.class));
+        assertTrue(manager.getAvailableDeviceConfigs().contains(TestEvent2.class));
 
         // Add duplicate Event
-        manager.addAvailableEvent(TestEvent1.class);
-        assertEquals("No duplicate check",2, manager.getAvailableEvents().size());
+        manager.addAvailableDevice(TestEvent1.class);
+        assertEquals("No duplicate check",2, manager.getAvailableDeviceConfigs().size());
     }
 
 
     @Test
     public void registerUnavailableEvent(){
-        assertEquals(Collections.EMPTY_LIST, manager.getAvailableEvents());
+        assertEquals(Collections.EMPTY_LIST, manager.getAvailableDeviceConfigs());
 
         Event Event = new Event();
         Event.setDeviceConfig(new TestEvent1());
         manager.register(Event);
-        assertEquals("No Event registered", Collections.EMPTY_LIST, manager.getRegisteredEvents());
+        assertEquals("No Event registered", Collections.EMPTY_LIST, manager.getRegisteredDevices());
     }
 
 
     @Test
     public void registerOneEvent() {
         Event Event1 = registerEvent(new TestEvent1());
-        assertEquals(1, manager.getRegisteredEvents().size());
-        assertTrue(manager.getRegisteredEvents().contains(Event1));
+        assertEquals(1, manager.getRegisteredDevices().size());
+        assertTrue(manager.getRegisteredDevices().contains(Event1));
     }
     public void registerTwoEvents(){
         Event Event1 = registerEvent(new TestEvent1());
         Event Event2 = registerEvent(new TestEvent2());
-        assertEquals(2, manager.getRegisteredEvents().size());
-        assertTrue(manager.getRegisteredEvents().contains(Event1));
-        assertTrue(manager.getRegisteredEvents().contains(Event2));
+        assertEquals(2, manager.getRegisteredDevices().size());
+        assertTrue(manager.getRegisteredDevices().contains(Event1));
+        assertTrue(manager.getRegisteredDevices().contains(Event2));
     }
 
 
@@ -65,7 +65,7 @@ public class EventControllerManagerTest {
     public void deregisterEvent(){
         Event Event1 = registerEvent(new TestEvent1());
         manager.deregister(Event1);
-        assertEquals(Collections.EMPTY_LIST, manager.getRegisteredEvents());
+        assertEquals(Collections.EMPTY_LIST, manager.getRegisteredDevices());
     }
 
 
@@ -76,7 +76,7 @@ public class EventControllerManagerTest {
     private Event registerEvent(HalEventConfig config){
         Event Event = new Event();
         Event.setDeviceConfig(config);
-        manager.addAvailableEvent(config.getClass());
+        manager.addAvailableDevice(config.getClass());
         manager.register(Event);
         return Event;
     }
@@ -84,12 +84,12 @@ public class EventControllerManagerTest {
     public static class TestEvent1 implements HalEventConfig {
 
         @Override
-        public Class<? extends HalEventController> getEventControllerClass() {
+        public Class<? extends HalEventController> getDeviceControllerClass() {
             return TestController.class;
         }
 
         @Override
-        public Class<? extends HalEventData> getEventDataClass() {
+        public Class<? extends HalEventData> getDeviceDataClass() {
             return OnOffEventData.class;
         }
     }
@@ -97,12 +97,12 @@ public class EventControllerManagerTest {
     public static class TestEvent2 implements HalEventConfig {
 
         @Override
-        public Class<? extends HalEventController> getEventControllerClass() {
+        public Class<? extends HalEventController> getDeviceControllerClass() {
             return TestController.class;
         }
 
         @Override
-        public Class<? extends HalEventData> getEventDataClass() {
+        public Class<? extends HalEventData> getDeviceDataClass() {
             return OnOffEventData.class;
         }
     }
@@ -111,7 +111,7 @@ public class EventControllerManagerTest {
         int size;
 
         @Override
-        public void initialize() throws Exception { }
+        public void initialize() { }
 
         @Override
         public void register(HalEventConfig event) {
@@ -134,7 +134,7 @@ public class EventControllerManagerTest {
         }
 
         @Override
-        public void setListener(HalEventReportListener listener) { }
+        public void setListener(HalDeviceReportListener listener) { }
 
         @Override
         public void close() { }

@@ -34,14 +34,14 @@ public interface DeConzRestSchedules {
     /**
      * Returns a list of all schedules.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/schedules")
     List getSchedules(String requestApiKey);
 
     /**
      * Returns all attributes of a schedule.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/schedules/{{scheduleId}}")
     List getSchedule(String requestApiKey, int scheduleId);
 
@@ -58,14 +58,14 @@ public interface DeConzRestSchedules {
      * @param autoDelete 	If true the schedule will be deleted after triggered. Else it will be disabled. Default is true. (optional)
      * @param time 	        Time when the schedule shall trigger in UTC ISO 8601:2004 format. (required)
      */
-    @WSRequestType(HTTP_PUT)
+    @WSRequestType(PUT)
     @WSPath("/api/{{requestApiKey}}/schedules/{{scheduleId}}")
     void setSchedule(String requestApiKey, int scheduleId, String name, String description, List command, String status, boolean autoDelete, String time);
 
     /**
      * Returns all attributes of a schedule.
      */
-    @WSRequestType(HTTP_DELETE)
+    @WSRequestType(DELETE)
     @WSPath("/api/{{requestApiKey}}/schedules/{{scheduleId}}")
     void deleteSchedule(String requestApiKey, int scheduleId);
 }

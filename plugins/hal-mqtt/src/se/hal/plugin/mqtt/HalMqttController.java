@@ -46,7 +46,7 @@ public class HalMqttController implements HalAutoScannableController, MqttSubscr
     private MqttBroker mqttBroker;
 
     private HashMap<String, HalMqttDeviceConfig> topics = new HashMap<>();
-    private HalEventReportListener eventListener;
+    private HalDeviceReportListener eventListener;
 
     // --------------------------
     // Lifecycle methods
@@ -116,18 +116,18 @@ public class HalMqttController implements HalAutoScannableController, MqttSubscr
     // --------------------------
 
     @Override
-    public void register(HalEventConfig eventConfig) {
-        if(eventConfig instanceof HalMqttDeviceConfig) {
-            HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) eventConfig;
+    public void register(HalDeviceConfig deviceConfig) {
+        if(deviceConfig instanceof HalMqttDeviceConfig) {
+            HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) deviceConfig;
             topics.put(mqttEvent.getTopic(), mqttEvent);
         } else throw new IllegalArgumentException(
-                "Device config is not an instance of " + HalMqttDeviceConfig.class + ": " + eventConfig.getClass());
+                "Device config is not an instance of " + HalMqttDeviceConfig.class + ": " + deviceConfig.getClass());
     }
 
     @Override
-    public void deregister(HalEventConfig eventConfig) {
-        if(eventConfig instanceof HalMqttDeviceConfig) {
-            HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) eventConfig;
+    public void deregister(HalDeviceConfig deviceConfig) {
+        if(deviceConfig instanceof HalMqttDeviceConfig) {
+            HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) deviceConfig;
             topics.remove(mqttEvent.getTopic());
         }
     }
@@ -147,7 +147,7 @@ public class HalMqttController implements HalAutoScannableController, MqttSubscr
     }
 
     @Override
-    public void setListener(HalEventReportListener listener) {
+    public void setListener(HalDeviceReportListener listener) {
         eventListener = listener;
     }
 }

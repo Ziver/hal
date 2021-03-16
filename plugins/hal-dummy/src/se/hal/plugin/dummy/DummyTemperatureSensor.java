@@ -30,12 +30,12 @@ public class DummyTemperatureSensor implements DummyDevice, HalSensorConfig {
     }
 
     @Override
-    public Class<? extends HalSensorController> getSensorControllerClass() {
+    public Class<? extends HalSensorController> getDeviceControllerClass() {
         return DummyController.class;
     }
 
     @Override
-    public Class<? extends HalSensorData> getSensorDataClass() {
+    public Class<? extends HalSensorData> getDeviceDataClass() {
         return TemperatureSensorData.class;
     }
 

@@ -26,7 +26,7 @@ package se.hal.plugin.nvr.page;
 
 import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
-import se.hal.plugin.nvr.device.Camera;
+import se.hal.plugin.nvr.struct.Camera;
 import se.hal.struct.Event;
 import se.hal.util.DeviceNameComparator;
 import zutil.ObjectUtil;

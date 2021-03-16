@@ -17,21 +17,21 @@ public interface DeConzRestScenes {
      *
      * @param name      The name of the new scene. (required)
      */
-    @WSRequestType(HTTP_POST)
+    @WSRequestType(POST)
     @WSPath("/api/{{requestApiKey}}/groups/{{group_id}}/scenes")
     void createScene(String requestApiKey, int groupId, String name);
 
     /**
      * Returns a list of all scenes of a group.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/groups/{{group_id}}/scenes")
     void getScenes(String requestApiKey, int groupId);
 
     /**
      * Returns all attributes of a scene.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/groups/{{group_id}}/scenes/{{sceneId}}")
     void getScene(String requestApiKey, int groupId, int sceneId);
 
@@ -40,14 +40,14 @@ public interface DeConzRestScenes {
      *
      * @param name      Name of the scene. (optional)
      */
-    @WSRequestType(HTTP_PUT)
+    @WSRequestType(PUT)
     @WSPath("/api/{{requestApiKey}}/groups/{{group_id}}/scenes/{{sceneId}}")
     void getScene(String requestApiKey, int groupId, int sceneId, String name);
 
     /**
      * Stores the current group state in the scene. The actual state of each light in the group will become the lights scene state.
      */
-    @WSRequestType(HTTP_PUT)
+    @WSRequestType(PUT)
     @WSPath("/api/{{requestApiKey}}/groups/{{group_id}}/scenes/{{sceneId}}/store")
     String storeScene(String requestApiKey, int groupId, int sceneId);
 
@@ -55,7 +55,7 @@ public interface DeConzRestScenes {
      * Recalls a scene. The actual state of each light in the group will become the lights scene state stored in each light.
      * Note: Lights which are not reachable (turned off) won’t be affected!
      */
-    @WSRequestType(HTTP_PUT)
+    @WSRequestType(PUT)
     @WSPath("/api/{{requestApiKey}}/groups/{{group_id}}/scenes/{{sceneId}}/recall")
     void recallScene(String requestApiKey, int groupId, int sceneId);
 
@@ -68,14 +68,14 @@ public interface DeConzRestScenes {
      * @param xy        	 	Set the CIE xy color space coordinates as array [x, y] of real values (0..1). 	optional
      * @param transitionTime    Transition time in 1/10 seconds between two states. (optional)
      */
-    @WSRequestType(HTTP_PUT)
+    @WSRequestType(PUT)
     @WSPath("/api/{{requestApiKey}}/groups/{{group_id}}/scenes/{{sceneId}}/state/lights/{{lightId}}/state")
     void setSceneState(String requestApiKey, int groupId, int sceneId, int lightId, int on, int bri, int xy, int transitionTime);
 
     /**
      * Deletes a scene.
      */
-    @WSRequestType(HTTP_DELETE)
+    @WSRequestType(DELETE)
     @WSPath("/api/{{requestApiKey}}/groups/{{group_id}}/scenes/{{sceneId}}")
     void deleteScene(String requestApiKey, int groupId, int sceneId);
 }

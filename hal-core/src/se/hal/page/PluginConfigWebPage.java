@@ -1,16 +1,15 @@
 package se.hal.page;
 
-import se.hal.ControllerManager;
 import se.hal.HalContext;
 import se.hal.HalServer;
 import se.hal.intf.HalWebPage;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
-import zutil.ui.UserMessageManager;
 
 import java.util.Map;
 
 import static zutil.ui.UserMessageManager.*;
+
 
 public class PluginConfigWebPage extends HalWebPage {
     private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/plugin_config.tmpl";
@@ -39,7 +38,7 @@ public class PluginConfigWebPage extends HalWebPage {
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("plugins", HalServer.getAllPlugins());
-        tmpl.set("controllers", ControllerManager.getInstance().getControllers());
+        //tmpl.set("controllers", ControllerManager.getInstance().getControllers()); // TODO: Get all controllers
         return tmpl;
     }
 }

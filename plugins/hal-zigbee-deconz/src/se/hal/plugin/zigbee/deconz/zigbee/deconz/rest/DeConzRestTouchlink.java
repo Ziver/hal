@@ -16,14 +16,14 @@ public interface DeConzRestTouchlink {
      * Starts scanning on all channels for devices which are located close to the gateway. The whole scan process will take about 10 seconds.
      * <p>Note: While scanning is in progress further API requests which require network access aren’t allowed.
      */
-    @WSRequestType(HTTP_POST)
+    @WSRequestType(POST)
     @WSPath("/api/{{requestApiKey}}/touchlink/scan")
     void startDeviceScan(String requestApiKey);
 
     /**
      * Returns the results of a touchlink scan.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/touchlink/scan")
     void getScanResult(String requestApiKey);
 
@@ -31,7 +31,7 @@ public interface DeConzRestTouchlink {
      * Puts a device into identify mode for example a light will blink a few times.
      * <p>Note: touchlinkId must be one of the indentifiers which are returned in the scan result.
      */
-    @WSRequestType(HTTP_POST)
+    @WSRequestType(POST)
     @WSPath("/api/{{requestApiKey}}/touchlink/{{touchlinkId}}/identify")
     void identifyDevice(String requestApiKey, int touchlinkId);
 
@@ -39,7 +39,7 @@ public interface DeConzRestTouchlink {
      * Send a reset to factory new request to a device.
      * <p>Note: touchlinkId must be one of the indentifiers which are returned in the scan result.
      */
-    @WSRequestType(HTTP_POST)
+    @WSRequestType(POST)
     @WSPath("/api/{{requestApiKey}}/touchlink/{{touchlinkId}}/reset")
     void resetDevice(String requestApiKey, int touchlinkId);
 }

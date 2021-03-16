@@ -22,27 +22,11 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.nvr;
+package se.hal.plugin.nvr.intf;
 
 import se.hal.intf.HalAbstractController;
-import se.hal.plugin.nvr.device.HalCameraConfig;
-import se.hal.plugin.nvr.device.HalCameraReportListener;
+
 
 public interface HalCameraController extends HalAbstractController {
 
-    /**
-     * Will register a camera to be handled by this controller.
-     */
-    void register(HalCameraConfig cameraConfig);
-
-    /**
-     * Deregisters a camera from this controller, the controller
-     * will no longer handle camera device.
-     */
-    void deregister(HalCameraConfig cameraConfig);
-
-    /**
-     * Set a listener that will receive all reports from the the registered camera.
-     */
-    void setListener(HalCameraReportListener listener);
 }

@@ -22,9 +22,11 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.nvr.device;
+package se.hal.plugin.nvr.struct;
 
 import se.hal.intf.HalAbstractController;
+import se.hal.plugin.nvr.intf.HalCameraConfig;
+import se.hal.plugin.nvr.intf.HalCameraData;
 import se.hal.struct.AbstractDevice;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
@@ -46,7 +48,7 @@ public class Camera extends AbstractDevice<Camera, HalCameraConfig, HalCameraDat
 
     @Override
     public Class<? extends HalAbstractController> getController() {
-        return getDeviceConfig().getCameraControllerClass();
+        return getDeviceConfig().getDeviceControllerClass();
     }
 
     @Override

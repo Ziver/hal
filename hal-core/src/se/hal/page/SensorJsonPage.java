@@ -62,7 +62,7 @@ public class SensorJsonPage extends HalJsonPage {
             else if (req_ids != null && ArrayUtil.contains(req_ids, ""+sensor.getId())) // id filtering
                 sensors.add(sensor);
             else if (req_type != null && !req_type.isEmpty() &&
-                    sensor.getDeviceConfig().getSensorDataClass().getSimpleName().contains(req_type)) // device type filtering
+                    sensor.getDeviceConfig().getDeviceDataClass().getSimpleName().contains(req_type)) // device type filtering
                 sensors.add(sensor);
         }
 
@@ -96,7 +96,7 @@ public class SensorJsonPage extends HalJsonPage {
             deviceNode.set("id", sensor.getId());
             deviceNode.set("name", sensor.getName());
             deviceNode.set("user", sensor.getUser().getUsername());
-            deviceNode.set("type", sensor.getDeviceConfig().getSensorDataClass().getSimpleName());
+            deviceNode.set("type", sensor.getDeviceConfig().getDeviceDataClass().getSimpleName());
             deviceNode.set("x", sensor.getX());
             deviceNode.set("y", sensor.getY());
 

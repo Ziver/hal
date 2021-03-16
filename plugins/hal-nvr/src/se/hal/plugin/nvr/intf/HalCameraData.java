@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.nvr.device;
+package se.hal.plugin.nvr.intf;
 
 import se.hal.intf.HalDeviceData;
 

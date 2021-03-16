@@ -1,7 +1,7 @@
 package se.hal.page;
 
-import se.hal.ControllerManager;
 import se.hal.HalContext;
+import se.hal.SensorControllerManager;
 import se.hal.intf.HalWebPage;
 import se.hal.struct.ClassConfigurationData;
 import se.hal.struct.Sensor;
@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 
 import static zutil.ui.UserMessageManager.*;
 
+
 public class SensorConfigWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/sensor_config.tmpl";
@@ -30,7 +31,7 @@ public class SensorConfigWebPage extends HalWebPage {
         super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Sensor Settings").setWeight(100);
 
         sensorConfigurations = new ArrayList<>();
-        for(Class c : ControllerManager.getInstance().getAvailableSensors())
+        for(Class c : SensorControllerManager.getInstance().getAvailableDeviceConfigs())
             sensorConfigurations.add(new ClassConfigurationData(c));
     }
 
@@ -61,7 +62,7 @@ public class SensorConfigWebPage extends HalWebPage {
                     sensor.setUser(localUser);
                     sensor.getDeviceConfigurator().setValues(request).applyConfiguration();
                     sensor.save(db);
-                    ControllerManager.getInstance().register(sensor);
+                    SensorControllerManager.getInstance().register(sensor);
 
                     HalAlertManager.getInstance().addAlert(new UserMessage(
                             MessageLevel.SUCCESS, "Successfully created new sensor: "+sensor.getName(), MessageTTL.ONE_VIEW));
@@ -90,7 +91,7 @@ public class SensorConfigWebPage extends HalWebPage {
                     sensor = Sensor.getSensor(db, id);
                     if(sensor != null) {
                         logger.warning("Removing sensor: " + sensor.getName());
-                        ControllerManager.getInstance().deregister(sensor);
+                        SensorControllerManager.getInstance().deregister(sensor);
                         sensor.delete(db);
 
                         HalAlertManager.getInstance().addAlert(new UserMessage(
@@ -103,7 +104,7 @@ public class SensorConfigWebPage extends HalWebPage {
                     break;
 
                 case "remove_all_detected_sensors":
-                    ControllerManager.getInstance().clearDetectedSensors();
+                    SensorControllerManager.getInstance().clearDetectedDevices();
                     break;
 
                 // External Users
@@ -174,10 +175,10 @@ public class SensorConfigWebPage extends HalWebPage {
         tmpl.set("user", localUser);
         tmpl.set("localSensors", Sensor.getLocalSensors(db));
         tmpl.set("localSensorConf", sensorConfigurations);
-        tmpl.set("detectedSensors", ControllerManager.getInstance().getDetectedSensors());
+        tmpl.set("detectedSensors", SensorControllerManager.getInstance().getDetectedDevices());
         tmpl.set("extUsers", User.getExternalUsers(db));
         tmpl.set("extSensor", Sensor.getExternalSensors(db));
-        tmpl.set("availableSensors", ControllerManager.getInstance().getAvailableSensors());
+        tmpl.set("availableSensors", SensorControllerManager.getInstance().getAvailableDeviceConfigs());
 
         return tmpl;
 

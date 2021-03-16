@@ -6,7 +6,6 @@ import com.zsmartsystems.zigbee.ZigBeeProfileType;
 import com.zsmartsystems.zigbee.ZigBeeStatus;
 import com.zsmartsystems.zigbee.app.basic.ZigBeeBasicServerExtension;
 import com.zsmartsystems.zigbee.app.discovery.ZigBeeDiscoveryExtension;
-import com.zsmartsystems.zigbee.app.iasclient.ZigBeeIasCieExtension;
 import com.zsmartsystems.zigbee.app.otaserver.ZigBeeOtaUpgradeExtension;
 import com.zsmartsystems.zigbee.dongle.cc2531.ZigBeeDongleTiCc2531;
 import com.zsmartsystems.zigbee.dongle.conbee.ZigBeeDongleConBee;
@@ -40,8 +39,7 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
     private ZigBeeDataStore dataStore;
     protected ZigBeeNetworkManager networkManager;
 
-    private HalSensorReportListener sensorListener;
-    private HalEventReportListener eventListener;
+    private HalDeviceReportListener deviceListener;
     private List<AbstractDevice> registeredDevices;
 
 
@@ -140,21 +138,13 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
     // --------------------------
 
     @Override
-    public void register(HalEventConfig event) {
-
-    }
-    @Override
-    public void register(HalSensorConfig sensor) {
+    public void register(HalDeviceConfig deviceConfig) {
 
     }
 
     @Override
-    public void deregister(HalEventConfig event) {
-        registeredDevices.remove(event);
-    }
-    @Override
-    public void deregister(HalSensorConfig sensor) {
-        registeredDevices.remove(sensor);
+    public void deregister(HalDeviceConfig deviceConfig) {
+        registeredDevices.remove(deviceConfig);
     }
 
     @Override
@@ -168,11 +158,7 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
     }
 
     @Override
-    public void setListener(HalEventReportListener listener) {
-        eventListener = listener;
-    }
-    @Override
-    public void setListener(HalSensorReportListener listener) {
-        sensorListener = listener;
+    public void setListener(HalDeviceReportListener listener) {
+        deviceListener = listener;
     }
 }

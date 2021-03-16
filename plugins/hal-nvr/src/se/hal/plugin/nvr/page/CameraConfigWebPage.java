@@ -24,11 +24,11 @@
 
 package se.hal.plugin.nvr.page;
 
-import se.hal.ControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
 import se.hal.page.HalAlertManager;
-import se.hal.plugin.nvr.device.Camera;
+import se.hal.plugin.nvr.CameraControllerManager;
+import se.hal.plugin.nvr.struct.Camera;
 import se.hal.struct.ClassConfigurationData;
 import se.hal.struct.User;
 import zutil.ObjectUtil;
@@ -36,7 +36,6 @@ import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
 import zutil.parser.Templator;
-import zutil.ui.UserMessageManager;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -56,7 +55,7 @@ public class CameraConfigWebPage extends HalWebPage {
         super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Camera Settings").setWeight(200);
 
         cameraConfigurations = new ArrayList<>();
-        for(Class c : ControllerManager.getInstance().getAvailableEvents())
+        for(Class c : CameraControllerManager.getInstance().getAvailableDeviceConfigs())
             cameraConfigurations.add(new ClassConfigurationData(c));
     }
 

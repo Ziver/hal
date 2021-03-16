@@ -19,21 +19,21 @@ public interface DeConzRestGroups {
      *
      * @param name      The name of the new group. (required)
      */
-    @WSRequestType(HTTP_POST)
+    @WSRequestType(POST)
     @WSPath("/api/{{requestApiKey}}/groups")
     void createGroup(String requestApiKey, String name);
 
     /**
      * Returns a list of all groups.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/groups")
     void getGroups(String requestApiKey);
 
     /**
      * Returns the full state of a group.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/groups/{{groupId}}")
     void getGroup(String requestApiKey, int groupId);
 
@@ -46,7 +46,7 @@ public interface DeConzRestGroups {
      * @param lightSequence 	Specify a sorted list of light ids that can be used in apps. 	optional
      * @param multiDeviceIds 	Append the subsequential light ids of multidevices like the FLS-PP if the app should handle that light differently.
      */
-    @WSRequestType(HTTP_PUT)
+    @WSRequestType(PUT)
     @WSPath("/api/{{requestApiKey}}/groups/{{groupId}}")
     void setGroup(String requestApiKey, int groupId, String name, List lights, boolean hidden, List lightSequence, List multiDeviceIds);
 
@@ -65,14 +65,14 @@ public interface DeConzRestGroups {
      * @param colorLoopSpeed    Specifies the speed of a colorloop. 1 = very fast, 255 = very slow (default: 15). This parameter only has an effect when it is called together with effect colorloop. (optional)
      * @param transitionTime    Transition time in 1/10 seconds between two states. (optional)
      */
-    @WSRequestType(HTTP_PUT)
+    @WSRequestType(PUT)
     @WSPath("/api/{{requestApiKey}}/groups/{{groupId}}/action")
     void setGroupState(String requestApiKey, int groupId, boolean on, boolean toggle, int bri, int hue, int sat, int ct, List xy, String alert, String effect, int colorLoopSpeed, int transitionTime);
 
     /**
      * Deletes a group.
      */
-    @WSRequestType(HTTP_DELETE)
+    @WSRequestType(DELETE)
     @WSPath("/api/{{requestApiKey}}/groups/{{groupId}}")
     void deleteGroup(String requestApiKey, int groupId);
 

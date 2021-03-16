@@ -10,3 +10,4 @@
 # Build and Ide files
 build
 .gradle
+.idea

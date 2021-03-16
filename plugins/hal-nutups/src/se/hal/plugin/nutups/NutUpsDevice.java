@@ -102,11 +102,11 @@ public class NutUpsDevice implements HalSensorConfig{
         return AggregationMethod.SUM;
     }
     @Override
-    public Class<? extends HalSensorController> getSensorControllerClass() {
+    public Class<? extends HalSensorController> getDeviceControllerClass() {
         return NutUpsController.class;
     }
     @Override
-    public Class<? extends HalSensorData> getSensorDataClass() {
+    public Class<? extends HalSensorData> getDeviceDataClass() {
         return PowerConsumptionSensorData.class;
     }
 }

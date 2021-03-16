@@ -24,9 +24,9 @@
 
 package se.hal.plugin.nvr.rtsp;
 
-import se.hal.plugin.nvr.HalCameraController;
-import se.hal.plugin.nvr.device.HalCameraConfig;
-import se.hal.plugin.nvr.device.HalCameraReportListener;
+import se.hal.intf.HalDeviceConfig;
+import se.hal.intf.HalDeviceReportListener;
+import se.hal.plugin.nvr.intf.HalCameraController;
 import zutil.log.LogUtil;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class RTSPController implements HalCameraController {
     private static final String CONFIG_RECORDING_PATH = "nvr.recording_path";
 
     private List<RTSPCameraConfig> cameras = new ArrayList<>();
-    private HalCameraReportListener listener;
+    private HalDeviceReportListener listener;
 
 
     public RTSPController() {}
@@ -51,7 +51,7 @@ public class RTSPController implements HalCameraController {
     // ----------------------------------------------------
 
     @Override
-    public void initialize() throws Exception {
+    public void initialize() {
 
     }
 
@@ -65,14 +65,14 @@ public class RTSPController implements HalCameraController {
     // ----------------------------------------------------
 
     @Override
-    public void register(HalCameraConfig cameraConfig) {
-        if (cameraConfig instanceof RTSPCameraConfig)
-            cameras.add((RTSPCameraConfig) cameraConfig);
+    public void register(HalDeviceConfig deviceConfig) {
+        if (deviceConfig instanceof RTSPCameraConfig)
+            cameras.add((RTSPCameraConfig) deviceConfig);
     }
 
     @Override
-    public void deregister(HalCameraConfig cameraConfig) {
-        cameras.remove(cameraConfig);
+    public void deregister(HalDeviceConfig deviceConfig) {
+        cameras.remove(deviceConfig);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class RTSPController implements HalCameraController {
     }
 
     @Override
-    public void setListener(HalCameraReportListener listener) {
+    public void setListener(HalDeviceReportListener listener) {
         this.listener = listener;
     }
 

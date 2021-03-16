@@ -49,10 +49,7 @@
 package se.hal.plugin.nutups;
 
 import se.hal.HalContext;
-import se.hal.intf.HalAutoScannableController;
-import se.hal.intf.HalSensorController;
-import se.hal.intf.HalSensorConfig;
-import se.hal.intf.HalSensorReportListener;
+import se.hal.intf.*;
 import zutil.log.LogUtil;
 import zutil.osal.linux.app.NutUPSClient;
 
@@ -62,6 +59,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 public class NutUpsController implements HalSensorController, HalAutoScannableController, Runnable{
     public static Logger logger = LogUtil.getLogger();
@@ -73,7 +71,7 @@ public class NutUpsController implements HalSensorController, HalAutoScannableCo
     private HashMap<String, NutUpsDevice> registeredDevices = new HashMap<>();
     private NutUPSClient client;
     private ScheduledExecutorService executor;
-    private HalSensorReportListener listener;
+    private HalDeviceReportListener listener;
 
 
 
@@ -97,7 +95,7 @@ public class NutUpsController implements HalSensorController, HalAutoScannableCo
 
 
     @Override
-    public void setListener(HalSensorReportListener listener) {
+    public void setListener(HalDeviceReportListener listener) {
         this.listener = listener;
     }
 
@@ -126,16 +124,19 @@ public class NutUpsController implements HalSensorController, HalAutoScannableCo
 
 
     @Override
-    public void register(HalSensorConfig sensor) {
-        registeredDevices.put(((NutUpsDevice) sensor).getUpsId(), (NutUpsDevice) sensor);
+    public void register(HalDeviceConfig deviceConfig) {
+        if (deviceConfig instanceof NutUpsDevice)
+            registeredDevices.put(((NutUpsDevice) deviceConfig).getUpsId(), (NutUpsDevice) deviceConfig);
     }
+
     @Override
-    public void deregister(HalSensorConfig sensor) {
-        registeredDevices.remove(((NutUpsDevice) sensor).getUpsId());
+    public void deregister(HalDeviceConfig deviceConfig) {
+        registeredDevices.remove(((NutUpsDevice) deviceConfig).getUpsId());
     }
+
     @Override
     public int size() {
-        return 0;
+        return registeredDevices.size();
     }
 
 }

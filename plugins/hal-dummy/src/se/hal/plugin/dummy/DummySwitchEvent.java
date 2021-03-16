@@ -16,12 +16,12 @@ public class DummySwitchEvent implements DummyDevice, HalEventConfig {
 
 
     @Override
-    public Class<? extends HalEventController> getEventControllerClass() {
+    public Class<? extends HalEventController> getDeviceControllerClass() {
         return DummyController.class;
     }
 
     @Override
-    public Class<? extends HalEventData> getEventDataClass() {
+    public Class<? extends HalEventData> getDeviceDataClass() {
         return OnOffEventData.class;
     }
 }

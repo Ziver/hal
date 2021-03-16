@@ -1,8 +1,8 @@
 package se.hal.struct;
 
-import se.hal.ControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalAbstractController;
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalDeviceReportListener;
 import zutil.db.DBConnection;
@@ -21,11 +21,11 @@ import java.util.logging.Logger;
 /**
  * Contains logic and data common to devices (Events and Sensors)
  *
- * @param   <T>     is the device type
+ * @param   <V>     is the device type
  * @param   <C>     is the device configuration class
  * @param   <D>     is the device data class
  */
-public abstract class AbstractDevice<T extends AbstractDevice, C,D extends HalDeviceData> extends DBBean {
+public abstract class AbstractDevice<V extends AbstractDevice,C extends HalDeviceConfig,D extends HalDeviceData> extends DBBean {
     private static final Logger logger = LogUtil.getLogger();
 
     // Sensor specific data
@@ -48,7 +48,7 @@ public abstract class AbstractDevice<T extends AbstractDevice, C,D extends HalDe
     @DBColumn("map_y")
     private double y;
 
-    protected transient List<HalDeviceReportListener<T>> listeners = new LinkedList<>();
+    protected transient List<HalDeviceReportListener<C,D>> listeners = new LinkedList<>();
 
 
     // ----------------------------------------------------
@@ -59,8 +59,8 @@ public abstract class AbstractDevice<T extends AbstractDevice, C,D extends HalDe
         C obj = getDeviceConfig();
         if (obj != null) {
             Configurator<C> configurator = new Configurator<>(obj);
-            configurator.setPreConfigurationListener(ControllerManager.getInstance());
-            configurator.setPostConfigurationListener(ControllerManager.getInstance());
+            //configurator.setPreConfigurationListener(ControllerManager.getInstance()); // TODO:
+            //configurator.setPostConfigurationListener(ControllerManager.getInstance()); // TODO:
             return configurator;
         }
         return null;
@@ -118,7 +118,7 @@ public abstract class AbstractDevice<T extends AbstractDevice, C,D extends HalDe
      * This method will configure the current DeviceData with the
      * configuration from the config String.
      */
-    private void applyConfig(){
+    private void applyConfig() {
         if (config != null && !config.isEmpty()) {
             Configurator<C> configurator = getDeviceConfigurator();
             configurator.setValues(JSONParser.read(config));
@@ -135,11 +135,11 @@ public abstract class AbstractDevice<T extends AbstractDevice, C,D extends HalDe
     /**
      * @return the latest known data from the device
      */
-    public D getDeviceData(){
+    public D getDeviceData() {
         return deviceData;
     }
 
-    public void setDeviceData(D latest){
+    public void setDeviceData(D latest) {
         this.deviceData = latest;
     }
 
@@ -198,13 +198,13 @@ public abstract class AbstractDevice<T extends AbstractDevice, C,D extends HalDe
         this.y = y;
     }
 
-    public void addReportListener(HalDeviceReportListener<T> listener){
+    public void addReportListener(HalDeviceReportListener<C,D> listener) {
         listeners.add(listener);
     }
-    public void removeReportListener(HalDeviceReportListener<T> listener){
+    public void removeReportListener(HalDeviceReportListener<C,D> listener) {
         listeners.remove(listener);
     }
-    public List<HalDeviceReportListener<T>> getReportListeners(){
+    public List<HalDeviceReportListener<C,D>> getReportListeners() {
         return listeners;
     }
 }

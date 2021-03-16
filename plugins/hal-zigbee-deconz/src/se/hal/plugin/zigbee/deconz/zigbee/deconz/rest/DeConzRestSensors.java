@@ -30,21 +30,21 @@ public interface DeConzRestSensors {
      *                          reachable - Bool - default: true
      *                          battery - Number (0..100)
      */
-    @WSRequestType(HTTP_POST)
+    @WSRequestType(POST)
     @WSPath("/api/{{requestApiKey}}/sensors")
     void createSensor(String requestApiKey, int groupId, String name, String modelid, String swversion, String type, String uniqueid, String manufacturername, Map state, Map config);
 
     /**
      * Returns a list of all Sensors. If there are no sensors in the system then an empty object {} will be returned.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/sensors")
     List getSensor(String requestApiKey);
 
     /**
      * Returns a list of all Sensors. If there are no sensors in the system then an empty object {} will be returned.
      */
-    @WSRequestType(HTTP_GET)
+    @WSRequestType(GET)
     @WSPath("/api/{{requestApiKey}}/sensors/{{sensorId}}")
     void getSensor(String requestApiKey, int sensorId);
 
@@ -57,7 +57,7 @@ public interface DeConzRestSensors {
      *              2 = Two groups mode
      *              3 = Color temperature mode
      */
-    @WSRequestType(HTTP_PUT)
+    @WSRequestType(PUT)
     @WSPath("/api/{{requestApiKey}}/sensors/{{sensorId}}")
     void setSensor(String requestApiKey, int sensorId, String name, int mode);
 
@@ -68,7 +68,7 @@ public interface DeConzRestSensors {
      * @param reachable     The reachable status of the sensor. (optional)
      * @param battery       The current battery state in percent, only for battery powered devices. (optional)
      */
-    @WSRequestType(HTTP_PUT)
+    @WSRequestType(PUT)
     @WSPath("/api/{{requestApiKey}}/sensors/{{sensorId}}/config")
     void setSensorConfig(String requestApiKey, int sensorId, boolean on, boolean reachable, int battery);
 
@@ -84,14 +84,14 @@ public interface DeConzRestSensors {
      *              CLIPGenericStatus 	status          Number
      *              CLIPHumidity 	    humidity        Number
      */
-    @WSRequestType(HTTP_PUT)
+    @WSRequestType(PUT)
     @WSPath("/api/{{requestApiKey}}/sensors/{{sensorId}}/state")
     void setSensorState(String requestApiKey, String flag);
 
     /**
      * Delete a sensor.
      */
-    @WSRequestType(HTTP_DELETE)
+    @WSRequestType(DELETE)
     @WSPath("/api/{{requestApiKey}}/sensors/{{sensorId}}/state")
     void deleteSensor(String requestApiKey, int sensorId);
 }

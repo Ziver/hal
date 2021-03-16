@@ -44,7 +44,7 @@ public class TelstickSerialCommEventTest {
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
         final ArrayList<HalEventConfig> list = new ArrayList<>();
-        tellstick.setListener(new HalEventReportListener() {
+        tellstick.setListener(new HalDeviceReportListener<HalEventConfig,HalEventData>() {
             @Override
             public void reportReceived(HalEventConfig e, HalEventData d) {
                 list.add(e);
@@ -62,7 +62,7 @@ public class TelstickSerialCommEventTest {
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
         final ArrayList<HalEventConfig> list = new ArrayList<>();
-        tellstick.setListener(new HalEventReportListener() {
+        tellstick.setListener(new HalDeviceReportListener<HalEventConfig,HalEventData>() {
             @Override
             public void reportReceived(HalEventConfig e, HalEventData d) {
                 list.add(e);
@@ -101,9 +101,9 @@ public class TelstickSerialCommEventTest {
 
 
         @Override
-        public Class<? extends HalEventController> getEventControllerClass() { return null; }
+        public Class<? extends HalEventController> getDeviceControllerClass() { return null; }
         @Override
-        public Class<? extends HalEventData> getEventDataClass() {
+        public Class<? extends HalEventData> getDeviceDataClass() {
             return null;
         }
 

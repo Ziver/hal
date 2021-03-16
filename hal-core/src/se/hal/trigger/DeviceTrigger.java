@@ -1,6 +1,7 @@
 package se.hal.trigger;
 
 import se.hal.TriggerManager;
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalDeviceReportListener;
 import se.hal.intf.HalTrigger;
@@ -14,7 +15,8 @@ import zutil.ui.Configurator.PreConfigurationActionListener;
  */
 public abstract class DeviceTrigger implements HalTrigger,
         PreConfigurationActionListener,
-        PostConfigurationActionListener, HalDeviceReportListener<AbstractDevice> {
+        PostConfigurationActionListener,
+        HalDeviceReportListener<HalDeviceConfig,HalDeviceData> {
 
     @Configurator.Configurable("Device ID")
     protected int deviceId = -1;
@@ -42,8 +44,8 @@ public abstract class DeviceTrigger implements HalTrigger,
     }
 
     @Override
-    public void receivedReport(AbstractDevice device) {
-        receivedData = device.getDeviceData();
+    public void reportReceived(HalDeviceConfig deviceConfig, HalDeviceData deviceData) {
+        receivedData = deviceData;
         // Instant trigger evaluation
         if (triggerOnChange)
             TriggerManager.getInstance().evaluateAndExecute();

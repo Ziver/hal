@@ -1,6 +1,6 @@
 package se.hal.page;
 
-import se.hal.ControllerManager;
+import se.hal.EventControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
 import se.hal.struct.Event;
@@ -54,7 +54,7 @@ public class EventOverviewWebPage extends HalWebPage {
             logger.info("Modifying Event(" + id + ") state: " + eventData.toString());
             Event event = Event.getEvent(db, id);
             event.setDeviceData(eventData);
-            ControllerManager.getInstance().send(event);
+            EventControllerManager.getInstance().send(event);
         }
 
         int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));

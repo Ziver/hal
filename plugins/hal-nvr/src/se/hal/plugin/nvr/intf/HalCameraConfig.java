@@ -22,8 +22,10 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.nvr;
+package se.hal.plugin.nvr.intf;
 
-public class StreamRecorder {
+import se.hal.intf.HalDeviceConfig;
+
+public interface HalCameraConfig extends HalDeviceConfig {
 
 }

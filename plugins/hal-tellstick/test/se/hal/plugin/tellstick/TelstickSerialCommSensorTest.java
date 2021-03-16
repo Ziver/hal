@@ -29,7 +29,7 @@ public class TelstickSerialCommSensorTest {
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
         final ArrayList<HalSensorConfig> list = new ArrayList<>();
-        tellstick.setListener(new HalSensorReportListener() {
+        tellstick.setListener(new HalDeviceReportListener<HalSensorConfig,HalSensorData>() {
             @Override
             public void reportReceived(HalSensorConfig e, HalSensorData d) {
                 list.add(e);
@@ -47,7 +47,7 @@ public class TelstickSerialCommSensorTest {
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
         final ArrayList<HalSensorConfig> list = new ArrayList<>();
-        tellstick.setListener(new HalSensorReportListener() {
+        tellstick.setListener(new HalDeviceReportListener<HalSensorConfig,HalSensorData>() {
             @Override
             public void reportReceived(HalSensorConfig e, HalSensorData d) {
                 list.add(e);
@@ -94,9 +94,9 @@ public class TelstickSerialCommSensorTest {
         @Override
         public AggregationMethod getAggregationMethod() { return null; }
         @Override
-        public Class<? extends HalSensorController> getSensorControllerClass() { return null; }
+        public Class<? extends HalSensorController> getDeviceControllerClass() { return null; }
         @Override
-        public Class<? extends HalSensorData> getSensorDataClass() {
+        public Class<? extends HalSensorData> getDeviceDataClass() {
             return null;
         }
     }

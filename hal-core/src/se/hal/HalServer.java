@@ -1,6 +1,7 @@
 package se.hal;
 
 
+import se.hal.intf.HalAbstractControllerManager;
 import se.hal.intf.HalDaemon;
 import se.hal.intf.HalWebPage;
 import se.hal.intf.HalJsonPage;
@@ -85,8 +86,12 @@ public class HalServer {
             logger.info("Initializing managers.");
 
             HalAlertManager.initialize();
-            ControllerManager.initialize(pluginManager);
             TriggerManager.initialize(pluginManager);
+
+            for (Iterator<HalAbstractControllerManager> it = pluginManager.getSingletonIterator(HalAbstractControllerManager.class); it.hasNext(); ) {
+                HalAbstractControllerManager manager = it.next();
+                manager.initialize(pluginManager);
+            }
 
             // ------------------------------------
             // Import sensors,events and triggers
@@ -95,10 +100,10 @@ public class HalServer {
             logger.info("Initializing Sensors and Events.");
 
             for (Sensor sensor : Sensor.getLocalSensors(db)) {
-                ControllerManager.getInstance().register(sensor);
+                SensorControllerManager.getInstance().register(sensor);
             }
             for (Event event : Event.getLocalEvents(db)) {
-                ControllerManager.getInstance().register(event);
+                EventControllerManager.getInstance().register(event);
             }
             // Import triggers
             for (TriggerFlow flow : TriggerFlow.getTriggerFlows(db)) {

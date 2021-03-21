@@ -1,11 +1,9 @@
 package se.hal.intf;
 
-import se.hal.struct.AbstractDevice;
 import zutil.ClassUtil;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginManager;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,7 +13,7 @@ import java.util.logging.Logger;
  * @param <T>   is the device controller class
  * @param <C>   is the device configuration class
  */
-public abstract class HalAbstractControllerManager<T extends HalAbstractController, V extends AbstractDevice, C extends HalDeviceConfig> {
+public abstract class HalAbstractControllerManager<T extends HalAbstractController, V extends HalAbstractDevice, C extends HalDeviceConfig> {
     private static final Logger logger = LogUtil.getLogger();
 
     /** A map of all instantiated controllers **/

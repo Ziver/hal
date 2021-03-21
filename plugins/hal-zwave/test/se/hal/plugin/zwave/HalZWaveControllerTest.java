@@ -1,17 +1,10 @@
 package se.hal.plugin.zwave;
 
-import org.zwave4j.*;
-import se.hal.HalContext;
-import se.hal.intf.*;
-import se.hal.struct.AbstractDevice;
 import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author zagumennikov

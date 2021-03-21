@@ -114,12 +114,12 @@ public class EventControllerManagerTest {
         public void initialize() { }
 
         @Override
-        public void register(HalEventConfig event) {
+        public void register(HalDeviceConfig event) {
             size++;
         }
 
         @Override
-        public void deregister(HalEventConfig event) {
+        public void deregister(HalDeviceConfig event) {
             size--;
         }
 

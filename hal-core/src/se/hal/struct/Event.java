@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @DBBean.DBTable(value="event", superBean=true)
-public class Event extends AbstractDevice<Event,HalEventConfig,HalEventData> {
+public class Event extends HalAbstractDevice<Event, HalEventConfig, HalEventData> {
     private static final Logger logger = LogUtil.getLogger();
 
 

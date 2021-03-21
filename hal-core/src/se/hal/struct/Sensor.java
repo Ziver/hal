@@ -2,6 +2,7 @@ package se.hal.struct;
 
 import se.hal.HalContext;
 import se.hal.intf.HalAbstractController;
+import se.hal.intf.HalAbstractDevice;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorData;
 import se.hal.util.DeviceDataSqlResult;
@@ -19,7 +20,7 @@ import java.util.logging.Logger;
 
 
 @DBBean.DBTable(value="sensor", superBean=true)
-public class Sensor extends AbstractDevice<Sensor,HalSensorConfig,HalSensorData> {
+public class Sensor extends HalAbstractDevice<Sensor, HalSensorConfig, HalSensorData> {
     private static final Logger logger = LogUtil.getLogger();
 
     private long external_id = -1;

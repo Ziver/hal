@@ -1,11 +1,7 @@
 package se.hal;
 
 import org.junit.Test;
-import se.hal.intf.HalAbstractController;
-import se.hal.intf.HalDeviceReportListener;
-import se.hal.intf.HalSensorConfig;
-import se.hal.intf.HalSensorController;
-import se.hal.intf.HalSensorData;
+import se.hal.intf.*;
 import se.hal.struct.Sensor;
 import se.hal.struct.devicedata.HumiditySensorData;
 import se.hal.struct.devicedata.TemperatureSensorData;
@@ -140,11 +136,11 @@ public class SensorControllerManagerTest {
         public void initialize() { }
 
         @Override
-        public void register(HalSensorConfig sensor) {
+        public void register(HalDeviceConfig sensor) {
             size++;
         }
         @Override
-        public void deregister(HalSensorConfig sensor) {
+        public void deregister(HalDeviceConfig sensor) {
             size--;
         }
         @Override

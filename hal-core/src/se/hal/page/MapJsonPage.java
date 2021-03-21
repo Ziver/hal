@@ -2,13 +2,11 @@ package se.hal.page;
 
 import se.hal.HalContext;
 import se.hal.intf.HalJsonPage;
-import se.hal.struct.AbstractDevice;
+import se.hal.intf.HalAbstractDevice;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
-import zutil.net.http.HttpHeader;
-import zutil.net.http.HttpPrintStream;
 import zutil.parser.DataNode;
 
 import java.sql.SQLException;
@@ -39,7 +37,7 @@ public class MapJsonPage extends HalJsonPage {
             getDeviceNode(db, root);
         } else if ("save".equals(request.get("action"))) {
             int id = Integer.parseInt(request.get("id"));
-            AbstractDevice device = null;
+            HalAbstractDevice device = null;
 
             logger.info("Saving Sensor coordinates.");
 
@@ -76,7 +74,7 @@ public class MapJsonPage extends HalJsonPage {
         root.set("events", eventsNode);
     }
 
-    private DataNode getDeviceNode(AbstractDevice device) {
+    private DataNode getDeviceNode(HalAbstractDevice device) {
         DataNode deviceNode = new DataNode(DataNode.DataType.Map);
         deviceNode.set("id", device.getId());
         deviceNode.set("name", device.getName());

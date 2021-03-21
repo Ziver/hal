@@ -16,7 +16,7 @@ import com.zsmartsystems.zigbee.serialization.DefaultSerializer;
 import com.zsmartsystems.zigbee.transport.*;
 import se.hal.HalContext;
 import se.hal.intf.*;
-import se.hal.struct.AbstractDevice;
+import se.hal.intf.HalAbstractDevice;
 import zutil.log.LogUtil;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class HalZigbeeController implements HalSensorController, HalEventControl
     protected ZigBeeNetworkManager networkManager;
 
     private HalDeviceReportListener deviceListener;
-    private List<AbstractDevice> registeredDevices;
+    private List<HalAbstractDevice> registeredDevices;
 
 
     public HalZigbeeController() {}

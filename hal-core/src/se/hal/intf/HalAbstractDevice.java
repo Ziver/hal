@@ -1,10 +1,7 @@
-package se.hal.struct;
+package se.hal.intf;
 
 import se.hal.HalContext;
-import se.hal.intf.HalAbstractController;
-import se.hal.intf.HalDeviceConfig;
-import se.hal.intf.HalDeviceData;
-import se.hal.intf.HalDeviceReportListener;
+import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.log.LogUtil;
@@ -25,7 +22,7 @@ import java.util.logging.Logger;
  * @param   <C>     is the device configuration class
  * @param   <D>     is the device data class
  */
-public abstract class AbstractDevice<V extends AbstractDevice,C extends HalDeviceConfig,D extends HalDeviceData> extends DBBean {
+public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends HalDeviceConfig, D extends HalDeviceData> extends DBBean {
     private static final Logger logger = LogUtil.getLogger();
 
     // Sensor specific data
@@ -74,7 +71,7 @@ public abstract class AbstractDevice<V extends AbstractDevice,C extends HalDevic
                 applyConfig();
                 deviceData = getLatestDeviceData(HalContext.getDB());
             } catch (Exception e) {
-                logger.log(Level.SEVERE, "Unable instantiate DeviceConfig: "+type, e);
+                logger.log(Level.SEVERE, "Unable instantiate DeviceConfig: " + type, e);
             }
         }
         return deviceConfig;
@@ -126,6 +123,9 @@ public abstract class AbstractDevice<V extends AbstractDevice,C extends HalDevic
         }
     }
 
+    /**
+     * @return the class of the Controller responsible for this device type.
+     */
     public abstract Class<? extends HalAbstractController> getController();
 
     // ----------------------------------------------------

@@ -5,7 +5,7 @@ import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalDeviceReportListener;
 import se.hal.intf.HalTrigger;
-import se.hal.struct.AbstractDevice;
+import se.hal.intf.HalAbstractDevice;
 import zutil.ui.Configurator;
 import zutil.ui.Configurator.PostConfigurationActionListener;
 import zutil.ui.Configurator.PreConfigurationActionListener;
@@ -31,14 +31,14 @@ public abstract class DeviceTrigger implements HalTrigger,
 
     @Override
     public void preConfigurationAction(Configurator configurator, Object obj) {
-        AbstractDevice device = getDevice(deviceId);
+        HalAbstractDevice device = getDevice(deviceId);
         if (device != null)
             device.removeReportListener(this);
         reset();
     }
     @Override
     public void postConfigurationAction(Configurator configurator, Object obj) {
-        AbstractDevice device = getDevice(deviceId);
+        HalAbstractDevice device = getDevice(deviceId);
         if (device != null)
             device.addReportListener(this);
     }
@@ -67,5 +67,5 @@ public abstract class DeviceTrigger implements HalTrigger,
 
 
 
-    protected abstract AbstractDevice getDevice(long id);
+    protected abstract HalAbstractDevice getDevice(long id);
 }

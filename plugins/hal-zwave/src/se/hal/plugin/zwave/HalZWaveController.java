@@ -3,7 +3,7 @@ package se.hal.plugin.zwave;
 import org.zwave4j.*;
 import se.hal.HalContext;
 import se.hal.intf.*;
-import se.hal.struct.AbstractDevice;
+import se.hal.intf.HalAbstractDevice;
 import zutil.log.LogUtil;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * @author Ziver Koc
  */
-public class HalZWaveController implements HalSensorController, HalEventController, HalAutoScannableController, NotificationWatcher{
+public class HalZWaveController implements HalSensorController, HalEventController, HalAutoScannableController, NotificationWatcher {
     private static final Logger logger = LogUtil.getLogger();
 
     public static final String CONFIG_ZWAVE_PORT = "zwave.com_port";
@@ -30,7 +30,7 @@ public class HalZWaveController implements HalSensorController, HalEventControll
 
     private HalDeviceReportListener sensorListener;
     private HalDeviceReportListener deviceListener;
-    private List<AbstractDevice> registeredDevices;
+    private List<HalAbstractDevice> registeredDevices;
 
 
     public HalZWaveController() {

@@ -16,7 +16,7 @@ public class RPiController implements HalSensorController {
     private HalDeviceReportListener sensorListener;
 
     public RPiController(){
-        
+
     }
 
     @Override
@@ -86,7 +86,7 @@ public class RPiController implements HalSensorController {
             pinToSensorMap.remove(key);
         }
     }
-    
+
     public void sendDataReport(HalSensorConfig sensorConfig, HalSensorData sensorData){
         if(sensorListener != null){
             sensorListener.reportReceived(sensorConfig, sensorData);

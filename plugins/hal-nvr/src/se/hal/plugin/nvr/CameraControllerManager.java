@@ -4,7 +4,6 @@ import se.hal.intf.HalAbstractControllerManager;
 import se.hal.plugin.nvr.intf.HalCameraConfig;
 import se.hal.plugin.nvr.intf.HalCameraController;
 import se.hal.plugin.nvr.struct.Camera;
-import se.hal.struct.AbstractDevice;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginManager;
 

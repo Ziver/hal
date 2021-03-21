@@ -38,13 +38,14 @@ The project is currently in alpha state, and as such things will change and brea
 ## Installing
 
 To run the Hal server you first need to clone the git repository and then run the 
-ant command to build and run:
+gradle command to build and run the server:
 
 ```
 ./gradlew run
 ```
 
-Check `hal.conf.example` for available configuration options.
+Check `hal.conf.example` for available configuration options. 
+By default, HAL server will be listening to http://localhost:8080. 
 
 ## Running the tests
 
@@ -53,6 +54,33 @@ test-cases run:
 
 ```
 ./gradlew test
+```
+
+## Architecture
+
+```
+ HalAbstractControlerManager
+       |
+       |             HalAbstractController
+       |                   |
+       |                   |              HalAbstractDevice
+       |                   |                   |
+ .-----------.       .------------.       .--------.  
+ |           |       |            |       |        |
+ |           |       |            | ----> | Device | 
+ |           |       |            |       |        |
+ |           | ----> | Controller |       '--------'
+ |           |       |            |       .--------.  
+ |           |       |            |       |        |
+ |  Manager  |       |            | ----> | Device | 
+ |           |       |            |       |        |
+ |           |       '------------'       '--------'
+ |           |       .------------.       .--------.  
+ |           |       |            |       |        |
+ |           | ----> | Controller | ----> | Device | 
+ |           |       |            |       |        |
+ '-----------'       '------------'       '--------'
+         
 ```
 
 ## Authors

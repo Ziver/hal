@@ -31,7 +31,7 @@ public class SensorConfigWebPage extends HalWebPage {
         super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Sensor Settings").setWeight(100);
 
         sensorConfigurations = new ArrayList<>();
-        for(Class c : SensorControllerManager.getInstance().getAvailableDeviceConfigs())
+        for (Class c : SensorControllerManager.getInstance().getAvailableDeviceConfigs())
             sensorConfigurations.add(new ClassConfigurationData(c));
     }
 
@@ -46,7 +46,7 @@ public class SensorConfigWebPage extends HalWebPage {
         User localUser = User.getLocalUser(db);
 
         // Save new input
-        if(request.containsKey("action")){
+        if (request.containsKey("action")) {
             int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));
             Sensor sensor;
             User user;
@@ -70,7 +70,7 @@ public class SensorConfigWebPage extends HalWebPage {
 
                 case "modify_local_sensor":
                     sensor = Sensor.getSensor(db, id);
-                    if(sensor != null){
+                    if (sensor != null) {
                         logger.info("Modifying sensor: " + sensor.getName());
                         sensor.setName(request.get("name"));
                         sensor.setType(request.get("type"));
@@ -89,7 +89,7 @@ public class SensorConfigWebPage extends HalWebPage {
 
                 case "remove_local_sensor":
                     sensor = Sensor.getSensor(db, id);
-                    if(sensor != null) {
+                    if (sensor != null) {
                         logger.warning("Removing sensor: " + sensor.getName());
                         SensorControllerManager.getInstance().deregister(sensor);
                         sensor.delete(db);
@@ -122,7 +122,7 @@ public class SensorConfigWebPage extends HalWebPage {
 
                 case "modify_external_user":
                     user = User.getUser(db, id);
-                    if(user != null){
+                    if (user != null) {
                         logger.info("Modifying external user: " + user.getHostname());
                         user.setHostname(request.get("hostname"));
                         user.setPort(Integer.parseInt(request.get("port")));
@@ -154,7 +154,7 @@ public class SensorConfigWebPage extends HalWebPage {
                 // External Sensors
                 case "modify_external_sensor":
                     sensor = Sensor.getSensor(db, id);
-                    if(sensor != null){
+                    if (sensor != null) {
                         logger.warning("Modifying external sensor: " + sensor.getName());
                         sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
                         sensor.save(db);

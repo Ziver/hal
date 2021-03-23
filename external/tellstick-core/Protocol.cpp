@@ -97,7 +97,7 @@ bool Protocol::checkBit(int data, int bitno) {
 
 
 Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname) {
-	if(TelldusCore::comparei(protocolname, L"arctech")) {
+	if (TelldusCore::comparei(protocolname, L"arctech")) {
 		return new ProtocolNexa();
 
 	} else if (TelldusCore::comparei(protocolname, L"brateck")) {
@@ -151,7 +151,7 @@ Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname) {
 
 std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &protocolName) {
 	std::list<std::string> parameters;
-	if(TelldusCore::comparei(protocolName, L"arctech")) {
+	if (TelldusCore::comparei(protocolName, L"arctech")) {
 		parameters.push_back("house");
 		parameters.push_back("unit");
 
@@ -218,7 +218,7 @@ std::list<std::string> Protocol::decodeData(const std::string &fullData) {
 	std::string decoded = "";
 
 	ControllerMessage dataMsg(fullData);
-	if( TelldusCore::comparei(dataMsg.protocol(), L"arctech") ) {
+	if ( TelldusCore::comparei(dataMsg.protocol(), L"arctech") ) {
 		decoded = ProtocolNexa::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
@@ -231,32 +231,32 @@ std::list<std::string> Protocol::decodeData(const std::string &fullData) {
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
-	} else if(TelldusCore::comparei(dataMsg.protocol(), L"everflourish") ) {
+	} else if (TelldusCore::comparei(dataMsg.protocol(), L"everflourish") ) {
 		decoded = ProtocolEverflourish::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
-	} else if(TelldusCore::comparei(dataMsg.protocol(), L"fineoffset") ) {
+	} else if (TelldusCore::comparei(dataMsg.protocol(), L"fineoffset") ) {
 		decoded = ProtocolFineoffset::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
-	} else if(TelldusCore::comparei(dataMsg.protocol(), L"mandolyn") ) {
+	} else if (TelldusCore::comparei(dataMsg.protocol(), L"mandolyn") ) {
 		decoded = ProtocolMandolyn::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
-	} else if(TelldusCore::comparei(dataMsg.protocol(), L"oregon") ) {
+	} else if (TelldusCore::comparei(dataMsg.protocol(), L"oregon") ) {
 		decoded = ProtocolOregon::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
-	} else if(TelldusCore::comparei(dataMsg.protocol(), L"x10") ) {
+	} else if (TelldusCore::comparei(dataMsg.protocol(), L"x10") ) {
 		decoded = ProtocolX10::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
-	} else if(TelldusCore::comparei(dataMsg.protocol(), L"hasta") ) {
+	} else if (TelldusCore::comparei(dataMsg.protocol(), L"hasta") ) {
 		decoded = ProtocolHasta::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);

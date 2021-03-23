@@ -12,7 +12,7 @@ public class PropertyConfigWebPage extends HalWebPage {
     private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/property_config.tmpl";
 
 
-    public PropertyConfigWebPage(){
+    public PropertyConfigWebPage() {
         super("properties");
         super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Properties");
     }

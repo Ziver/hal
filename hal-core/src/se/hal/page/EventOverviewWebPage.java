@@ -27,7 +27,7 @@ public class EventOverviewWebPage extends HalWebPage {
     private static final String DETAIL_TEMPLATE   = HalContext.RESOURCE_WEB_ROOT + "/event_detail.tmpl";
 
 
-    public EventOverviewWebPage(){
+    public EventOverviewWebPage() {
         super("event_overview");
         super.getRootNav().createSubNav("Events").createSubNav(this.getId(), "Overview");
     }

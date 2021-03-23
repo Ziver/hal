@@ -33,10 +33,10 @@ public class TriggerWebPage extends HalWebPage {
         super.getRootNav().createSubNav("Events").createSubNav(this.getId(), "Triggers");
 
         triggerConfigurators = new ArrayList<>();
-        for(Class c : TriggerManager.getInstance().getAvailableTriggers())
+        for (Class c : TriggerManager.getInstance().getAvailableTriggers())
             triggerConfigurators.add(new ClassConfigurationData(c));
         actionConfigurators = new ArrayList<>();
-        for(Class c : TriggerManager.getInstance().getAvailableActions())
+        for (Class c : TriggerManager.getInstance().getAvailableActions())
             actionConfigurators.add(new ClassConfigurationData(c));
     }
 
@@ -78,7 +78,7 @@ public class TriggerWebPage extends HalWebPage {
 
                 // Triggers
                 case "create_trigger":
-                    if (flow == null){
+                    if (flow == null) {
                         logger.warning("Invalid flow id: " + request.get("flow-id"));
                         HalAlertManager.getInstance().addAlert(new UserMessage(
                                 MessageLevel.ERROR, "Invalid flow id: " + request.get("flow-id"), MessageTTL.ONE_VIEW));
@@ -107,7 +107,7 @@ public class TriggerWebPage extends HalWebPage {
 
                 // Triggers
                 case "create_action":
-                    if (flow == null){
+                    if (flow == null) {
                         HalAlertManager.getInstance().addAlert(new UserMessage(
                                 MessageLevel.ERROR, "Invalid flow id", MessageTTL.ONE_VIEW));
                         break;

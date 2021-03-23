@@ -44,7 +44,7 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
                         + " ORDER BY timestamp_start ASC");
         stmt.setLong(1, sensor.getId());
         stmt.setLong(2, sensor.getUser().getId());
-        switch(aggrPeriodLength){
+        switch(aggrPeriodLength) {
             case SECOND: stmt.setLong(3, UTCTimeUtility.SECOND_IN_MS-1); break;
             case MINUTE: stmt.setLong(3, UTCTimeUtility.MINUTE_IN_MS-1); break;
             case FIVE_MINUTES: stmt.setLong(3, UTCTimeUtility.FIVE_MINUTES_IN_MS-1); break;
@@ -61,7 +61,7 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
 
     private Sensor sensor;
 
-    private AggregateDataListSqlResult(Sensor sensor){
+    private AggregateDataListSqlResult(Sensor sensor) {
         this.sensor = sensor;
     }
 
@@ -71,7 +71,7 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
     public ArrayList<AggregateData> handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
         ArrayList<AggregateData> list = new ArrayList<>();
         long previousTimestampEnd = -1;
-        while (result.next()){
+        while (result.next()) {
 
             int id = result.getInt("id");
             long timestampStart = result.getLong("timestamp_start");
@@ -84,7 +84,7 @@ public class AggregateDataListSqlResult implements SQLResultHandler<ArrayList<Ag
             float estimatedData = data/confidence;	//estimate the "real" value of the data by looking at the confidence value
 
             // Add null data point to list if one or more periods of data is missing before this
-            if (previousTimestampEnd != -1 && sensor.getDeviceConfig() != null){
+            if (previousTimestampEnd != -1 && sensor.getDeviceConfig() != null) {
                 boolean shortInterval = timestampEnd-timestampStart < sensor.getDeviceConfig().getDataInterval();
                 long distance = timestampStart - (previousTimestampEnd + 1);
                 if (// Only add nulls if the report interval is smaller than the aggregated interval

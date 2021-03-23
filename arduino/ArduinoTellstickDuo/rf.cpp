@@ -17,29 +17,29 @@ void parseRadioRXBuffer() {
   bool parse = false;
   while (bufferReadP != bufferWriteP) { //stop if the read pointer is pointing to where the writing is currently performed
     uint8_t sampleCount = *bufferReadP;
-    
+
     if ( (((uintptr_t)bufferReadP) & 0x1) == 1 ) { //buffer pointer is odd (stores highs)
       //Serial.print("high:"); Serial.println(sampleCount);
       if (prevValue >= SILENCE_LENGTH) {
         startDataP = bufferReadP;   //some new data must start here since this is the first "high" after a silent period
       }
-      
+
       //stream data to stream parsers
       parseOregonStream(HIGH, sampleCount);
-      
+
     } else { //buffer pointer is even    (stores lows)
       //Serial.print("low:"); Serial.println(sampleCount);
       if (sampleCount >= SILENCE_LENGTH) {  //evaluate if it is time to parse the curernt data
         endDataP = bufferReadP;     //this is a silient period and must be the end of a data
-        if(startDataP != 0){
+        if (startDataP != 0){
           parse = true;
           break;
         }
       }
-      
+
       //stream data to stream parsers
       parseOregonStream(LOW, sampleCount);
-      
+
     }
 
     //step the read pointer one step
@@ -74,11 +74,11 @@ void parseRadioRXBuffer() {
   //Let all available parsers parse the data set now.
   parseArctechSelfLearning(startDataP, endDataP);
   //TODO: add more parsers here
-  
+
   //reset the data pointers since the data have been parsed at this point
   startDataP = 0;
   endDataP = 0;
-  
+
 };   //end radioTask
 
 void sendTCodedData(uint8_t* data, uint8_t T_long, uint8_t* timings, uint8_t repeat, uint8_t pause) {
@@ -88,7 +88,7 @@ void sendTCodedData(uint8_t* data, uint8_t T_long, uint8_t* timings, uint8_t rep
     for (int i = 0; i < T_long; ++i) {
       uint8_t timeIndex = (data[i / 4] >> (6 - (2 * (i % 4)))) & 0x03;
       if (timings[timeIndex] > 0 || i == T_long - 1) {
-        if(nextPinState){
+        if (nextPinState){
             TX_PIN_HIGH();
         }else{
             TX_PIN_LOW();
@@ -111,7 +111,7 @@ void sendSCodedData(uint8_t* data, uint8_t pulseCount, uint8_t repeat, uint8_t p
     bool nextPinState = HIGH;
     for (int i = 0; i < pulseCount; ++i) {
       if (data[i] > 0 || i == pulseCount - 1) {
-        if(nextPinState){
+        if (nextPinState){
             TX_PIN_HIGH();
         }else{
             TX_PIN_LOW();

@@ -16,8 +16,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Parameterized.class)
 public class TimePeriodTest {
 	private final long currentTime_UTC;
-	
-	
+
+
 	/**
 	 * Constructor
 	 * @param timestamp
@@ -25,7 +25,7 @@ public class TimePeriodTest {
 	public TimePeriodTest(long timestamp){
 		this.currentTime_UTC = timestamp;
 	}
-	
+
 	@Parameters
 	public static Collection<Object[]> data(){
 		return Arrays.asList(new Object[][] {
@@ -46,59 +46,59 @@ public class TimePeriodTest {
 			{System.currentTimeMillis()+(7*UTCTimeUtility.MINUTE_IN_MS)},	//current time + 7m
 		});
 	}
-	
+
 	@Test
 	public void testYearTimePeriod(){
 		testSeriesOfPeriods(AggregationPeriodLength.YEAR);
 	}
-	
+
 	@Test
 	public void testMonthTimePeriod(){
 		testSeriesOfPeriods(AggregationPeriodLength.MONTH);
 	}
-	
+
 	@Test
 	public void testWeekTimePeriod(){
 		testSeriesOfPeriods(AggregationPeriodLength.WEEK);
 	}
-	
+
 	@Test
 	public void testDayTimePeriod(){
 		testSeriesOfPeriods(AggregationPeriodLength.DAY);
 	}
-	
+
 	@Test
 	public void testHourTimePeriod(){
 		testSeriesOfPeriods(AggregationPeriodLength.HOUR);
 	}
-	
+
 	@Test
 	public void test15MiuteTimePeriod(){
 		testSeriesOfPeriods(AggregationPeriodLength.FIFTEEN_MINUTES);
 	}
-	
+
 	@Test
 	public void test5MiuteTimePeriod(){
 		testSeriesOfPeriods(AggregationPeriodLength.FIVE_MINUTES);
 	}
-	
+
 	@Test
 	public void testMiuteTimePeriod(){
 		testSeriesOfPeriods(AggregationPeriodLength.MINUTE);
 	}
-	
+
 	@Test
 	public void testSecondTimePeriod(){
 		testSeriesOfPeriods(AggregationPeriodLength.SECOND);
 	}
-	
+
 	private void testSeriesOfPeriods(AggregationPeriodLength periodLength){
 		UTCTimePeriod tp = new UTCTimePeriod(currentTime_UTC, periodLength);
-		
+
 		//test next 50 periods
 		UTCTimePeriod prevTp = tp;
 		UTCTimePeriod nextTp = null;
-		for(int i = 0; i < 50; ++i){
+		for (int i = 0; i < 50; ++i){
 			nextTp = prevTp.getNextPeriod();
 			assertTrue("previos period end must be older than the next period end", prevTp.getEndTimestamp() < nextTp.getStartTimestamp());
 			assertTrue("previous period +1ms must be equal to next period start", prevTp.getEndTimestamp()+1 == nextTp.getStartTimestamp());
@@ -106,10 +106,10 @@ public class TimePeriodTest {
 			testPeriod(nextTp, periodLength);
 			prevTp = nextTp;
 		}
-		
+
 		//test previous 50 periods
 		nextTp = tp;
-		for(int i = 0; i < 50; ++i){
+		for (int i = 0; i < 50; ++i){
 			prevTp = nextTp.getPreviosPeriod();
 			assertTrue("previos period end must be older than the next period end", prevTp.getEndTimestamp() < nextTp.getStartTimestamp());
 			assertTrue("previous period +1ms must be equal to next period start", prevTp.getEndTimestamp()+1 == nextTp.getStartTimestamp());
@@ -118,11 +118,11 @@ public class TimePeriodTest {
 			nextTp = prevTp;
 		}
 	}
-	
-	private void testPeriod(UTCTimePeriod period, AggregationPeriodLength periodLength){		
+
+	private void testPeriod(UTCTimePeriod period, AggregationPeriodLength periodLength){
 		//verify that the period start and end is in the same period
 		assertEquals("start and/or end timestamp is not in the same period", period.getStartTimestamp(), UTCTimeUtility.getTimestampPeriodStart(periodLength, period.getEndTimestamp()));
 		assertEquals("start and/or end timestamp is not in the same period", period.getEndTimestamp(), UTCTimeUtility.getTimestampPeriodEnd(periodLength, period.getStartTimestamp()));
 	}
-	
+
 }

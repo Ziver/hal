@@ -13,7 +13,7 @@ public class DeviceDataSqlResult implements SQLResultHandler<HalDeviceData> {
     private Class<? extends HalDeviceData> clazz;
 
 
-    public DeviceDataSqlResult(Class<? extends HalDeviceData> clazz){
+    public DeviceDataSqlResult(Class<? extends HalDeviceData> clazz) {
         this.clazz = clazz;
     }
 
@@ -27,9 +27,9 @@ public class DeviceDataSqlResult implements SQLResultHandler<HalDeviceData> {
                 dataObj.setTimestamp(result.getLong("timestamp"));
                 return dataObj;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             throw e;
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new SQLException(e);
         }
         return null;

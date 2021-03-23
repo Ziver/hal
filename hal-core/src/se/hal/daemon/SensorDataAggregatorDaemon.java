@@ -51,7 +51,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     public void run(){
         try {
             List<Sensor> sensorList = Sensor.getLocalSensors(HalContext.getDB());
-            for(Sensor sensor : sensorList){
+            for (Sensor sensor : sensorList){
                 logger.fine("Aggregating sensor_id: " + sensor.getId());
                 aggregateSensor(sensor);
             }
@@ -62,7 +62,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
     }
 
     public void aggregateSensor(Sensor sensor) {
-        if(sensor.getDeviceConfig() == null){
+        if (sensor.getDeviceConfig() == null){
             logger.fine("The sensor config is not available - ignoring it");
             return;
         }
@@ -128,7 +128,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
             }
 
             // Is there any new data to evaluate?
-            if(dbMaxRawTimestamp < dbMaxAggrEndTimestamp || dbMaxRawTimestamp < periodOldestStartTimestamp){
+            if (dbMaxRawTimestamp < dbMaxAggrEndTimestamp || dbMaxRawTimestamp < periodOldestStartTimestamp){
                 logger.fine("No new data to evaluate - aggregation is up to date");
                 return;
             }
@@ -215,8 +215,8 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
                         "INSERT INTO sensor_data_aggr" +
                                 "(sensor_id, sequence_id, timestamp_start, timestamp_end, data, confidence) " +
                                 "VALUES(?, ?, ?, ?, ?, ?)");
-                while(result.next()){
-                    if(sensorId != result.getInt("sensor_id")){
+                while (result.next()){
+                    if (sensorId != result.getInt("sensor_id")){
                         throw new IllegalArgumentException("found entry for aggregation for the wrong sensorId " +
                                 "(expecting: "+sensorId+", but was: "+result.getInt("sensor_id")+")");
                     }
@@ -224,10 +224,10 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
                     long timestamp = result.getLong("timestamp");
                     UTCTimePeriod dataPeriod = new UTCTimePeriod(timestamp, this.aggrPeriodLength);
 
-                    if(currentPeriod == null)
+                    if (currentPeriod == null)
                         currentPeriod = dataPeriod;
 
-                    if(!dataPeriod.equals(currentPeriod)){
+                    if (!dataPeriod.equals(currentPeriod)){
                         saveData(preparedInsertStmt, confidenceSum, sum, samples, currentPeriod, ++highestSequenceId);
 
                         // Reset variables
@@ -242,7 +242,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon {
                 }
 
                 //check if the last period is complete and also should be aggregated
-                if(currentPeriod != null &&
+                if (currentPeriod != null &&
                         currentPeriod.getEndTimestamp() <= new UTCTimePeriod(aggregationStartTime, aggrPeriodLength).getPreviosPeriod().getEndTimestamp()){
                     saveData(preparedInsertStmt, confidenceSum, sum, samples, currentPeriod, ++highestSequenceId);
                 }

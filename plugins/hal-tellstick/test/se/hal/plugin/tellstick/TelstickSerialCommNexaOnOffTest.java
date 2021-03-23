@@ -27,7 +27,7 @@ public class TelstickSerialCommNexaOnOffTest {
             OnOffEventData nexaData = new OnOffEventData();
 
             System.out.println("Up and Running");
-            while(true) {
+            while (true) {
                 Thread.sleep(2000);
                 nexaData.turnOn();
                 nexaDevice.setUnit(0);

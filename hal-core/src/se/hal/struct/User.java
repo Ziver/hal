@@ -48,7 +48,7 @@ public class User extends DBBean{
     @Override
     public void delete(DBConnection db) throws SQLException {
         List<Sensor> sensorList = Sensor.getSensors(db, this);
-        for(Sensor sensor : sensorList){
+        for (Sensor sensor : sensorList){
             sensor.delete(db);
         }
         super.delete(db);

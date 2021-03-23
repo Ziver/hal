@@ -138,13 +138,13 @@ public class TellstickSerialComm implements Runnable,
     private String readLine() throws IOException {
         StringBuilder str = new StringBuilder(50);
         int c;
-        while((c = in.read()) >= 0){
+        while ((c = in.read()) >= 0) {
             switch(c) {
                 case -1:
                     return null;
                 case '\n':
                 case '\r':
-                    if(str.length() > 0)
+                    if (str.length() > 0)
                         return str.toString();
                     break;
                 default:
@@ -153,7 +153,7 @@ public class TellstickSerialComm implements Runnable,
         }
         return str.toString();
     }
-    protected void handleLine(String data){
+    protected void handleLine(String data) {
         List<TellstickDecodedEntry> decodeList = parser.decode(data);
         for (TellstickDecodedEntry entry : decodeList) {
             if (entry.getData().getTimestamp() < 0)
@@ -191,7 +191,7 @@ public class TellstickSerialComm implements Runnable,
 
     @Override
     public void send(HalEventConfig deviceConfig, HalEventData deviceData) {
-        if(deviceConfig instanceof TellstickDevice) {
+        if (deviceConfig instanceof TellstickDevice) {
             TellstickDevice tellstickDevice = (TellstickDevice) deviceConfig;
             TellstickProtocol prot = TellstickParser.getProtocolInstance(
                     tellstickDevice.getProtocolName(),
@@ -208,7 +208,7 @@ public class TellstickSerialComm implements Runnable,
         if (data == null)
             return;
         try {
-            for(int i=0; i<data.length();i++)
+            for (int i=0; i<data.length();i++)
                 out.write(0xFF & data.charAt(i));
             out.write('\n');
             out.flush();
@@ -223,15 +223,15 @@ public class TellstickSerialComm implements Runnable,
 
     @Override
     public void register(HalDeviceConfig deviceConfig) {
-        if(deviceConfig instanceof TellstickDevice)
+        if (deviceConfig instanceof TellstickDevice)
             registeredDevices.add(deviceConfig);
         else throw new IllegalArgumentException(
                 "Device config is not an instance of " + TellstickDevice.class + ": " + deviceConfig.getClass());
     }
 
-    public <T> List<T> getRegisteredDevices(Class<T> clazz){
+    public <T> List<T> getRegisteredDevices(Class<T> clazz) {
         ArrayList<T> list = new ArrayList<>();
-        for (HalDeviceConfig device : registeredDevices){
+        for (HalDeviceConfig device : registeredDevices) {
             if (clazz.isAssignableFrom(device.getClass()))
                 list.add((T) device);
         }
@@ -254,7 +254,7 @@ public class TellstickSerialComm implements Runnable,
     }
 
 
-    public static TellstickSerialComm getInstance(){
+    public static TellstickSerialComm getInstance() {
         return instance;
     }
 }

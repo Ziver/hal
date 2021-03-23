@@ -101,8 +101,8 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                 Object obj = null;
                 out.writeInt(PROTOCOL_VERSION); // send our protocol version to client
                 out.flush();
-                while((obj = in.readObject()) != null){
-                    if(obj instanceof PeerDataReqDTO){
+                while ((obj = in.readObject()) != null){
+                    if (obj instanceof PeerDataReqDTO){
                         logger.fine("Client requesting peer data");
                         PeerDataRspDTO rsp = new PeerDataRspDTO();
                         User localUser = User.getLocalUser(db);
@@ -111,8 +111,8 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                         rsp.address = localUser.getAddress();
 
                         rsp.sensors = new ArrayList<>();
-                        for(Sensor sensor : Sensor.getLocalSensors(db)){
-                            if(sensor.isSynced()) {
+                        for (Sensor sensor : Sensor.getLocalSensors(db)){
+                            if (sensor.isSynced()) {
                                 SensorDTO dto = new SensorDTO();
                                 dto.sensorId = sensor.getId();
                                 dto.name = sensor.getName();
@@ -123,17 +123,17 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                         }
                         out.writeObject(rsp);
                     }
-                    if(obj instanceof SensorDataReqDTO){
+                    if (obj instanceof SensorDataReqDTO){
                         SensorDataReqDTO req = (SensorDataReqDTO) obj;
                         Sensor sensor = Sensor.getSensor(db, req.sensorId);
-                        if(sensor.isSynced()) {
+                        if (sensor.isSynced()) {
                             PreparedStatement stmt = db.getPreparedStatement("SELECT * FROM sensor_data_aggr WHERE sensor_id == ? AND sequence_id > ?");
                             stmt.setLong(1, sensor.getId());
                             logger.fine("Client requesting sensor data: sensorId: " + req.sensorId + ", offset: " + req.offsetSequenceId + ", " + req.aggregationVersion);
-                            if(req.aggregationVersion != sensor.getAggregationVersion()){
+                            if (req.aggregationVersion != sensor.getAggregationVersion()){
                                 logger.fine("The requested aggregation version does not match the local version: " + sensor.getAggregationVersion() + ". Will re-send all aggregated data.");
                                 stmt.setLong(2, 0);	//0 since we want to re-send all data to the peer
-                            }else{
+                            } else {
                                 stmt.setLong(2, req.offsetSequenceId);
                             }
 
@@ -157,7 +157,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                             logger.fine("Sending " + rsp.size() + " sensor data items to client");
                             out.writeObject(rsp);
                         }
-                        else{
+                        else {
                             logger.warning("Client requesting non synced sensor data: sensorId: " + req.sensorId + ", offset: " + req.offsetSequenceId);
                             SensorDataListDTO rsp = new SensorDataListDTO();
                             out.writeObject(rsp);

@@ -30,7 +30,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
     public void run(){
         try {
             List<Sensor> sensorList = Sensor.getSensors(HalContext.getDB());
-            for(Sensor sensor : sensorList){
+            for (Sensor sensor : sensorList){
                 logger.fine("Deleting old aggregated data for sensor id: " + sensor.getId());
                 cleanupSensor(sensor);
             }
@@ -97,8 +97,8 @@ public class SensorDataCleanupDaemon implements HalDaemon {
             try{
                 HalContext.getDB().getConnection().setAutoCommit(false);
                 PreparedStatement preparedDeleteStmt = HalContext.getDB().getPreparedStatement("DELETE FROM sensor_data_aggr WHERE sensor_id == ? AND sequence_id == ?");
-                while(result.next()){
-                    if(sensorId != result.getInt("sensor_id")){
+                while (result.next()){
+                    if (sensorId != result.getInt("sensor_id")){
                         throw new IllegalArgumentException("Found entry for aggregation for the wrong sensorId (expecting: "+sensorId+", but was: "+result.getInt("sensor_id")+")");
                     }
                     logger.finer("Deleting sensor(id: "+ sensorId +") aggregate entry timestamp: "+ result.getLong("timestamp_start") +" - "+ result.getLong("timestamp_end") + " (" + UTCTimeUtility.timeInMsToString(1+result.getLong("timestamp_end")-result.getLong("timestamp_start")) + ")");

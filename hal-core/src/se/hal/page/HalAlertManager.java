@@ -24,10 +24,10 @@ public class HalAlertManager implements HttpPage {
     private UserMessageManager messageManager = new UserMessageManager();
 
 
-    private HalAlertManager(){}
+    private HalAlertManager() {}
 
 
-    public String getUrl(){
+    public String getUrl() {
         return "/" + PAGE_NAME;
     }
 
@@ -74,10 +74,10 @@ public class HalAlertManager implements HttpPage {
 
 
 
-    public static void initialize(){
+    public static void initialize() {
         instance = new HalAlertManager();
     }
-    public static HalAlertManager getInstance(){
+    public static HalAlertManager getInstance() {
         return instance;
     }
 }

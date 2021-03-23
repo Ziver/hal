@@ -91,8 +91,8 @@ public class NexaSelfLearning implements TellstickDevice, HalEventConfig, Tellst
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(obj instanceof NexaSelfLearning)
+    public boolean equals(Object obj) {
+        if (obj instanceof NexaSelfLearning)
             return ((NexaSelfLearning) obj).house == house &&
                     ((NexaSelfLearning) obj).group == group &&
                     ((NexaSelfLearning)obj).unit == unit;
@@ -100,13 +100,13 @@ public class NexaSelfLearning implements TellstickDevice, HalEventConfig, Tellst
     }
     @Override
     public boolean equalsGroup(TellstickDeviceGroup obj) {
-        if(obj instanceof NexaSelfLearning)
+        if (obj instanceof NexaSelfLearning)
             return ((NexaSelfLearning) obj).house == house &&
                     (((NexaSelfLearning) obj).group || group );
         return false;
     }
     @Override
-    public String toString(){
+    public String toString() {
         return "house:" + house +
                 ", group:" + group +
                 ", unit:" + unit;

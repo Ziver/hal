@@ -55,7 +55,7 @@ public class CameraConfigWebPage extends HalWebPage {
         super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Camera Settings").setWeight(200);
 
         cameraConfigurations = new ArrayList<>();
-        for(Class c : CameraControllerManager.getInstance().getAvailableDeviceConfigs())
+        for (Class c : CameraControllerManager.getInstance().getAvailableDeviceConfigs())
             cameraConfigurations.add(new ClassConfigurationData(c));
     }
 
@@ -70,7 +70,7 @@ public class CameraConfigWebPage extends HalWebPage {
         User localUser = User.getLocalUser(db);
 
         // Save new input
-        if(request.containsKey("action")){
+        if (request.containsKey("action")){
             int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));
             Camera camera;
 

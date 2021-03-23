@@ -14,7 +14,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-public class RPiDS18B20 implements RPiSensor, Runnable {	
+public class RPiDS18B20 implements RPiSensor, Runnable {
     private static final Logger logger = LogUtil.getLogger();
     private final String DEGREE_SIGN  = "\u00b0";
 
@@ -23,7 +23,7 @@ public class RPiDS18B20 implements RPiSensor, Runnable {
     private ScheduledExecutorService scheduler;
     private W1Master w1Mater;
 
-    public RPiDS18B20(String w1Address, RPiController controller){
+    public RPiDS18B20(String w1Address, RPiController controller) {
         this.controller = controller;
         this.w1Address = w1Address;
 
@@ -32,7 +32,7 @@ public class RPiDS18B20 implements RPiSensor, Runnable {
         w1Mater = new W1Master();
 
         //print out all sensors found
-        for(TemperatureSensor device : w1Mater.getDevices(TemperatureSensor.class)){
+        for (TemperatureSensor device : w1Mater.getDevices(TemperatureSensor.class)) {
             logger.info(String.format("1-Wire temperature sensor divice found: %-20s: %3.1f"+DEGREE_SIGN+"C\n", device.getName(), device.getTemperature(TemperatureScale.CELSIUS)));
         }
 
@@ -40,7 +40,7 @@ public class RPiDS18B20 implements RPiSensor, Runnable {
         scheduler.scheduleAtFixedRate(this, 10, 60, TimeUnit.SECONDS);	//wait 10s and run every 60s
 
     }
-    
+
     public void close() {
         scheduler.shutdown();
         try {
@@ -52,8 +52,8 @@ public class RPiDS18B20 implements RPiSensor, Runnable {
 
     @Override
     public void run() {
-        for(TemperatureSensor device : w1Mater.getDevices(TemperatureSensor.class)){
-            if(device.getName().equals(w1Address)){
+        for (TemperatureSensor device : w1Mater.getDevices(TemperatureSensor.class)) {
+            if (device.getName().equals(w1Address)) {
                 controller.sendDataReport(
                         new RPiTemperatureSensor(w1Address),
                         new TemperatureSensorData(
@@ -64,5 +64,5 @@ public class RPiDS18B20 implements RPiSensor, Runnable {
             }
         }
     }
-    
+
 }

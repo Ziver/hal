@@ -39,8 +39,8 @@
 
 /*******************************************************************************
  * Modifications to rfcmd.c ver 2.1.0 done by Tord Andersson
- *  Introduced semaphore protection to avoid problems with simultaneous port 
- *  access from several processes (typically cron jobs). Note! Need rt lib. 
+ *  Introduced semaphore protection to avoid problems with simultaneous port
+ *  access from several processes (typically cron jobs). Note! Need rt lib.
  ******************************************************************************/
 
 /*******************************************************************************
@@ -48,10 +48,10 @@
  *  Added support for RISINGSUN
  * Note:
  * 1. Command line syntax:
- *    /usr/local/bin/rfcmd  /dev/ttyUSB0  RISINGSUN 4 1 0" 
+ *    /usr/local/bin/rfcmd  /dev/ttyUSB0  RISINGSUN 4 1 0"
  *    Arg 1: device
  *    Arg 2: protocol
- *    Arg 3: code 
+ *    Arg 3: code
  *    Arg 4: device number
  *    Arg 5: Level (0=off, 1 = on)
  ******************************************************************************/
@@ -70,7 +70,7 @@
  ******************************************************************************/
 
 /*******************************************************************************
- * Modifications from rfcmd ver 2.1.1 done by Johan Ström
+ * Modifications from rfcmd ver 2.1.1 done by Johan Strï¿½m
  *  Default disabled semaphores for FreeBSD.
  *  Added status readback in ftdi.c, instead of wasting time in sleep.
  *
@@ -99,7 +99,7 @@
 
 #define PROG_NAME "rfcmd"
 #define PROG_VERSION "2.1.1"
-/* #define RFCMD_DEBUG */ 
+/* #define RFCMD_DEBUG */
 
 /* Local function declarations */
 int createNexaString(const char * pHouseStr, const char * pChannelStr,
@@ -132,18 +132,18 @@ int main( int argc, char **argv )
 
 	char txStr[100];
 
-	if( (argc == 6) && (strcmp(*(argv+2), "NEXA") == 0)) {
+	if ((argc == 6) && (strcmp(*(argv+2), "NEXA") == 0)) {
 		if (createNexaString(*(argv+3), *(argv+4), *(argv+5), txStr, 0) == 0) {
 			printUsage();
 			exit(1);
 		}
 		/* else - a send cmd string was created */
-	} else if( (argc == 6) && (strcmp(*(argv+2), "WAVEMAN") == 0)) {
+	} else if ( (argc == 6) && (strcmp(*(argv+2), "WAVEMAN") == 0)) {
 		if (createNexaString(*(argv+3),*(argv+4), *(argv+5), txStr, 1) == 0) {
 			printUsage();
 			exit(1);
 		}
-	} else if( (argc == 5) && (strcmp(*(argv+2), "SARTANO") == 0)) {
+	} else if ( (argc == 5) && (strcmp(*(argv+2), "SARTANO") == 0)) {
 		if (createSartanoString(*(argv+3), *(argv+4), txStr) == 0) {
 			printUsage();
 			exit(1);
@@ -183,11 +183,11 @@ int main( int argc, char **argv )
 
 #endif
 
-	if(strlen(txStr) > 0) {
+	if (strlen(txStr) > 0) {
 #ifndef NO_SEMAPHORES
 		/* create the semaphore - will reuse an existing one if it exists */
 		portMutex = sem_open(SEM_NAME,O_CREAT,0644,1);
-		if( portMutex == SEM_FAILED) {
+		if (portMutex == SEM_FAILED) {
 			fprintf(stderr,  "%s - Error creating port semaphore\n", PROG_NAME);
 			perror("Semaphore open error");
 			sem_unlink(SEM_NAME);
@@ -195,24 +195,24 @@ int main( int argc, char **argv )
 		}
 
 		/* lock semaphore to protect port from multiple access */
-		if(sem_wait(portMutex) != 0) {
+		if (sem_wait(portMutex) != 0) {
 			fprintf(stderr,  "%s - Error aquiring port semaphore\n", PROG_NAME);
 			sem_unlink(SEM_NAME);
 			sem_close(portMutex);
-			exit(1); 
+			exit(1);
 		}
 #endif
 
 
 		if (strcmp(*(argv+1), "LIBUSB") != 0) {
-			if( 0 > ( fd = open( *(argv+1), O_RDWR ) ) ) {
+			if ( 0 > ( fd = open( *(argv+1), O_RDWR ) ) ) {
 #ifdef __FreeBSD__
 				fprintf(stderr,  "%s - Error opening %s; You're on a FreeBSD system, you should probably use LIBUSB.\n", PROG_NAME, *(argv+1));
 #else
 				fprintf(stderr,  "%s - Error opening %s\n", PROG_NAME, *(argv+1));
 #endif
 #ifndef NO_SEMAPHORES
-				if(sem_post(portMutex) != 0) {
+				if (sem_post(portMutex) != 0) {
 					fprintf(stderr,  "%s - Error releasing port semaphore\n", PROG_NAME);
 				}
 				sem_unlink(SEM_NAME);
@@ -251,7 +251,7 @@ int main( int argc, char **argv )
 			exit(1);
 		} else {
 			sem_unlink(SEM_NAME);
-			sem_close(portMutex);	
+			sem_close(portMutex);
 		}
 #endif
 	}
@@ -342,7 +342,7 @@ int createSartanoString(const char * pChannelStr, const char * pOn_offStr,
 		strcat(pTxStr,"S");
 		for(bit=0;bit<=9;bit++)
 		{
-			if(strncmp(pChannelStr+bit, "1", 1) == 0) { //If it is a "1"
+			if (strncmp(pChannelStr+bit, "1", 1) == 0) { //If it is a "1"
 				strcat(pTxStr,"$k$k");
 			} else {
 				strcat(pTxStr,"$kk$");
@@ -364,9 +364,9 @@ int createIkeaString( const char * pSystemStr, const char * pChannelStr, const c
 {
 	*pStrReturn = '\0'; /* Make sure tx string is empty */
 
-	const char STARTCODE[] = "STTTTTTª";
+	const char STARTCODE[] = "STTTTTTï¿½";
 	const char TT[]  = "TT";
-	const char A[]   = "ª";
+	const char A[]   = "ï¿½";
 	int systemCode   = atoi(pSystemStr) - 1;   /* System 1..16 */
 	int channelCode  = atoi(pChannelStr);  /* Channel 1..10 */
 	int Level        = atoi(pLevelStr);     /* off,10,20,..,90,on */
@@ -658,6 +658,6 @@ void printVersion(void) {
 	printf("\n");
 	printf("Written by:\n");
 	printf("Tord Andersson, Micke Prag, Gudmund Berggren, Tapani Rintala\n");
-	printf("and Johan Ström\n");
+	printf("and Johan Strï¿½m\n");
 }
 

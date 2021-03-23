@@ -65,11 +65,11 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
      */
     @Override
     public void register(Event event) {
-        if(event.getDeviceConfig() == null) {
+        if (event.getDeviceConfig() == null) {
             logger.warning("Event config is null: " + event);
             return;
         }
-        if(!availableEvents.contains(event.getDeviceConfig().getClass())) {
+        if (!availableEvents.contains(event.getDeviceConfig().getClass())) {
             logger.warning("Event data plugin not available: " + event.getDeviceConfig().getClass());
             return;
         }
@@ -78,7 +78,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
         Class<? extends HalEventController> c = event.getController();
         HalEventController controller = getControllerInstance(c);
 
-        if(controller != null)
+        if (controller != null)
             controller.register(event.getDeviceConfig());
         registeredEvents.add(event);
         detectedEvents.remove(HalDeviceUtil.findDevice(event.getDeviceConfig(), detectedEvents)); // Remove if this device was detected
@@ -91,7 +91,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
      */
     @Override
     public void deregister(Event event){
-        if(event.getDeviceConfig() == null) {
+        if (event.getDeviceConfig() == null) {
             logger.warning("Event config is null: "+ event);
             return;
         }
@@ -171,7 +171,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
                 logger.info("Received report from unregistered event" +
                         "(" + eventConfig.getClass().getSimpleName() + "): " + eventConfig);
                 event = HalDeviceUtil.findDevice(eventConfig, detectedEvents);
-                if(event == null) {
+                if (event == null) {
                     event = new Event();
                     detectedEvents.add(event);
                 }
@@ -179,7 +179,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
             }
             event.setDeviceData(eventData);
             // call listeners
-            for(HalDeviceReportListener<HalEventConfig,HalEventData> listener : event.getReportListeners())
+            for (HalDeviceReportListener<HalEventConfig,HalEventData> listener : event.getReportListeners())
                 listener.reportReceived(event.getDeviceConfig(), eventData);
 
         }catch (SQLException e){
@@ -189,7 +189,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
 
     public void send(Event event){
         HalEventController controller = getControllerInstance(event.getController());
-        if(controller != null) {
+        if (controller != null) {
             controller.send(event.getDeviceConfig(), event.getDeviceData());
             reportReceived(event.getDeviceConfig(), event.getDeviceData()); // save action to db
         }
@@ -207,9 +207,9 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
 
     @Override
     public void preConfigurationAction(Configurator configurator, Object obj) {
-        if(obj instanceof HalEventConfig) {
+        if (obj instanceof HalEventConfig) {
             Event event = HalDeviceUtil.findDevice((HalEventConfig) obj, registeredEvents);
-            if(event != null){
+            if (event != null){
                 deregister(event);
                 limboEvents.add(event);
             }
@@ -220,7 +220,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
     public void postConfigurationAction(Configurator configurator, Object obj) {
         if (obj instanceof HalEventConfig) {
             Event event = HalDeviceUtil.findDevice((HalEventConfig) obj, limboEvents);
-            if(event != null){
+            if (event != null){
                 register(event);
                 limboEvents.remove(event);
             }

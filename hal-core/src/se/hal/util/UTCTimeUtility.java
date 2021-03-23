@@ -24,7 +24,7 @@ public class UTCTimeUtility {
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
         cal.setTimeInMillis(timestamp);
         cal.setFirstDayOfWeek(Calendar.MONDAY);
-        switch(aggrPeriodLength){
+        switch(aggrPeriodLength) {
             case YEAR:
                 cal.set(Calendar.DAY_OF_YEAR, 1);
                 cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -82,7 +82,7 @@ public class UTCTimeUtility {
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
         cal.setTimeInMillis(timestamp);
         cal.setFirstDayOfWeek(Calendar.MONDAY);
-        switch(aggrPeriodLength){
+        switch(aggrPeriodLength) {
             case YEAR:
                 cal.set(Calendar.DAY_OF_YEAR, cal.getActualMaximum(Calendar.DAY_OF_YEAR));
                 cal.set(Calendar.HOUR_OF_DAY, 23);
@@ -137,7 +137,7 @@ public class UTCTimeUtility {
     }
 
     public static int getMillisecondInSecondFromTimestamp(long ms) throws NumberFormatException{
-        if(ms < 0)
+        if (ms < 0)
             throw new NumberFormatException("argument must be positive");
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
         cal.setTimeInMillis(ms);
@@ -145,7 +145,7 @@ public class UTCTimeUtility {
     }
 
     public static int getSecondOfMinuteFromTimestamp(long ms) throws NumberFormatException{
-        if(ms < 0)
+        if (ms < 0)
             throw new NumberFormatException("argument must be positive");
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
         cal.setTimeInMillis(ms);
@@ -153,7 +153,7 @@ public class UTCTimeUtility {
     }
 
     public static int getMinuteOfHourFromTimestamp(long ms) throws NumberFormatException{
-        if(ms < 0)
+        if (ms < 0)
             throw new NumberFormatException("argument must be positive");
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
         cal.setTimeInMillis(ms);
@@ -161,7 +161,7 @@ public class UTCTimeUtility {
     }
 
     public static int getHourOfDayFromTimestamp(long ms) throws NumberFormatException{
-        if(ms < 0)
+        if (ms < 0)
             throw new NumberFormatException("argument must be positive");
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
         cal.setTimeInMillis(ms);
@@ -169,7 +169,7 @@ public class UTCTimeUtility {
     }
 
     public static int getDayOfWeekFromTimestamp(long ms) throws NumberFormatException{
-        if(ms < 0)
+        if (ms < 0)
             throw new NumberFormatException("argument must be positive");
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
         cal.setTimeInMillis(ms);
@@ -177,7 +177,7 @@ public class UTCTimeUtility {
     }
 
     public static int getDayOfMonthFromTimestamp(long ms) throws NumberFormatException{
-        if(ms < 0)
+        if (ms < 0)
             throw new NumberFormatException("argument must be positive");
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
         cal.setTimeInMillis(ms);
@@ -185,7 +185,7 @@ public class UTCTimeUtility {
     }
 
     public static int getDayOfYearFromTimestamp(long ms) throws NumberFormatException{
-        if(ms < 0)
+        if (ms < 0)
             throw new NumberFormatException("argument must be positive");
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
         cal.setTimeInMillis(ms);
@@ -193,7 +193,7 @@ public class UTCTimeUtility {
     }
 
     public static int getWeekOfYearFromTimestamp(long ms) throws NumberFormatException{
-        if(ms < 0)
+        if (ms < 0)
             throw new NumberFormatException("argument must be positive");
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
         cal.setTimeInMillis(ms);
@@ -201,7 +201,7 @@ public class UTCTimeUtility {
     }
 
     public static int getMonthOfYearFromTimestamp(long ms) throws NumberFormatException{
-        if(ms < 0)
+        if (ms < 0)
             throw new NumberFormatException("argument must be positive");
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
         cal.setTimeInMillis(ms);
@@ -209,7 +209,7 @@ public class UTCTimeUtility {
     }
 
     public static int getYearFromTimestamp(long ms) throws NumberFormatException{
-        if(ms < 0)
+        if (ms < 0)
             throw new NumberFormatException("argument must be positive");
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);
         cal.setTimeInMillis(ms);
@@ -217,15 +217,15 @@ public class UTCTimeUtility {
     }
 
     public static String timeInMsToString(long ms) throws NumberFormatException{
-        if(ms < 0)
+        if (ms < 0)
             throw new NumberFormatException("argument must be positive");
         String retval = "";
         int weeks = (int) (ms / WEEK_IN_MS);
-        if(weeks > 0){
+        if (weeks > 0) {
             retval += weeks + "w+";
         }
         int days = ((int) (ms / DAY_IN_MS)) % 7;
-        if(days > 0){
+        if (days > 0) {
             retval += days + "d+";
         }
         int hours = (int) ((ms % DAY_IN_MS) / HOUR_IN_MS);
@@ -239,7 +239,7 @@ public class UTCTimeUtility {
         return retval;
     }
 
-    public static String getDateString(long timestamp){
+    public static String getDateString(long timestamp) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         format.setTimeZone(TIMEZONE);
         Calendar cal = Calendar.getInstance(TIMEZONE, LOCALE);

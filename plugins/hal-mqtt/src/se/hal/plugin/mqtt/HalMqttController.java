@@ -117,7 +117,7 @@ public class HalMqttController implements HalAutoScannableController, MqttSubscr
 
     @Override
     public void register(HalDeviceConfig deviceConfig) {
-        if(deviceConfig instanceof HalMqttDeviceConfig) {
+        if (deviceConfig instanceof HalMqttDeviceConfig) {
             HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) deviceConfig;
             topics.put(mqttEvent.getTopic(), mqttEvent);
         } else throw new IllegalArgumentException(
@@ -126,7 +126,7 @@ public class HalMqttController implements HalAutoScannableController, MqttSubscr
 
     @Override
     public void deregister(HalDeviceConfig deviceConfig) {
-        if(deviceConfig instanceof HalMqttDeviceConfig) {
+        if (deviceConfig instanceof HalMqttDeviceConfig) {
             HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) deviceConfig;
             topics.remove(mqttEvent.getTopic());
         }
@@ -134,7 +134,7 @@ public class HalMqttController implements HalAutoScannableController, MqttSubscr
 
     @Override
     public void send(HalEventConfig eventConfig, HalEventData eventData) {
-        if(eventConfig instanceof HalMqttDeviceConfig) {
+        if (eventConfig instanceof HalMqttDeviceConfig) {
             HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) eventConfig;
             mqttBroker.publish(mqttEvent.getTopic(), Double.toString(eventData.getData()).getBytes());
         } else throw new IllegalArgumentException(

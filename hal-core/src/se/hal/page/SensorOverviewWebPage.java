@@ -23,7 +23,7 @@ public class SensorOverviewWebPage extends HalWebPage {
     private static final String DETAIL_TEMPLATE   = HalContext.RESOURCE_WEB_ROOT + "/sensor_detail.tmpl";
 
 
-    public SensorOverviewWebPage(){
+    public SensorOverviewWebPage() {
         super("sensor_overview");
         super.getRootNav().createSubNav("Sensors").createSubNav(this.getId(), "Overview");
     }

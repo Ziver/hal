@@ -90,14 +90,14 @@ public class Oregon0x1A2D implements TellstickDevice, HalSensorConfig {
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(obj instanceof Oregon0x1A2D)
+    public boolean equals(Object obj) {
+        if (obj instanceof Oregon0x1A2D)
             return ((Oregon0x1A2D)obj).address == this.address &&
                     ((Oregon0x1A2D)obj).sensorType == this.sensorType;
         return false;
     }
     @Override
-    public String toString(){
+    public String toString() {
         return "address:" + address + ",sensorType:" + sensorType;
     }
 

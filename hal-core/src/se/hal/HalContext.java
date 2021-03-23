@@ -74,7 +74,7 @@ public class HalContext {
             File dbFile = FileUtil.find(DB_FILE);
             db = new DBConnection(DBConnection.DBMS.SQLite, DB_FILE);
 
-            if(dbFile == null){
+            if (dbFile == null){
                 logger.info("No database file found, creating new DB...");
             } else {
                 dbConf = db.exec("SELECT * FROM conf", new PropertiesSQLResult());
@@ -92,9 +92,9 @@ public class HalContext {
                                 -1);
             logger.info("DB version: "+ dbVersion);
 
-            if(defaultDBVersion > dbVersion ) {
+            if (defaultDBVersion > dbVersion ) {
                 logger.info("Starting DB upgrade from v" + dbVersion + " to v" + defaultDBVersion + "...");
-                if(dbFile != null){
+                if (dbFile != null){
                     File backupDB = FileUtil.getNextFile(dbFile);
                     logger.fine("Backing up DB to: "+ backupDB);
                     FileUtil.copy(dbFile, backupDB);
@@ -115,8 +115,8 @@ public class HalContext {
                         new SQLResultHandler<Object>() {
                     @Override
                     public Object handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
-                        while(result.next()){
-                            if(result.getBoolean("force_upgrade")){
+                        while (result.next()){
+                            if (result.getBoolean("force_upgrade")){
                                 logger.fine("Forced upgrade enabled");
                                 handler.setForcedDBUpgrade(true);	//set to true if any of the intermediate db version requires it.
                             }
@@ -139,19 +139,19 @@ public class HalContext {
                         boolean clearExternalAggrData = false;
                         boolean clearInternalAggrData = false;
 
-                        while(result.next()){
-                            if(result.getBoolean("clear_external_aggr_data"))
+                        while (result.next()){
+                            if (result.getBoolean("clear_external_aggr_data"))
                                 clearExternalAggrData = true;
-                            if(result.getBoolean("clear_internal_aggr_data"))
+                            if (result.getBoolean("clear_internal_aggr_data"))
                                 clearInternalAggrData = true;
                         }
 
-                        if(clearExternalAggrData){
+                        if (clearExternalAggrData){
                             logger.fine("Clearing external aggregate data");
                             db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id = "
                                     + "(SELECT sensor.id FROM user, sensor WHERE user.external == 1 AND sensor.user_id = user.id)");
                         }
-                        if(clearInternalAggrData){
+                        if (clearInternalAggrData){
                             logger.fine("Clearing local aggregate data");
                             db.exec("DELETE FROM sensor_data_aggr WHERE sensor_id IN "
                                     + "(SELECT sensor.id FROM user, sensor WHERE user.external == 0 AND sensor.user_id = user.id)");

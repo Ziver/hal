@@ -86,7 +86,7 @@ public class TellstickParser {
         } else if (data.startsWith("+V")) {
             if (data.length() > 2)
                 firmwareVersion = Integer.parseInt(data.substring(2));
-        }else {
+        } else {
             logger.severe("Unknown prefix: " + data);
         }
 
@@ -96,7 +96,7 @@ public class TellstickParser {
     /**
      * This method blocks until a send command confirmation is received.
      */
-    public synchronized void waitSendConformation(){
+    public synchronized void waitSendConformation() {
         try {
             this.wait();
         } catch (InterruptedException e) {

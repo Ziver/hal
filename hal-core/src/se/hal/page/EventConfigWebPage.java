@@ -30,7 +30,7 @@ public class EventConfigWebPage extends HalWebPage {
         super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Event Settings").setWeight(200);
 
         eventConfigurations = new ArrayList<>();
-        for(Class c : EventControllerManager.getInstance().getAvailableDeviceConfigs())
+        for (Class c : EventControllerManager.getInstance().getAvailableDeviceConfigs())
             eventConfigurations.add(new ClassConfigurationData(c));
     }
 
@@ -45,7 +45,7 @@ public class EventConfigWebPage extends HalWebPage {
         User localUser = User.getLocalUser(db);
 
         // Save new input
-        if(request.containsKey("action")){
+        if (request.containsKey("action")) {
             int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));
             Event event;
 

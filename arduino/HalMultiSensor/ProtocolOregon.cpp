@@ -83,14 +83,14 @@ inline void ProtocolOregon::setId(byte data[], byte id)
  */
 inline void ProtocolOregon::setBatteryLevel(byte data[], bool level)
 {
-  if(!level) data[4] = 0x0C;
+  if (!level) data[4] = 0x0C;
   else data[4] = 0x00;
 }
 
 inline void ProtocolOregon::setTemperature(byte data[], float temp)
 {
   // Set temperature sign
-  if(temp < 0)
+  if (temp < 0)
   {
     data[6] = 0x08;
     temp *= -1;

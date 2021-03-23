@@ -175,7 +175,7 @@ std::string ProtocolX10::decodeData(const ControllerMessage& dataMsg) {
 	retString << "house:" << static_cast<char>('A' + intHouse);
 	retString << ";unit:" << unit+1;
 	retString << ";method:";
-	if(method == 0) {
+	if (method == 0) {
 		retString << "turnon;";
 	} else {
 		retString << "turnoff;";

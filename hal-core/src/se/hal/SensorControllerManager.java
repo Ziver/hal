@@ -67,11 +67,11 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
      */
     @Override
     public void register(Sensor sensor) {
-        if(sensor.getDeviceConfig() == null) {
+        if (sensor.getDeviceConfig() == null) {
             logger.warning("Sensor config is null: " + sensor);
             return;
         }
-        if(!availableSensors.contains(sensor.getDeviceConfig().getClass())) {
+        if (!availableSensors.contains(sensor.getDeviceConfig().getClass())) {
             logger.warning("Sensor data plugin not available: " + sensor.getDeviceConfig().getClass());
             return;
         }
@@ -80,7 +80,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
         Class<? extends HalAbstractController> c = sensor.getController();
         HalAbstractController controller = getControllerInstance(c);
 
-        if(controller != null)
+        if (controller != null)
             controller.register(sensor.getDeviceConfig());
         registeredSensors.add(sensor);
         detectedSensors.remove(
@@ -94,7 +94,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
      */
     @Override
     public void deregister(Sensor sensor){
-        if(sensor.getDeviceConfig() == null) {
+        if (sensor.getDeviceConfig() == null) {
             logger.warning("Sensor config is null: "+ sensor);
             return;
         }
@@ -175,7 +175,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
                 logger.finest("Received report from unregistered sensor" +
                         "(" + sensorConfig.getClass().getSimpleName() + "): " + sensorConfig);
                 sensor = HalDeviceUtil.findDevice(sensorConfig, detectedSensors);
-                if(sensor == null) {
+                if (sensor == null) {
                     sensor = new Sensor();
                     detectedSensors.add(sensor);
                 }
@@ -183,7 +183,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
             }
             sensor.setDeviceData(sensorData);
             // call listeners
-            for(HalDeviceReportListener<HalSensorConfig,HalSensorData> listener : sensor.getReportListeners())
+            for (HalDeviceReportListener<HalSensorConfig,HalSensorData> listener : sensor.getReportListeners())
                 listener.reportReceived(sensorConfig, sensorData);
 
         } catch (SQLException e){

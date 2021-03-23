@@ -46,7 +46,7 @@ public class HalZigbeeControllerTest {
 
         handleConsoleInput('h', controller.networkManager);
 
-        while(true) {
+        while (true) {
             char input = waitForInout();
             handleConsoleInput(input, controller.networkManager);
 

@@ -5,8 +5,8 @@ import com.pi4j.io.gpio.RaspiPin;
 
 public class RPiUtility {
 
-    public static Pin getPin(int gpioPin){
-        switch(gpioPin){
+    public static Pin getPin(int gpioPin) {
+        switch(gpioPin) {
         case 0:
             return RaspiPin.GPIO_00;
         case 1:

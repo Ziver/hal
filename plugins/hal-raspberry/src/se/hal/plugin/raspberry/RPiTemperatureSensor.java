@@ -46,7 +46,7 @@ public class RPiTemperatureSensor implements HalSensorConfig {
 
     @Override
     public boolean equals(Object obj){
-        if(obj instanceof RPiTemperatureSensor && w1Address != null)
+        if (obj instanceof RPiTemperatureSensor && w1Address != null)
             return this.get1WAddress().equals(((RPiTemperatureSensor) obj).w1Address);
         return false;
     }

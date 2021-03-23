@@ -101,7 +101,7 @@ public class TriggerFlow extends DBBean {
     public boolean evaluate(){
         if (triggerList.isEmpty() || !enabled)
             return false;
-        for(Trigger trigger : triggerList){
+        for (Trigger trigger : triggerList){
             if (!trigger.evaluate())
                 return false;
         }
@@ -114,7 +114,7 @@ public class TriggerFlow extends DBBean {
     public void execute(){
         if (!enabled)
             return;
-        for(Action action : actionList){
+        for (Action action : actionList){
             action.execute();
         }
     }
@@ -123,7 +123,7 @@ public class TriggerFlow extends DBBean {
      * Resets all trigger evaluations
      */
     public void reset() {
-        for(Trigger trigger : triggerList){
+        for (Trigger trigger : triggerList){
             trigger.reset();
         }
     }

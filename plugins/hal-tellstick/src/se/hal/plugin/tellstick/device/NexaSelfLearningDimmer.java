@@ -81,14 +81,14 @@ public class NexaSelfLearningDimmer implements TellstickDevice, HalEventConfig {
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(obj instanceof NexaSelfLearningDimmer)
+    public boolean equals(Object obj) {
+        if (obj instanceof NexaSelfLearningDimmer)
             return ((NexaSelfLearningDimmer) obj).house == house &&
                     ((NexaSelfLearningDimmer)obj).unit == unit;
         return false;
     }
     @Override
-    public String toString(){
+    public String toString() {
         return "house:" + house +
                 ", unit:" + unit;
     }

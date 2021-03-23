@@ -27,7 +27,7 @@ public class TellstickCmdSend implements TellstickCmd{
     }
 
 
-    public String getTransmissionString(){
+    public String getTransmissionString() {
         cmd[0] = 'S';
         cmd[OFFSET_PULSES+length] = '+';
         return new String(cmd, 0, OFFSET_PULSES+length+1, StandardCharsets.ISO_8859_1);

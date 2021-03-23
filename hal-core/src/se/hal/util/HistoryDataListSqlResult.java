@@ -13,11 +13,11 @@ public class HistoryDataListSqlResult implements SQLResultHandler<List<HistoryDa
             public long timestamp;
             public float data;
         }
-        
+
         @Override
         public List<HistoryData> handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
             ArrayList<HistoryData> list = new ArrayList<HistoryData>();
-            while(result.next()){
+            while (result.next()) {
                 HistoryData data = new HistoryData();
                 data.timestamp = result.getLong("timestamp");
                 data.data = result.getFloat("data");

@@ -59,28 +59,28 @@ bool parseArctechSelfLearning(uint8_t* bufStartP, uint8_t* bufEndP) {    //start
   uint64_t data = 0;
   bool dimValuePresent;
   uint8_t b1,b2,b3,b4;
-  
+
   //parse preamp
 
   b1 = *bufStartP;
   stepBufferPointer(&bufStartP);
   b2 = *bufStartP;
   stepBufferPointer(&bufStartP);
-  if(!IS_PREAMP(b1, b2)){
+  if (!IS_PREAMP(b1, b2)){
     return false;
   }
 
   //parse data
-  
+
   uint16_t dataBitsInBuffer = (calculateBufferPointerDistance(bufStartP, bufEndP)-2) / 4;   //each bit is representd by 4 high/low
   if (dataBitsInBuffer == 32) {
     dimValuePresent = false;
-  }else if(dataBitsInBuffer == 36){
+  } else if (dataBitsInBuffer == 36){
     dimValuePresent = true;
   } else {
     return false;
   }
-  
+
   for (uint8_t i = 0; i < dataBitsInBuffer; ++i) {
     b1 = *bufStartP;    //no of high
     stepBufferPointer(&bufStartP);
@@ -103,7 +103,7 @@ bool parseArctechSelfLearning(uint8_t* bufStartP, uint8_t* bufEndP) {    //start
   }
 
   //data parsed - send event over serial
-  
+
   Serial.print(F("+Wclass:command;protocol:arctech;model:selflearning;data:0x"));
   uint8_t hexToSend = (dimValuePresent ? 9 : 8);
   for (int8_t i = hexToSend - 1; i >= 0; --i) {

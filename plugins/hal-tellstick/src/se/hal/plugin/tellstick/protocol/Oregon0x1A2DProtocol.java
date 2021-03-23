@@ -27,7 +27,7 @@ public class Oregon0x1A2DProtocol extends TellstickProtocol {
 
 
 
-    public Oregon0x1A2DProtocol(){
+    public Oregon0x1A2DProtocol() {
         super(PROTOCOL, MODEL);
     }
 
@@ -84,7 +84,7 @@ public class Oregon0x1A2DProtocol extends TellstickProtocol {
             OregonSensorType sensorType = device.getSensorType();
             if (sensorType == null)
                 sensorType = OregonSensorType.POWER;
-            switch (sensorType){
+            switch (sensorType) {
                 case HUMIDITY:
                     dataObj = new HumiditySensorData(humidity, timestamp);
                     humidityFound = true;

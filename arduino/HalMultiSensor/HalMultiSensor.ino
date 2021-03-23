@@ -92,7 +92,7 @@ void loop()
 
     // Send power consumption
     #ifdef POWERCON_ENABLED
-    if(timerMultiplier % POWER_TIMER_MULTIPLIER == 0)
+    if (timerMultiplier % POWER_TIMER_MULTIPLIER == 0)
     {
         static PowerData powerData;
         powerSensor->read(powerData); // not needed, only here for future use
@@ -103,7 +103,7 @@ void loop()
 
     // Handle temperature sensor
     #ifdef TEMPERATURE_ENABLED
-    if(timerMultiplier % TEMPERATURE_TIMER_MULTIPLIER == 0)
+    if (timerMultiplier % TEMPERATURE_TIMER_MULTIPLIER == 0)
     {
         static TemperatureData tempData;
         tempSensor->read(tempData);
@@ -114,7 +114,7 @@ void loop()
 
     // Handle light sensor
     #ifdef LIGHT_ENABLED
-    if(timerMultiplier % LIGHT_TIMER_MULTIPLIER == 0)
+    if (timerMultiplier % LIGHT_TIMER_MULTIPLIER == 0)
     {
         static LightData lightData;
         lightSensor->read(lightData);

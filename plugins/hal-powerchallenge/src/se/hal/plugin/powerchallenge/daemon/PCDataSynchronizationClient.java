@@ -67,8 +67,8 @@ public class PCDataSynchronizationClient implements HalDaemon {
         try {
             DBConnection db = HalContext.getDB();
             List<User> users = User.getExternalUsers(db);
-            for(User user : users){
-                if(user.getHostname() == null){
+            for (User user : users){
+                if (user.getHostname() == null){
                     logger.fine("Hostname not defined for user: "+ user.getUsername());
                     continue;
                 }
@@ -80,7 +80,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
 
                     // Check server protocol version
                     int version = in.readInt();
-                    if(version != PCDataSynchronizationDaemon.PROTOCOL_VERSION){
+                    if (version != PCDataSynchronizationDaemon.PROTOCOL_VERSION){
                         logger.warning("Protocol version do not match, skipping user. " +
                                 "(local v"+PCDataSynchronizationDaemon.PROTOCOL_VERSION+" != remote v"+version+")");
                         out.writeObject(null); // Tell server we are disconnecting
@@ -96,10 +96,10 @@ public class PCDataSynchronizationClient implements HalDaemon {
                     user.setAddress(peerData.address);
                     user.save(db);
 
-                    for(SensorDTO sensorDTO : peerData.sensors){
+                    for (SensorDTO sensorDTO : peerData.sensors){
                         try { // We might not have the sensor plugin installed
                             Sensor sensor = Sensor.getExternalSensor(db, user, sensorDTO.sensorId);
-                            if(sensor == null) { // new sensor
+                            if (sensor == null) { // new sensor
                                 sensor = new Sensor();
                                 logger.fine("Created new external sensor with external_id: "+ sensorDTO.sensorId);
                             }
@@ -120,8 +120,8 @@ public class PCDataSynchronizationClient implements HalDaemon {
 
                     // Request sensor data
                     List<Sensor> sensors = Sensor.getSensors(db, user);
-                    for(Sensor sensor : sensors){
-                        if(sensor.isSynced()) {
+                    for (Sensor sensor : sensors){
+                        if (sensor.isSynced()) {
                             SensorDataReqDTO req = new SensorDataReqDTO();
                             req.sensorId = sensor.getExternalId();
                             req.offsetSequenceId = Sensor.getHighestSequenceId(sensor.getId());
@@ -129,7 +129,7 @@ public class PCDataSynchronizationClient implements HalDaemon {
                             out.writeObject(req);
 
                             SensorDataListDTO dataList = (SensorDataListDTO) in.readObject();
-                            if(dataList.aggregationVersion != sensor.getAggregationVersion()){
+                            if (dataList.aggregationVersion != sensor.getAggregationVersion()){
                                 logger.fine("The peer has modified its aggregated data, clearing aggregate data. oldAggregationVersion:"+sensor.getAggregationVersion()+" , newAggregationVersion:"+dataList.aggregationVersion);
 
                                 //clear old aggregated data for sensor

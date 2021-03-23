@@ -15,7 +15,7 @@ public class PluginConfigWebPage extends HalWebPage {
     private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/plugin_config.tmpl";
 
 
-    public PluginConfigWebPage(){
+    public PluginConfigWebPage() {
         super("plugins");
         super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Plugins").setWeight(500);
     }

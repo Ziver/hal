@@ -37,7 +37,7 @@ int usbWriteFtdi(char *cmdstr)
 		char *err = ftdi_get_error_string(&ctx);
 		// FreeBSD says -3 when another rfcmd is running...
 		// Same on other systems?
-		if(retval == -3) {
+		if (retval == -3) {
 			fprintf(stderr,  "usb - open error: %s. Is it busy?\n", err);
 		} else {
 			fprintf(stderr,  "usb - open error: %s\n", err);
@@ -68,8 +68,8 @@ int usbWriteFtdi(char *cmdstr)
 		fprintf(stderr,  "usb - write failed: %s\n", err);
 		ftdiCleanup(&ctx);
 		return 5;
-	}	else if(retval != strlen(cmdstr)) {
-		fprintf(stderr,  "usb - warning: %d bytes written instead of %d\n", 
+	}	else if (retval != strlen(cmdstr)) {
+		fprintf(stderr,  "usb - warning: %d bytes written instead of %d\n",
 				retval, (int)strlen(cmdstr));
 	}
 
@@ -90,7 +90,7 @@ int usbWriteFtdi(char *cmdstr)
 			usleep(1000);
 		} else if (bytes > 0) {
 			// Done when newline is received
-			if(inb == '\n') {
+			if (inb == '\n') {
 				ftdiCleanup(&ctx);
 				return retval;
 			}

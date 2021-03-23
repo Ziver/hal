@@ -83,7 +83,7 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
      * DeviceData will be reset if the input is set as null.
      */
     public void setDeviceConfig(C data) {
-        if(data != null) {
+        if (data != null) {
             type = data.getClass().getName();
             deviceConfig = data;
             deviceData = getLatestDeviceData(HalContext.getDB());

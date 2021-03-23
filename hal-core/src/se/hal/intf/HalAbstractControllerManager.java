@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 /**
  *
  * @param <T>   is the device controller class
+ * @param <V>   is the device class
  * @param <C>   is the device configuration class
  */
 public abstract class HalAbstractControllerManager<T extends HalAbstractController, V extends HalAbstractDevice, C extends HalDeviceConfig> {

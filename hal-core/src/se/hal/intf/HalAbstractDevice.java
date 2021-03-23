@@ -2,6 +2,7 @@ package se.hal.intf;
 
 import se.hal.HalContext;
 import se.hal.struct.User;
+import se.hal.util.HalDeviceChangeListener;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.log.LogUtil;
@@ -55,9 +56,11 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
     public Configurator<C> getDeviceConfigurator() {
         C obj = getDeviceConfig();
         if (obj != null) {
+            HalDeviceChangeListener<C> listener = new HalDeviceChangeListener<>();
+
             Configurator<C> configurator = new Configurator<>(obj);
-            //configurator.setPreConfigurationListener(ControllerManager.getInstance()); // TODO:
-            //configurator.setPostConfigurationListener(ControllerManager.getInstance()); // TODO:
+            configurator.setPreConfigurationListener(listener);
+            configurator.setPostConfigurationListener(listener);
             return configurator;
         }
         return null;
@@ -71,16 +74,15 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
                 applyConfig();
                 deviceData = getLatestDeviceData(HalContext.getDB());
             } catch (Exception e) {
-                logger.log(Level.SEVERE, "Unable instantiate DeviceConfig: " + type, e);
+                logger.log(Level.SEVERE, "Unable instantiate HalDeviceConfig: " + type, e);
             }
         }
         return deviceConfig;
     }
 
     /**
-     * Will replace the current DeviceData.
-     * And the current config will be applied on the new DeviceData.
-     * DeviceData will be reset if the input is set as null.
+     * Will replace the current device configuration.
+     * The device configuration will be reset if the input is set as null.
      */
     public void setDeviceConfig(C data) {
         if (data != null) {

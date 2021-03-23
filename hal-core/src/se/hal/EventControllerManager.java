@@ -19,10 +19,9 @@ import java.util.logging.Logger;
 /**
  * This class manages all SensorController and EventController objects
  */
-public class EventControllerManager extends HalAbstractControllerManager<HalEventController,Event,HalEventConfig> implements
-        HalDeviceReportListener<HalEventConfig,HalEventData>,
-        PreConfigurationActionListener,
-        PostConfigurationActionListener {
+public class EventControllerManager extends HalAbstractControllerManager<HalEventController,Event,HalEventConfig>
+        implements HalDeviceReportListener<HalEventConfig,HalEventData> {
+
     private static final Logger logger = LogUtil.getLogger();
     private static EventControllerManager instance;
 
@@ -32,8 +31,6 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
     private List<Event> registeredEvents = Collections.synchronizedList(new ArrayList<>());
     /** List of auto detected events **/
     private List<Event> detectedEvents = Collections.synchronizedList(new ArrayList<>());
-    /** List of all registered events **/
-    private List<Event> limboEvents = Collections.synchronizedList(new LinkedList<>());
 
 
     public void initialize(PluginManager pluginManager) {
@@ -203,28 +200,6 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
     @Override
     public Collection<HalEventController> getControllers() {
         return controllerMap.values();
-    }
-
-    @Override
-    public void preConfigurationAction(Configurator configurator, Object obj) {
-        if (obj instanceof HalEventConfig) {
-            Event event = HalDeviceUtil.findDevice((HalEventConfig) obj, registeredEvents);
-            if (event != null){
-                deregister(event);
-                limboEvents.add(event);
-            }
-        }
-    }
-
-    @Override
-    public void postConfigurationAction(Configurator configurator, Object obj) {
-        if (obj instanceof HalEventConfig) {
-            Event event = HalDeviceUtil.findDevice((HalEventConfig) obj, limboEvents);
-            if (event != null){
-                register(event);
-                limboEvents.remove(event);
-            }
-        }
     }
 
 

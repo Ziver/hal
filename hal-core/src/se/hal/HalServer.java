@@ -1,15 +1,9 @@
 package se.hal;
 
 
-import se.hal.intf.HalAbstractControllerManager;
-import se.hal.intf.HalDaemon;
-import se.hal.intf.HalWebPage;
-import se.hal.intf.HalJsonPage;
+import se.hal.intf.*;
 import se.hal.page.*;
-import se.hal.struct.Event;
 import se.hal.struct.PluginConfig;
-import se.hal.struct.Sensor;
-import se.hal.struct.TriggerFlow;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
@@ -150,6 +144,7 @@ public class HalServer {
         pluginConfig.save(db);
     }
 
+
     public static List<PluginData> getEnabledPlugins() {
         return pluginManager.toArray();
     }
@@ -158,20 +153,24 @@ public class HalServer {
         return pluginManager.toArrayAll();
     }
 
+    public static List<HalAbstractControllerManager> getControllerManagers() {
+        return controllerManagers;
+    }
 
+    /**
+     * @param daemon    registers the given daemon and starts execution of the Runnable.
+     */
     public static void registerDaemon(HalDaemon daemon){
         logger.info("Registering daemon: " + daemon.getClass());
         daemons.add(daemon);
         daemon.initiate(daemonExecutor);
     }
 
+    /**
+     * @param page  registers the given page with the intranet Hal web server.
+     */
     public static void registerPage(HalWebPage page){
         pages.add(page);
         http.setPage(page.getId(), page);
-    }
-
-
-    public static List<HalAbstractControllerManager> getControllerManagers() {
-        return controllerManagers;
     }
 }

@@ -19,13 +19,11 @@ import java.util.logging.Logger;
 /**
  * This class manages all SensorController and EventController objects
  */
-public class SensorControllerManager extends HalAbstractControllerManager<HalAbstractController, Sensor, HalSensorConfig> implements
-        HalDeviceReportListener<HalSensorConfig, HalSensorData>,
-        PreConfigurationActionListener,
-        PostConfigurationActionListener {
+public class SensorControllerManager extends HalAbstractControllerManager<HalAbstractController, Sensor, HalSensorConfig>
+        implements HalDeviceReportListener<HalSensorConfig, HalSensorData> {
+
     private static final Logger logger = LogUtil.getLogger();
     private static SensorControllerManager instance;
-
 
     /** All available sensor plugins **/
     private List<Class<? extends HalSensorConfig>> availableSensors = new ArrayList<>();
@@ -33,8 +31,6 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
     private List<Sensor> registeredSensors = Collections.synchronizedList(new ArrayList<>());
     /** List of auto detected sensors **/
     private List<Sensor> detectedSensors = Collections.synchronizedList(new ArrayList<>());
-    /** List of sensors that are currently being reconfigured **/
-    private List<Sensor> limboSensors = Collections.synchronizedList(new LinkedList<>());
 
 
     @Override
@@ -95,7 +91,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
     @Override
     public void deregister(Sensor sensor){
         if (sensor.getDeviceConfig() == null) {
-            logger.warning("Sensor config is null: "+ sensor);
+            logger.warning("Sensor config is null: " + sensor);
             return;
         }
 
@@ -188,29 +184,6 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
 
         } catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store sensor report", e);
-        }
-    }
-
-
-    @Override
-    public void preConfigurationAction(Configurator configurator, Object obj) {
-        if (obj instanceof HalSensorConfig) {
-            Sensor sensor = HalDeviceUtil.findDevice((HalSensorConfig) obj, registeredSensors);
-            if (sensor != null){
-                deregister(sensor);
-                limboSensors.add(sensor);
-            }
-        }
-    }
-
-    @Override
-    public void postConfigurationAction(Configurator configurator, Object obj) {
-        if (obj instanceof HalSensorConfig) {
-            Sensor sensor = HalDeviceUtil.findDevice((HalSensorConfig) obj, limboSensors);
-            if (sensor != null){
-                register(sensor);
-                limboSensors.remove(sensor);
-            }
         }
     }
 

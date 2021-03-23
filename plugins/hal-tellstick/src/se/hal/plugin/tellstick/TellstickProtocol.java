@@ -37,21 +37,25 @@ public abstract class TellstickProtocol {
     private final String model;
 
 
-    public TellstickProtocol(String protocol, String model){
+    public TellstickProtocol(String protocol, String model) {
         this.protocol = protocol;
         this.model = model;
     }
 
 
-    public String getProtocolName(){
+    public String getProtocolName() {
         return protocol;
     }
-    public String getModelName(){
+
+    public String getModelName() {
         return model;
     }
 
 
-    public TellstickCmd encode(HalEventConfig deviceConfig, HalEventData deviceData){ return null; }
+    public TellstickCmd encode(HalEventConfig deviceConfig, HalEventData deviceData) {
+        return null;
+    }
+
     public abstract List<TellstickDecodedEntry> decode(byte[] data);
 
 
@@ -59,15 +63,16 @@ public abstract class TellstickProtocol {
         private TellstickDevice device;
         private HalDeviceData data;
 
-        public TellstickDecodedEntry(TellstickDevice device, HalDeviceData data){
+        public TellstickDecodedEntry(TellstickDevice device, HalDeviceData data) {
             this.device = device;
             this.data = data;
         }
 
-        public TellstickDevice getDevice(){
+        public TellstickDevice getDevice() {
             return device;
         }
-        public HalDeviceData getData(){
+
+        public HalDeviceData getData() {
             return data;
         }
     }

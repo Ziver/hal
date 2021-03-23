@@ -48,6 +48,7 @@
 
 package se.hal.plugin.mqtt.device;
 
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalEventData;
@@ -78,5 +79,12 @@ public class HalMqttDeviceConfig implements HalEventConfig {
     @Override
     public Class<? extends HalEventData> getDeviceDataClass() {
         return HalMqttDeviceData.class;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof HalMqttDeviceConfig)
+            return topic.equals(((HalMqttDeviceConfig) obj).topic);
+        return false;
     }
 }

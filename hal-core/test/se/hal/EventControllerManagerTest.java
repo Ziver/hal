@@ -92,6 +92,11 @@ public class EventControllerManagerTest {
         public Class<? extends HalEventData> getDeviceDataClass() {
             return OnOffEventData.class;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            return this.equals(obj);
+        }
     }
 
     public static class TestEvent2 implements HalEventConfig {
@@ -104,6 +109,11 @@ public class EventControllerManagerTest {
         @Override
         public Class<? extends HalEventData> getDeviceDataClass() {
             return OnOffEventData.class;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return this.equals(obj);
         }
     }
 

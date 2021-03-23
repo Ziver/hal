@@ -3,44 +3,45 @@ package se.hal.plugin.tellstick;
 import org.junit.Before;
 import org.junit.Test;
 import se.hal.intf.*;
-import se.hal.struct.devicedata.DimmerEventData;
-import zutil.converter.Converter;
+import se.hal.plugin.tellstick.test.TestEventDevice;
+import se.hal.plugin.tellstick.test.TestProtocol;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Ziver on 2015-11-19.
  */
-public class TelstickSerialCommEventTest {
+public class TellstickSerialCommEventTest {
 
     @Before
-    public void init(){
-        TellstickParser.registerProtocol(TestEvent.class);
+    public void init() {
+        TellstickParser.registerProtocol(TestProtocol.class);
     }
 
-
-    //############# Non crashing TC
+    // ----------------------------------------------------
+    // Non crashing TC
+    // ----------------------------------------------------
 
     @Test
-    public void startup(){
+    public void startup() {
         TellstickSerialComm tellstick = new TellstickSerialComm();
         tellstick.handleLine("+V2");
     }
 
     @Test
-    public void unregisteredListener(){
+    public void unregisteredListener() {
         TellstickSerialComm tellstick = new TellstickSerialComm();
         tellstick.handleLine("+Wclass:sensor;protocol:test-prot;model:test-model;data:1234;");
     }
 
-
-    //############ Normal TCs
+    // ----------------------------------------------------
+    // Normal TCs
+    // ----------------------------------------------------
 
     @Test
-    public void receiveUnregisteredEvent(){
+    public void receiveUnregisteredEvent() {
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
         final ArrayList<HalEventConfig> list = new ArrayList<>();
@@ -51,14 +52,14 @@ public class TelstickSerialCommEventTest {
             }
         });
         // Execution
-        tellstick.handleLine("+Wclass:sensor;protocol:test-prot;model:test-model;data:2345;");
+        tellstick.handleLine("+Wclass:sensor;protocol:test-prot;model:test-model;data:6345;");
         assertEquals("Events first transmission", 0, list.size());
-        tellstick.handleLine("+Wclass:sensor;protocol:test-prot;model:test-model;data:2345;");
+        tellstick.handleLine("+Wclass:sensor;protocol:test-prot;model:test-model;data:6345;");
         assertEquals("Events Second transmission", 1, list.size());
     }
 
     @Test
-    public void receiveEvent(){
+    public void receiveEvent() {
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
         final ArrayList<HalEventConfig> list = new ArrayList<>();
@@ -69,45 +70,13 @@ public class TelstickSerialCommEventTest {
             }
         });
         // Execution
-        TestEvent event = new TestEvent();
+        TestEventDevice event = new TestEventDevice();
         event.testData = 0xAAAA;
         tellstick.register(event);
         tellstick.handleLine("+Wclass:sensor;protocol:test-prot;model:test-model;data:AAAA;");
         // Verification
         assertEquals("Nr of received events", 1, list.size());
-        assertEquals("Data", event.testData, ((TestEvent)list.get(0)).testData);
+        assertEquals("Data", event.testData, ((TestEventDevice)list.get(0)).testData);
     }
 
-
-
-
-    private static class TestEvent extends TellstickProtocol implements HalEventConfig,TellstickDevice {
-        public int testData;
-
-        public TestEvent(){
-            super("test-prot", "test-model");
-        }
-
-        @Override
-        public List<TellstickDecodedEntry> decode(byte[] data) {
-            testData = Converter.toInt(data);
-
-            ArrayList<TellstickDecodedEntry> list = new ArrayList<>();
-            list.add(new TellstickDecodedEntry(
-                    this, new DimmerEventData(testData, System.currentTimeMillis())
-            ));
-            return list;
-        }
-
-
-        @Override
-        public Class<? extends HalEventController> getDeviceControllerClass() { return null; }
-        @Override
-        public Class<? extends HalEventData> getDeviceDataClass() {
-            return null;
-        }
-
-        @Override
-        public boolean equals(Object obj) {return testData == ((TestEvent)obj).testData;}
-    }
 }

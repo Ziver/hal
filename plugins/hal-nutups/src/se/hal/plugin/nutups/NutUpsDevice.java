@@ -48,6 +48,7 @@
 
 package se.hal.plugin.nutups;
 
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
@@ -87,17 +88,6 @@ public class NutUpsDevice implements HalSensorConfig{
     }
 
     @Override
-    public boolean equals(Object obj){
-        if (obj instanceof NutUpsDevice)
-            return upsId != null && upsId.equals(((NutUpsDevice)obj).upsId);
-        return false;
-    }
-
-    public String toString(){
-        return "upsId: "+ upsId;
-    }
-
-    @Override
     public AggregationMethod getAggregationMethod() {
         return AggregationMethod.SUM;
     }
@@ -109,4 +99,16 @@ public class NutUpsDevice implements HalSensorConfig{
     public Class<? extends HalSensorData> getDeviceDataClass() {
         return PowerConsumptionSensorData.class;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj instanceof NutUpsDevice)
+            return upsId != null && upsId.equals(((NutUpsDevice)obj).upsId);
+        return false;
+    }
+    @Override
+    public String toString(){
+        return "upsId: "+ upsId;
+    }
+
 }

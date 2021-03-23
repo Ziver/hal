@@ -58,8 +58,8 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
     private final FlowControl flowControl;
 
     private SerialPort serialPort;
-    private InputStream serialInputstream;
-    private OutputStream serialOutputstream;
+    private InputStream serialInputStream;
+    private OutputStream serialOutputStream;
 
 
     /**
@@ -140,8 +140,8 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
             throw new RuntimeException("Error opening serial port: " + portName);
         }
 
-        serialInputstream = serialPort.getInputStream();
-        serialOutputstream = serialPort.getOutputStream();
+        serialInputStream = serialPort.getInputStream();
+        serialOutputStream = serialPort.getOutputStream();
 
         switch (flowControl) {
             case FLOWCONTROL_OUT_NONE:
@@ -170,8 +170,8 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
             purgeRxBuffer();
             serialPort.closePort();
 
-            serialInputstream = null;
-            serialOutputstream = null;
+            serialInputStream = null;
+            serialOutputStream = null;
             serialPort = null;
         } catch (Exception e) {
             logger.warn("Error closing portName portName: '" + portName + "'", e);
@@ -180,11 +180,11 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
 
     @Override
     public void write(int value) {
-        if (serialOutputstream == null)
+        if (serialOutputStream == null)
             throw new RuntimeException("Unable to write, Serial port is not open.");
 
         try {
-            serialOutputstream.write(value);
+            serialOutputStream.write(value);
         } catch (IOException e) {
             logger.error("Was unable to write to serial port.", e);
         }
@@ -197,14 +197,14 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
 
     @Override
     public int read(int timeout) {
-        if (serialInputstream == null)
+        if (serialInputStream == null)
             throw new RuntimeException("Unable to read, Serial port is not open.");
 
         try {
             if (serialPort.getReadTimeout() != timeout)
                 serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, 0);
 
-            return serialInputstream.read();
+            return serialInputStream.read();
         } catch (IOException e) {
             logger.error("Was unable to read from serial port.", e);
         }
@@ -213,11 +213,11 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
 
     @Override
     public void purgeRxBuffer() {
-        if (serialOutputstream == null)
+        if (serialOutputStream == null)
             return;
 
         try {
-            serialOutputstream.flush();
+            serialOutputStream.flush();
         } catch (IOException e) {
             logger.error("Was unable to flush serial data.", e);
         }

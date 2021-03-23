@@ -1,5 +1,6 @@
 package se.hal.plugin.raspberry;
 
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
@@ -12,10 +13,14 @@ public class RPiTemperatureSensor implements HalSensorConfig {
     private String w1Address;
 
 
-
     public RPiTemperatureSensor() { }
     public RPiTemperatureSensor(String w1Address) {
         this.w1Address = w1Address;
+    }
+
+
+    public String get1WAddress() {
+        return w1Address;
     }
 
 
@@ -45,9 +50,4 @@ public class RPiTemperatureSensor implements HalSensorConfig {
             return this.get1WAddress().equals(((RPiTemperatureSensor) obj).w1Address);
         return false;
     }
-
-    public String get1WAddress() {
-        return w1Address;
-    }
-
 }

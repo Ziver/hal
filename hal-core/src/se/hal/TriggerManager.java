@@ -3,9 +3,11 @@ package se.hal;
 import se.hal.intf.HalAction;
 import se.hal.intf.HalTrigger;
 import se.hal.struct.TriggerFlow;
+import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginManager;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +32,37 @@ public class TriggerManager {
     private ArrayList<TriggerFlow> triggerFlows = new ArrayList<>();
     private ScheduledExecutorService executor;
 
+
+    public static void initialize(PluginManager pluginManager) {
+        TriggerManager manager = new TriggerManager();
+
+        for (Iterator<Class<? extends HalTrigger>> it = pluginManager.getClassIterator(HalTrigger.class);
+             it.hasNext(); ) {
+            manager.addAvailableTrigger(it.next());
+        }
+
+        for (Iterator<Class<? extends HalAction>> it = pluginManager.getClassIterator(HalAction.class);
+             it.hasNext(); ) {
+            manager.addAvailableAction(it.next());
+        }
+
+        manager.setEvaluationInterval(EVALUATION_INTERVAL);
+        instance = manager;
+
+        try {
+            // Import triggers
+
+            DBConnection db = HalContext.getDB();
+
+            logger.info("Reading in existing sensors.");
+
+            for (TriggerFlow flow : TriggerFlow.getTriggerFlows(db)) {
+                TriggerManager.getInstance().register(flow);
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Unable to read in existing triggers.", e);
+        }
+    }
 
 
     public void setEvaluationInterval(long interval) {
@@ -85,23 +118,6 @@ public class TriggerManager {
         }
     }
 
-
-    public static void initialize(PluginManager pluginManager) {
-        TriggerManager manager = new TriggerManager();
-
-        for (Iterator<Class<? extends HalTrigger>> it = pluginManager.getClassIterator(HalTrigger.class);
-             it.hasNext(); ) {
-            manager.addAvailableTrigger(it.next());
-        }
-
-        for (Iterator<Class<? extends HalAction>> it = pluginManager.getClassIterator(HalAction.class);
-             it.hasNext(); ) {
-            manager.addAvailableAction(it.next());
-        }
-
-        manager.setEvaluationInterval(EVALUATION_INTERVAL);
-        instance = manager;
-    }
 
     public static TriggerManager getInstance(){
         return instance;

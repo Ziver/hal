@@ -22,6 +22,7 @@
 
 package se.hal.plugin.tellstick.device;
 
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalEventData;
@@ -34,7 +35,7 @@ import zutil.ui.Configurator;
 /**
  * Created by Ziver on 2015-02-18.
  */
-public class NexaSelfLearningDimmer implements HalEventConfig,TellstickDevice {
+public class NexaSelfLearningDimmer implements TellstickDevice, HalEventConfig {
 
     @Configurator.Configurable("House code")
     private int house = 0;
@@ -48,7 +49,6 @@ public class NexaSelfLearningDimmer implements HalEventConfig,TellstickDevice {
         this.house = house;
         this.unit = unit;
     }
-
 
 
     public int getHouse() {
@@ -65,19 +65,10 @@ public class NexaSelfLearningDimmer implements HalEventConfig,TellstickDevice {
     }
 
 
-
-    public String toString(){
-        return "house:"+house+
-                ", unit:"+unit;
-    }
-
     @Override
-    public boolean equals(Object obj){
-        if(obj instanceof NexaSelfLearningDimmer)
-            return ((NexaSelfLearningDimmer) obj).house == house &&
-                    ((NexaSelfLearningDimmer)obj).unit == unit;
-        return false;
-    }
+    public String getProtocolName() { return NexaSelfLearningProtocol.PROTOCOL; }
+    @Override
+    public String getModelName() { return NexaSelfLearningProtocol.MODEL; }
 
 
     @Override
@@ -90,7 +81,15 @@ public class NexaSelfLearningDimmer implements HalEventConfig,TellstickDevice {
     }
 
     @Override
-    public String getProtocolName() { return NexaSelfLearningProtocol.PROTOCOL; }
+    public boolean equals(Object obj){
+        if(obj instanceof NexaSelfLearningDimmer)
+            return ((NexaSelfLearningDimmer) obj).house == house &&
+                    ((NexaSelfLearningDimmer)obj).unit == unit;
+        return false;
+    }
     @Override
-    public String getModelName() { return NexaSelfLearningProtocol.MODEL; }
+    public String toString(){
+        return "house:" + house +
+                ", unit:" + unit;
+    }
 }

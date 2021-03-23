@@ -1,5 +1,6 @@
 package se.hal.plugin.netscan;
 
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalEventData;
@@ -23,16 +24,6 @@ public class NetworkDevice implements HalEventConfig {
         return host;
     }
 
-    @Override
-    public String toString(){
-        return "Host: "+ host;
-    }
-    @Override
-    public boolean equals(Object obj){
-        if (obj instanceof NetworkDevice)
-            return host != null && host.equals(((NetworkDevice) obj).host);
-        return false;
-    }
 
     @Override
     public Class<? extends HalEventController> getDeviceControllerClass() {
@@ -41,5 +32,17 @@ public class NetworkDevice implements HalEventConfig {
     @Override
     public Class<? extends HalEventData> getDeviceDataClass() {
         return OnOffEventData.class;
+    }
+
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj instanceof NetworkDevice)
+            return host != null && host.equals(((NetworkDevice) obj).host);
+        return false;
+    }
+    @Override
+    public String toString(){
+        return "Host: "+ host;
     }
 }

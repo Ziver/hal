@@ -2,6 +2,7 @@ package se.hal;
 
 import se.hal.intf.*;
 import se.hal.struct.Sensor;
+import se.hal.util.HalDeviceUtil;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginManager;
@@ -35,6 +36,27 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
     /** List of sensors that are currently being reconfigured **/
     private List<Sensor> limboSensors = Collections.synchronizedList(new LinkedList<>());
 
+
+    @Override
+    public void initialize(PluginManager pluginManager){
+        super.initialize(pluginManager);
+        instance = this;
+
+        // Read in existing devices
+
+        try {
+            DBConnection db = HalContext.getDB();
+
+            logger.info("Reading in existing sensors.");
+
+            for (Sensor sensor : Sensor.getLocalSensors(db)) {
+                SensorControllerManager.getInstance().register(sensor);
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Unable to read in existing sensors.", e);
+        }
+    }
+
     // ----------------------------------------------------
     //                     SENSORS
     // ----------------------------------------------------
@@ -61,7 +83,8 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
         if(controller != null)
             controller.register(sensor.getDeviceConfig());
         registeredSensors.add(sensor);
-        detectedSensors.remove(findSensor(sensor.getDeviceConfig(), detectedSensors)); // Remove if this device was detected
+        detectedSensors.remove(
+                HalDeviceUtil.findDevice(sensor.getDeviceConfig(), detectedSensors)); // Remove if this device was detected
     }
 
     /**
@@ -137,7 +160,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
     public void reportReceived(HalSensorConfig sensorConfig, HalSensorData sensorData) {
         try{
             DBConnection db = HalContext.getDB();
-            Sensor sensor = findSensor(sensorConfig, registeredSensors);
+            Sensor sensor = HalDeviceUtil.findDevice(sensorConfig, registeredSensors);
 
             if (sensor != null) {
                 logger.finest("Received report from sensor(" + sensorConfig.getClass().getSimpleName() + "): " + sensorConfig);
@@ -151,7 +174,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
             else { // unknown sensor
                 logger.finest("Received report from unregistered sensor" +
                         "(" + sensorConfig.getClass().getSimpleName() + "): " + sensorConfig);
-                sensor = findSensor(sensorConfig, detectedSensors);
+                sensor = HalDeviceUtil.findDevice(sensorConfig, detectedSensors);
                 if(sensor == null) {
                     sensor = new Sensor();
                     detectedSensors.add(sensor);
@@ -168,20 +191,11 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
         }
     }
 
-    private static Sensor findSensor(HalSensorConfig sensorData, List<Sensor> list){
-        for (int i=0; i<list.size(); ++i) { // Don't use foreach for concurrency reasons
-            Sensor s = list.get(i);
-            if (sensorData.equals(s.getDeviceConfig())) {
-                return s;
-            }
-        }
-        return null;
-    }
 
     @Override
     public void preConfigurationAction(Configurator configurator, Object obj) {
         if (obj instanceof HalSensorConfig) {
-            Sensor sensor = findSensor((HalSensorConfig) obj, registeredSensors);
+            Sensor sensor = HalDeviceUtil.findDevice((HalSensorConfig) obj, registeredSensors);
             if (sensor != null){
                 deregister(sensor);
                 limboSensors.add(sensor);
@@ -192,7 +206,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
     @Override
     public void postConfigurationAction(Configurator configurator, Object obj) {
         if (obj instanceof HalSensorConfig) {
-            Sensor sensor = findSensor((HalSensorConfig) obj, limboSensors);
+            Sensor sensor = HalDeviceUtil.findDevice((HalSensorConfig) obj, limboSensors);
             if (sensor != null){
                 register(sensor);
                 limboSensors.remove(sensor);
@@ -200,12 +214,6 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
         }
     }
 
-
-    @Override
-    public void initialize(PluginManager pluginManager){
-        super.initialize(pluginManager);
-        instance = this;
-    }
 
     public static SensorControllerManager getInstance(){
         return instance;

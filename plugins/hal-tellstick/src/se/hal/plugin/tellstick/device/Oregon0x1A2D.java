@@ -1,5 +1,6 @@
 package se.hal.plugin.tellstick.device;
 
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
@@ -18,7 +19,7 @@ import java.util.logging.Logger;
 /**
  * Created by Ziver on 2015-11-19.
  */
-public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
+public class Oregon0x1A2D implements TellstickDevice, HalSensorConfig {
     private static final Logger logger = LogUtil.getLogger();
 
     public enum OregonSensorType{
@@ -52,17 +53,11 @@ public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
         return sensorType;
     }
 
-    @Override
-    public boolean equals(Object obj){
-        if(! (obj instanceof Oregon0x1A2D))
-            return false;
-        return ((Oregon0x1A2D)obj).address == this.address &&
-                ((Oregon0x1A2D)obj).sensorType == this.sensorType;
-    }
 
-    public String toString(){
-        return "address:"+address+",sensorType:"+ sensorType;
-    }
+    @Override
+    public String getProtocolName() { return Oregon0x1A2DProtocol.PROTOCOL; }
+    @Override
+    public String getModelName() { return Oregon0x1A2DProtocol.MODEL; }
 
 
     @Override
@@ -95,7 +90,15 @@ public class Oregon0x1A2D implements HalSensorConfig,TellstickDevice {
     }
 
     @Override
-    public String getProtocolName() { return Oregon0x1A2DProtocol.PROTOCOL; }
+    public boolean equals(Object obj){
+        if(obj instanceof Oregon0x1A2D)
+            return ((Oregon0x1A2D)obj).address == this.address &&
+                    ((Oregon0x1A2D)obj).sensorType == this.sensorType;
+        return false;
+    }
     @Override
-    public String getModelName() { return Oregon0x1A2DProtocol.MODEL; }
+    public String toString(){
+        return "address:" + address + ",sensorType:" + sensorType;
+    }
+
 }

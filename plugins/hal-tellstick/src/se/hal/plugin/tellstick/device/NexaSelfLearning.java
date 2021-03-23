@@ -22,6 +22,7 @@
 
 package se.hal.plugin.tellstick.device;
 
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalEventData;
@@ -35,7 +36,7 @@ import zutil.ui.Configurator;
 /**
  * Created by Ziver on 2015-02-18.
  */
-public class NexaSelfLearning implements HalEventConfig,TellstickDevice,TellstickDeviceGroup {
+public class NexaSelfLearning implements TellstickDevice, HalEventConfig, TellstickDeviceGroup {
 
     @Configurator.Configurable("House code")
     private int house = 0;
@@ -53,7 +54,6 @@ public class NexaSelfLearning implements HalEventConfig,TellstickDevice,Tellstic
         this.group = group;
         this.unit = unit;
     }
-
 
 
     public int getHouse() {
@@ -76,11 +76,18 @@ public class NexaSelfLearning implements HalEventConfig,TellstickDevice,Tellstic
     }
 
 
+    @Override
+    public String getProtocolName() { return NexaSelfLearningProtocol.PROTOCOL; }
+    @Override
+    public String getModelName() { return NexaSelfLearningProtocol.MODEL; }
 
-    public String toString(){
-        return "house:"+house+
-                ", group:"+group+
-                ", unit:"+unit;
+    @Override
+    public Class<? extends HalEventController> getDeviceControllerClass() {
+        return TellstickSerialComm.class;
+    }
+    @Override
+    public Class<? extends HalEventData> getDeviceDataClass() {
+        return OnOffEventData.class;
     }
 
     @Override
@@ -98,19 +105,10 @@ public class NexaSelfLearning implements HalEventConfig,TellstickDevice,Tellstic
                     (((NexaSelfLearning) obj).group || group );
         return false;
     }
-
-
     @Override
-    public Class<? extends HalEventController> getDeviceControllerClass() {
-        return TellstickSerialComm.class;
+    public String toString(){
+        return "house:" + house +
+                ", group:" + group +
+                ", unit:" + unit;
     }
-    @Override
-    public Class<? extends HalEventData> getDeviceDataClass() {
-        return OnOffEventData.class;
-    }
-
-    @Override
-    public String getProtocolName() { return NexaSelfLearningProtocol.PROTOCOL; }
-    @Override
-    public String getModelName() { return NexaSelfLearningProtocol.MODEL; }
 }

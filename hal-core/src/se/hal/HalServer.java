@@ -32,6 +32,8 @@ import java.util.logging.Logger;
 public class HalServer {
     private static final Logger logger = LogUtil.getLogger();
 
+    private static List<HalAbstractControllerManager> controllerManagers = new ArrayList<>();
+
     private static ScheduledExecutorService daemonExecutor;
     private static List<HalDaemon> daemons = new ArrayList<>();
 
@@ -91,23 +93,7 @@ public class HalServer {
             for (Iterator<HalAbstractControllerManager> it = pluginManager.getSingletonIterator(HalAbstractControllerManager.class); it.hasNext(); ) {
                 HalAbstractControllerManager manager = it.next();
                 manager.initialize(pluginManager);
-            }
-
-            // ------------------------------------
-            // Import sensors,events and triggers
-            // ------------------------------------
-
-            logger.info("Initializing Sensors and Events.");
-
-            for (Sensor sensor : Sensor.getLocalSensors(db)) {
-                SensorControllerManager.getInstance().register(sensor);
-            }
-            for (Event event : Event.getLocalEvents(db)) {
-                EventControllerManager.getInstance().register(event);
-            }
-            // Import triggers
-            for (TriggerFlow flow : TriggerFlow.getTriggerFlows(db)) {
-                TriggerManager.getInstance().register(flow);
+                controllerManagers.add(manager);
             }
 
             // ------------------------------------
@@ -182,5 +168,10 @@ public class HalServer {
     public static void registerPage(HalWebPage page){
         pages.add(page);
         http.setPage(page.getId(), page);
+    }
+
+
+    public static List<HalAbstractControllerManager> getControllerManagers() {
+        return controllerManagers;
     }
 }

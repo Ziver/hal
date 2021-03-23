@@ -104,6 +104,11 @@ public class SensorControllerManagerTest {
         public Class<? extends HalSensorData> getDeviceDataClass() {
             return TemperatureSensorData.class;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            return this.equals(obj);
+        }
     }
 
     public static class TestSensor2 implements HalSensorConfig {
@@ -126,6 +131,11 @@ public class SensorControllerManagerTest {
         @Override
         public Class<? extends HalSensorData> getDeviceDataClass() {
             return HumiditySensorData.class;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return this.equals(obj);
         }
     }
 

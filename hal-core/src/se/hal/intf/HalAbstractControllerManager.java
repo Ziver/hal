@@ -20,6 +20,28 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
     protected HashMap<Class, T> controllerMap = new HashMap<>();
 
 
+    /**
+     * Will instantiate a generic ControllerManager.
+     *
+     * @param pluginManager     a PluginManager instance that will be used to find Controller plugins.
+     */
+    public void initialize(PluginManager pluginManager) {
+        Class[] genericClasses = ClassUtil.getGenericClasses(HalAbstractControllerManager.class);
+
+        if (genericClasses.length >= 1 && genericClasses[0] != null) {
+            for (Iterator<Class<C>> it = pluginManager.getClassIterator(genericClasses[0]); it.hasNext(); ) {
+                addAvailableDevice(it.next());
+            }
+        } else {
+            logger.severe("Unable to retrieve Controller class from generics.");
+        }
+
+        for (Iterator<Class<? extends HalAutoScannableController>> it = pluginManager.getClassIterator(HalAutoScannableController.class); it.hasNext(); ){
+            Class controller = it.next();
+            getControllerInstance(controller); // Instantiate controller
+        }
+    }
+
     // ----------------------------------------------------
     //                  Abstract methods
     // ----------------------------------------------------
@@ -129,28 +151,6 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
             controllerMap.remove(controller.getClass());
 
             controller.close();
-        }
-    }
-
-    /**
-     * Will instantiate a generic ControllerManager.
-     *
-     * @param pluginManager     a PluginManager instance that will be used to find Controller plugins.
-     */
-    public void initialize(PluginManager pluginManager) {
-        Class[] genericClasses = ClassUtil.getGenericClasses(HalAbstractControllerManager.class);
-
-        if (genericClasses.length >= 1 && genericClasses[0] != null) {
-            for (Iterator<Class<C>> it = pluginManager.getClassIterator(genericClasses[0]); it.hasNext(); ) {
-                addAvailableDevice(it.next());
-            }
-        } else {
-            logger.severe("Unable to retrieve Controller class from generics.");
-        }
-
-        for (Iterator<Class<? extends HalAutoScannableController>> it = pluginManager.getClassIterator(HalAutoScannableController.class); it.hasNext(); ){
-            Class controller = it.next();
-            getControllerInstance(controller); // Instantiate controller
         }
     }
 }

@@ -57,19 +57,15 @@ public class TellstickSerialComm implements Runnable,
     private SerialPort serial;
     private InputStream in;
     private OutputStream out;
-    private TimedHashSet<String> set; // To check for duplicate transmissions
+    private TimedHashSet<String> receivedTransmissionSet = new TimedHashSet<>(TRANSMISSION_UNIQUENESS_TTL); // To check for duplicate transmissions
 
-    protected TellstickParser parser;
+    protected TellstickParser parser = new TellstickParser();
 
     private HalDeviceReportListener deviceListener;
-    private List<TellstickDevice> registeredDevices;
+    private List<HalDeviceConfig> registeredDevices = Collections.synchronizedList(new ArrayList<HalDeviceConfig>());
 
 
-    public TellstickSerialComm() {
-        set = new TimedHashSet<>(TRANSMISSION_UNIQUENESS_TTL);
-        parser = new TellstickParser();
-        registeredDevices = Collections.synchronizedList(new ArrayList<TellstickDevice>());
-    }
+    public TellstickSerialComm() {}
 
     // --------------------------
     // Lifecycle methods
@@ -79,6 +75,7 @@ public class TellstickSerialComm implements Runnable,
     public boolean isAvailable() {
         return HalContext.containsProperty(CONFIG_TELLSTICK_COM_PORT);
     }
+
     @Override
     public void initialize() throws Exception {
          initialize(HalContext.getStringProperty(CONFIG_TELLSTICK_COM_PORT));
@@ -163,14 +160,16 @@ public class TellstickSerialComm implements Runnable,
                 entry.getData().setTimestamp(System.currentTimeMillis());
 
             boolean registered = registeredDevices.contains(entry.getDevice());
-            if (registered && !set.contains(data) || // check for duplicates transmissions of registered devices
-                    !registered && set.contains(data)) { // required duplicate transmissions before reporting unregistered devices
+            if (registered && !receivedTransmissionSet.contains(data) || // check for duplicates transmissions of registered devices
+                    !registered && receivedTransmissionSet.contains(data)) { // required duplicate transmissions before reporting unregistered devices
 
-                //Check for registered device that are in the same group
+                // Check for registered device that are in the same group
                 if (entry.getDevice() instanceof TellstickDeviceGroup) {
                     TellstickDeviceGroup groupProtocol = (TellstickDeviceGroup) entry.getDevice();
+
                     for (int i = 0; i < registeredDevices.size(); ++i) { // Don't use foreach for concurrency reasons
-                        TellstickDevice childDevice = registeredDevices.get(i);
+                        HalDeviceConfig childDevice = registeredDevices.get(i);
+
                         if (childDevice instanceof TellstickDeviceGroup &&
                                 groupProtocol.equalsGroup((TellstickDeviceGroup)childDevice) &&
                                 !entry.getDevice().equals(childDevice)) {
@@ -182,11 +181,12 @@ public class TellstickSerialComm implements Runnable,
                 reportEvent(entry.getDevice(), entry.getData());
             }
         }
-        set.add(data);
+
+        receivedTransmissionSet.add(data);
     }
-    private void reportEvent(TellstickDevice tellstickDevice, HalDeviceData deviceData){
+    private void reportEvent(HalDeviceConfig tellstickDevice, HalDeviceData deviceData) {
         if (deviceListener != null)
-            deviceListener.reportReceived((HalDeviceConfig) tellstickDevice, deviceData);
+            deviceListener.reportReceived(tellstickDevice, deviceData);
     }
 
     @Override
@@ -224,14 +224,14 @@ public class TellstickSerialComm implements Runnable,
     @Override
     public void register(HalDeviceConfig deviceConfig) {
         if(deviceConfig instanceof TellstickDevice)
-            registeredDevices.add((TellstickDevice) deviceConfig);
+            registeredDevices.add(deviceConfig);
         else throw new IllegalArgumentException(
                 "Device config is not an instance of " + TellstickDevice.class + ": " + deviceConfig.getClass());
     }
 
     public <T> List<T> getRegisteredDevices(Class<T> clazz){
         ArrayList<T> list = new ArrayList<>();
-        for (TellstickDevice device : registeredDevices){
+        for (HalDeviceConfig device : registeredDevices){
             if (clazz.isAssignableFrom(device.getClass()))
                 list.add((T) device);
         }

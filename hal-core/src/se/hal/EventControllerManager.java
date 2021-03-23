@@ -2,6 +2,7 @@ package se.hal;
 
 import se.hal.intf.*;
 import se.hal.struct.Event;
+import se.hal.util.HalDeviceUtil;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginManager;
@@ -35,6 +36,25 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
     private List<Event> limboEvents = Collections.synchronizedList(new LinkedList<>());
 
 
+    public void initialize(PluginManager pluginManager) {
+        super.initialize(pluginManager);
+        instance = this;
+
+        // Read in existing devices
+
+        try {
+            DBConnection db = HalContext.getDB();
+
+            logger.info("Reading in existing events.");
+
+            for (Event event : Event.getLocalEvents(db)) {
+                EventControllerManager.getInstance().register(event);
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Unable to read in existing events.", e);
+        }
+    }
+
     // ----------------------------------------------------
     //                     EVENTS
     // ----------------------------------------------------
@@ -61,7 +81,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
         if(controller != null)
             controller.register(event.getDeviceConfig());
         registeredEvents.add(event);
-        detectedEvents.remove(findEvent(event.getDeviceConfig(), detectedEvents)); // Remove if this device was detected
+        detectedEvents.remove(HalDeviceUtil.findDevice(event.getDeviceConfig(), detectedEvents)); // Remove if this device was detected
     }
 
     /**
@@ -136,7 +156,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
     public void reportReceived(HalEventConfig eventConfig, HalEventData eventData) {
         try {
             DBConnection db = HalContext.getDB();
-            Event event = findEvent(eventConfig, registeredEvents);
+            Event event = HalDeviceUtil.findDevice(eventConfig, registeredEvents);
 
             if (event != null) {
                 logger.finest("Received report from event(" + eventConfig.getClass().getSimpleName() + "): " + eventConfig);
@@ -150,7 +170,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
             else { // unknown sensor
                 logger.info("Received report from unregistered event" +
                         "(" + eventConfig.getClass().getSimpleName() + "): " + eventConfig);
-                event = findEvent(eventConfig, detectedEvents);
+                event = HalDeviceUtil.findDevice(eventConfig, detectedEvents);
                 if(event == null) {
                     event = new Event();
                     detectedEvents.add(event);
@@ -165,16 +185,6 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
         }catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store event report", e);
         }
-    }
-
-    private static Event findEvent(HalEventConfig eventData, List<Event> list){
-        for (int i=0; i<list.size(); ++i) { // Don't use foreach for concurrency reasons
-            Event e = list.get(i);
-            if (eventData.equals(e.getDeviceConfig())) {
-                return e;
-            }
-        }
-        return null;
     }
 
     public void send(Event event){
@@ -198,7 +208,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
     @Override
     public void preConfigurationAction(Configurator configurator, Object obj) {
         if(obj instanceof HalEventConfig) {
-            Event event = findEvent((HalEventConfig) obj, registeredEvents);
+            Event event = HalDeviceUtil.findDevice((HalEventConfig) obj, registeredEvents);
             if(event != null){
                 deregister(event);
                 limboEvents.add(event);
@@ -209,17 +219,12 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
     @Override
     public void postConfigurationAction(Configurator configurator, Object obj) {
         if (obj instanceof HalEventConfig) {
-            Event event = findEvent((HalEventConfig) obj, limboEvents);
+            Event event = HalDeviceUtil.findDevice((HalEventConfig) obj, limboEvents);
             if(event != null){
                 register(event);
                 limboEvents.remove(event);
             }
         }
-    }
-
-    public void initialize(PluginManager pluginManager){
-        super.initialize(pluginManager);
-        instance = this;
     }
 
 

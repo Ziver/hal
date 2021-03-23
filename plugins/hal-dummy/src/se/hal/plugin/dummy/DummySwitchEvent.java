@@ -24,4 +24,9 @@ public class DummySwitchEvent implements DummyDevice, HalEventConfig {
     public Class<? extends HalEventData> getDeviceDataClass() {
         return OnOffEventData.class;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.equals(obj);
+    }
 }

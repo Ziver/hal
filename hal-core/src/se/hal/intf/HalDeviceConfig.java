@@ -5,6 +5,9 @@ package se.hal.intf;
  */
 public interface HalDeviceConfig {
 
+    /**
+     * @return the controller class that is responsible to track this configuration
+     */
     Class<? extends HalAbstractController> getDeviceControllerClass();
 
     /**
@@ -13,9 +16,11 @@ public interface HalDeviceConfig {
     Class<? extends HalDeviceData> getDeviceDataClass();
 
     /**
-     * This method needs to be implemented.
-     * NOTE: it should not compare data and timestamp, only static or unique data for the event type.
+     * This method is required to be implemented.
+     * This method compares two configuration objects static or unique configuration. it should not compare data and timestamp type dynamic values.
+     *
+     * @param obj   is the target object to compare to.
+     * @return true if the configuration of the two objects are same, false if the objects are not of same type or configuration does not match.
      */
     boolean equals(Object obj);
-
 }

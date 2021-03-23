@@ -1,11 +1,7 @@
 package se.hal.plugin.dummy;
 
-import se.hal.intf.HalDeviceData;
-import se.hal.intf.HalSensorConfig;
-import se.hal.intf.HalSensorController;
-import se.hal.intf.HalSensorData;
+import se.hal.intf.*;
 import se.hal.struct.devicedata.HumiditySensorData;
-import se.hal.struct.devicedata.TemperatureSensorData;
 
 
 public class DummyHumiditySensor implements DummyDevice, HalSensorConfig {
@@ -40,4 +36,8 @@ public class DummyHumiditySensor implements DummyDevice, HalSensorConfig {
         return HumiditySensorData.class;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return this.equals(obj);
+    }
 }

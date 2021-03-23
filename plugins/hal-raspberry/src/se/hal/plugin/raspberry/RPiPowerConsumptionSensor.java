@@ -1,5 +1,6 @@
 package se.hal.plugin.raspberry;
 
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;

@@ -122,9 +122,9 @@
                     <div class="form-group">
                         <label class="control-label">Type:</label>
                         <select class="form-control" name="type">
-                            {{#availableEvents}}
+                            {{#availableEventConfigClasses}}
                             <option>{{.getName()}}</option>
-                            {{/availableEvents}}
+                            {{/availableEventConfigClasses}}
                         </select>
                     </div>
 
@@ -142,7 +142,7 @@
     </div>
 </div>
 <div id="event-data-conf-template" class="hidden">
-    {{#localEventConf}}
+    {{#availableEventObjectConfig}}
     <div id="{{.clazz.getName()}}">
         {{#.params}}
         <div class="form-group">
@@ -158,6 +158,6 @@
         </div>
         {{/.params}}
     </div>
-    {{/localEventConf}}
+    {{/availableEventObjectConfig}}
 </div>
 

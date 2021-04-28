@@ -111,7 +111,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
      * Registers a Sensor class type as usable by the manager
      */
     @Override
-    public void addAvailableDevice(Class<? extends HalSensorConfig> sensorConfigClass) {
+    public void addAvailableDeviceConfig(Class<? extends HalSensorConfig> sensorConfigClass) {
         if (!availableSensors.contains(sensorConfigClass))
             availableSensors.add(sensorConfigClass);
     }

@@ -22,14 +22,13 @@ public class EventConfigWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/event_config.tmpl";
 
-    private ArrayList<ClassConfigurationData> eventConfigurations;
+    private ArrayList<ClassConfigurationData> eventConfigurations = new ArrayList<>();
 
 
     public EventConfigWebPage() {
         super("event_config");
         super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Event Settings").setWeight(200);
 
-        eventConfigurations = new ArrayList<>();
         for (Class c : EventControllerManager.getInstance().getAvailableDeviceConfigs())
             eventConfigurations.add(new ClassConfigurationData(c));
     }
@@ -50,7 +49,6 @@ public class EventConfigWebPage extends HalWebPage {
             Event event;
 
             switch(request.get("action")) {
-                // Local events
                 case "create_local_event":
                     logger.info("Creating new event: " + request.get("name"));
                     event = new Event();
@@ -110,9 +108,9 @@ public class EventConfigWebPage extends HalWebPage {
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("user", localUser);
         tmpl.set("localEvents", Event.getLocalEvents(db));
-        tmpl.set("localEventConf", eventConfigurations);
         tmpl.set("detectedEvents", EventControllerManager.getInstance().getDetectedDevices());
-        tmpl.set("availableEvents", EventControllerManager.getInstance().getAvailableDeviceConfigs());
+        tmpl.set("availableEventConfigClasses", EventControllerManager.getInstance().getAvailableDeviceConfigs());
+        tmpl.set("availableEventObjectConfig", eventConfigurations);
 
         return tmpl;
     }

@@ -1,11 +1,16 @@
-///////////////////////////////// Autostart
+// --------------------------------------------------------
+//                      Autostart
+// --------------------------------------------------------
+
 $(function(){
     $(".toggle-switch").bootstrapSwitch();
 
     $(".timestamp").relTimestamp();
 });
 
-////////////////////////////////////// JQuery helper functions
+// --------------------------------------------------------
+// JQuery helper functions
+// --------------------------------------------------------
 
 // $.attr() # returns all attributes of an element
 (function(old) {
@@ -28,7 +33,11 @@ $(function(){
     };
 })($.fn.attr);
 
-// converts all timestamps to human readable time and date
+// --------------------------------------------------------
+// Timestamps
+// --------------------------------------------------------
+
+// Converts all timestamps to human readable time and date
 $.fn.relTimestamp = function() {
     return this.each(function() {
         var timestamp = parseInt($(this).text());
@@ -45,10 +54,10 @@ $.fn.relTimestamp = function() {
     });
 };
 
+// --------------------------------------------------------
+// Chart functions
+// --------------------------------------------------------
 
-////////////////////////////////////// Hal functions
-
-////////////// Chart functions
 function createChart(elementId, url, updateTime=-1){
     var tickConf = {count: 20};
     if (updateTime < 60*60*1000)
@@ -127,30 +136,33 @@ function getChartData(json){
     };
 }
 
-////////////// Dynamic forms
+// --------------------------------------------------------
+// Dynamic forms
+// --------------------------------------------------------
+
 var dynamicConf = {};
 
 function initDynamicModalForm(modalId, formTemplateId = null, templateID = null){
     // read in all configurations into global variable (to skip naming issues)
     if (formTemplateId != null) {
         dynamicConf[formTemplateId] = [];
-        $("#"+templateID+" div").each(function(){
+        $("#" + templateID + " div").each(function(){
             dynamicConf[formTemplateId][$(this).attr("id")] = $(this).html();
         });
         // Update dynamic inputs
-        $("#"+modalId+" select[name=type]").change(function(){
-            $("#"+modalId+" #"+formTemplateId).html(dynamicConf[formTemplateId][$(this).val()]);
+        $("#" + modalId + " select[name=type]").change(function(){
+            $("#" + modalId + " #" + formTemplateId).html(dynamicConf[formTemplateId][$(this).val()]);
         });
     }
 
     // click event
-    $("#"+modalId).on('show.bs.modal', function (event) {
+    $("#" + modalId).on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var modal = $(this);
 
         // Reset all inputs
         if (formTemplateId != null)
-            modal.find("#"+formTemplateId).empty(); // clear form div
+            modal.find("#" + formTemplateId).empty(); // clear form div
 
         // select dynamic form
         var selector = modal.find("select[name=type]");
@@ -169,7 +181,7 @@ function initDynamicModalForm(modalId, formTemplateId = null, templateID = null)
                     if (value=="true") input.attr("checked", "true");
                     else               input.removeAttr("checked");
                     // Add default false value as a unchecked checkbox is not included in the post
-                    input.parent().prepend("<input type='hidden' name='"+input.attr("name")+"' value='false' />");
+                    input.parent().prepend("<input type='hidden' name='" + input.attr("name") + "' value='false' />");
                 } else {
                     input.val(value);
                 }

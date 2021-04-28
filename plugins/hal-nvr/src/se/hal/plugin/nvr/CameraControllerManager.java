@@ -43,7 +43,7 @@ public class CameraControllerManager extends HalAbstractControllerManager<HalCam
     }
 
     @Override
-    public void addAvailableDevice(Class deviceConfigClass) {
+    public void addAvailableDeviceConfig(Class deviceConfigClass) {
 
     }
 

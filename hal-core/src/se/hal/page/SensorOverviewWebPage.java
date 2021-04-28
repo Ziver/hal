@@ -38,7 +38,6 @@ public class SensorOverviewWebPage extends HalWebPage {
         DBConnection db = HalContext.getDB();
         int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));
 
-        // Save new input
         if (id >= 0) {
             Sensor sensor = Sensor.getSensor(db, id);
 

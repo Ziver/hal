@@ -109,7 +109,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
      * Registers a Event class type as usable by the manager
      */
     @Override
-    public void addAvailableDevice(Class<? extends HalEventConfig> eventClass) {
+    public void addAvailableDeviceConfig(Class<? extends HalEventConfig> eventClass) {
         if (!availableEvents.contains(eventClass))
             availableEvents.add(eventClass);
     }

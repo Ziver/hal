@@ -20,17 +20,17 @@ public class SensorControllerManagerTest {
     public void addAvailableDevice(){
         assertEquals(Collections.EMPTY_LIST, manager.getAvailableDeviceConfigs());
 
-        manager.addAvailableDevice(TestSensor1.class);
+        manager.addAvailableDeviceConfig(TestSensor1.class);
         assertEquals(1, manager.getAvailableDeviceConfigs().size());
         assertTrue(manager.getAvailableDeviceConfigs().contains(TestSensor1.class));
 
-        manager.addAvailableDevice(TestSensor2.class);
+        manager.addAvailableDeviceConfig(TestSensor2.class);
         assertEquals(2, manager.getAvailableDeviceConfigs().size());
         assertTrue(manager.getAvailableDeviceConfigs().contains(TestSensor1.class));
         assertTrue(manager.getAvailableDeviceConfigs().contains(TestSensor2.class));
 
         // Add duplicate sensor
-        manager.addAvailableDevice(TestSensor1.class);
+        manager.addAvailableDeviceConfig(TestSensor1.class);
         assertEquals("No duplicate check",2, manager.getAvailableDeviceConfigs().size());
     }
 
@@ -77,7 +77,7 @@ public class SensorControllerManagerTest {
     private Sensor registerSensor(HalSensorConfig config){
         Sensor sensor = new Sensor();
         sensor.setDeviceConfig(config);
-        manager.addAvailableDevice(config.getClass());
+        manager.addAvailableDeviceConfig(config.getClass());
         manager.register(sensor);
         return sensor;
     }

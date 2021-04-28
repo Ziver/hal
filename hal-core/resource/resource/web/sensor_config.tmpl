@@ -224,9 +224,9 @@
                     <div class="form-group">
                         <label class="control-label">Type:</label>
                         <select class="form-control" name="type">
-                            {{#availableSensors}}
+                            {{#availableSensorConfigClasses}}
                             <option>{{.getName()}}</option>
-                            {{/availableSensors}}
+                            {{/availableSensorConfigClasses}}
                         </select>
                     </div>
                     <div class="checkbox">
@@ -251,7 +251,7 @@
     </div>
 </div>
 <div id="sensor-data-conf-template" class="hidden">
-    {{#localSensorConf}}
+    {{#availableSensorObjectConfig}}
     <div id="{{.clazz.getName()}}">
         {{#.params}}
         <div class="form-group">
@@ -267,7 +267,7 @@
         </div>
         {{/.params}}
     </div>
-    {{/localSensorConf}}
+    {{/availableSensorObjectConfig}}
 </div>
 
 

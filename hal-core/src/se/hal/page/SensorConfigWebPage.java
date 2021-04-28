@@ -174,11 +174,11 @@ public class SensorConfigWebPage extends HalWebPage {
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("user", localUser);
         tmpl.set("localSensors", Sensor.getLocalSensors(db));
-        tmpl.set("localSensorConf", sensorConfigurations);
         tmpl.set("detectedSensors", SensorControllerManager.getInstance().getDetectedDevices());
         tmpl.set("extUsers", User.getExternalUsers(db));
         tmpl.set("extSensor", Sensor.getExternalSensors(db));
-        tmpl.set("availableSensors", SensorControllerManager.getInstance().getAvailableDeviceConfigs());
+        tmpl.set("availableSensorConfigClasses", SensorControllerManager.getInstance().getAvailableDeviceConfigs());
+        tmpl.set("availableSensorObjectConfig", sensorConfigurations);
 
         return tmpl;
 

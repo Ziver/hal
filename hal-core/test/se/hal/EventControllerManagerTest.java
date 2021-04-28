@@ -20,17 +20,17 @@ public class EventControllerManagerTest {
     public void addAvailableEventDevice(){
         assertEquals(0, manager.getAvailableDeviceConfigs().size());
 
-        manager.addAvailableDevice(TestEvent1.class);
+        manager.addAvailableDeviceConfig(TestEvent1.class);
         assertEquals(1, manager.getAvailableDeviceConfigs().size());
         assertTrue(manager.getAvailableDeviceConfigs().contains(TestEvent1.class));
 
-        manager.addAvailableDevice(TestEvent2.class);
+        manager.addAvailableDeviceConfig(TestEvent2.class);
         assertEquals(2, manager.getAvailableDeviceConfigs().size());
         assertTrue(manager.getAvailableDeviceConfigs().contains(TestEvent1.class));
         assertTrue(manager.getAvailableDeviceConfigs().contains(TestEvent2.class));
 
         // Add duplicate Event
-        manager.addAvailableDevice(TestEvent1.class);
+        manager.addAvailableDeviceConfig(TestEvent1.class);
         assertEquals("No duplicate check",2, manager.getAvailableDeviceConfigs().size());
     }
 
@@ -76,7 +76,7 @@ public class EventControllerManagerTest {
     private Event registerEvent(HalEventConfig config){
         Event Event = new Event();
         Event.setDeviceConfig(config);
-        manager.addAvailableDevice(config.getClass());
+        manager.addAvailableDeviceConfig(config.getClass());
         manager.register(Event);
         return Event;
     }

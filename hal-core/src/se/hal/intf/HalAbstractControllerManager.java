@@ -31,7 +31,7 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
 
         if (genericClasses.length >= 1 && genericClasses[0] != null) {
             for (Iterator<Class<C>> it = pluginManager.getClassIterator(genericClasses[0]); it.hasNext(); ) {
-                addAvailableDevice(it.next());
+                addAvailableDeviceConfig(it.next());
             }
         } else {
             logger.severe("Unable to retrieve Controller class from generics.");
@@ -63,7 +63,7 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
     /**
      * Registers a device configuration class type as usable by the manager
      */
-    public abstract void addAvailableDevice(Class<? extends C> deviceConfigClass);
+    public abstract void addAvailableDeviceConfig(Class<? extends C> deviceConfigClass);
 
     /**
      * @return a List of all available devices that can be registered with this manager

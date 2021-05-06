@@ -257,13 +257,13 @@
         <div class="form-group">
             <label class="control-label">{{.getNiceName()}}:</label>
             {{#.isTypeString()}}<input type="text" class="form-control" name="{{.getName()}}">{{/#.isTypeString()}}
-            {{#.isTypeInt()}}<input type="number" class="form-control" name="{{.getName()}}">{{/#.isTypeInt()}}
+            {{#.isTypeNumber()}}<input type="number" class="form-control" name="{{.getName()}}">{{/#.isTypeNumber()}}
             {{#.isTypeBoolean()}}<input type="checkbox" name="{{.getName()}}" value="true">{{/#.isTypeBoolean()}}
-            {{#.isTypeEnum()}}
+            {{#.isTypeSelection()}}
             <select class="form-control" name="{{.getName()}}">
                 {{#.getPossibleValues()}}<option>{{.}}</option>{{/.getPossibleValues()}}
             </select>
-            {{/#.isTypeEnum()}}
+            {{/#.isTypeSelection()}}
         </div>
         {{/.params}}
     </div>

@@ -25,9 +25,9 @@
 package se.hal.plugin.powerchallenge.daemon;
 
 import se.hal.HalContext;
+import se.hal.intf.HalDaemon;
 import se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationClient.PeerDataReqDTO;
 import se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationClient.SensorDataReqDTO;
-import se.hal.intf.HalDaemon;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;

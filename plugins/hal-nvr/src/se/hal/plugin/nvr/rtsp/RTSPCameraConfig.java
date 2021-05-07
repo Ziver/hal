@@ -24,10 +24,9 @@
 
 package se.hal.plugin.nvr.rtsp;
 
-import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
-import se.hal.plugin.nvr.intf.HalCameraController;
 import se.hal.plugin.nvr.intf.HalCameraConfig;
+import se.hal.plugin.nvr.intf.HalCameraController;
 
 public class RTSPCameraConfig implements HalCameraConfig {
 

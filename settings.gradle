@@ -1,4 +1,4 @@
-import static groovy.io.FileType.*
+import static groovy.io.FileType.DIRECTORIES
 
 rootProject.name = "Hal"
 

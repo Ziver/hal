@@ -3,7 +3,8 @@ package se.hal.plugin.zigbee.deconz.zigbee.deconz.rest;
 import zutil.net.ws.WSInterface.WSPath;
 import zutil.net.ws.WSInterface.WSRequestType;
 
-import static zutil.net.ws.WSInterface.RequestType.*;
+import static zutil.net.ws.WSInterface.RequestType.DELETE;
+import static zutil.net.ws.WSInterface.RequestType.GET;
 
 /**
  * Rules provide the ability to trigger actions of lights or groups when a specific sensor condition is met.

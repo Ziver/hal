@@ -1,7 +1,6 @@
 package se.hal.util;
 
 import se.hal.intf.HalDeviceData;
-import zutil.ClassUtil;
 import zutil.db.SQLResultHandler;
 
 import java.sql.ResultSet;

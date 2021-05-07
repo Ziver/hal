@@ -48,7 +48,6 @@
 
 package se.hal.plugin.mqtt.device;
 
-import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalEventData;

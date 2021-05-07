@@ -1,6 +1,9 @@
 package se.hal.test;
 
-import se.hal.intf.*;
+import se.hal.intf.HalEventConfig;
+import se.hal.intf.HalSensorConfig;
+import se.hal.intf.HalSensorController;
+import se.hal.intf.HalSensorData;
 import se.hal.struct.devicedata.TemperatureSensorData;
 
 /**

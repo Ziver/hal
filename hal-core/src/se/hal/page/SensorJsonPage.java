@@ -9,8 +9,6 @@ import se.hal.util.UTCTimeUtility;
 import zutil.ArrayUtil;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
-import zutil.net.http.HttpHeader;
-import zutil.net.http.HttpPrintStream;
 import zutil.parser.DataNode;
 
 import java.util.ArrayList;

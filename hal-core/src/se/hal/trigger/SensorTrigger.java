@@ -1,32 +1,30 @@
 package se.hal.trigger;
 
-import se.hal.HalContext;
-import se.hal.struct.Event;
 import se.hal.struct.Sensor;
+import se.hal.util.ConfigSensorValueProvider;
 import zutil.log.LogUtil;
+import zutil.ui.conf.Configurator;
 
-import java.sql.SQLException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SensorTrigger extends DeviceTrigger{
+public class SensorTrigger extends DeviceTrigger {
     private static final Logger logger = LogUtil.getLogger();
 
+    @Configurator.Configurable(value = "Sensor", valueProvider = ConfigSensorValueProvider.class)
+    protected Sensor device;
+
+
     @Override
-    protected Sensor getDevice(long id) {
-        try {
-            if (id >= 0)
-                return Sensor.getSensor(HalContext.getDB(), id);
-        } catch (SQLException e){ logger.log(Level.SEVERE, null, e);}
-        return null;
+    protected Sensor getDevice() {
+        return device;
     }
 
     @Override
     public String toString(){
-        Sensor sensor = getDevice(deviceId);
+        Sensor sensor = getDevice();
         return "Trigger " + (triggerOnChange ? "on" : "when") +
-                " sensor: "+ deviceId +" ("+(sensor != null ? sensor.getName() : null) + ")" +
-                " == "+ expectedData;
+                " sensor: " + sensor.getId() +" (" + (sensor != null ? sensor.getName() : null) + ")" +
+                " == " + expectedData;
     }
 
 }

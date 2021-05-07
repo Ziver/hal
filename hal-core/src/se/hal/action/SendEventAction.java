@@ -5,9 +5,10 @@ import se.hal.HalContext;
 import se.hal.intf.HalAction;
 import se.hal.intf.HalEventData;
 import se.hal.struct.Event;
+import se.hal.util.ConfigEventValueProvider;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
-import zutil.ui.Configurator;
+import zutil.ui.conf.Configurator;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,8 +19,8 @@ import java.util.logging.Logger;
 public class SendEventAction implements HalAction {
     private static final Logger logger = LogUtil.getLogger();
 
-    @Configurator.Configurable("Event Device ID")
-    private int eventId;
+    @Configurator.Configurable(value = "Event Device", valueProvider = ConfigEventValueProvider.class)
+    private Event event;
     @Configurator.Configurable("Data to Send")
     private double data;
 
@@ -28,7 +29,6 @@ public class SendEventAction implements HalAction {
     public void execute() {
         try {
             DBConnection db = HalContext.getDB();
-            Event event = Event.getEvent(db, eventId);
             if (event != null) {
                 HalEventData dataObj = (HalEventData) event.getDeviceConfig().getDeviceDataClass().newInstance();
                 dataObj.setData(data);
@@ -37,7 +37,7 @@ public class SendEventAction implements HalAction {
                 EventControllerManager.getInstance().send(event);
             }
             else
-                logger.warning("Unable to find event with id: "+ eventId);
+                logger.warning("Unable to find event with id: "+ event.getId());
         } catch (Exception e) {
             logger.log(Level.SEVERE, null, e);
         }
@@ -45,11 +45,8 @@ public class SendEventAction implements HalAction {
 
 
     public String toString(){
-        DBConnection db = HalContext.getDB();
-        Event event = null;
-        try{ event = Event.getEvent(db, eventId); } catch (Exception e){} //ignore exception
-        return "Send event: "+ eventId +
+        return "Send event: " + event.getId() +
                 " (" + (event!=null ? event.getName() : null) + ")" +
-                " with data: "+ data;
+                " with data: " + data;
     }
 }

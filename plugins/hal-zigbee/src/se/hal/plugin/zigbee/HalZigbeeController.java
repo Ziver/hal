@@ -2,7 +2,6 @@ package se.hal.plugin.zigbee;
 
 
 import com.zsmartsystems.zigbee.*;
-import com.zsmartsystems.zigbee.app.basic.ZigBeeBasicServerExtension;
 import com.zsmartsystems.zigbee.app.discovery.ZigBeeDiscoveryExtension;
 import com.zsmartsystems.zigbee.app.iasclient.ZigBeeIasCieExtension;
 import com.zsmartsystems.zigbee.app.otaserver.ZigBeeOtaUpgradeExtension;
@@ -12,20 +11,19 @@ import com.zsmartsystems.zigbee.dongle.xbee.ZigBeeDongleXBee;
 import com.zsmartsystems.zigbee.security.ZigBeeKey;
 import com.zsmartsystems.zigbee.serialization.DefaultDeserializer;
 import com.zsmartsystems.zigbee.serialization.DefaultSerializer;
-import com.zsmartsystems.zigbee.transport.*;
+import com.zsmartsystems.zigbee.transport.TransportConfig;
+import com.zsmartsystems.zigbee.transport.TransportConfigOption;
+import com.zsmartsystems.zigbee.transport.ZigBeePort;
+import com.zsmartsystems.zigbee.transport.ZigBeeTransportTransmit;
 import com.zsmartsystems.zigbee.zcl.clusters.*;
-import com.zsmartsystems.zigbee.zdo.command.NetworkAddressRequest;
 import com.zsmartsystems.zigbee.zdo.field.NodeDescriptor;
 import se.hal.HalContext;
 import se.hal.intf.*;
-import se.hal.intf.HalAbstractDevice;
 import zutil.log.LogUtil;
 
-import java.nio.channels.Channel;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  *

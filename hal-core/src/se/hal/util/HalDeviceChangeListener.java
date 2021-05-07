@@ -4,7 +4,7 @@ import se.hal.HalServer;
 import se.hal.intf.HalAbstractControllerManager;
 import se.hal.intf.HalAbstractDevice;
 import se.hal.intf.HalDeviceConfig;
-import zutil.ui.Configurator;
+import zutil.ui.conf.Configurator;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -4,12 +4,8 @@ import se.hal.intf.HalTrigger;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanObjectDSO;
-import zutil.db.bean.DBBeanSQLResultHandler;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A class that declares a trigger/condition that

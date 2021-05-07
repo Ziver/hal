@@ -1,6 +1,9 @@
 package se.hal.plugin.dummy;
 
-import se.hal.intf.*;
+import se.hal.intf.HalDeviceData;
+import se.hal.intf.HalEventConfig;
+import se.hal.intf.HalEventController;
+import se.hal.intf.HalEventData;
 import se.hal.struct.devicedata.OnOffEventData;
 
 public class DummySwitchEvent implements DummyDevice, HalEventConfig {

@@ -1,8 +1,8 @@
 package se.hal.page;
 
 import se.hal.HalContext;
-import se.hal.intf.HalJsonPage;
 import se.hal.intf.HalAbstractDevice;
+import se.hal.intf.HalJsonPage;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;

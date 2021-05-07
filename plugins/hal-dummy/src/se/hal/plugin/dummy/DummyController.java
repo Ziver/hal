@@ -7,7 +7,8 @@ import se.hal.intf.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class DummyController implements HalSensorController, HalEventController, Runnable, HalDaemon {

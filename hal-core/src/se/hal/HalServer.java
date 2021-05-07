@@ -1,8 +1,11 @@
 package se.hal;
 
 
-import se.hal.intf.*;
-import se.hal.page.*;
+import se.hal.intf.HalAbstractControllerManager;
+import se.hal.intf.HalDaemon;
+import se.hal.intf.HalJsonPage;
+import se.hal.intf.HalWebPage;
+import se.hal.page.HalAlertManager;
 import se.hal.struct.PluginConfig;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -14,7 +17,9 @@ import zutil.plugin.PluginData;
 import zutil.plugin.PluginManager;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Level;

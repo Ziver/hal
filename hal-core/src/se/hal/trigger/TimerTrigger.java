@@ -2,7 +2,7 @@ package se.hal.trigger;
 
 import se.hal.intf.HalTrigger;
 import zutil.Timer;
-import zutil.ui.Configurator;
+import zutil.ui.conf.Configurator;
 
 public class TimerTrigger implements HalTrigger {
 

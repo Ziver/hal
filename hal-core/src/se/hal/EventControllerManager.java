@@ -6,13 +6,13 @@ import se.hal.util.HalDeviceUtil;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginManager;
-import zutil.ui.Configurator;
-import zutil.ui.Configurator.PostConfigurationActionListener;
-import zutil.ui.Configurator.PreConfigurationActionListener;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

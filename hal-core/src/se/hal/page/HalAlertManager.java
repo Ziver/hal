@@ -11,7 +11,8 @@ import zutil.ui.UserMessageManager;
 import zutil.ui.UserMessageManager.UserMessage;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

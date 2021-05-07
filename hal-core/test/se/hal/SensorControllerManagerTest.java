@@ -8,7 +8,8 @@ import se.hal.struct.devicedata.TemperatureSensorData;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class SensorControllerManagerTest {

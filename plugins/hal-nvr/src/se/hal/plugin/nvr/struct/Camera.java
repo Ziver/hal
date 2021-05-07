@@ -25,9 +25,9 @@
 package se.hal.plugin.nvr.struct;
 
 import se.hal.intf.HalAbstractController;
+import se.hal.intf.HalAbstractDevice;
 import se.hal.plugin.nvr.intf.HalCameraConfig;
 import se.hal.plugin.nvr.intf.HalCameraData;
-import se.hal.intf.HalAbstractDevice;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 

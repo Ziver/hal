@@ -1,11 +1,10 @@
 package se.hal.plugin.raspberry;
 
-import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
 import se.hal.struct.devicedata.PowerConsumptionSensorData;
-import zutil.ui.Configurator;
+import zutil.ui.conf.Configurator;
 
 public class RPiPowerConsumptionSensor implements HalSensorConfig {
 

@@ -1,31 +1,30 @@
 package se.hal.trigger;
 
-import se.hal.HalContext;
 import se.hal.struct.Event;
+import se.hal.util.ConfigEventValueProvider;
 import zutil.log.LogUtil;
+import zutil.ui.conf.Configurator;
 
-import java.sql.SQLException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class EventTrigger extends DeviceTrigger{
     private static final Logger logger = LogUtil.getLogger();
 
+    @Configurator.Configurable(value = "Event", valueProvider = ConfigEventValueProvider.class)
+    protected Event device;
+
+
     @Override
-    protected Event getDevice(long id) {
-        try {
-            if (id >= 0)
-                return Event.getEvent(HalContext.getDB(), id);
-        } catch (SQLException e){ logger.log(Level.SEVERE, null, e);}
-        return null;
+    protected Event getDevice() {
+        return device;
     }
 
     @Override
     public String toString(){
-        Event event = getDevice(deviceId);
+        Event event = getDevice();
         return "Trigger " + (triggerOnChange ? "on" : "when") +
-                " event: "+ deviceId +" ("+(event != null ? event.getName() : null) + ")" +
-                " == "+ expectedData;
+                " event: " + device.getId() + " (" + (event != null ? event.getName() : null) + ")" +
+                " == " + expectedData;
     }
 
 }

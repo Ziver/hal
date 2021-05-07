@@ -1,16 +1,11 @@
 package se.hal.struct;
 
 import se.hal.intf.HalAction;
-import se.hal.intf.HalTrigger;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanObjectDSO;
-import zutil.db.bean.DBBeanSQLResultHandler;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Defines a action that will be executed

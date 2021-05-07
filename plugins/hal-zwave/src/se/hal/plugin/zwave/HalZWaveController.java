@@ -3,7 +3,6 @@ package se.hal.plugin.zwave;
 import org.zwave4j.*;
 import se.hal.HalContext;
 import se.hal.intf.*;
-import se.hal.intf.HalAbstractDevice;
 import zutil.log.LogUtil;
 
 import java.util.List;

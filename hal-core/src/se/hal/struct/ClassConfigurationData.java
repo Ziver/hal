@@ -1,7 +1,7 @@
 package se.hal.struct;
 
-import zutil.ui.Configurator;
-import zutil.ui.Configurator.ConfigurationParam;
+import zutil.ui.conf.Configurator;
+import zutil.ui.conf.Configurator.ConfigurationParam;
 
 /**
  * A Data class used by the dynamic class configuration pages

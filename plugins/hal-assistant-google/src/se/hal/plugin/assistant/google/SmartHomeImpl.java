@@ -16,11 +16,6 @@
 
 package se.hal.plugin.assistant.google;
 
-import java.sql.SQLException;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.google.actions.api.smarthome.*;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -37,6 +32,11 @@ import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.net.http.page.oauth.OAuth2Registry.TokenRegistrationListener;
+
+import java.sql.SQLException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationListener {

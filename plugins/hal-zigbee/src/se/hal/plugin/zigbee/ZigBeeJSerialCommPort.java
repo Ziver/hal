@@ -24,11 +24,10 @@
 
 package se.hal.plugin.zigbee;
 
+import com.fazecast.jSerialComm.SerialPort;
 import com.zsmartsystems.zigbee.transport.ZigBeePort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fazecast.jSerialComm.SerialPort;
 
 import java.io.IOException;
 import java.io.InputStream;

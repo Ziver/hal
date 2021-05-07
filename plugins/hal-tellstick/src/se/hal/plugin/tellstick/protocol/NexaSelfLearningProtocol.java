@@ -24,9 +24,9 @@ package se.hal.plugin.tellstick.protocol;
 
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventData;
+import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.plugin.tellstick.cmd.TellstickCmd;
 import se.hal.plugin.tellstick.cmd.TellstickCmdExtendedSend;
-import se.hal.plugin.tellstick.TellstickProtocol;
 import se.hal.plugin.tellstick.device.NexaSelfLearning;
 import se.hal.plugin.tellstick.device.NexaSelfLearningDimmer;
 import se.hal.struct.devicedata.DimmerEventData;

@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
 import se.hal.daemon.SensorDataAggregatorDaemon.AggregationPeriodLength;
 
 import java.util.Arrays;
@@ -18,8 +17,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Parameterized.class)
 public class TimeUtilityTest {
 	private final long currentTime_UTC;
-	
-	
+
+
 	/**
 	 * Constructor
 	 * @param timestamp
@@ -27,7 +26,7 @@ public class TimeUtilityTest {
 	public TimeUtilityTest(long timestamp){
 		this.currentTime_UTC = timestamp;
 	}
-	
+
 	@Parameters
 	public static Collection<Object[]> data(){
 		return Arrays.asList(new Object[][] {
@@ -50,15 +49,15 @@ public class TimeUtilityTest {
 			{Long.MAX_VALUE-(60*UTCTimeUtility.WEEK_IN_MS)},				//max time - 60w
 		});
 	}
-	
+
 	// Test flooring & ceiling UTC time to the closes year
 	@Test
-	public void testYear_UTC(){		
+	public void testYear_UTC(){
 		System.out.println("Testing year with timestamp " + currentTime_UTC + "   " + UTCTimeUtility.getDateString(currentTime_UTC));
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.YEAR, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.YEAR, currentTime_UTC);
-		
+
 		//verify period start is correct
 		System.out.println("	year start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
 		assertTrue("perdiod start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
@@ -80,18 +79,18 @@ public class TimeUtilityTest {
 		assertEquals("period end day is wrong", 31, UTCTimeUtility.getDayOfMonthFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end month is wrong", Calendar.DECEMBER, UTCTimeUtility.getMonthOfYearFromTimestamp(thisPeriodEndedAt));
 		assertEquals("period end year is wrong", UTCTimeUtility.getYearFromTimestamp(currentTime_UTC), UTCTimeUtility.getYearFromTimestamp(thisPeriodEndedAt));
-		
+
 		//verify that start and end values are reasonable
 		assertTrue("start is zero", thisPeriodStartedAt != 0);
 		assertTrue("end is zero", thisPeriodEndedAt != 0);
 		assertTrue("start is not before end", thisPeriodStartedAt < thisPeriodEndedAt );
 		assertTrue("start and end are equal", thisPeriodStartedAt != thisPeriodEndedAt );
-		
+
 		//verify that the period start and end is in the same period
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodStartedAt, UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.YEAR, thisPeriodEndedAt));
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodEndedAt, UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.YEAR, thisPeriodStartedAt));
-	}	
-	
+	}
+
 	// Test flooring & ceiling UTC time to the closes month
 	@Test
 	public void testMonth_UTC(){
@@ -101,7 +100,7 @@ public class TimeUtilityTest {
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.MONTH, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.MONTH, currentTime_UTC);
-		
+
 		//verify period start is correct
 		System.out.println("	month start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
 		assertTrue("perdiod start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
@@ -129,12 +128,12 @@ public class TimeUtilityTest {
 		assertTrue("end is zero", thisPeriodEndedAt != 0);
 		assertTrue("start is not before end", thisPeriodStartedAt < thisPeriodEndedAt );
 		assertTrue("start and end are equal", thisPeriodStartedAt != thisPeriodEndedAt );
-		
+
 		//verify that the period start and end is in the same period
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodStartedAt, UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.MONTH, thisPeriodEndedAt));
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodEndedAt, UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.MONTH, thisPeriodStartedAt));
-	}	
-		
+	}
+
 	// Test flooring & ceiling UTC time to the closes week
 	@Test
 	public void testWeek_UTC(){
@@ -142,7 +141,7 @@ public class TimeUtilityTest {
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.WEEK, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.WEEK, currentTime_UTC);
-		
+
 		//verify period start is correct
 		System.out.println("	week start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
 		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
@@ -175,8 +174,8 @@ public class TimeUtilityTest {
 		//verify that the period start and end is in the same period
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodStartedAt, UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.WEEK, thisPeriodEndedAt));
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodEndedAt, UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.WEEK, thisPeriodStartedAt));
-	}	
-	
+	}
+
 	// Test flooring & ceiling UTC time to the closes day
 	@Test
 	public void testDay_UTC(){
@@ -184,7 +183,7 @@ public class TimeUtilityTest {
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.DAY, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.DAY, currentTime_UTC);
-		
+
 		//verify period start is correct
 		System.out.println("	day start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
 		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
@@ -218,7 +217,7 @@ public class TimeUtilityTest {
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodStartedAt, UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.DAY, thisPeriodEndedAt));
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodEndedAt, UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.DAY, thisPeriodStartedAt));
 	}
-	
+
 	// Test flooring & ceiling UTC time to the closes hour
 	@Test
 	public void testHour_UTC(){
@@ -226,7 +225,7 @@ public class TimeUtilityTest {
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.HOUR, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.HOUR, currentTime_UTC);
-		
+
 		//verify period start is correct
 		System.out.println("	hour start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
 		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
@@ -260,7 +259,7 @@ public class TimeUtilityTest {
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodStartedAt, UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.HOUR, thisPeriodEndedAt));
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodEndedAt, UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.HOUR, thisPeriodStartedAt));
 	}
-	
+
 	// Test flooring & ceiling UTC time to the closes 15-minute period
 	@Test
 	public void testFifteenMinute_UTC(){
@@ -268,7 +267,7 @@ public class TimeUtilityTest {
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.FIFTEEN_MINUTES, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.FIFTEEN_MINUTES, currentTime_UTC);
-		
+
 		//verify period start is correct
 		System.out.println("	15-min start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
 		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
@@ -305,15 +304,15 @@ public class TimeUtilityTest {
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodStartedAt, UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.FIFTEEN_MINUTES, thisPeriodEndedAt));
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodEndedAt, UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.FIFTEEN_MINUTES, thisPeriodStartedAt));
 	}
-	
+
 	// Test flooring & ceiling UTC time to the closes 5-minute period
 	@Test
 	public void testFiveMinute_UTC(){
 		System.out.println("Testing 5-min with timestamp " + currentTime_UTC + "   " + UTCTimeUtility.getDateString(currentTime_UTC));
 
-		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.FIVE_MINUTES, currentTime_UTC);	
+		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.FIVE_MINUTES, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.FIVE_MINUTES, currentTime_UTC);
-		
+
 		//verify period start is correct
 		System.out.println("	5-min start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
 		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
@@ -350,7 +349,7 @@ public class TimeUtilityTest {
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodStartedAt, UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.FIVE_MINUTES, thisPeriodEndedAt));
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodEndedAt, UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.FIVE_MINUTES, thisPeriodStartedAt));
 	}
-	
+
 	// Test flooring & ceiling UTC time to the closes minute
 	@Test
 	public void testMinute_UTC(){
@@ -358,7 +357,7 @@ public class TimeUtilityTest {
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.MINUTE, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.MINUTE, currentTime_UTC);
-		
+
 		//verify period start is correct
 		System.out.println("	minute start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
 		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
@@ -391,7 +390,7 @@ public class TimeUtilityTest {
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodStartedAt, UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.MINUTE, thisPeriodEndedAt));
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodEndedAt, UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.MINUTE, thisPeriodStartedAt));
 	}
-	
+
 	// Test flooring & ceiling UTC time to the closes second
 	@Test
 	public void testSecond_UTC(){
@@ -399,7 +398,7 @@ public class TimeUtilityTest {
 
 		long thisPeriodStartedAt = UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.SECOND, currentTime_UTC);
 		long thisPeriodEndedAt = UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.SECOND, currentTime_UTC);
-		
+
 		//verify period start is correct
 		System.out.println("	second start timestamp = " + thisPeriodStartedAt + "   " + UTCTimeUtility.getDateString(thisPeriodStartedAt));
 		assertTrue("period start is not before current time", thisPeriodStartedAt <= currentTime_UTC);
@@ -432,9 +431,9 @@ public class TimeUtilityTest {
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodStartedAt, UTCTimeUtility.getTimestampPeriodStart(AggregationPeriodLength.SECOND, thisPeriodEndedAt));
 		assertEquals("start and/or end timestamp is not in the same period", thisPeriodEndedAt, UTCTimeUtility.getTimestampPeriodEnd(AggregationPeriodLength.SECOND, thisPeriodStartedAt));
 	}
-	
+
 	// Test printing converting milliseconds to text
-	@Test 
+	@Test
 	public void testMsToString(){
 		//low values
 		assertEquals("00:00:00.000", UTCTimeUtility.timeInMsToString(0));
@@ -452,23 +451,23 @@ public class TimeUtilityTest {
 		assertEquals("00:59:00.000", UTCTimeUtility.timeInMsToString(UTCTimeUtility.MINUTE_IN_MS*59));
 		assertEquals("23:00:00.000", UTCTimeUtility.timeInMsToString(UTCTimeUtility.HOUR_IN_MS*23));
 		assertEquals("52w+5d+00:00:00.000", UTCTimeUtility.timeInMsToString(UTCTimeUtility.DAY_IN_MS*369));
-		
+
 		//high overflow values
 		assertEquals("00:00:01.999", UTCTimeUtility.timeInMsToString(1999));
 		assertEquals("00:02:39.000", UTCTimeUtility.timeInMsToString(UTCTimeUtility.SECOND_IN_MS*159));
 		assertEquals("02:39:00.000", UTCTimeUtility.timeInMsToString(UTCTimeUtility.MINUTE_IN_MS*159));
 		assertEquals("5d+03:00:00.000", UTCTimeUtility.timeInMsToString(UTCTimeUtility.HOUR_IN_MS*123));
-		
+
 		//combinations
 		assertEquals("142w+5d+23:59:59.999", UTCTimeUtility.timeInMsToString((UTCTimeUtility.WEEK_IN_MS*142) + (UTCTimeUtility.DAY_IN_MS*5) + (UTCTimeUtility.HOUR_IN_MS*23) + (UTCTimeUtility.MINUTE_IN_MS*59) + (UTCTimeUtility.SECOND_IN_MS*59) + 999));
 		assertEquals("6d+23:59:59.999", UTCTimeUtility.timeInMsToString(UTCTimeUtility.WEEK_IN_MS-1));
 	}
-	
+
 	// Test printing converting milliseconds to text for a negative time
 	@Test(expected=NumberFormatException.class)
 	public void testMsToStringForNegativeArgument(){
 		//low values
 		UTCTimeUtility.timeInMsToString(-1);
 	}
-	
+
 }

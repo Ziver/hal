@@ -24,20 +24,16 @@
 
 package se.hal.plugin.assistant.google;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.google.actions.api.smarthome.SmartHomeApp;
-import se.hal.plugin.assistant.google.SmartHomeImpl;
 import zutil.io.IOUtil;
 import zutil.log.LogUtil;
 import zutil.net.http.HttpHeader;
 import zutil.net.http.HttpPage;
 import zutil.net.http.HttpPrintStream;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Handles Google SMartHome request received via HTTP POST.

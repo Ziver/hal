@@ -2,7 +2,9 @@ package se.hal.plugin.tellstick;
 
 import org.junit.Before;
 import org.junit.Test;
-import se.hal.intf.*;
+import se.hal.intf.HalDeviceReportListener;
+import se.hal.intf.HalEventConfig;
+import se.hal.intf.HalEventData;
 import se.hal.plugin.tellstick.test.TestEventDevice;
 import se.hal.plugin.tellstick.test.TestProtocol;
 

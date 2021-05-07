@@ -22,7 +22,6 @@
 
 package se.hal.plugin.tellstick.device;
 
-import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalEventData;
@@ -30,7 +29,7 @@ import se.hal.plugin.tellstick.TellstickDevice;
 import se.hal.plugin.tellstick.TellstickSerialComm;
 import se.hal.plugin.tellstick.protocol.NexaSelfLearningProtocol;
 import se.hal.struct.devicedata.DimmerEventData;
-import zutil.ui.Configurator;
+import zutil.ui.conf.Configurator;
 
 /**
  * Created by Ziver on 2015-02-18.

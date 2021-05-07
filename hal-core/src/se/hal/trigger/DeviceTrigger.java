@@ -1,14 +1,10 @@
 package se.hal.trigger;
 
 import se.hal.TriggerManager;
-import se.hal.intf.HalDeviceConfig;
-import se.hal.intf.HalDeviceData;
-import se.hal.intf.HalDeviceReportListener;
-import se.hal.intf.HalTrigger;
-import se.hal.intf.HalAbstractDevice;
-import zutil.ui.Configurator;
-import zutil.ui.Configurator.PostConfigurationActionListener;
-import zutil.ui.Configurator.PreConfigurationActionListener;
+import se.hal.intf.*;
+import zutil.ui.conf.Configurator;
+import zutil.ui.conf.Configurator.PostConfigurationActionListener;
+import zutil.ui.conf.Configurator.PreConfigurationActionListener;
 
 /**
  * An abstract class that implements generic device data logic
@@ -18,8 +14,6 @@ public abstract class DeviceTrigger implements HalTrigger,
         PostConfigurationActionListener,
         HalDeviceReportListener<HalDeviceConfig,HalDeviceData> {
 
-    @Configurator.Configurable("Device ID")
-    protected int deviceId = -1;
     @Configurator.Configurable("Trigger only on change")
     protected boolean triggerOnChange = true;
     @Configurator.Configurable("Data to compare to")
@@ -31,14 +25,14 @@ public abstract class DeviceTrigger implements HalTrigger,
 
     @Override
     public void preConfigurationAction(Configurator configurator, Object obj) {
-        HalAbstractDevice device = getDevice(deviceId);
+        HalAbstractDevice device = getDevice();
         if (device != null)
             device.removeReportListener(this);
         reset();
     }
     @Override
     public void postConfigurationAction(Configurator configurator, Object obj) {
-        HalAbstractDevice device = getDevice(deviceId);
+        HalAbstractDevice device = getDevice();
         if (device != null)
             device.addReportListener(this);
     }
@@ -67,5 +61,5 @@ public abstract class DeviceTrigger implements HalTrigger,
 
 
 
-    protected abstract HalAbstractDevice getDevice(long id);
+    protected abstract HalAbstractDevice getDevice();
 }

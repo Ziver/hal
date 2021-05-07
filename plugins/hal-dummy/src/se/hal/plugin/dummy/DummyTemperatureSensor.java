@@ -1,6 +1,9 @@
 package se.hal.plugin.dummy;
 
-import se.hal.intf.*;
+import se.hal.intf.HalDeviceData;
+import se.hal.intf.HalSensorConfig;
+import se.hal.intf.HalSensorController;
+import se.hal.intf.HalSensorData;
 import se.hal.struct.devicedata.TemperatureSensorData;
 
 

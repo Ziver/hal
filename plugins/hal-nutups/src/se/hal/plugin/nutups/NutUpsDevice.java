@@ -48,13 +48,12 @@
 
 package se.hal.plugin.nutups;
 
-import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
 import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.osal.linux.app.NutUPSClient;
-import zutil.ui.Configurator;
+import zutil.ui.conf.Configurator;
 
 public class NutUpsDevice implements HalSensorConfig{
 

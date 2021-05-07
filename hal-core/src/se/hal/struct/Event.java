@@ -1,6 +1,9 @@
 package se.hal.struct;
 
-import se.hal.intf.*;
+import se.hal.intf.HalAbstractDevice;
+import se.hal.intf.HalEventConfig;
+import se.hal.intf.HalEventController;
+import se.hal.intf.HalEventData;
 import se.hal.util.DeviceDataSqlResult;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;

@@ -1,15 +1,14 @@
 package se.hal.daemon;
 
-import java.sql.PreparedStatement;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import se.hal.HalContext;
 import se.hal.util.UTCTimeUtility;
 import zutil.db.DBConnection;
 import zutil.db.DBUpgradeHandler;
 import zutil.log.LogUtil;
+
+import java.sql.PreparedStatement;
 
 public class SensorDataAggregationDaemonTest {
     private static final String DEFAULT_DB_FILE = "resource/resource/hal-default.db";

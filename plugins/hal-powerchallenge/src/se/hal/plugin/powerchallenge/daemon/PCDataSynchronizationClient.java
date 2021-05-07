@@ -25,18 +25,17 @@
 package se.hal.plugin.powerchallenge.daemon;
 
 import se.hal.HalContext;
+import se.hal.intf.HalDaemon;
+import se.hal.page.HalAlertManager;
 import se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationDaemon.PeerDataRspDTO;
 import se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationDaemon.SensorDTO;
 import se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationDaemon.SensorDataDTO;
 import se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationDaemon.SensorDataListDTO;
-import se.hal.intf.HalDaemon;
-import se.hal.page.HalAlertManager;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.parser.json.JSONParser;
-import zutil.ui.UserMessageManager;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

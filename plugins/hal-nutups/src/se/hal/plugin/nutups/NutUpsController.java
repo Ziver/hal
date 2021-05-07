@@ -49,7 +49,10 @@
 package se.hal.plugin.nutups;
 
 import se.hal.HalContext;
-import se.hal.intf.*;
+import se.hal.intf.HalAutoScannableController;
+import se.hal.intf.HalDeviceConfig;
+import se.hal.intf.HalDeviceReportListener;
+import se.hal.intf.HalSensorController;
 import zutil.log.LogUtil;
 import zutil.osal.linux.app.NutUPSClient;
 

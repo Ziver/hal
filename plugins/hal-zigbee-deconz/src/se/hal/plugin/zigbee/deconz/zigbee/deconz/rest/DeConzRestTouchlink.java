@@ -3,7 +3,8 @@ package se.hal.plugin.zigbee.deconz.zigbee.deconz.rest;
 import zutil.net.ws.WSInterface.WSPath;
 import zutil.net.ws.WSInterface.WSRequestType;
 
-import static zutil.net.ws.WSInterface.RequestType.*;
+import static zutil.net.ws.WSInterface.RequestType.GET;
+import static zutil.net.ws.WSInterface.RequestType.POST;
 
 /**
  * The touchlink endpoint allows to communicate with near by located devices.

@@ -8,7 +8,7 @@ import zutil.db.bean.DBBean;
 import zutil.log.LogUtil;
 import zutil.parser.json.JSONParser;
 import zutil.parser.json.JSONWriter;
-import zutil.ui.Configurator;
+import zutil.ui.conf.Configurator;
 
 import java.sql.SQLException;
 import java.util.LinkedList;

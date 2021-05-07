@@ -12,7 +12,8 @@ import zutil.db.SQLResultHandler;
 import zutil.db.handler.SimpleSQLResult;
 import zutil.log.LogUtil;
 import zutil.ui.UserMessageManager;
-import zutil.ui.UserMessageManager.*;
+import zutil.ui.UserMessageManager.MessageTTL;
+import zutil.ui.UserMessageManager.UserMessage;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

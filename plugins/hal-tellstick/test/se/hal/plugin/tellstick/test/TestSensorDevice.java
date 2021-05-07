@@ -1,11 +1,9 @@
 package se.hal.plugin.tellstick.test;
 
-import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
 import se.hal.plugin.tellstick.TellstickDevice;
-import se.hal.plugin.tellstick.TellstickSerialCommSensorTest;
 
 public class TestSensorDevice implements HalSensorConfig, TellstickDevice {
     public int testData;

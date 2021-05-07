@@ -1,6 +1,5 @@
 package se.hal.plugin.tellstick.device;
 
-import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
@@ -12,7 +11,7 @@ import se.hal.struct.devicedata.LightSensorData;
 import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.log.LogUtil;
-import zutil.ui.Configurator;
+import zutil.ui.conf.Configurator;
 
 import java.util.logging.Logger;
 

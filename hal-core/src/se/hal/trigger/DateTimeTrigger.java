@@ -2,10 +2,10 @@ package se.hal.trigger;
 
 import se.hal.intf.HalTrigger;
 import zutil.CronTimer;
-import zutil.ui.Configurator;
-import zutil.ui.Configurator.PreConfigurationActionListener;
+import zutil.ui.conf.Configurator;
 
 import java.text.SimpleDateFormat;
+
 
 public class DateTimeTrigger implements HalTrigger,Configurator.PostConfigurationActionListener {
 

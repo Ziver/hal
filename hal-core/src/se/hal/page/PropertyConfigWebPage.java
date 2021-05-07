@@ -2,11 +2,10 @@ package se.hal.page;
 
 import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
-import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
 
-import java.util.*;
+import java.util.Map;
 
 public class PropertyConfigWebPage extends HalWebPage {
     private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/property_config.tmpl";

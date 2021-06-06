@@ -42,7 +42,7 @@ public class HalZigbeeControllerTest {
         LogUtil.setGlobalLevel(Level.ALL);
 
         HalZigbeeController controller = new HalZigbeeController();
-        controller.initialize("COM5", HalZigbeeController.ZIGBEE_DONGLE_CC2531);
+        controller.initialize("COM3", HalZigbeeController.ZIGBEE_DONGLE_CC2531);
 
         handleConsoleInput('h', controller.networkManager);
 
@@ -67,7 +67,7 @@ public class HalZigbeeControllerTest {
 
             case 'l':
                 for (ZigBeeNode node : networkManager.getNodes()) {
-                    System.out.println(node);
+                    System.out.println(node + " (" + node.getNodeState() + ")");
 
                     for (ZigBeeEndpoint endpoint : node.getEndpoints()) {
                         System.out.println("  - " + endpoint);

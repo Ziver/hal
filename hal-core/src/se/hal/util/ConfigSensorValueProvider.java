@@ -33,14 +33,9 @@ public class ConfigSensorValueProvider implements Configurator.ConfigValueProvid
         }
     }
 
-
-    private String getValue(Sensor sensor) {
-        return sensor.getName() + " (id: " + sensor.getId() + ")";
-    }
-
     @Override
-    public String getCurrentValue() {
-        return getValue(currentValue);
+    public String getValue(Sensor sensor) {
+        return sensor.getName() + " (id: " + sensor.getId() + ")";
     }
 
     @Override

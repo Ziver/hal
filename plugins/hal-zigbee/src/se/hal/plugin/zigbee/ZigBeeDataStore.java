@@ -27,9 +27,14 @@ package se.hal.plugin.zigbee;
 import com.zsmartsystems.zigbee.IeeeAddress;
 import com.zsmartsystems.zigbee.database.ZigBeeNetworkDataStore;
 import com.zsmartsystems.zigbee.database.ZigBeeNodeDao;
+import com.zsmartsystems.zigbee.zdo.field.BindingTable;
+import zutil.StringUtil;
+import zutil.converter.Converter;
 import zutil.log.LogUtil;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -38,6 +43,36 @@ public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
     private static final Logger logger = LogUtil.getLogger();
 
     private HashMap<IeeeAddress,ZigBeeNodeDao> devices = new HashMap<>();
+
+
+    public ZigBeeDataStore() {
+        /*ZigBeeNodeDao controller = new ZigBeeNodeDao();
+        controller.setIeeeAddress(new IeeeAddress("00124B001CCE1B5F"));
+        controller.setNetworkAddress(0);
+        controller.setBindingTable(new HashSet<>());
+        controller.setEndpoints(Collections.EMPTY_LIST);
+        controller.setNodeDescriptor(null);
+        controller.setPowerDescriptor(null);
+        writeNode(controller);
+
+        ZigBeeNodeDao ikeaOutlet = new ZigBeeNodeDao();
+        ikeaOutlet.setIeeeAddress(new IeeeAddress("00158D000488A47F"));
+        ikeaOutlet.setNetworkAddress(10697);
+        ikeaOutlet.setBindingTable(new HashSet<>());
+        ikeaOutlet.setEndpoints(Collections.EMPTY_LIST);
+        ikeaOutlet.setNodeDescriptor(null);
+        ikeaOutlet.setPowerDescriptor(null);
+        writeNode(ikeaOutlet);
+
+        ZigBeeNodeDao aquaraTemp = new ZigBeeNodeDao();
+        aquaraTemp.setIeeeAddress(new IeeeAddress("842E14FFFE63AE4B"));
+        aquaraTemp.setNetworkAddress(52953);
+        aquaraTemp.setBindingTable(new HashSet<>());
+        aquaraTemp.setEndpoints(Collections.EMPTY_LIST);
+        aquaraTemp.setNodeDescriptor(null);
+        aquaraTemp.setPowerDescriptor(null);
+        writeNode(aquaraTemp);*/
+    }
 
 
     @Override
@@ -56,11 +91,11 @@ public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
     public void writeNode(ZigBeeNodeDao node) {
         System.out.println("ZigBeeDataStore.writeNode(" +
                 "IeeAddr: " + node.getIeeeAddress() + ", " +
-                "binding: "+node.getBindingTable()+", " +
-                "description: "+node.getNodeDescriptor()+", " +
-                "endpoints: "+node.getEndpoints()+", " +
-                "NetAddr: "+node.getNetworkAddress()+", " +
-                "Power: "+node.getPowerDescriptor()+", " +
+                "NetAddr: " + node.getNetworkAddress() + ", " +
+                "binding: " + node.getBindingTable() + ", " +
+                "description: " + node.getNodeDescriptor() + ", " +
+                "endpoints: " + node.getEndpoints() + ", " +
+                "Power: " + node.getPowerDescriptor() + ", " +
                 ")");
 
         devices.put(node.getIeeeAddress(), node);

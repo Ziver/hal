@@ -33,14 +33,9 @@ public class ConfigEventValueProvider implements Configurator.ConfigValueProvide
         }
     }
 
-
-    private String getValue(Event event) {
-        return event.getName() + " (id: " + event.getId() + ")";
-    }
-
     @Override
-    public String getCurrentValue() {
-        return getValue(currentValue);
+    public String getValue(Event event) {
+        return event.getName() + " (id: " + event.getId() + ")";
     }
 
     @Override

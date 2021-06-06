@@ -19,6 +19,7 @@ import com.zsmartsystems.zigbee.zcl.clusters.*;
 import com.zsmartsystems.zigbee.zdo.field.NodeDescriptor;
 import se.hal.HalContext;
 import se.hal.intf.*;
+import zutil.Timer;
 import zutil.log.LogUtil;
 
 import java.util.HashSet;
@@ -32,7 +33,8 @@ public class HalZigbeeController implements HalSensorController,
         HalEventController,
         HalAutoScannableController,
         ZigBeeAnnounceListener,
-        ZigBeeNetworkNodeListener {
+        ZigBeeNetworkNodeListener,
+        HalScannableController {
 
     private static final Logger logger = LogUtil.getLogger();
 
@@ -47,6 +49,7 @@ public class HalZigbeeController implements HalSensorController,
     private ZigBeeDataStore dataStore;
     protected ZigBeeNetworkManager networkManager;
 
+    private Timer permitJoinTimer;
     private HalDeviceReportListener deviceListener;
     private List<HalAbstractDevice> registeredDevices;
 
@@ -92,22 +95,16 @@ public class HalZigbeeController implements HalSensorController,
         // Startup Network
         // ------------------------
 
-        networkManager.setDefaultProfileId(ZigBeeProfileType.ZIGBEE_HOME_AUTOMATION.getKey());
-        networkManager.setZigBeeLinkKey(new ZigBeeKey(new int[] { // Add the default ZigBeeAlliance09 HA link key
-                0x5A, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6C, 0x6C, 0x69, 0x61, 0x6E, 0x63, 0x65, 0x30, 0x39 }));
-        networkManager.setZigBeeNetworkKey(new ZigBeeKey("552FAAF9B5F49E75F1ADDA12215C2CA1")); // ZigBeeKey.createRandom();
-        networkManager.setZigBeeChannel(ZigBeeChannel.create(11));
-        networkManager.setZigBeePanId(65534); // (int) Math.floor((Math.random() * 65534));
-        networkManager.setZigBeeExtendedPanId(new ExtendedPanId("00124B001CCE1B5F")); // ExtendedPanId.createRandom();
-
-        //transportOptions.addOption(TransportConfigOption.TRUST_CENTRE_JOIN_MODE, TrustCentreJoinMode.TC_JOIN_INSECURE); // TC_JOIN_SECURE
-        dongle.updateTransportConfig(transportOptions);
-
         // Register extensions
 
+        ZigBeeDiscoveryExtension discoveryExtension = new ZigBeeDiscoveryExtension();
+        discoveryExtension.setUpdatePeriod(86400); // in seconds, 24h
+
+        networkManager.addExtension(discoveryExtension);
         networkManager.addExtension(new ZigBeeOtaUpgradeExtension());
-        networkManager.addExtension(new ZigBeeDiscoveryExtension());
         networkManager.addExtension(new ZigBeeIasCieExtension());
+
+        // Register clusters
 
         networkManager.addSupportedClientCluster(ZclBasicCluster.CLUSTER_ID);
         networkManager.addSupportedClientCluster(ZclIdentifyCluster.CLUSTER_ID);
@@ -136,6 +133,19 @@ public class HalZigbeeController implements HalSensorController,
         networkManager.addSupportedServerCluster(ZclWindowCoveringCluster.CLUSTER_ID);
         networkManager.addSupportedServerCluster(ZclBinaryInputBasicCluster.CLUSTER_ID);
 
+        // Configure network
+
+        networkManager.setDefaultProfileId(ZigBeeProfileType.ZIGBEE_HOME_AUTOMATION.getKey());
+        networkManager.setZigBeeNetworkKey(ZigBeeKey.createRandom());//new ZigBeeKey("552FAAF9B5F49E75F1ADDA12215C2CA1")); // ZigBeeKey.createRandom();
+        networkManager.setZigBeeLinkKey(new ZigBeeKey(new int[] { // Add the default ZigBeeAlliance09 HA link key
+                0x5A, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6C, 0x6C, 0x69, 0x61, 0x6E, 0x63, 0x65, 0x30, 0x39 }));
+        networkManager.setZigBeeChannel(ZigBeeChannel.create(11));
+        networkManager.setZigBeePanId(65534); // (int) Math.floor((Math.random() * 65534));
+        networkManager.setZigBeeExtendedPanId(new ExtendedPanId("00124B001CCE1B5F")); // ExtendedPanId.createRandom();
+
+        //transportOptions.addOption(TransportConfigOption.TRUST_CENTRE_JOIN_MODE, TrustCentreJoinMode.TC_JOIN_INSECURE); // TC_JOIN_SECURE
+        dongle.updateTransportConfig(transportOptions);
+
         // Startup Network
 
         logger.info("Starting up ZigBee Network...");
@@ -148,9 +158,7 @@ public class HalZigbeeController implements HalSensorController,
         case ZIGBEE_DONGLE_CC2531:
             HashSet<Integer> clusters = new HashSet<>();
             clusters.add(ZclIasZoneCluster.CLUSTER_ID);
-
             transportOptions.addOption(TransportConfigOption.SUPPORTED_OUTPUT_CLUSTERS, clusters);
-            transportOptions.addOption(TransportConfigOption.RADIO_TX_POWER, 3);
 
             return new ZigBeeDongleTiCc2531(serialPort);
         case ZIGBEE_DONGLE_CONBEE:
@@ -243,5 +251,17 @@ public class HalZigbeeController implements HalSensorController,
     @Override
     public void setListener(HalDeviceReportListener listener) {
         deviceListener = listener;
+    }
+
+    @Override
+    public void startScan() {
+        networkManager.permitJoin(120);
+        permitJoinTimer = new Timer(120_000);
+        permitJoinTimer.start();
+    }
+
+    @Override
+    public boolean isScanning() {
+        return permitJoinTimer != null && !permitJoinTimer.hasTimedOut();
     }
 }

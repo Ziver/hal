@@ -132,8 +132,11 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
 
         serialPort = SerialPort.getCommPort(portName);
         serialPort.setBaudRate(baudRate);
+        serialPort.setNumDataBits(8);
+        serialPort.setNumStopBits(SerialPort.ONE_STOP_BIT);
+        serialPort.setParity(SerialPort.NO_PARITY);
         serialPort.setComPortTimeouts(
-                SerialPort.TIMEOUT_READ_BLOCKING, 0, 0);
+                SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
 
         if (!serialPort.openPort()) {
             throw new RuntimeException("Error opening serial port: " + portName);

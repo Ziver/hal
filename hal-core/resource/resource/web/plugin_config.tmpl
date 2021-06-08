@@ -16,7 +16,7 @@
                 <tr>
                     <td>{{.getName()}}</td>
                     <td>{{.getVersion()}}</td>
-                    <td>{{.getDescription()}}</td>
+                    <td>{{#.getDescription()}}{{.getDescription()}}{{/.getDescription()}}</td>
                     <td>
                         <form method="POST">
                             <input type="hidden" name="action" value="modify">

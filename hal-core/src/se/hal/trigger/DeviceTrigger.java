@@ -16,7 +16,7 @@ public abstract class DeviceTrigger implements HalTrigger,
 
     @Configurator.Configurable("Trigger only on change")
     protected boolean triggerOnChange = true;
-    @Configurator.Configurable("Data to compare to")
+    @Configurator.Configurable("Trigger when data equals")
     protected double expectedData;
 
     private transient HalDeviceData receivedData;

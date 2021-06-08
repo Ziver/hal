@@ -45,8 +45,8 @@ public class SendEventAction implements HalAction {
 
 
     public String toString(){
-        return "Send event: " + event.getId() +
-                " (" + (event!=null ? event.getName() : null) + ")" +
+        return "Send event: " + (event != null ? event.getId() : null) +
+                " (" + (event != null ? event.getName() : null) + ")" +
                 " with data: " + data;
     }
 }

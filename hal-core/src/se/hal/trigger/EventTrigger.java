@@ -20,10 +20,10 @@ public class EventTrigger extends DeviceTrigger{
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         Event event = getDevice();
         return "Trigger " + (triggerOnChange ? "on" : "when") +
-                " event: " + device.getId() + " (" + (event != null ? event.getName() : null) + ")" +
+                " event: " + (device != null ? device.getId() : null) + " (" + (event != null ? event.getName() : null) + ")" +
                 " == " + expectedData;
     }
 

@@ -59,7 +59,7 @@ public class TriggerManager {
             for (TriggerFlow flow : TriggerFlow.getTriggerFlows(db)) {
                 TriggerManager.getInstance().register(flow);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             logger.log(Level.SEVERE, "Unable to read in existing triggers.", e);
         }
     }
@@ -74,7 +74,9 @@ public class TriggerManager {
             public void run() {
                 try {
                     evaluateAndExecute();
-                } catch (Exception e){ logger.log(Level.SEVERE, "Trigger Evaluation Thread has Crashed", e); }
+                } catch (Exception e) {
+                    logger.log(Level.SEVERE, "Trigger Evaluation Thread has Crashed", e);
+                }
             }
         }, 0, interval, TimeUnit.MILLISECONDS);
     }

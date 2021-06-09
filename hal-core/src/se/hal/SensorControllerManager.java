@@ -24,8 +24,6 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
     private static final Logger logger = LogUtil.getLogger();
     private static SensorControllerManager instance;
 
-    /** All available sensor plugins **/
-    private List<Class<? extends HalSensorConfig>> availableSensors = new ArrayList<>();
     /** List of all registered sensors **/
     private List<Sensor> registeredSensors = Collections.synchronizedList(new ArrayList<>());
     /** List of auto detected sensors **/
@@ -66,7 +64,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
             logger.warning("Sensor config is null: " + sensor);
             return;
         }
-        if (!availableSensors.contains(sensor.getDeviceConfig().getClass())) {
+        if (!getAvailableDeviceConfigs().contains(sensor.getDeviceConfig().getClass())) {
             logger.warning("Sensor data plugin not available: " + sensor.getDeviceConfig().getClass());
             return;
         }
@@ -104,23 +102,6 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
         } else {
             logger.warning("Controller not instantiated: " + sensor.getController());
         }
-    }
-
-    /**
-     * Registers a Sensor class type as usable by the manager
-     */
-    @Override
-    public void addAvailableDeviceConfig(Class<? extends HalSensorConfig> sensorConfigClass) {
-        if (!availableSensors.contains(sensorConfigClass))
-            availableSensors.add(sensorConfigClass);
-    }
-
-    /**
-     * @return a List of all available Sensors that can be registered to this manager
-     */
-    @Override
-    public List<Class<? extends HalSensorConfig>> getAvailableDeviceConfigs(){
-        return availableSensors;
     }
 
     /**

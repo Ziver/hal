@@ -7,7 +7,9 @@ import se.hal.plugin.nvr.struct.Camera;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginManager;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -16,6 +18,8 @@ public class CameraControllerManager extends HalAbstractControllerManager<HalCam
     private static final Logger logger = LogUtil.getLogger();
     private static CameraControllerManager instance;
 
+    /** List of all registered cameras **/
+    private List<Camera> registeredCameras = Collections.synchronizedList(new ArrayList<>());
 
     @Override
     public void register(Camera device) {
@@ -28,24 +32,15 @@ public class CameraControllerManager extends HalAbstractControllerManager<HalCam
     }
 
     @Override
-    public List<Class<? extends HalCameraConfig>> getAvailableDeviceConfigs() {
-        return null;
-    }
-
-    @Override
     public List<Camera> getRegisteredDevices() {
-        return null;
+        return registeredCameras;
     }
 
     @Override
     public List<Camera> getDetectedDevices() {
-        return null;
+        return Collections.EMPTY_LIST;
     }
 
-    @Override
-    public void addAvailableDeviceConfig(Class deviceConfigClass) {
-
-    }
 
     @Override
     public void clearDetectedDevices() {

@@ -25,8 +25,6 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
     private static final Logger logger = LogUtil.getLogger();
     private static EventControllerManager instance;
 
-    /** All available event plugins **/
-    private List<Class<? extends HalEventConfig>> availableEvents = new ArrayList<>();
     /** List of all registered events **/
     private List<Event> registeredEvents = Collections.synchronizedList(new ArrayList<>());
     /** List of auto detected events **/
@@ -66,7 +64,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
             logger.warning("Event config is null: " + event);
             return;
         }
-        if (!availableEvents.contains(event.getDeviceConfig().getClass())) {
+        if (!getAvailableDeviceConfigs().contains(event.getDeviceConfig().getClass())) {
             logger.warning("Event data plugin not available: " + event.getDeviceConfig().getClass());
             return;
         }
@@ -103,23 +101,6 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
         } else {
             logger.warning("Controller not instantiated: "+ event.getController());
         }
-    }
-
-    /**
-     * Registers a Event class type as usable by the manager
-     */
-    @Override
-    public void addAvailableDeviceConfig(Class<? extends HalEventConfig> eventClass) {
-        if (!availableEvents.contains(eventClass))
-            availableEvents.add(eventClass);
-    }
-
-    /**
-     * @return a List of all available Events that can be registered to this manager
-     */
-    @Override
-    public List<Class<? extends HalEventConfig>> getAvailableDeviceConfigs(){
-        return availableEvents;
     }
 
     /**

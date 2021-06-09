@@ -4,10 +4,8 @@ import zutil.ClassUtil;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginManager;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +20,8 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
 
     /** A map of all instantiated controllers **/
     protected HashMap<Class, T> controllerMap = new HashMap<>();
-
+    /** All available sensor plugins **/
+    protected List<Class<? extends C>> availableDeviceConfigs = new ArrayList<>();
 
     /**
      * Will instantiate a generic ControllerManager.
@@ -30,19 +29,27 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
      * @param pluginManager     a PluginManager instance that will be used to find Controller plugins.
      */
     public void initialize(PluginManager pluginManager) {
-        Class[] genericClasses = ClassUtil.getGenericClasses(HalAbstractControllerManager.class);
+        Class[] genericClasses = ClassUtil.getGenericClasses(this.getClass());
 
-        if (genericClasses.length >= 1 && genericClasses[0] != null) {
-            for (Iterator<Class<C>> it = pluginManager.getClassIterator(genericClasses[0]); it.hasNext(); ) {
+        if (genericClasses.length >= 3 && genericClasses[2] != null) {
+            for (Iterator<Class<C>> it = pluginManager.getClassIterator(genericClasses[2]); it.hasNext(); ) {
                 addAvailableDeviceConfig(it.next());
             }
         } else {
-            logger.severe("Unable to retrieve Controller class from generics.");
+            logger.severe("Unable to retrieve Controller class from generics for class: " + this.getClass());
         }
 
-        for (Iterator<Class<? extends HalAutoScannableController>> it = pluginManager.getClassIterator(HalAutoScannableController.class); it.hasNext(); ){
-            Class controller = it.next();
-            getControllerInstance(controller); // Instantiate controller
+        for (Class<? extends C> deviceConfig : getAvailableDeviceConfigs()){
+            try {
+                @SuppressWarnings("unchecked")
+                Class<T> controllerClass = (Class<T>) deviceConfig.getDeclaredConstructor().newInstance().getDeviceControllerClass();
+
+                if (controllerClass.isAssignableFrom(HalAutoScannableController.class)) {
+                    getControllerInstance(controllerClass); // Instantiate controller
+                }
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Unable to instantiate Device Config for controller check: " + deviceConfig.getClass());
+            }
         }
     }
 
@@ -64,16 +71,6 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
     public abstract void deregister(V device);
 
     /**
-     * Registers a device configuration class type as usable by the manager
-     */
-    public abstract void addAvailableDeviceConfig(Class<? extends C> deviceConfigClass);
-
-    /**
-     * @return a List of all available devices that can be registered with this manager
-     */
-    public abstract List<Class<? extends C>> getAvailableDeviceConfigs();
-
-    /**
      * @return a List of device instances that have been registered on this manager
      */
     public abstract List<V> getRegisteredDevices();
@@ -89,7 +86,26 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
     public abstract void clearDetectedDevices();
 
     // ----------------------------------------------------
-    //                   Common Logic
+    //               Common Device Logic
+    // ----------------------------------------------------
+
+    /**
+     * Registers a device configuration class type as usable by this manager
+     */
+    protected void addAvailableDeviceConfig(Class<? extends C> deviceConfigClass) {
+        if (!availableDeviceConfigs.contains(deviceConfigClass))
+            availableDeviceConfigs.add(deviceConfigClass);
+    }
+
+    /**
+     * @return a List of all available device configurations that can be registered with this manager
+     */
+    public List<Class<? extends C>> getAvailableDeviceConfigs() {
+        return availableDeviceConfigs;
+    }
+
+    // ----------------------------------------------------
+    //             Common Controller Logic
     // ----------------------------------------------------
 
     /**
@@ -115,7 +131,7 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
         } else {
             try {
                 // Instantiate controller
-                controller = clazz.newInstance();
+                controller = clazz.getDeclaredConstructor().newInstance();
 
                 if (controller instanceof HalAutoScannableController &&
                         ! ((HalAutoScannableController) controller).isAvailable()) {

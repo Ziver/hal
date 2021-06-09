@@ -2,7 +2,7 @@
 	"version": 1.0,
 	"name": "Hal-Network Scanner",
 	"interfaces": [
-		{"se.hal.intf.HalAutoScannableController": "se.hal.plugin.netscan.NetScanController"},
+		{"se.hal.intf.HalAutostartController": "se.hal.plugin.netscan.NetScanController"},
 		{"se.hal.intf.HalEventConfig": "se.hal.plugin.netscan.NetworkDevice"}
 	]
 }

@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  */
 public class HalZigbeeController implements HalSensorController,
         HalEventController,
-        HalAutoScannableController,
+        HalAutostartController,
         ZigBeeAnnounceListener,
         ZigBeeNetworkNodeListener,
         HalScannableController {

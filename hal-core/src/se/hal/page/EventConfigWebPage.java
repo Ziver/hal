@@ -3,7 +3,7 @@ package se.hal.page;
 import se.hal.EventControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
-import se.hal.struct.ClassConfigurationData;
+import se.hal.util.ClassConfigurationFacade;
 import se.hal.struct.Event;
 import se.hal.struct.User;
 import zutil.ObjectUtil;
@@ -24,7 +24,7 @@ public class EventConfigWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/event_config.tmpl";
 
-    private ArrayList<ClassConfigurationData> eventConfigurations = new ArrayList<>();
+    private ArrayList<ClassConfigurationFacade> eventConfigurations = new ArrayList<>();
 
 
     public EventConfigWebPage() {
@@ -32,7 +32,7 @@ public class EventConfigWebPage extends HalWebPage {
         super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Event Settings").setWeight(200);
 
         for (Class c : EventControllerManager.getInstance().getAvailableDeviceConfigs())
-            eventConfigurations.add(new ClassConfigurationData(c));
+            eventConfigurations.add(new ClassConfigurationFacade(c));
     }
 
     @Override

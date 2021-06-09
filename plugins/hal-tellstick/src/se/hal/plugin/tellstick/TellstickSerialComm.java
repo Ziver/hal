@@ -46,7 +46,7 @@ import java.util.logging.Logger;
  * communication and reporting to Hal
  */
 public class TellstickSerialComm implements Runnable,
-        HalSensorController, HalEventController, HalAutoScannableController {
+        HalSensorController, HalEventController, HalAutostartController {
     private static final Logger logger = LogUtil.getLogger();
 
     private static String CONFIG_TELLSTICK_COM_PORT = "tellstick.com_port";

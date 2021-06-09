@@ -3,7 +3,7 @@ package se.hal.page;
 import se.hal.HalContext;
 import se.hal.SensorControllerManager;
 import se.hal.intf.HalWebPage;
-import se.hal.struct.ClassConfigurationData;
+import se.hal.util.ClassConfigurationFacade;
 import se.hal.struct.Sensor;
 import se.hal.struct.User;
 import zutil.ObjectUtil;
@@ -23,7 +23,7 @@ public class SensorConfigWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/sensor_config.tmpl";
 
-    private ArrayList<ClassConfigurationData> sensorConfigurations;
+    private ArrayList<ClassConfigurationFacade> sensorConfigurations;
 
 
     public SensorConfigWebPage() {
@@ -32,7 +32,7 @@ public class SensorConfigWebPage extends HalWebPage {
 
         sensorConfigurations = new ArrayList<>();
         for (Class c : SensorControllerManager.getInstance().getAvailableDeviceConfigs())
-            sensorConfigurations.add(new ClassConfigurationData(c));
+            sensorConfigurations.add(new ClassConfigurationFacade(c));
     }
 
     @Override

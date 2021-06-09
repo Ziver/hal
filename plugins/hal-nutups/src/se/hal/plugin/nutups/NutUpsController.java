@@ -49,7 +49,7 @@
 package se.hal.plugin.nutups;
 
 import se.hal.HalContext;
-import se.hal.intf.HalAutoScannableController;
+import se.hal.intf.HalAutostartController;
 import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceReportListener;
 import se.hal.intf.HalSensorController;
@@ -64,7 +64,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class NutUpsController implements HalSensorController, HalAutoScannableController, Runnable {
+public class NutUpsController implements HalSensorController, HalAutostartController, Runnable {
     public static Logger logger = LogUtil.getLogger();
 
     private static final int SYNC_INTERVAL = 60 * 1000;

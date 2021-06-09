@@ -4,6 +4,7 @@ import se.hal.HalContext;
 import se.hal.HalServer;
 import se.hal.intf.HalAbstractController;
 import se.hal.intf.HalAbstractControllerManager;
+import se.hal.intf.HalScannableController;
 import se.hal.intf.HalWebPage;
 import zutil.ObjectUtil;
 import zutil.io.file.FileUtil;
@@ -52,25 +53,36 @@ public class PluginConfigWebPage extends HalWebPage {
 
                 case "controller_scan":
                     String controllerName = request.get("controller");
+
+                    HalAbstractController controller = null;
+                    for (HalAbstractController c : HalAbstractControllerManager.getControllers()) {
+                        if (c.getClass().getName().equals(controllerName)) {
+                            controller = c;
+                            break;
+                        }
+                    }
+
+                    if (controller != null) {
+                        if (controller instanceof HalScannableController) {
+                            ((HalScannableController) controller).startScan();
+
+                            HalAlertManager.getInstance().addAlert(new UserMessage(
+                                    MessageLevel.SUCCESS, "Initiated scanning on controller: " + controllerName, MessageTTL.ONE_VIEW));
+                        } else {
+                            HalAlertManager.getInstance().addAlert(new UserMessage(
+                                    MessageLevel.ERROR, "Controller " + controllerName + " does not support scanning.", MessageTTL.ONE_VIEW));
+                        }
+                    } else {
+                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                                MessageLevel.ERROR, "Unable to find controller: " + controllerName, MessageTTL.ONE_VIEW));
+                    }
                     break;
-            }
-        }
-
-        List<HalAbstractController> controllers = new LinkedList<>();
-        for (HalAbstractControllerManager manager : HalServer.getControllerManagers()) {
-            Collection<HalAbstractController> managerControllers = manager.getControllers();
-
-            if (!ObjectUtil.isEmpty(managerControllers)) {
-                for (HalAbstractController controller : managerControllers) {
-                    if (!controllers.contains(controller))
-                        controllers.add(controller);
-                }
             }
         }
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("plugins", HalServer.getAllPlugins());
-        tmpl.set("controllers", controllers);
+        tmpl.set("controllers", HalAbstractControllerManager.getControllers());
         return tmpl;
     }
 }

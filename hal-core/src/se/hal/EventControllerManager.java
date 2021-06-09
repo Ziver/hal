@@ -92,7 +92,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
         }
 
         Class<? extends HalEventController> c = event.getController();
-        HalEventController controller = controllerMap.get(c);
+        HalEventController controller = (HalEventController) controllerMap.get(c);
         if (controller != null) {
             logger.info("Deregistering event(id: " + event.getId() + "): " + event.getDeviceConfig().getClass());
             controller.deregister(event.getDeviceConfig());
@@ -173,14 +173,6 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
         }
         else
             logger.warning("No controller found for event id: "+ event.getId());
-    }
-
-    /**
-     * @return all instantiated controllers.
-     */
-    @Override
-    public Collection<HalEventController> getControllers() {
-        return controllerMap.values();
     }
 
 

@@ -15,4 +15,13 @@ public interface HalScannableController {
      * @return a boolean indication if a scan is still ongoing.
      */
     boolean isScanning();
+
+    /**
+     * Function that can be used by template to identify a scannable controller.
+     *
+     * @return always true.
+     */
+    default boolean isScannable() {
+        return true;
+    }
 }

@@ -50,15 +50,24 @@
                 <tr>
                     <td>{{.getClass().getName()}}</td>
                     <td>
+                        {{#.isScannable()}}
                         <div class="btn-toolbar pull-right">
                             <form method="POST">
                                 <input type="hidden" name="action" value="controller_scan">
                                 <input type="hidden" name="controller" value="{{.getClass().getName()}}">
 
+                                {{#.isScanning()}}
+                                <button type="submit" class="btn btn-primary btn-xs" style="padding: 1px 20px;" disabled>
+                                    <span class="glyphicon glyphicon-refresh anim-spin"></span>
+                                </button>
+                                {{/.isScanning()}}
+                                {{^.isScanning()}}
                                 <button type="submit" class="btn btn-primary btn-xs" style="padding: 1px 20px;">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </button>
+                                {{/.isScanning()}}
                             </form>
+                            {{/.isScannable()}}
                         </div>
                     </td>
                 </tr>

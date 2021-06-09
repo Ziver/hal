@@ -47,11 +47,6 @@ public class CameraControllerManager extends HalAbstractControllerManager<HalCam
 
     }
 
-    @Override
-    public Collection<HalCameraController> getControllers() {
-        return null;
-    }
-
 
     public void initialize(PluginManager pluginManager){
         super.initialize(pluginManager);

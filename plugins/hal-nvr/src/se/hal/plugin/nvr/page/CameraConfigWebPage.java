@@ -29,7 +29,7 @@ import se.hal.intf.HalWebPage;
 import se.hal.page.HalAlertManager;
 import se.hal.plugin.nvr.CameraControllerManager;
 import se.hal.plugin.nvr.struct.Camera;
-import se.hal.struct.ClassConfigurationData;
+import se.hal.util.ClassConfigurationFacade;
 import se.hal.struct.User;
 import zutil.ObjectUtil;
 import zutil.db.DBConnection;
@@ -47,7 +47,7 @@ public class CameraConfigWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/camera_config.tmpl";
 
-    private ArrayList<ClassConfigurationData> cameraConfigurations;
+    private ArrayList<ClassConfigurationFacade> cameraConfigurations;
 
 
     public CameraConfigWebPage() {
@@ -56,7 +56,7 @@ public class CameraConfigWebPage extends HalWebPage {
 
         cameraConfigurations = new ArrayList<>();
         for (Class c : CameraControllerManager.getInstance().getAvailableDeviceConfigs())
-            cameraConfigurations.add(new ClassConfigurationData(c));
+            cameraConfigurations.add(new ClassConfigurationFacade(c));
     }
 
     @Override

@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  * <p>
  * Rest documentatiuon for deConz: https://dresden-elektronik.github.io/deconz-rest-doc/
  */
-public class DeConzZigbeeController implements HalSensorController, HalEventController, HalAutoScannableController {
+public class DeConzZigbeeController implements HalSensorController, HalEventController, HalAutostartController {
     private static final Logger logger = LogUtil.getLogger();
 
     public static final String CONFIG_ZIGBEE_REST_URL = "zigbee.rest_url";

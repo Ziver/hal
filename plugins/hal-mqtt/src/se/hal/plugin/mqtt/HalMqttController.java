@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class HalMqttController implements HalAutoScannableController, MqttSubscriptionListener, HalEventController {
+public class HalMqttController implements HalAutostartController, MqttSubscriptionListener, HalEventController {
     private final Logger logger = LogUtil.getLogger();
 
     private MulticastDnsServer mDns;

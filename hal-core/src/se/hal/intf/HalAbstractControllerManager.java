@@ -4,8 +4,8 @@ import zutil.ClassUtil;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginManager;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +19,7 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
     private static final Logger logger = LogUtil.getLogger();
 
     /** A map of all instantiated controllers **/
-    protected HashMap<Class, T> controllerMap = new HashMap<>();
+    protected static Map<Class, HalAbstractController> controllerMap = new ConcurrentHashMap<>();
     /** All available sensor plugins **/
     protected List<Class<? extends C>> availableDeviceConfigs = new ArrayList<>();
 
@@ -44,7 +44,7 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
                 @SuppressWarnings("unchecked")
                 Class<T> controllerClass = (Class<T>) deviceConfig.getDeclaredConstructor().newInstance().getDeviceControllerClass();
 
-                if (controllerClass.isAssignableFrom(HalAutoScannableController.class)) {
+                if (controllerClass.isAssignableFrom(HalAutostartController.class)) {
                     getControllerInstance(controllerClass); // Instantiate controller
                 }
             } catch (Exception e) {
@@ -111,14 +111,14 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
     /**
      * @return all active instantiated controllers.
      */
-    public Collection<T> getControllers() {
-        return controllerMap.values();
+    public static List<HalAbstractController> getControllers() {
+        return new ArrayList<>(controllerMap.values());
     }
 
     /**
      * Will return a singleton controller instance of the given class.
      * If a instance does not exist yet the a new instance will be allocated
-     * depending on if the controller is ready thorough the {@link HalAutoScannableController#isAvailable()} method.
+     * depending on if the controller is ready thorough the {@link HalAutostartController#isAvailable()} method.
      *
      * @param clazz     is the class of the wanted object instance wanted
      * @return A singleton instance of the input clazz or null if the class is unavailable or not ready to be instantiated.
@@ -127,14 +127,14 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
         T controller;
 
         if (controllerMap.containsKey(clazz)) {
-            controller = controllerMap.get(clazz);
+            controller = (T) controllerMap.get(clazz);
         } else {
             try {
                 // Instantiate controller
                 controller = clazz.getDeclaredConstructor().newInstance();
 
-                if (controller instanceof HalAutoScannableController &&
-                        ! ((HalAutoScannableController) controller).isAvailable()) {
+                if (controller instanceof HalAutostartController &&
+                        ! ((HalAutostartController) controller).isAvailable()) {
                     logger.warning("Controller is not ready: " + clazz.getName());
                     return null;
                 }
@@ -162,7 +162,7 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
      * @param controller    is the controller instance.
      */
     protected void removeControllerIfEmpty(HalAbstractController controller){
-        if (controller instanceof HalAutoScannableController)
+        if (controller instanceof HalAutostartController)
             return; // Don't do anything if controller is scannable
 
         if (controller.size() < 0){

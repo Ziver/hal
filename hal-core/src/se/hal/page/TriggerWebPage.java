@@ -4,7 +4,7 @@ import se.hal.HalContext;
 import se.hal.TriggerManager;
 import se.hal.intf.HalWebPage;
 import se.hal.struct.Action;
-import se.hal.struct.ClassConfigurationData;
+import se.hal.util.ClassConfigurationFacade;
 import se.hal.struct.Trigger;
 import se.hal.struct.TriggerFlow;
 import zutil.ObjectUtil;
@@ -23,8 +23,8 @@ public class TriggerWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
     private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/trigger.tmpl";
 
-    private ArrayList<ClassConfigurationData> triggerConfigurators;
-    private ArrayList<ClassConfigurationData> actionConfigurators;
+    private ArrayList<ClassConfigurationFacade> triggerConfigurators;
+    private ArrayList<ClassConfigurationFacade> actionConfigurators;
 
 
     public TriggerWebPage() {
@@ -33,10 +33,10 @@ public class TriggerWebPage extends HalWebPage {
 
         triggerConfigurators = new ArrayList<>();
         for (Class c : TriggerManager.getInstance().getAvailableTriggers())
-            triggerConfigurators.add(new ClassConfigurationData(c));
+            triggerConfigurators.add(new ClassConfigurationFacade(c));
         actionConfigurators = new ArrayList<>();
         for (Class c : TriggerManager.getInstance().getAvailableActions())
-            actionConfigurators.add(new ClassConfigurationData(c));
+            actionConfigurators.add(new ClassConfigurationFacade(c));
     }
 
     @Override

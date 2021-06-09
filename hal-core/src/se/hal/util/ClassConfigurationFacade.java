@@ -1,4 +1,4 @@
-package se.hal.struct;
+package se.hal.util;
 
 import zutil.ui.conf.Configurator;
 import zutil.ui.conf.Configurator.ConfigurationParam;
@@ -6,12 +6,12 @@ import zutil.ui.conf.Configurator.ConfigurationParam;
 /**
  * A Data class used by the dynamic class configuration pages
  */
-public class ClassConfigurationData {
+public class ClassConfigurationFacade {
         public Class clazz;
         public ConfigurationParam[] params;
 
 
-    public ClassConfigurationData(Class clazz) {
+    public ClassConfigurationFacade(Class clazz) {
         this.clazz = clazz;
         this.params = Configurator.getConfiguration(clazz);
     }

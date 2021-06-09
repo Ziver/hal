@@ -3,6 +3,6 @@
 	"name": "Hal-Zigbee-DeConz",
 	"description": "A Zigbee plugin interfacing with a DeConz service.",
 	"interfaces": [
-		{"se.hal.intf.HalAutoScannableController": "se.hal.plugin.zigbee.deconz.zigbee.HalDeconzZigbeeController"}
+		{"se.hal.intf.HalAutostartController": "se.hal.plugin.zigbee.deconz.zigbee.HalDeconzZigbeeController"}
 	]
 }

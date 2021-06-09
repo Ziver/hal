@@ -92,7 +92,7 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
     /**
      * Registers a device configuration class type as usable by this manager
      */
-    protected void addAvailableDeviceConfig(Class<? extends C> deviceConfigClass) {
+    public void addAvailableDeviceConfig(Class<? extends C> deviceConfigClass) {
         if (!availableDeviceConfigs.contains(deviceConfigClass))
             availableDeviceConfigs.add(deviceConfigClass);
     }

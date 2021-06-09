@@ -34,17 +34,25 @@ public class PluginConfigWebPage extends HalWebPage {
             throws Exception{
 
         if (request.containsKey("action")) {
-            String name = request.get("action_id");
+            switch (request.get("action")) {
+                case "plugin_enable":
+                    String name = request.get("plugin_name");
 
-            if (!name.equals("Hal-Core")) {
-                HalServer.enablePlugin(name,
-                        (request.containsKey("enabled") && "on".equals(request.get("enabled"))));
+                    if (!name.equals("Hal-Core")) {
+                        HalServer.enablePlugin(name,
+                                (request.containsKey("enabled") && "on".equals(request.get("enabled"))));
 
-                HalAlertManager.getInstance().addAlert(new UserMessage(
-                        MessageLevel.SUCCESS, "Successfully updated plugin " + name + ", change will take affect after restart.", MessageTTL.ONE_VIEW));
-            } else {
-                HalAlertManager.getInstance().addAlert(new UserMessage(
-                        MessageLevel.ERROR, "Hal-Core cannot be disabled as it is critical component of Hal.", MessageTTL.ONE_VIEW));
+                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                                MessageLevel.SUCCESS, "Successfully updated plugin " + name + ", change will take affect after restart.", MessageTTL.ONE_VIEW));
+                    } else {
+                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                                MessageLevel.ERROR, "Hal-Core cannot be disabled as it is critical component of Hal.", MessageTTL.ONE_VIEW));
+                    }
+                    break;
+
+                case "controller_scan":
+                    String controllerName = request.get("controller");
+                    break;
             }
         }
 

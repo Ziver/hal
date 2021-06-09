@@ -19,8 +19,8 @@
                     <td>{{#.getDescription()}}{{.getDescription()}}{{/.getDescription()}}</td>
                     <td>
                         <form method="POST">
-                            <input type="hidden" name="action" value="modify">
-                            <input type="hidden" name="action_id" value="{{.getName()}}">
+                            <input type="hidden" name="action" value="plugin_enable">
+                            <input type="hidden" name="plugin_name" value="{{.getName()}}">
 
                             <div class="btn-toolbar pull-right">
                                 <input class="toggle-switch" type="checkbox" name="enabled"
@@ -44,10 +44,23 @@
             <table class="table table-hover table-condensed">
                 <thead>
                     <th class="col-md-3">Name</th>
+                    <th class="col-md-1 text-right">Actions</th>
                 </thead>
                 {{#controllers}}
                 <tr>
                     <td>{{.getClass().getName()}}</td>
+                    <td>
+                        <div class="btn-toolbar pull-right">
+                            <form method="POST">
+                                <input type="hidden" name="action" value="controller_scan">
+                                <input type="hidden" name="controller" value="{{.getClass().getName()}}">
+
+                                <button type="submit" class="btn btn-primary btn-xs" style="padding: 1px 20px;">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
                 {{/controllers}}
             </table>

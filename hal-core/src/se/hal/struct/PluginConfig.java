@@ -44,7 +44,7 @@ public class PluginConfig extends DBBean {
     public static PluginConfig getPluginConfig(DBConnection db, String name) throws SQLException {
         PreparedStatement stmt = db.getPreparedStatement( "SELECT plugin.* FROM plugin WHERE name == ?" );
         stmt.setString(1, name);
-        return DBConnection.exec(stmt, DBBeanSQLResultHandler.create(PluginConfig.class, db) );
+        return DBConnection.exec(stmt, DBBeanSQLResultHandler.create(PluginConfig.class, db));
     }
 
 

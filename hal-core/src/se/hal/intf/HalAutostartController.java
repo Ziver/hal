@@ -6,9 +6,4 @@ package se.hal.intf;
  */
 public interface HalAutostartController {
 
-    /**
-     * Indicates if the controller has all the configuration
-     * data and resources needed to be able to initialize correctly
-     */
-    boolean isAvailable();
 }

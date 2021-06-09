@@ -19,7 +19,7 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
     private static final Logger logger = LogUtil.getLogger();
 
     /** A map of all instantiated controllers **/
-    protected static Map<Class, HalAbstractController> controllerMap = new ConcurrentHashMap<>();
+    protected static Map<Class, HalAbstractController> controllerMap;
     /** All available sensor plugins **/
     protected List<Class<? extends C>> availableDeviceConfigs = new ArrayList<>();
 
@@ -39,16 +39,16 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
             logger.severe("Unable to retrieve Controller class from generics for class: " + this.getClass());
         }
 
-        for (Class<? extends C> deviceConfig : getAvailableDeviceConfigs()){
-            try {
-                @SuppressWarnings("unchecked")
-                Class<T> controllerClass = (Class<T>) deviceConfig.getDeclaredConstructor().newInstance().getDeviceControllerClass();
+        // Instantiate autostart controllers, but only the first time
 
-                if (controllerClass.isAssignableFrom(HalAutostartController.class)) {
-                    getControllerInstance(controllerClass); // Instantiate controller
+        synchronized (this) {
+            if (controllerMap == null) {
+                controllerMap = new ConcurrentHashMap<>();
+
+                for (Iterator<Class<? extends HalAutostartController>> it = pluginManager.getClassIterator(HalAutostartController.class); it.hasNext(); ) {
+                    Class controller = it.next();
+                    getControllerInstance(controller); // Instantiate controller
                 }
-            } catch (Exception e) {
-                logger.log(Level.WARNING, "Unable to instantiate Device Config for controller check: " + deviceConfig.getClass());
             }
         }
     }
@@ -118,7 +118,7 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
     /**
      * Will return a singleton controller instance of the given class.
      * If a instance does not exist yet the a new instance will be allocated
-     * depending on if the controller is ready thorough the {@link HalAutostartController#isAvailable()} method.
+     * depending on if the controller is ready thorough the {@link HalAbstractController#isAvailable()} method.
      *
      * @param clazz     is the class of the wanted object instance wanted
      * @return A singleton instance of the input clazz or null if the class is unavailable or not ready to be instantiated.
@@ -127,14 +127,14 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
         T controller;
 
         if (controllerMap.containsKey(clazz)) {
+            //noinspection unchecked
             controller = (T) controllerMap.get(clazz);
         } else {
             try {
                 // Instantiate controller
                 controller = clazz.getDeclaredConstructor().newInstance();
 
-                if (controller instanceof HalAutostartController &&
-                        ! ((HalAutostartController) controller).isAvailable()) {
+                if (!controller.isAvailable()) {
                     logger.warning("Controller is not ready: " + clazz.getName());
                     return null;
                 }
@@ -142,15 +142,17 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
                 logger.info("Instantiating new controller: " + clazz.getName());
                 controller.initialize();
 
-                if (this instanceof HalDeviceReportListener)
-                    controller.setListener((HalDeviceReportListener)this);
-
                 controllerMap.put(clazz, controller);
             } catch (Exception e){
                 logger.log(Level.SEVERE, "Unable to instantiate controller: " + clazz.getName(), e);
                 return null;
             }
         }
+
+        // Assign the manager as a listener
+
+        if (this instanceof HalDeviceReportListener)
+            controller.setListener((HalDeviceReportListener) this);
 
         return controller;
     }

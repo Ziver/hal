@@ -28,6 +28,14 @@ package se.hal.intf;
 public interface HalAbstractController {
 
     /**
+     * Indicates if the controller has all the configuration
+     * data and resources needed to be able to initialize correctly.
+     */
+    default boolean isAvailable() {
+        return true;
+    }
+
+    /**
      * The framework might create dummy objects so any type of
      * resource initialization should be handled in this method
      * and not in the constructor.
@@ -35,13 +43,13 @@ public interface HalAbstractController {
     void initialize() throws Exception;
 
     /**
-     * Will register an device type to be handled by this controller
+     * Will register an device type to be handled by this controller.
      */
     void register(HalDeviceConfig deviceConfig);
 
     /**
      * Deregisters an device from this controller, the controller
-     * will no longer handle that type of event
+     * will no longer handle that type of event.
      */
     void deregister(HalDeviceConfig deviceConfig);
 
@@ -51,7 +59,7 @@ public interface HalAbstractController {
     int size();
 
     /**
-     * Set a listener that will receive all reports from the the registered devices
+     * Set a listener that will receive all reports from the the registered devices.
      */
     void setListener(HalDeviceReportListener listener);
 

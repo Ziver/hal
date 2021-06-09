@@ -3,7 +3,6 @@ package se.hal.plugin.netscan;
 import se.hal.HalContext;
 import se.hal.intf.*;
 import se.hal.struct.devicedata.AvailabilityEventData;
-import se.hal.struct.devicedata.OnOffEventData;
 import zutil.InetUtil;
 import zutil.log.LogUtil;
 import zutil.net.InetScanner;
@@ -91,7 +90,7 @@ public class NetScanController implements HalEventController, HalAutostartContro
         if (listener != null)
             listener.reportReceived(
                     new NetworkDevice(ip.getHostAddress()),
-                    new OnOffEventData(true, System.currentTimeMillis()));
+                    new AvailabilityEventData(true, System.currentTimeMillis()));
     }
 
 

@@ -3,7 +3,7 @@ package se.hal.plugin.netscan;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalEventData;
-import se.hal.struct.devicedata.OnOffEventData;
+import se.hal.struct.devicedata.AvailabilityEventData;
 import zutil.ui.conf.Configurator;
 
 public class NetworkDevice implements HalEventConfig {
@@ -30,7 +30,7 @@ public class NetworkDevice implements HalEventConfig {
     }
     @Override
     public Class<? extends HalEventData> getDeviceDataClass() {
-        return OnOffEventData.class;
+        return AvailabilityEventData.class;
     }
 
 

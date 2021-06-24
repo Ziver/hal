@@ -45,36 +45,6 @@ public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
     private HashMap<IeeeAddress,ZigBeeNodeDao> devices = new HashMap<>();
 
 
-    public ZigBeeDataStore() {
-        /*ZigBeeNodeDao controller = new ZigBeeNodeDao();
-        controller.setIeeeAddress(new IeeeAddress("00124B001CCE1B5F"));
-        controller.setNetworkAddress(0);
-        controller.setBindingTable(new HashSet<>());
-        controller.setEndpoints(Collections.EMPTY_LIST);
-        controller.setNodeDescriptor(null);
-        controller.setPowerDescriptor(null);
-        writeNode(controller);
-
-        ZigBeeNodeDao ikeaOutlet = new ZigBeeNodeDao();
-        ikeaOutlet.setIeeeAddress(new IeeeAddress("00158D000488A47F"));
-        ikeaOutlet.setNetworkAddress(10697);
-        ikeaOutlet.setBindingTable(new HashSet<>());
-        ikeaOutlet.setEndpoints(Collections.EMPTY_LIST);
-        ikeaOutlet.setNodeDescriptor(null);
-        ikeaOutlet.setPowerDescriptor(null);
-        writeNode(ikeaOutlet);
-
-        ZigBeeNodeDao aquaraTemp = new ZigBeeNodeDao();
-        aquaraTemp.setIeeeAddress(new IeeeAddress("842E14FFFE63AE4B"));
-        aquaraTemp.setNetworkAddress(52953);
-        aquaraTemp.setBindingTable(new HashSet<>());
-        aquaraTemp.setEndpoints(Collections.EMPTY_LIST);
-        aquaraTemp.setNodeDescriptor(null);
-        aquaraTemp.setPowerDescriptor(null);
-        writeNode(aquaraTemp);*/
-    }
-
-
     @Override
     public Set<IeeeAddress> readNetworkNodes() {
         return devices.keySet();

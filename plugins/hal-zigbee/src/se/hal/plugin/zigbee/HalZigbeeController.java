@@ -15,15 +15,22 @@ import com.zsmartsystems.zigbee.transport.TransportConfig;
 import com.zsmartsystems.zigbee.transport.TransportConfigOption;
 import com.zsmartsystems.zigbee.transport.ZigBeePort;
 import com.zsmartsystems.zigbee.transport.ZigBeeTransportTransmit;
+import com.zsmartsystems.zigbee.zcl.ZclAttribute;
+import com.zsmartsystems.zigbee.zcl.ZclAttributeListener;
+import com.zsmartsystems.zigbee.zcl.ZclCluster;
 import com.zsmartsystems.zigbee.zcl.clusters.*;
 import com.zsmartsystems.zigbee.zdo.field.NodeDescriptor;
 import se.hal.HalContext;
 import se.hal.intf.*;
+import se.hal.plugin.zigbee.device.*;
 import zutil.Timer;
 import zutil.log.LogUtil;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -32,9 +39,11 @@ import java.util.logging.Logger;
 public class HalZigbeeController implements HalSensorController,
         HalEventController,
         HalAutostartController,
+        HalScannableController,
         ZigBeeAnnounceListener,
         ZigBeeNetworkNodeListener,
-        HalScannableController {
+        ZigBeeNetworkEndpointListener,
+        ZclAttributeListener {
 
     private static final Logger logger = LogUtil.getLogger();
 
@@ -51,14 +60,14 @@ public class HalZigbeeController implements HalSensorController,
 
     private Timer permitJoinTimer;
     private HalDeviceReportListener deviceListener;
-    private List<HalAbstractDevice> registeredDevices;
+    private List<ZigbeeHalDeviceConfig> registeredDevices = new ArrayList<>();
 
 
     public HalZigbeeController() {}
 
-    // --------------------------
+    // ------------------------------------------
     // Lifecycle Methods
-    // --------------------------
+    // ------------------------------------------
 
     @Override
     public boolean isAvailable() {
@@ -179,58 +188,128 @@ public class HalZigbeeController implements HalSensorController,
         serialPort.close();
     }
 
-    // --------------------------
-    // Zigbee Methods
-    // --------------------------
+    // ------------------------------------------
+    // Zigbee Node Methods
+    // ------------------------------------------
 
     @Override
     public void deviceStatusUpdate(ZigBeeNodeStatus deviceStatus, Integer networkAddress, IeeeAddress ieeeAddress) {
-        System.out.println(deviceStatus.name() + " status updated.");
+        logger.fine("New device connected to network: " + ieeeAddress + "(" + deviceStatus + ")");
     }
 
     @Override
     public void announceUnknownDevice(Integer networkAddress) {
-        System.out.println("Unknown device: " + networkAddress);
+        logger.fine("Unknown device connected to network: " + networkAddress);
     }
 
     @Override
     public void nodeAdded(final ZigBeeNode node) {
-        System.out.println("nodeAdded: " + node);
+        nodeUpdated(node);
+    }
 
+    @Override
+    public void nodeUpdated(final ZigBeeNode node) {
         // If this is the coordinator (NWK address 0), ignore this device
         if (node.getLogicalType() == NodeDescriptor.LogicalType.COORDINATOR || node.getNetworkAddress() == 0) {
-            System.out.println(node.getIeeeAddress() + ": is a coordinator, skipping.");
+            logger.fine("[Node: " + node.getIeeeAddress() + "]: Node is coordinator, ignoring registration.");
             return;
         }
 
         if (!node.isDiscovered()) {
-            System.out.println(node.getIeeeAddress() + ": Node discovery not complete");
+            logger.fine("[Node: " + node.getIeeeAddress() + "]: Node discovery not complete, ignoring registration.");
             return;
         }
 
         // Perform the device properties discovery.
 
-        System.out.println(node.getIeeeAddress() + ": " +
-                "Manufacturer=" + node.getNodeDescriptor().getManufacturerCode());
-    }
-
-    @Override
-    public void nodeUpdated(final ZigBeeNode node) {
-        System.out.println("nodeUpdated: " + node);
+        node.removeNetworkEndpointListener(this);
+        node.addNetworkEndpointListener(this);
+        logger.fine("[Node: " + node.getIeeeAddress() + "]: Node has been registered: " +
+                "Manufacturer=" + node.getNodeDescriptor().getManufacturerCode() +
+                "Type=" + node.getNodeDescriptor().getLogicalType());
     }
 
     @Override
     public void nodeRemoved(final ZigBeeNode node) {
-        System.out.println("nodeRemoved: " + node);
+        node.removeNetworkEndpointListener(this);
+        logger.fine("[Node: " + node.getIeeeAddress() + "]: Node registration has been removed.");
     }
 
-    // --------------------------
+    // ------------------------------------------
+    // Zigbee Endpoint Methods
+    // ------------------------------------------
+
+    @Override
+    public void deviceAdded(ZigBeeEndpoint endpoint) {
+        deviceUpdated(endpoint);
+    }
+
+    @Override
+    public void deviceUpdated(ZigBeeEndpoint endpoint) {
+        logger.fine("[Node: " + endpoint.getIeeeAddress() + ", Endpoint: " + endpoint.getEndpointId() + "]: Received a Zigbee endpoint update: " + endpoint);
+
+        for (int inputClusterId : endpoint.getInputClusterIds()) {
+            ZigbeeHalDeviceConfig config = createDeviceConfig(inputClusterId);
+
+            if (config != null)
+                registerCluster(endpoint, config);
+        }
+    }
+
+    private ZigbeeHalDeviceConfig createDeviceConfig(int clusterId) {
+        switch (clusterId) {
+            case ZclRelativeHumidityMeasurementCluster.CLUSTER_ID: return new ZigbeeHumidityConfig();
+            case ZclOnOffCluster.CLUSTER_ID:                       return new ZigbeeOnOffConfig();
+            case ZclPressureMeasurementCluster.CLUSTER_ID:         return new ZigbeePressureConfig();
+            case ZclTemperatureMeasurementCluster.CLUSTER_ID:      return new ZigbeeTemperatureConfig();
+        }
+
+        return null;
+    }
+
+    private void registerCluster(ZigBeeEndpoint endpoint, ZigbeeHalDeviceConfig config) {
+        ZclCluster cluster = endpoint.getInputCluster(config.getZigbeeClusterId());
+        if (cluster != null) {
+            config.setZigbeeNodeAddress(endpoint.getIeeeAddress());
+            cluster.addAttributeListener(this);
+
+            // // TODO: Notify listener that a device is online
+            if (deviceListener != null)
+                deviceListener.reportReceived(config, null);
+        }
+    }
+
+    @Override
+    public void deviceRemoved(ZigBeeEndpoint endpoint) {
+        logger.fine("[Node: " + endpoint.getIeeeAddress() + ", Endpoint: " + endpoint.getEndpointId() + "]: Endpoint removed: " + endpoint);
+    }
+
+    // ------------------------------------------
+    // Zigbee Cluster Attribute Methods
+    // ------------------------------------------
+
+    @Override
+    public void attributeUpdated(ZclAttribute attribute, Object value) {
+        if (deviceListener != null) {
+            ZigbeeHalDeviceConfig config = createDeviceConfig(attribute.getCluster().getId());
+
+            if (config != null)
+                deviceListener.reportReceived(config, config.getDeviceData(attribute));
+            else
+                logger.severe("Cluster ID (" + attribute.getCluster().getId() + ") is not supported but a listener was added.");
+        }
+    }
+
+    // ------------------------------------------
     // Hal Overrides
-    // --------------------------
+    // ------------------------------------------
 
     @Override
     public void register(HalDeviceConfig deviceConfig) {
-
+        if (deviceConfig instanceof ZigbeeHalDeviceConfig && !registeredDevices.contains(deviceConfig)) {
+            ZigbeeHalDeviceConfig zigbeeDevice = (ZigbeeHalDeviceConfig) deviceConfig;
+            registeredDevices.add(zigbeeDevice);
+        }
     }
 
     @Override
@@ -245,7 +324,9 @@ public class HalZigbeeController implements HalSensorController,
 
     @Override
     public void send(HalEventConfig eventConfig, HalEventData eventData) {
-
+        if (eventConfig instanceof ZigbeeHalEventDeviceConfig) {
+            ((ZigbeeHalEventDeviceConfig) eventConfig).sendZigbeeCommand(networkManager, eventData);
+        }
     }
 
     @Override
@@ -255,6 +336,8 @@ public class HalZigbeeController implements HalSensorController,
 
     @Override
     public void startScan() {
+        logger.info("Starting Zigbee pairing process.");
+
         networkManager.permitJoin(120);
         permitJoinTimer = new Timer(120_000);
         permitJoinTimer.start();

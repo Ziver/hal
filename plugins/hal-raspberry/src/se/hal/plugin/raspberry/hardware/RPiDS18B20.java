@@ -5,7 +5,7 @@ import com.pi4j.io.w1.W1Master;
 import com.pi4j.temperature.TemperatureScale;
 import se.hal.plugin.raspberry.RPiController;
 import se.hal.plugin.raspberry.RPiSensor;
-import se.hal.plugin.raspberry.RPiTemperatureSensor;
+import se.hal.plugin.raspberry.device.RPiTemperatureSensor;
 import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.log.LogUtil;
 
@@ -33,12 +33,11 @@ public class RPiDS18B20 implements RPiSensor, Runnable {
 
         //print out all sensors found
         for (TemperatureSensor device : w1Mater.getDevices(TemperatureSensor.class)) {
-            logger.info(String.format("1-Wire temperature sensor divice found: %-20s: %3.1f"+DEGREE_SIGN+"C\n", device.getName(), device.getTemperature(TemperatureScale.CELSIUS)));
+            logger.info(String.format("1-Wire temperature sensor device found: %-20s: %3.1f"+DEGREE_SIGN+"C\n", device.getName(), device.getTemperature(TemperatureScale.CELSIUS)));
         }
 
         //schedule job
         scheduler.scheduleAtFixedRate(this, 10, 60, TimeUnit.SECONDS);	//wait 10s and run every 60s
-
     }
 
     public void close() {

@@ -5,7 +5,7 @@ import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import com.pi4j.wiringpi.GpioUtil;
 import se.hal.plugin.raspberry.RPiController;
-import se.hal.plugin.raspberry.RPiPowerConsumptionSensor;
+import se.hal.plugin.raspberry.device.RPiPowerConsumptionSensor;
 import se.hal.plugin.raspberry.RPiSensor;
 import se.hal.plugin.raspberry.RPiUtility;
 import se.hal.struct.devicedata.PowerConsumptionSensorData;

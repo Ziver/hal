@@ -11,7 +11,9 @@ import zutil.osal.MultiCommandExecutor;
 
 import java.net.InetAddress;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -25,10 +27,9 @@ public class NetScanController implements HalEventController, HalAutostartContro
     private static final String PARAM_IPSCAN = "netscan.ipscan";
 
     private ScheduledExecutorService executor;
-    private HalDeviceReportListener listener;
+    private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
     /** A register and a cache of previous state **/
     private HashMap<NetworkDevice, AvailabilityEventData> devices = new HashMap<>();
-
 
 
     @Override
@@ -37,7 +38,7 @@ public class NetScanController implements HalEventController, HalAutostartContro
     }
 
     @Override
-    public void initialize() throws Exception {
+    public void initialize() {
         executor = Executors.newScheduledThreadPool(2);
         executor.scheduleAtFixedRate(NetScanController.this, 10_000, PING_INTERVAL, TimeUnit.MILLISECONDS);
         if (HalContext.getBooleanProperty(PARAM_IPSCAN, true)) {
@@ -64,7 +65,8 @@ public class NetScanController implements HalEventController, HalAutostartContro
             for (Map.Entry<NetworkDevice, AvailabilityEventData> entry : devices.entrySet()) {
                 NetworkDevice device = entry.getKey();
                 AvailabilityEventData prevData = entry.getValue();
-                if (listener != null) {
+
+                if (!deviceListeners.isEmpty()) {
                     // We ping two times to increase reliability
                     boolean ping = false;
                     ping |= InetScanner.isReachable(device.getHost(), executor);
@@ -76,7 +78,10 @@ public class NetScanController implements HalEventController, HalAutostartContro
                         AvailabilityEventData newData = new AvailabilityEventData(ping, System.currentTimeMillis());
                         entry.setValue(newData);
                         logger.fine("IP " + device.getHost() + " state has changed to " + newData);
-                        listener.reportReceived(device, newData);
+
+                        for (HalDeviceReportListener deviceListener : deviceListeners) {
+                            deviceListener.reportReceived(device, newData);
+                        }
                     }
                 }
             }
@@ -86,11 +91,13 @@ public class NetScanController implements HalEventController, HalAutostartContro
     }
     @Override
     public void foundInetAddress(InetAddress ip) {
-        logger.fine("Auto Detected ip: "+ip.getHostAddress());
-        if (listener != null)
-            listener.reportReceived(
+        logger.fine("Auto Detected ip: " + ip.getHostAddress());
+
+        for (HalDeviceReportListener deviceListener : deviceListeners) {
+            deviceListener.reportReceived(
                     new NetworkDevice(ip.getHostAddress()),
                     new AvailabilityEventData(true, System.currentTimeMillis()));
+        }
     }
 
 
@@ -117,8 +124,8 @@ public class NetScanController implements HalEventController, HalAutostartContro
 
 
     @Override
-    public void setListener(HalDeviceReportListener listener) {
-        this.listener = listener;
+    public void addListener(HalDeviceReportListener listener) {
+        deviceListeners.add(listener);
     }
 
 

@@ -19,7 +19,7 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
     private static final Logger logger = LogUtil.getLogger();
 
     /** A map of all instantiated controllers **/
-    protected static Map<Class, HalAbstractController> controllerMap;
+    protected static Map<Class, HalAbstractController> controllerMap = new ConcurrentHashMap<>();;
     /** All available sensor plugins **/
     protected List<Class<? extends C>> availableDeviceConfigs = new ArrayList<>();
 
@@ -43,8 +43,6 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
 
         synchronized (this) {
             if (controllerMap == null) {
-                controllerMap = new ConcurrentHashMap<>();
-
                 for (Iterator<Class<? extends HalAutostartController>> it = pluginManager.getClassIterator(HalAutostartController.class); it.hasNext(); ) {
                     Class controller = it.next();
                     getControllerInstance(controller); // Instantiate controller
@@ -152,7 +150,7 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
         // Assign the manager as a listener
 
         if (this instanceof HalDeviceReportListener)
-            controller.setListener((HalDeviceReportListener) this);
+            controller.addListener((HalDeviceReportListener) this);
 
         return controller;
     }

@@ -24,9 +24,10 @@
 
 package se.hal.plugin.dummy;
 
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
 
-public interface DummyDevice {
+public interface DummyDevice extends HalDeviceConfig {
 
-    public HalDeviceData generateData();
+    HalDeviceData generateData();
 }

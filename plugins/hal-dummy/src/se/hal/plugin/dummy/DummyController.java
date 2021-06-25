@@ -7,14 +7,14 @@ import se.hal.intf.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
 public class DummyController implements HalSensorController, HalEventController, Runnable, HalDaemon {
     private List<DummyDevice> registeredDevices = new ArrayList();
-    private HalDeviceReportListener sensorListener;
-    private HalDeviceReportListener eventListener;
+    private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
 
 
     public DummyController() {}
@@ -36,10 +36,8 @@ public class DummyController implements HalSensorController, HalEventController,
             for (DummyDevice device : registeredDevices) {
                 HalDeviceData data = device.generateData();
 
-                if (sensorListener != null && data instanceof HalSensorData) {
-                    sensorListener.reportReceived((HalSensorConfig) device, (HalSensorData) data);
-                } else if (eventListener != null && data instanceof HalEventData) {
-                    eventListener.reportReceived((HalEventConfig) device, (HalEventData) data);
+                for (HalDeviceReportListener deviceListener : deviceListeners) {
+                    deviceListener.reportReceived(device, data);
                 }
             }
         } catch (Exception e) {
@@ -60,7 +58,7 @@ public class DummyController implements HalSensorController, HalEventController,
 
     @Override
     public synchronized void send(HalEventConfig eventConfig, HalEventData eventData) {
-        // Nothing to do as this is a dummy
+        // Nothing to do as this is a dummy controller
     }
 
     @Override
@@ -69,11 +67,8 @@ public class DummyController implements HalSensorController, HalEventController,
     }
 
     @Override
-    public void setListener(HalDeviceReportListener listener) {
-        if (listener instanceof SensorControllerManager)
-            sensorListener = listener;
-        else if (listener instanceof EventControllerManager)
-            eventListener = listener;
+    public void addListener(HalDeviceReportListener listener) {
+        deviceListeners.add(listener);
     }
 
     @Override

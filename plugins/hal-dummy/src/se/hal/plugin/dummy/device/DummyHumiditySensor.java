@@ -1,19 +1,21 @@
-package se.hal.plugin.dummy;
+package se.hal.plugin.dummy.device;
 
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
-import se.hal.struct.devicedata.TemperatureSensorData;
+import se.hal.plugin.dummy.DummyController;
+import se.hal.plugin.dummy.DummyDevice;
+import se.hal.struct.devicedata.HumiditySensorData;
 
 
-public class DummyTemperatureSensor implements DummyDevice, HalSensorConfig {
+public class DummyHumiditySensor implements DummyDevice, HalSensorConfig {
 
 
     @Override
     public HalDeviceData generateData() {
-        return new TemperatureSensorData(
-                (int) (Math.random() * 30),
+        return new HumiditySensorData(
+                (int) (Math.random() * 100),
                 System.currentTimeMillis()
         );
     }
@@ -21,7 +23,7 @@ public class DummyTemperatureSensor implements DummyDevice, HalSensorConfig {
 
     @Override
     public long getDataInterval() {
-        return 60 * 1000; // 1 min
+        return 60*1000; // 1 min
     }
 
     @Override
@@ -36,7 +38,7 @@ public class DummyTemperatureSensor implements DummyDevice, HalSensorConfig {
 
     @Override
     public Class<? extends HalSensorData> getDeviceDataClass() {
-        return TemperatureSensorData.class;
+        return HumiditySensorData.class;
     }
 
     @Override

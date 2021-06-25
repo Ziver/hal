@@ -36,6 +36,8 @@ import zutil.net.mqtt.MqttSubscriptionListener;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,7 +48,7 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
     private MqttBroker mqttBroker;
 
     private HashMap<String, HalMqttDeviceConfig> topics = new HashMap<>();
-    private HalDeviceReportListener eventListener;
+    private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
 
     // --------------------------
     // Lifecycle methods
@@ -105,8 +107,10 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
         if (eventConfig != null && data.length > 0) {
             HalMqttDeviceData eventData = new HalMqttDeviceData(data);
 
-            if (eventListener != null) {
-                eventListener.reportReceived(eventConfig, eventData);
+            if (deviceListeners != null) {
+                for (HalDeviceReportListener deviceListener : deviceListeners) {
+                    deviceListener.reportReceived(eventConfig, eventData);
+                }
             }
         }
     }
@@ -120,8 +124,10 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
         if (deviceConfig instanceof HalMqttDeviceConfig) {
             HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) deviceConfig;
             topics.put(mqttEvent.getTopic(), mqttEvent);
-        } else throw new IllegalArgumentException(
-                "Device config is not an instance of " + HalMqttDeviceConfig.class + ": " + deviceConfig.getClass());
+        } else {
+            throw new IllegalArgumentException(
+                    "Device config is not an instance of " + HalMqttDeviceConfig.class + ": " + deviceConfig.getClass());
+        }
     }
 
     @Override
@@ -147,7 +153,7 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
     }
 
     @Override
-    public void setListener(HalDeviceReportListener listener) {
-        eventListener = listener;
+    public void addListener(HalDeviceReportListener listener) {
+        deviceListeners.add(listener);
     }
 }

@@ -144,7 +144,7 @@ public class EventControllerManagerTest {
         }
 
         @Override
-        public void setListener(HalDeviceReportListener listener) { }
+        public void addListener(HalDeviceReportListener listener) { }
 
         @Override
         public void close() { }

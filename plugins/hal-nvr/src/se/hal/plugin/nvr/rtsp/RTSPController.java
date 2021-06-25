@@ -31,6 +31,7 @@ import zutil.log.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 
@@ -40,7 +41,7 @@ public class RTSPController implements HalCameraController {
     private static final String CONFIG_RECORDING_PATH = "nvr.recording_path";
 
     private List<RTSPCameraConfig> cameras = new ArrayList<>();
-    private HalDeviceReportListener listener;
+    private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
 
 
     public RTSPController() {}
@@ -81,8 +82,8 @@ public class RTSPController implements HalCameraController {
     }
 
     @Override
-    public void setListener(HalDeviceReportListener listener) {
-        this.listener = listener;
+    public void addListener(HalDeviceReportListener listener) {
+        deviceListeners.add(listener);
     }
 
 }

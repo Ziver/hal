@@ -1,8 +1,9 @@
-package se.hal.plugin.raspberry;
+package se.hal.plugin.raspberry.device;
 
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
+import se.hal.plugin.raspberry.RPiController;
 import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import zutil.ui.conf.Configurator;
 

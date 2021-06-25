@@ -6,6 +6,7 @@ import se.hal.intf.*;
 import zutil.log.LogUtil;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
@@ -27,8 +28,7 @@ public class HalZWaveController implements HalSensorController, HalEventControll
     private Options options;
     private Manager manager;
 
-    private HalDeviceReportListener sensorListener;
-    private HalDeviceReportListener deviceListener;
+    private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
     private List<HalAbstractDevice> registeredDevices;
 
 
@@ -320,8 +320,8 @@ public class HalZWaveController implements HalSensorController, HalEventControll
     }
 
     @Override
-    public void setListener(HalDeviceReportListener listener) {
-        deviceListener = listener;
+    public void addListener(HalDeviceReportListener listener) {
+        deviceListeners.add(listener);
     }
 
 }

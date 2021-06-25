@@ -30,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,7 +59,7 @@ public class HalZigbeeController implements HalSensorController,
     protected ZigBeeNetworkManager networkManager;
 
     private Timer permitJoinTimer;
-    private HalDeviceReportListener deviceListener;
+    private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
     private List<ZigbeeHalDeviceConfig> registeredDevices = new ArrayList<>();
 
 
@@ -277,7 +278,7 @@ public class HalZigbeeController implements HalSensorController,
             cluster.addAttributeListener(new ZclAttributeListener() {
                 @Override
                 public void attributeUpdated(ZclAttribute attribute, Object value) {
-                    if (deviceListener != null) {
+                    for (HalDeviceReportListener deviceListener : deviceListeners) {
                         logger.finer("[Node: " + endpoint.getIeeeAddress() + ", Endpoint: " + endpoint.getEndpointId() + ", Cluster: " +  attribute.getCluster().getId() + "] Attribute updated: attribute_name=" + attribute.getName() + ", value=" + attribute.getLastValue());
                         deviceListener.reportReceived(config, config.getDeviceData(attribute));
                     }
@@ -285,8 +286,9 @@ public class HalZigbeeController implements HalSensorController,
             });
 
             // // TODO: Notify listener that a device is online
-            if (deviceListener != null)
+            for (HalDeviceReportListener deviceListener : deviceListeners) {
                 deviceListener.reportReceived(config, null);
+            }
         }
     }
 
@@ -325,8 +327,8 @@ public class HalZigbeeController implements HalSensorController,
     }
 
     @Override
-    public void setListener(HalDeviceReportListener listener) {
-        deviceListener = listener;
+    public void addListener(HalDeviceReportListener listener) {
+        deviceListeners.add(listener);
     }
 
     @Override

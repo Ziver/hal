@@ -2,7 +2,7 @@
     "version": 1.0,
     "name": "Hal-RaspberryPi Sensors",
     "interfaces": [
-        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.raspberry.RPiPowerConsumptionSensor"},
-        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.raspberry.RPiTemperatureSensor"}
+        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.raspberry.device.RPiPowerConsumptionSensor"},
+        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.raspberry.device.RPiTemperatureSensor"}
     ]
 }

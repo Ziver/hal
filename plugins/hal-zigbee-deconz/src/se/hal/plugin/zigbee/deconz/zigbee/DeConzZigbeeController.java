@@ -77,7 +77,7 @@ public class DeConzZigbeeController implements HalSensorController, HalEventCont
     }
 
     @Override
-    public void setListener(HalDeviceReportListener listener) {
+    public void addListener(HalDeviceReportListener listener) {
 
     }
 

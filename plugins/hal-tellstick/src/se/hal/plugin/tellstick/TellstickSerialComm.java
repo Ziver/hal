@@ -36,6 +36,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,7 +62,7 @@ public class TellstickSerialComm implements Runnable,
 
     protected TellstickParser parser = new TellstickParser();
 
-    private HalDeviceReportListener deviceListener;
+    private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
     private List<HalDeviceConfig> registeredDevices = Collections.synchronizedList(new ArrayList<HalDeviceConfig>());
 
 
@@ -185,8 +186,9 @@ public class TellstickSerialComm implements Runnable,
         receivedTransmissionSet.add(data);
     }
     private void reportEvent(HalDeviceConfig tellstickDevice, HalDeviceData deviceData) {
-        if (deviceListener != null)
+        for (HalDeviceReportListener deviceListener : deviceListeners) {
             deviceListener.reportReceived(tellstickDevice, deviceData);
+        }
     }
 
     @Override
@@ -249,8 +251,8 @@ public class TellstickSerialComm implements Runnable,
     }
 
     @Override
-    public void setListener(HalDeviceReportListener listener) {
-        deviceListener = listener;
+    public void addListener(HalDeviceReportListener listener) {
+        deviceListeners.add(listener);
     }
 
 

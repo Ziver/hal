@@ -57,6 +57,8 @@ import zutil.log.LogUtil;
 import zutil.osal.linux.app.NutUPSClient;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -74,7 +76,7 @@ public class NutUpsController implements HalSensorController, HalAutostartContro
     private HashMap<String, NutUpsDevice> registeredDevices = new HashMap<>();
     private NutUPSClient client;
     private ScheduledExecutorService executor;
-    private HalDeviceReportListener listener;
+    private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
 
 
 
@@ -98,20 +100,23 @@ public class NutUpsController implements HalSensorController, HalAutostartContro
 
 
     @Override
-    public void setListener(HalDeviceReportListener listener) {
-        this.listener = listener;
+    public void addListener(HalDeviceReportListener listener) {
+        deviceListeners.add(listener);
     }
 
 
     @Override
     public void run() {
         try {
-            if (client != null && listener != null) {
-                for (NutUPSClient.UPSDevice ups : client.getUPSList()) {
-                    NutUpsDevice device = registeredDevices.get(ups.getId());
-                    if (device == null)
-                        device = new NutUpsDevice(ups);
-                    listener.reportReceived(device, device.read(ups));
+            if (client != null) {
+                for (HalDeviceReportListener deviceListener : deviceListeners) {
+                    for (NutUPSClient.UPSDevice ups : client.getUPSList()) {
+                        NutUpsDevice device = registeredDevices.get(ups.getId());
+                        if (device == null)
+                            device = new NutUpsDevice(ups);
+
+                        deviceListener.reportReceived(device, device.read(ups));
+                    }
                 }
             }
         } catch (Exception e){

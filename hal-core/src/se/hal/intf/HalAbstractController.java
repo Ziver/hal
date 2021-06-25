@@ -59,9 +59,9 @@ public interface HalAbstractController {
     int size();
 
     /**
-     * Set a listener that will receive all reports from the the registered devices.
+     * Add a listener to the controller that will receive all device reports from registered devices.
      */
-    void setListener(HalDeviceReportListener listener);
+    void addListener(HalDeviceReportListener listener);
 
     /**
      * Close any resources associated with this controller.

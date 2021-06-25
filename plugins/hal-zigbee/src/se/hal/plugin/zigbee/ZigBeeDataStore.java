@@ -27,14 +27,9 @@ package se.hal.plugin.zigbee;
 import com.zsmartsystems.zigbee.IeeeAddress;
 import com.zsmartsystems.zigbee.database.ZigBeeNetworkDataStore;
 import com.zsmartsystems.zigbee.database.ZigBeeNodeDao;
-import com.zsmartsystems.zigbee.zdo.field.BindingTable;
-import zutil.StringUtil;
-import zutil.converter.Converter;
 import zutil.log.LogUtil;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -52,28 +47,26 @@ public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
 
     @Override
     public ZigBeeNodeDao readNode(IeeeAddress address) {
-        System.out.println("ZigBeeDataStore.readNetworkNodes(" + address + ")");
-
         return devices.get(address);
     }
 
     @Override
     public void writeNode(ZigBeeNodeDao node) {
-        System.out.println("ZigBeeDataStore.writeNode(" +
+        logger.fine("[Node: " + node.getIeeeAddress() + "] Storing Zigbee Node in DB: " +
                 "IeeAddr: " + node.getIeeeAddress() + ", " +
                 "NetAddr: " + node.getNetworkAddress() + ", " +
                 "binding: " + node.getBindingTable() + ", " +
                 "description: " + node.getNodeDescriptor() + ", " +
                 "endpoints: " + node.getEndpoints() + ", " +
-                "Power: " + node.getPowerDescriptor() + ", " +
-                ")");
+                "Power: " + node.getPowerDescriptor()
+        );
 
         devices.put(node.getIeeeAddress(), node);
     }
 
     @Override
     public void removeNode(IeeeAddress address) {
-        System.out.println("ZigBeeDataStore.removeNode(" + address + ")");
+        logger.fine("[Node: " + address + "] Removing Node from DB.");
 
         devices.remove(address);
     }

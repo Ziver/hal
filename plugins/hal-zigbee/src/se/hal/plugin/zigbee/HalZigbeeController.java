@@ -42,8 +42,7 @@ public class HalZigbeeController implements HalSensorController,
         HalScannableController,
         ZigBeeAnnounceListener,
         ZigBeeNetworkNodeListener,
-        ZigBeeNetworkEndpointListener,
-        ZclAttributeListener {
+        ZigBeeNetworkEndpointListener {
 
     private static final Logger logger = LogUtil.getLogger();
 
@@ -226,7 +225,7 @@ public class HalZigbeeController implements HalSensorController,
         node.addNetworkEndpointListener(this);
         logger.fine("[Node: " + node.getIeeeAddress() + "]: Node has been registered: " +
                 "Manufacturer=" + node.getNodeDescriptor().getManufacturerCode() +
-                "Type=" + node.getNodeDescriptor().getLogicalType());
+                ", Type=" + node.getNodeDescriptor().getLogicalType());
     }
 
     @Override
@@ -251,8 +250,11 @@ public class HalZigbeeController implements HalSensorController,
         for (int inputClusterId : endpoint.getInputClusterIds()) {
             ZigbeeHalDeviceConfig config = createDeviceConfig(inputClusterId);
 
-            if (config != null)
+            if (config != null) {
                 registerCluster(endpoint, config);
+            } else {
+                logger.finest("[Node: " + endpoint.getIeeeAddress() + "] Cluster ID '" + inputClusterId + "' is not supported.");
+            }
         }
     }
 
@@ -267,11 +269,20 @@ public class HalZigbeeController implements HalSensorController,
         return null;
     }
 
-    private void registerCluster(ZigBeeEndpoint endpoint, ZigbeeHalDeviceConfig config) {
-        ZclCluster cluster = endpoint.getInputCluster(config.getZigbeeClusterId());
+    private void registerCluster(final ZigBeeEndpoint endpoint, ZigbeeHalDeviceConfig config) {
+        final ZclCluster cluster = endpoint.getInputCluster(config.getZigbeeClusterId());
         if (cluster != null) {
             config.setZigbeeNodeAddress(endpoint.getIeeeAddress());
-            cluster.addAttributeListener(this);
+
+            cluster.addAttributeListener(new ZclAttributeListener() {
+                @Override
+                public void attributeUpdated(ZclAttribute attribute, Object value) {
+                    if (deviceListener != null) {
+                        logger.finer("[Node: " + endpoint.getIeeeAddress() + ", Endpoint: " + endpoint.getEndpointId() + ", Cluster: " +  attribute.getCluster().getId() + "] Attribute updated: attribute_name=" + attribute.getName() + ", value=" + attribute.getLastValue());
+                        deviceListener.reportReceived(config, config.getDeviceData(attribute));
+                    }
+                }
+            });
 
             // // TODO: Notify listener that a device is online
             if (deviceListener != null)
@@ -282,22 +293,6 @@ public class HalZigbeeController implements HalSensorController,
     @Override
     public void deviceRemoved(ZigBeeEndpoint endpoint) {
         logger.fine("[Node: " + endpoint.getIeeeAddress() + ", Endpoint: " + endpoint.getEndpointId() + "]: Endpoint removed: " + endpoint);
-    }
-
-    // ------------------------------------------
-    // Zigbee Cluster Attribute Methods
-    // ------------------------------------------
-
-    @Override
-    public void attributeUpdated(ZclAttribute attribute, Object value) {
-        if (deviceListener != null) {
-            ZigbeeHalDeviceConfig config = createDeviceConfig(attribute.getCluster().getId());
-
-            if (config != null)
-                deviceListener.reportReceived(config, config.getDeviceData(attribute));
-            else
-                logger.severe("Cluster ID (" + attribute.getCluster().getId() + ") is not supported but a listener was added.");
-        }
     }
 
     // ------------------------------------------

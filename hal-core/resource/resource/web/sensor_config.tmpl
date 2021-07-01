@@ -63,9 +63,17 @@
                 <th>Configuration</th>
                 <th>
                     <form method="POST">
-                        <button type="submit" class="btn btn-danger btn-xs pull-right" name="action" value="remove_all_detected_sensors">
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </button>
+                        <div class="btn-toolbar pull-right">
+                            <button type="submit" class="btn btn-primary btn-xs" style="padding: 1px 20px;" name="action" value="start_scan" {{#scanning}}disabled{{/scanning}}>
+                                {{#scanning}}<span class="glyphicon glyphicon-refresh anim-spin"></span>{{/scanning}}
+                                {{^scanning}}<span class="glyphicon glyphicon-search"></span>{{/scanning}}
+                                Scan
+                            </button>
+
+                            <button type="submit" class="btn btn-danger btn-xs" name="action" value="remove_all_detected_sensors">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </div>
                     </form>
                 </th>
                 </thead>

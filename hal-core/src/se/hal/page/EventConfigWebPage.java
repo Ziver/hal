@@ -2,6 +2,9 @@ package se.hal.page;
 
 import se.hal.EventControllerManager;
 import se.hal.HalContext;
+import se.hal.intf.HalAbstractController;
+import se.hal.intf.HalAbstractControllerManager;
+import se.hal.intf.HalScannableController;
 import se.hal.intf.HalWebPage;
 import se.hal.util.ClassConfigurationFacade;
 import se.hal.struct.Event;
@@ -103,12 +106,33 @@ public class EventConfigWebPage extends HalWebPage {
                 case "remove_all_detected_events":
                     EventControllerManager.getInstance().clearDetectedDevices();
                     break;
+
+                case "start_scan":
+                    for (HalAbstractController controller : HalAbstractControllerManager.getControllers()) {
+                        if (controller instanceof HalScannableController) {
+                            ((HalScannableController) controller).startScan();
+
+                            HalAlertManager.getInstance().addAlert(new UserMessage(
+                                    MessageLevel.SUCCESS, "Initiated scanning on controller: " + controller.getClass().getName(), MessageTTL.ONE_VIEW));
+                        }
+                    }
+                    break;
+            }
+        }
+
+        // Is any scan active?
+        boolean scanning = false;
+
+        for (HalAbstractController controller : HalAbstractControllerManager.getControllers()) {
+            if (controller instanceof HalScannableController) {
+                scanning |= ((HalScannableController) controller).isScanning();
             }
         }
 
         // Output
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("user", localUser);
+        tmpl.set("scanning", scanning);
         tmpl.set("localEvents", Event.getLocalEvents(db));
         tmpl.set("detectedEvents", EventControllerManager.getInstance().getDetectedDevices());
         tmpl.set("availableEventConfigClasses", EventControllerManager.getInstance().getAvailableDeviceConfigs());

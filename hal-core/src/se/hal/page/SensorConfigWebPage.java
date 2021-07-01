@@ -2,6 +2,9 @@ package se.hal.page;
 
 import se.hal.HalContext;
 import se.hal.SensorControllerManager;
+import se.hal.intf.HalAbstractController;
+import se.hal.intf.HalAbstractControllerManager;
+import se.hal.intf.HalScannableController;
 import se.hal.intf.HalWebPage;
 import se.hal.util.ClassConfigurationFacade;
 import se.hal.struct.Sensor;
@@ -52,7 +55,10 @@ public class SensorConfigWebPage extends HalWebPage {
             User user;
 
             switch(request.get("action")) {
+                // ----------------------------------------
                 // Local Sensors
+                // ----------------------------------------
+
                 case "create_local_sensor":
                     logger.info("Creating sensor: " + request.get("name"));
                     sensor = new Sensor();
@@ -107,7 +113,21 @@ public class SensorConfigWebPage extends HalWebPage {
                     SensorControllerManager.getInstance().clearDetectedDevices();
                     break;
 
+                case "start_scan":
+                    for (HalAbstractController controller : HalAbstractControllerManager.getControllers()) {
+                        if (controller instanceof HalScannableController) {
+                            ((HalScannableController) controller).startScan();
+
+                            HalAlertManager.getInstance().addAlert(new UserMessage(
+                                    MessageLevel.SUCCESS, "Initiated scanning on controller: " + controller.getClass().getName(), MessageTTL.ONE_VIEW));
+                        }
+                    }
+                    break;
+
+                // ----------------------------------------
                 // External Users
+                // ----------------------------------------
+
                 case "create_external_user":
                     logger.info("Creating external user: " + request.get("hostname"));
                     user = new User();
@@ -151,7 +171,10 @@ public class SensorConfigWebPage extends HalWebPage {
                     }
                     break;
 
+                // ----------------------------------------
                 // External Sensors
+                // ----------------------------------------
+
                 case "modify_external_sensor":
                     sensor = Sensor.getSensor(db, id);
                     if (sensor != null) {
@@ -170,9 +193,19 @@ public class SensorConfigWebPage extends HalWebPage {
             }
         }
 
+        // Is any scan active?
+        boolean scanning = false;
+
+        for (HalAbstractController controller : HalAbstractControllerManager.getControllers()) {
+            if (controller instanceof HalScannableController) {
+                scanning |= ((HalScannableController) controller).isScanning();
+            }
+        }
+
         // Output
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("user", localUser);
+        tmpl.set("scanning", scanning);
         tmpl.set("localSensors", Sensor.getLocalSensors(db));
         tmpl.set("detectedSensors", SensorControllerManager.getInstance().getDetectedDevices());
         tmpl.set("extUsers", User.getExternalUsers(db));

@@ -52,8 +52,7 @@ public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
 
     @Override
     public void writeNode(ZigBeeNodeDao node) {
-        logger.fine("[Node: " + node.getIeeeAddress() + "] Storing Zigbee Node in DB: " +
-                "IeeAddr: " + node.getIeeeAddress() + ", " +
+        logger.fine("[Node: " + node.getIeeeAddress() + "]: Storing Zigbee Node in DB: " +
                 "NetAddr: " + node.getNetworkAddress() + ", " +
                 "binding: " + node.getBindingTable() + ", " +
                 "description: " + node.getNodeDescriptor() + ", " +
@@ -66,7 +65,7 @@ public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
 
     @Override
     public void removeNode(IeeeAddress address) {
-        logger.fine("[Node: " + address + "] Removing Node from DB.");
+        logger.fine("[Node: " + address + "]: Removing Node from DB.");
 
         devices.remove(address);
     }

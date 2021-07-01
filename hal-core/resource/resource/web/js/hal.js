@@ -3,7 +3,7 @@
 // --------------------------------------------------------
 
 $(function(){
-    $(".toggle-switch").bootstrapSwitch();
+    $(".toggle-switch").bootstrapSwitch({inverse: true});
 
     $(".timestamp").relTimestamp();
 });

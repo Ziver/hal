@@ -19,7 +19,9 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
     private static final Logger logger = LogUtil.getLogger();
 
     /** A map of all instantiated controllers **/
-    protected static Map<Class, HalAbstractController> controllerMap = new ConcurrentHashMap<>();;
+    protected static Map<Class, HalAbstractController> controllerMap = new ConcurrentHashMap<>();
+    /** Internal variable indicating if autostart controllers have been processed **/
+    private Boolean autostartProcessed = false;
     /** All available sensor plugins **/
     protected List<Class<? extends C>> availableDeviceConfigs = new ArrayList<>();
 
@@ -41,12 +43,14 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
 
         // Instantiate autostart controllers, but only the first time
 
-        synchronized (this) {
-            if (controllerMap == null) {
+        synchronized (autostartProcessed) {
+            if (!autostartProcessed) {
                 for (Iterator<Class<? extends HalAutostartController>> it = pluginManager.getClassIterator(HalAutostartController.class); it.hasNext(); ) {
                     Class controller = it.next();
+                    logger.fine("Autostarting controller: " + controller.getName());
                     getControllerInstance(controller); // Instantiate controller
                 }
+                autostartProcessed = true;
             }
         }
     }

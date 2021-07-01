@@ -46,7 +46,7 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
     @DBColumn("map_y")
     private double y;
 
-    protected transient List<HalDeviceReportListener<C,D>> listeners = new LinkedList<>();
+    protected transient List<HalDeviceReportListener> deviceListeners = new LinkedList<>();
 
 
     // ----------------------------------------------------
@@ -200,13 +200,13 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
         this.y = y;
     }
 
-    public void addReportListener(HalDeviceReportListener<C,D> listener) {
-        listeners.add(listener);
+    public void addReportListener(HalDeviceReportListener listener) {
+        deviceListeners.add(listener);
     }
-    public void removeReportListener(HalDeviceReportListener<C,D> listener) {
-        listeners.remove(listener);
+    public void removeReportListener(HalDeviceReportListener listener) {
+        deviceListeners.remove(listener);
     }
-    public List<HalDeviceReportListener<C,D>> getReportListeners() {
-        return listeners;
+    public List<HalDeviceReportListener> getReportListeners() {
+        return deviceListeners;
     }
 }

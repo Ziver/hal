@@ -35,7 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Controller that will connect to a Zigbee USB coordinator.
  */
 public class HalZigbeeController implements HalSensorController,
         HalEventController,
@@ -254,7 +254,7 @@ public class HalZigbeeController implements HalSensorController,
             if (config != null) {
                 registerCluster(endpoint, config);
             } else {
-                logger.finest("[Node: " + endpoint.getIeeeAddress() + "] Cluster ID '" + inputClusterId + "' is not supported.");
+                logger.finest("[Node: " + endpoint.getIeeeAddress() + ", Endpoint: " + endpoint.getEndpointId() + "] Cluster ID '" + inputClusterId + "' is not supported.");
             }
         }
     }

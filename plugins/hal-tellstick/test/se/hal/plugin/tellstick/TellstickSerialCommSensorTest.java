@@ -2,9 +2,7 @@ package se.hal.plugin.tellstick;
 
 import org.junit.Before;
 import org.junit.Test;
-import se.hal.intf.HalDeviceReportListener;
-import se.hal.intf.HalSensorConfig;
-import se.hal.intf.HalSensorData;
+import se.hal.intf.*;
 import se.hal.plugin.tellstick.test.TestProtocol;
 import se.hal.plugin.tellstick.test.TestSensorDevice;
 
@@ -32,10 +30,10 @@ public class TellstickSerialCommSensorTest {
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
         final ArrayList<HalSensorConfig> list = new ArrayList<>();
-        tellstick.setListener(new HalDeviceReportListener<HalSensorConfig,HalSensorData>() {
+        tellstick.addListener(new HalDeviceReportListener() {
             @Override
-            public void reportReceived(HalSensorConfig e, HalSensorData d) {
-                list.add(e);
+            public void reportReceived(HalDeviceConfig e, HalDeviceData d) {
+                list.add((HalSensorConfig) e);
             }
         });
         // Execution
@@ -50,10 +48,10 @@ public class TellstickSerialCommSensorTest {
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
         final ArrayList<HalSensorConfig> list = new ArrayList<>();
-        tellstick.setListener(new HalDeviceReportListener<HalSensorConfig,HalSensorData>() {
+        tellstick.addListener(new HalDeviceReportListener() {
             @Override
-            public void reportReceived(HalSensorConfig e, HalSensorData d) {
-                list.add(e);
+            public void reportReceived(HalDeviceConfig e, HalDeviceData d) {
+                list.add((HalSensorConfig) e);
             }
         });
         // Execution

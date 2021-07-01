@@ -12,7 +12,7 @@ import zutil.ui.conf.Configurator.PreConfigurationActionListener;
 public abstract class DeviceTrigger implements HalTrigger,
         PreConfigurationActionListener,
         PostConfigurationActionListener,
-        HalDeviceReportListener<HalDeviceConfig,HalDeviceData> {
+        HalDeviceReportListener {
 
     @Configurator.Configurable("Trigger only on change")
     protected boolean triggerOnChange = true;

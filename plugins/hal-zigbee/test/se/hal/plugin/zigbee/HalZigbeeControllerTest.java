@@ -29,6 +29,9 @@ import com.zsmartsystems.zigbee.ZigBeeNetworkManager;
 import com.zsmartsystems.zigbee.ZigBeeNode;
 import com.zsmartsystems.zigbee.zcl.ZclAttribute;
 import com.zsmartsystems.zigbee.zcl.ZclCluster;
+import se.hal.intf.HalDeviceConfig;
+import se.hal.intf.HalDeviceData;
+import se.hal.intf.HalDeviceReportListener;
 import zutil.log.CompactLogFormatter;
 import zutil.log.LogUtil;
 
@@ -46,6 +49,12 @@ public class HalZigbeeControllerTest {
 
         HalZigbeeController controller = new HalZigbeeController();
         controller.initialize("COM5", HalZigbeeController.ZIGBEE_DONGLE_CC2531);
+        controller.addListener(new HalDeviceReportListener() {
+            @Override
+            public void reportReceived(HalDeviceConfig deviceConfig, HalDeviceData deviceData) {
+                System.out.println("Device reported: " + deviceConfig + " , " + deviceData);
+            }
+        });
 
         Scanner in = new Scanner(System.in);
         handleConsoleInput("h", in, controller.networkManager);

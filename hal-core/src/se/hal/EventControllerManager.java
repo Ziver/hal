@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * This class manages all SensorController and EventController objects
  */
 public class EventControllerManager extends HalAbstractControllerManager<HalEventController,Event,HalEventConfig>
-        implements HalDeviceReportListener<HalEventConfig,HalEventData> {
+        implements HalDeviceReportListener {
 
     private static final Logger logger = LogUtil.getLogger();
     private static EventControllerManager instance;
@@ -131,7 +131,10 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
      * Called by Controllers to report received Event data
      */
     @Override
-    public void reportReceived(HalEventConfig eventConfig, HalEventData eventData) {
+    public void reportReceived(HalDeviceConfig eventConfig, HalDeviceData eventData) {
+        if (!(eventConfig instanceof HalEventConfig && eventData instanceof HalEventData))
+            return;
+
         try {
             DBConnection db = HalContext.getDB();
             Event event = HalDeviceUtil.findDevice(eventConfig, registeredEvents);
@@ -153,11 +156,11 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
                     event = new Event();
                     detectedEvents.add(event);
                 }
-                event.setDeviceConfig(eventConfig);
+                event.setDeviceConfig((HalEventConfig) eventConfig);
             }
-            event.setDeviceData(eventData);
+            event.setDeviceData((HalEventData) eventData);
             // call listeners
-            for (HalDeviceReportListener<HalEventConfig,HalEventData> listener : event.getReportListeners())
+            for (HalDeviceReportListener listener : event.getReportListeners())
                 listener.reportReceived(event.getDeviceConfig(), eventData);
 
         }catch (SQLException e){

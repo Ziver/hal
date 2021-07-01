@@ -2,9 +2,7 @@ package se.hal.plugin.tellstick;
 
 import org.junit.Before;
 import org.junit.Test;
-import se.hal.intf.HalDeviceReportListener;
-import se.hal.intf.HalEventConfig;
-import se.hal.intf.HalEventData;
+import se.hal.intf.*;
 import se.hal.plugin.tellstick.test.TestEventDevice;
 import se.hal.plugin.tellstick.test.TestProtocol;
 
@@ -47,10 +45,10 @@ public class TellstickSerialCommEventTest {
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
         final ArrayList<HalEventConfig> list = new ArrayList<>();
-        tellstick.setListener(new HalDeviceReportListener<HalEventConfig,HalEventData>() {
+        tellstick.addListener(new HalDeviceReportListener() {
             @Override
-            public void reportReceived(HalEventConfig e, HalEventData d) {
-                list.add(e);
+            public void reportReceived(HalDeviceConfig e, HalDeviceData d) {
+                list.add((HalEventConfig) e);
             }
         });
         // Execution
@@ -65,10 +63,10 @@ public class TellstickSerialCommEventTest {
         // Setup
         TellstickSerialComm tellstick = new TellstickSerialComm();
         final ArrayList<HalEventConfig> list = new ArrayList<>();
-        tellstick.setListener(new HalDeviceReportListener<HalEventConfig,HalEventData>() {
+        tellstick.addListener(new HalDeviceReportListener() {
             @Override
-            public void reportReceived(HalEventConfig e, HalEventData d) {
-                list.add(e);
+            public void reportReceived(HalDeviceConfig e, HalDeviceData d) {
+                list.add((HalEventConfig) e);
             }
         });
         // Execution

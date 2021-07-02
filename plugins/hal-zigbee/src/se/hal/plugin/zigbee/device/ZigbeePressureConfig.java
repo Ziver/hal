@@ -4,6 +4,8 @@ import com.zsmartsystems.zigbee.zcl.ZclAttribute;
 import com.zsmartsystems.zigbee.zcl.clusters.ZclTemperatureMeasurementCluster;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalSensorConfig;
+import se.hal.struct.devicedata.HumiditySensorData;
+import se.hal.struct.devicedata.PressureSensorData;
 import se.hal.struct.devicedata.TemperatureSensorData;
 
 /**
@@ -17,7 +19,7 @@ public class ZigbeePressureConfig extends ZigbeeHalDeviceConfig implements HalSe
 
     @Override
     public HalDeviceData getDeviceData(ZclAttribute zclAttribute) {
-        return null;
+        return new PressureSensorData(((int) zclAttribute.getLastValue()), zclAttribute.getLastReportTime().getTimeInMillis());
     }
 
     @Override
@@ -43,6 +45,4 @@ public class ZigbeePressureConfig extends ZigbeeHalDeviceConfig implements HalSe
     public Class<? extends HalDeviceData> getDeviceDataClass() {
         return TemperatureSensorData.class;
     }
-
-
 }

@@ -59,4 +59,10 @@ public abstract class ZigbeeHalDeviceConfig implements HalDeviceConfig {
         return zigbeeNodeAddress.equals(that.zigbeeNodeAddress) &&
                 getZigbeeClusterId() == that.getZigbeeClusterId();
     }
+
+
+    @Override
+    public String toString() {
+        return "Address: " + getZigbeeNodeAddress() + "; Cluster ID: " + getZigbeeClusterId();
+    }
 }

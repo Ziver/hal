@@ -5,6 +5,7 @@ import com.zsmartsystems.zigbee.zcl.clusters.ZclRelativeHumidityMeasurementClust
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalSensorConfig;
 import se.hal.struct.devicedata.HumiditySensorData;
+import se.hal.struct.devicedata.TemperatureSensorData;
 
 /**
  * A device configuration for a specific endpoint on a Zigbee device.
@@ -17,7 +18,7 @@ public class ZigbeeHumidityConfig extends ZigbeeHalDeviceConfig implements HalSe
 
     @Override
     public HalDeviceData getDeviceData(ZclAttribute zclAttribute) {
-        return null;
+        return new HumiditySensorData(((int) zclAttribute.getLastValue()) / 100.0, zclAttribute.getLastReportTime().getTimeInMillis());
     }
 
     @Override

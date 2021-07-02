@@ -3,6 +3,8 @@
 	"name": "Hal-Zigbee",
 	"description": "A Zigbee plugin for directly connecting to a CC2531 device over serial port.",
 	"interfaces": [
-		{"se.hal.intf.HalAutostartController": "se.hal.plugin.zigbee.HalZigbeeController"}
+		{"se.hal.intf.HalAutostartController": "se.hal.plugin.zigbee.HalZigbeeController"},
+
+		{"se.hal.intf.HalWebPage": "se.hal.plugin.zigbee.page.ZigbeeNodeOverviewPage"}
 	]
 }

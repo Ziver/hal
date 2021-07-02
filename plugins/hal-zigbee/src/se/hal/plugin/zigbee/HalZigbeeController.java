@@ -26,12 +26,11 @@ import se.hal.plugin.zigbee.device.*;
 import zutil.Timer;
 import zutil.log.LogUtil;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -55,7 +54,6 @@ public class HalZigbeeController implements HalSensorController,
     private static final String CONFIG_ZIGBEE_DONGLE = "zigbee.dongle";
 
     private ZigBeePort serialPort;
-    private ZigBeeDataStore dataStore;
     protected ZigBeeNetworkManager networkManager;
 
     private Timer permitJoinTimer;
@@ -80,7 +78,6 @@ public class HalZigbeeController implements HalSensorController,
     }
     public void initialize(String comPort, String dongleName) {
         serialPort = new ZigBeeJSerialCommPort(comPort, ZigBeeJSerialCommPort.DEFAULT_BAUD_RATE, ZigBeePort.FlowControl.FLOWCONTROL_OUT_RTSCTS);
-        dataStore = new ZigBeeDataStore();
         TransportConfig transportOptions = new TransportConfig();
 
         // ----------------------------
@@ -89,7 +86,7 @@ public class HalZigbeeController implements HalSensorController,
 
         ZigBeeTransportTransmit dongle = getDongle(dongleName, serialPort, transportOptions);
         networkManager = new ZigBeeNetworkManager(dongle);
-        networkManager.setNetworkDataStore(dataStore);
+        networkManager.setNetworkDataStore(ZigBeeDataStore.getInstance());
         networkManager.setSerializer(DefaultSerializer.class, DefaultDeserializer.class);
         networkManager.addAnnounceListener(this);
         networkManager.addNetworkNodeListener(this);
@@ -233,6 +230,10 @@ public class HalZigbeeController implements HalSensorController,
     public void nodeRemoved(final ZigBeeNode node) {
         node.removeNetworkEndpointListener(this);
         logger.fine("[Node: " + node.getIeeeAddress() + "]: Node registration has been removed.");
+    }
+
+    public Set<ZigBeeNode> getNodes() {
+        return networkManager.getNodes();
     }
 
     // ------------------------------------------

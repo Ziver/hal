@@ -1,0 +1,129 @@
+<h1 class="page-header">Zigbee Node Overview</h1>
+
+{{#nodes}}
+<div class="col-md-12">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">Node: {{.getIeeeAddress()}}</div>
+        <div class="panel-body">
+            <div class="col-md-6">
+                <div class="panel panel-default drop-shadow">
+                    <div class="panel-heading">Node Description</div>
+                    <div class="panel-body">
+                        <table class="table table-hover table-condensed">
+                            <thead>
+                            <tr>
+                                <th class="text-right">Manufacturer Code:</th>
+                                <td>{{.getNodeDescriptor().getManufacturerCode()}}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-right">Logical Type:</th>
+                                <td>{{.getNodeDescriptor().getLogicalType()}}</td>
+                            </tr>
+                            </thead>
+                            <tr>
+                                <th class="text-right">Frequency Bands:</th>
+                                <td>{{.getNodeDescriptor().getFrequencyBands()}}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-right">Mac Capabilities:</th>
+                                <td>{{.getNodeDescriptor().getMacCapabilities()}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default drop-shadow">
+                    <div class="panel-heading">Power Descriptor</div>
+                    <div class="panel-body">
+                        <table class="table table-hover table-condensed">
+                            <thead>
+                            <tr>
+                                <th class="text-right">Current Power Mode:</th>
+                                <td>{{.getPowerDescriptor().getCurrentPowerMode()}}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-right">Available Power Sources:</th>
+                                <td>{{.getPowerDescriptor().getAvailablePowerSources()}}</td>
+                            </tr>
+                            </thead>
+                            <tr>
+                                <th class="text-right">Current Power Source:</th>
+                                <td>{{.getPowerDescriptor().getCurrentPowerSource()}}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-right">Power Level:</th>
+                                <td>{{.getPowerDescriptor().getPowerLevel()}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+            {{#.getEndpoints()}}
+            <div class="panel panel-default drop-shadow">
+                <div class="panel-heading">Endpoint: {{.getDeviceId()}}</div>
+                <div class="panel-body">
+
+                    <p>Input Clusters:</p>
+
+                    {{#.inputClusters.values()}}
+                    <div class="panel panel-default drop-shadow">
+                        <div class="panel-heading">Cluster: {{.getClusterId()}}</div>
+                        <div class="panel-body">
+
+                            <table class="table table-hover table-condensed">
+                                <thead>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Last Value</th>
+                                    <th>Last Report Time</th>
+                                </thead>
+                                {{#.getAttributes()}}
+                                <tr>
+                                    <td>{{.getId()}}</td>
+                                    <td>{{.getName()}}</td>
+                                    <td>{{.getLastValue()}}</td>
+                                    <td><span class="timestamp">{{.getLastReportTime().getTimeInMillis()}}</span></td>
+                                </tr>
+                                {{/.getAttributes()}}
+                            </table>
+                        </div>
+                    </div>
+                    {{/.inputClusters.values()}}
+
+                    <p>Output Clusters:</p>
+
+                    {{#.outputClusters.values()}}
+                    <div class="panel panel-default drop-shadow">
+                        <div class="panel-heading">Cluster: {{.getClusterId()}}</div>
+                        <div class="panel-body">
+
+                            <table class="table table-hover table-condensed">
+                                <thead>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Last Value</th>
+                                <th>Last Report Time</th>
+                                </thead>
+                                {{#.getAttributes()}}
+                                <tr>
+                                    <td>{{.getId()}}</td>
+                                    <td>{{.getName()}}</td>
+                                    <td>{{.getLastValue()}}</td>
+                                    <td><span class="timestamp">{{.getLastReportTime().getTimeInMillis()}}</span></td>
+                                </tr>
+                                {{/.getAttributes()}}
+                            </table>
+                        </div>
+                    </div>
+                    {{/.outputClusters.values()}}
+                </div>
+            </div>
+            {{/.getEndpoints()}}
+            </div>
+        </div>
+    </div>
+</div>
+{{/nodes}}

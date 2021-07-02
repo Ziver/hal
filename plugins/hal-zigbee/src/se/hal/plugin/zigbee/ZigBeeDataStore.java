@@ -36,8 +36,12 @@ import java.util.logging.Logger;
 
 public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
     private static final Logger logger = LogUtil.getLogger();
+    private static ZigBeeDataStore instance;
 
     private HashMap<IeeeAddress,ZigBeeNodeDao> devices = new HashMap<>();
+
+
+    private ZigBeeDataStore() {}
 
 
     @Override
@@ -68,5 +72,12 @@ public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
         logger.fine("[Node: " + address + "]: Removing Node from DB.");
 
         devices.remove(address);
+    }
+
+
+    public static ZigBeeDataStore getInstance() {
+        if (instance == null)
+            instance = new ZigBeeDataStore();
+        return instance;
     }
 }

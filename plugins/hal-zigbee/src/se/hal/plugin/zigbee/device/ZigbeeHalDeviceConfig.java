@@ -5,25 +5,25 @@ import com.zsmartsystems.zigbee.zcl.ZclAttribute;
 import se.hal.intf.HalAbstractController;
 import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
-import se.hal.plugin.zigbee.HalZigbeeController;
+import se.hal.plugin.zigbee.ZigbeeController;
+import zutil.ui.conf.Configurator;
+
+import java.util.Objects;
 
 /**
  * A generic class that is extended by all Endpoint config classes.
  */
 public abstract class ZigbeeHalDeviceConfig implements HalDeviceConfig {
+    @Configurator.Configurable(value = "Node IeeeAddress")
     private String zigbeeNodeAddressStr;
-    private transient IeeeAddress zigbeeNodeAddress;
 
 
     public void setZigbeeNodeAddress(IeeeAddress zigbeeNodeAddress) {
-        this.zigbeeNodeAddress = zigbeeNodeAddress;
         this.zigbeeNodeAddressStr = zigbeeNodeAddress.toString();
     }
 
     public IeeeAddress getZigbeeNodeAddress() {
-        if (zigbeeNodeAddress == null && zigbeeNodeAddressStr != null)
-            zigbeeNodeAddress = new IeeeAddress(zigbeeNodeAddressStr);
-        return zigbeeNodeAddress;
+        return new IeeeAddress(zigbeeNodeAddressStr);
     }
 
     // --------------------------
@@ -47,17 +47,16 @@ public abstract class ZigbeeHalDeviceConfig implements HalDeviceConfig {
 
     @Override
     public Class<? extends HalAbstractController> getDeviceControllerClass() {
-        return HalZigbeeController.class;
+        return ZigbeeController.class;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ZigbeeHalDeviceConfig)) return false;
 
         ZigbeeHalDeviceConfig that = (ZigbeeHalDeviceConfig) o;
-        return zigbeeNodeAddress.equals(that.zigbeeNodeAddress) &&
-                getZigbeeClusterId() == that.getZigbeeClusterId();
+        return Objects.equals(zigbeeNodeAddressStr, that.zigbeeNodeAddressStr);
     }
 
 

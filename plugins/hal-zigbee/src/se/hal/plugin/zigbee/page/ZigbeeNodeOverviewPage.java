@@ -5,7 +5,7 @@ import se.hal.HalContext;
 import se.hal.intf.HalAbstractController;
 import se.hal.intf.HalAbstractControllerManager;
 import se.hal.intf.HalWebPage;
-import se.hal.plugin.zigbee.HalZigbeeController;
+import se.hal.plugin.zigbee.ZigbeeController;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
 
@@ -29,8 +29,8 @@ public class ZigbeeNodeOverviewPage extends HalWebPage {
 
         Set<ZigBeeNode> nodes = null;
         for (HalAbstractController controller : HalAbstractControllerManager.getControllers()) {
-            if (controller instanceof HalZigbeeController) {
-                nodes = ((HalZigbeeController) controller).getNodes();
+            if (controller instanceof ZigbeeController) {
+                nodes = ((ZigbeeController) controller).getNodes();
                 break;
             }
         }

@@ -47,8 +47,8 @@ public class HalZigbeeControllerTest {
         LogUtil.setGlobalFormatter(new CompactLogFormatter());
         LogUtil.setGlobalLevel(Level.ALL);
 
-        HalZigbeeController controller = new HalZigbeeController();
-        controller.initialize("COM5", HalZigbeeController.ZIGBEE_DONGLE_CC2531);
+        ZigbeeController controller = new ZigbeeController();
+        controller.initialize("COM5", ZigbeeController.ZIGBEE_DONGLE_CC2531);
         controller.addListener(new HalDeviceReportListener() {
             @Override
             public void reportReceived(HalDeviceConfig deviceConfig, HalDeviceData deviceData) {

@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 /**
  * Controller that will connect to a Zigbee USB coordinator.
  */
-public class HalZigbeeController implements HalSensorController,
+public class ZigbeeController implements HalSensorController,
         HalEventController,
         HalAutostartController,
         HalScannableController,
@@ -61,7 +61,7 @@ public class HalZigbeeController implements HalSensorController,
     private List<ZigbeeHalDeviceConfig> registeredDevices = new ArrayList<>();
 
 
-    public HalZigbeeController() {}
+    public ZigbeeController() {}
 
     // ------------------------------------------
     // Lifecycle Methods
@@ -86,7 +86,7 @@ public class HalZigbeeController implements HalSensorController,
 
         ZigBeeTransportTransmit dongle = getDongle(dongleName, serialPort, transportOptions);
         networkManager = new ZigBeeNetworkManager(dongle);
-        networkManager.setNetworkDataStore(ZigBeeDataStore.getInstance());
+        networkManager.setNetworkDataStore(new ZigBeeHalDataStore(HalContext.getDB()));
         networkManager.setSerializer(DefaultSerializer.class, DefaultDeserializer.class);
         networkManager.addAnnounceListener(this);
         networkManager.addNetworkNodeListener(this);

@@ -34,14 +34,13 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 
-public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
+public class ZigBeeMemoryDataStore implements ZigBeeNetworkDataStore {
     private static final Logger logger = LogUtil.getLogger();
-    private static ZigBeeDataStore instance;
 
     private HashMap<IeeeAddress,ZigBeeNodeDao> devices = new HashMap<>();
 
 
-    private ZigBeeDataStore() {}
+    private ZigBeeMemoryDataStore() {}
 
 
     @Override
@@ -58,9 +57,9 @@ public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
     public void writeNode(ZigBeeNodeDao node) {
         logger.fine("[Node: " + node.getIeeeAddress() + "]: Storing Zigbee Node in DB: " +
                 "NetAddr: " + node.getNetworkAddress() + ", " +
-                "binding: " + node.getBindingTable() + ", " +
-                "description: " + node.getNodeDescriptor() + ", " +
-                "endpoints: " + node.getEndpoints() + ", " +
+                "Binding: " + node.getBindingTable() + ", " +
+                "Description: " + node.getNodeDescriptor() + ", " +
+                "Endpoints: " + node.getEndpoints() + ", " +
                 "Power: " + node.getPowerDescriptor()
         );
 
@@ -72,12 +71,5 @@ public class ZigBeeDataStore implements ZigBeeNetworkDataStore {
         logger.fine("[Node: " + address + "]: Removing Node from DB.");
 
         devices.remove(address);
-    }
-
-
-    public static ZigBeeDataStore getInstance() {
-        if (instance == null)
-            instance = new ZigBeeDataStore();
-        return instance;
     }
 }

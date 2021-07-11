@@ -3,6 +3,8 @@
 	"name": "Hal-Core",
 	"description": "Plugin contains core logic for running Hal.",
 	"interfaces": [
+		{"se.hal.intf.HalDatabaseUpgrade":  "se.hal.HalCoreDatabaseUpgrade"},
+
 		{"se.hal.intf.HalAbstractControllerManager":  "se.hal.EventControllerManager"},
 		{"se.hal.intf.HalAbstractControllerManager":  "se.hal.SensorControllerManager"},
 

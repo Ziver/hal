@@ -32,7 +32,6 @@ public class SensorDataAggregationDaemonTest {
         System.out.println("Upgrading in-memory database to latest version");
         DBConnection referenceDB = new DBConnection(DBConnection.DBMS.SQLite, DEFAULT_DB_FILE);
         final DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);
-        handler.addIgnoredTable("db_version_history");
         handler.addIgnoredTable("sqlite_sequence");    //sqlite internal
         handler.setTargetDB(db);
         handler.upgrade();

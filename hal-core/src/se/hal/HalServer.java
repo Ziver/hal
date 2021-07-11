@@ -1,10 +1,7 @@
 package se.hal;
 
 
-import se.hal.intf.HalAbstractControllerManager;
-import se.hal.intf.HalDaemon;
-import se.hal.intf.HalJsonPage;
-import se.hal.intf.HalWebPage;
+import se.hal.intf.*;
 import se.hal.page.HalAlertManager;
 import se.hal.struct.PluginConfig;
 import zutil.db.DBConnection;
@@ -52,17 +49,21 @@ public class HalServer {
             // init logging
             LogUtil.readConfiguration("logging.properties");
 
-            // init DB and other configurations
-            HalContext.initialize();
-
-            logger.info("Working directory: " + FileUtil.find(".").getAbsolutePath());
-
             // init variables
             pluginManager = new PluginManager();
             daemonExecutor = Executors.newScheduledThreadPool(1); // We set only one thread for easier troubleshooting
             http = new HttpServer(HalContext.getIntegerProperty(HalContext.PROPERTY_HTTP_PORT));
 
+            // Upgrade database
+            HalDatabaseUpgradeManager.initialize(pluginManager);
+            HalDatabaseUpgradeManager.upgrade();
+
+            // init DB and other configurations
+
+            HalContext.initialize();
             DBConnection db = HalContext.getDB();
+
+            logger.info("Working directory: " + FileUtil.find(".").getAbsolutePath());
 
             // ------------------------------------
             // Initialize Plugins

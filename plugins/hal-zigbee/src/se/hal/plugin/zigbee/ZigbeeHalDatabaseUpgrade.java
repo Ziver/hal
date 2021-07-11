@@ -1,5 +1,6 @@
 package se.hal.plugin.zigbee;
 
+import se.hal.HalContext;
 import se.hal.intf.HalDatabaseUpgrade;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
@@ -12,7 +13,7 @@ import java.util.logging.Logger;
  */
 public class ZigbeeHalDatabaseUpgrade extends HalDatabaseUpgrade {
     private static final int    REFERENCE_DB_VERSION = 1;
-    private static final String REFERENCE_DB_PATH = "resource/hal-zigbee-reference.db";
+    private static final String REFERENCE_DB_PATH = HalContext.RESOURCE_ROOT + "/resource/hal-zigbee-reference.db";
 
 
     public ZigbeeHalDatabaseUpgrade() {

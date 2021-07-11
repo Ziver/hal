@@ -41,11 +41,14 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class ZigBeeHalDataStore implements ZigBeeNetworkDataStore {
     private static final Logger logger = LogUtil.getLogger();
+
+    private static final String ZIGBEE_NODE_TABLE = "hal_zigbee_node";
 
     private DBConnection db;
 
@@ -60,14 +63,14 @@ public class ZigBeeHalDataStore implements ZigBeeNetworkDataStore {
         Set<IeeeAddress> ieeeAddresses = new HashSet<>();
 
         try {
-            PreparedStatement stmt = db.getPreparedStatement( "SELECT address FROM zigbee_node" );
+            PreparedStatement stmt = db.getPreparedStatement( "SELECT address FROM " +ZIGBEE_NODE_TABLE);
             List<String> strAddresses = DBConnection.exec(stmt, new ListSQLResult<String>());
 
             for (String address : strAddresses) {
                 ieeeAddresses.add(new IeeeAddress(address));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Unable to read Zigbee Nodes from DB.", e);
         }
 
         return ieeeAddresses;
@@ -80,7 +83,7 @@ public class ZigBeeHalDataStore implements ZigBeeNetworkDataStore {
             if (dso != null)
                 return dso.getConfig();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Unable to read Zigbee Node from DB.", e);
         }
         return null;
     }
@@ -106,7 +109,7 @@ public class ZigBeeHalDataStore implements ZigBeeNetworkDataStore {
             dso.save(db);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Unable to updated Zigbee Node in DB.", e);
         }
     }
 
@@ -119,20 +122,21 @@ public class ZigBeeHalDataStore implements ZigBeeNetworkDataStore {
             if (dso != null)
                 dso.delete(db);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Unable to remove Zigbee Node from DB.", e);
         }
     }
 
     /**
      * A private data storage object connected to the DB schema.
      */
+    @DBBean.DBTable(ZIGBEE_NODE_TABLE)
     private static class ZigbeeNodeDSO extends DBBean {
         protected String address;
         protected String config;
 
 
         public static ZigbeeNodeDSO load(DBConnection db, String address) throws SQLException{
-            PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM zigbee_node WHERE ? == zigbee_node.address" );
+            PreparedStatement stmt = db.getPreparedStatement( "SELECT * FROM " + ZIGBEE_NODE_TABLE + " WHERE ? == address" );
             stmt.setString(1, address);
             return DBConnection.exec(stmt, DBBeanSQLResultHandler.create(ZigbeeNodeDSO.class, db));
         }

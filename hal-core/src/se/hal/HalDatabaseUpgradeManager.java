@@ -5,6 +5,7 @@ import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.db.DBUpgradeHandler;
 import zutil.db.handler.PropertiesSQLResult;
+import zutil.db.handler.SimpleSQLResult;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
 import zutil.plugin.PluginManager;
@@ -23,6 +24,7 @@ import java.util.logging.Logger;
 public class HalDatabaseUpgradeManager {
     private static final Logger logger = LogUtil.getLogger();
 
+    private static HalDatabaseUpgrade halCoreUpgrade;
     private static Queue<HalDatabaseUpgrade> upgradeQueue;
 
 
@@ -40,7 +42,11 @@ public class HalDatabaseUpgradeManager {
 
         for (Iterator<HalDatabaseUpgrade> it = pluginManager.getSingletonIterator(HalDatabaseUpgrade.class); it.hasNext(); ) {
             HalDatabaseUpgrade dbUpgrade = it.next();
-            upgradeQueue.add(dbUpgrade);
+
+            if (dbUpgrade instanceof HalCoreDatabaseUpgrade)
+                halCoreUpgrade = dbUpgrade;
+            else
+                upgradeQueue.add(dbUpgrade);
         }
     }
 
@@ -50,6 +56,12 @@ public class HalDatabaseUpgradeManager {
     public static void upgrade() {
         if (upgradeQueue == null)
             return;
+
+        // Prioritize upgrade of HalCore
+        if (halCoreUpgrade != null) {
+            upgrade(halCoreUpgrade);
+            halCoreUpgrade = null;
+        }
 
         while (!upgradeQueue.isEmpty()) {
             upgrade(upgradeQueue.poll());
@@ -69,14 +81,20 @@ public class HalDatabaseUpgradeManager {
             // Init DB
             File dbFile = FileUtil.find(HalContext.DB_FILE);
             mainDB = new DBConnection(DBConnection.DBMS.SQLite, HalContext.DB_FILE);
-            Properties dbConf =
-                    mainDB.exec("SELECT * FROM conf", new PropertiesSQLResult());
+            Properties dbConf = new Properties();
+
+            // Read in conf table from DB if it exists
+
+            String confTableExists = mainDB.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='conf';", new SimpleSQLResult<>());
+            if ("conf".equals(confTableExists))
+                dbConf = mainDB.exec("SELECT * FROM conf", new PropertiesSQLResult());
 
             if (dbFile == null) {
                 logger.info("No database file found, creating new DB...");
             }
 
-            // Upgrade DB needed?
+            // Evaluate if DB upgrade is needed?
+
             referenceDB = new DBConnection(DBConnection.DBMS.SQLite, referenceDBPath);
             String mainDBVersionProperty = dbUpgrade.getClass().getSimpleName() + ".db_version";
 
@@ -85,7 +103,7 @@ public class HalDatabaseUpgradeManager {
             final int mainDBVersion = (dbConf.getProperty(mainDBVersionProperty) != null ?
                     Integer.parseInt(dbConf.getProperty(mainDBVersionProperty)) :
                     -1);
-            logger.info("DB version: " + mainDBVersion);
+            logger.info("DB version: " + mainDBVersion + "(" + dbUpgrade.getClass().getSimpleName() + ")");
 
             if (referenceDBVersion > mainDBVersion) {
                 // ----------------------------------------
@@ -94,22 +112,18 @@ public class HalDatabaseUpgradeManager {
 
                 logger.info("Starting DB upgrade from v" + mainDBVersion + " to v" + referenceDBVersion + "...");
 
-                if (dbFile != null){
-                    File backupDB = FileUtil.getNextFile(dbFile);
-                    logger.fine("Backing up DB to: "+ backupDB);
-                    FileUtil.copy(dbFile, backupDB);
-                }
-
                 final DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);
+                handler.setForcedDBUpgrade(false);
                 handler.addIgnoredTable("sqlite_sequence");	// sqlite internal
                 handler.setTargetDB(mainDB);
 
                 logger.fine("Performing pre-upgrade activities");
 
-                /*if (doForceUpgrade) {
-                    logger.fine("Forced upgrade enabled.");
-                    handler.setForcedDBUpgrade(true); // set to true if any of the intermediate db version requires it.
-                }*/
+                if (dbFile != null){
+                    File backupDB = FileUtil.getNextFile(dbFile);
+                    logger.fine("Backing up DB to: "+ backupDB);
+                    FileUtil.copy(dbFile, backupDB);
+                }
 
                 dbUpgrade.preDatabaseUpgrade(mainDB, mainDBVersion, referenceDBVersion);
 

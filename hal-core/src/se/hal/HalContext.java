@@ -25,7 +25,6 @@ public class HalContext {
     private static final Logger logger = LogUtil.getLogger();
 
     // Constants
-    public static final String PROPERTY_DB_VERSION = "hal.db_version";
     public static final String PROPERTY_HTTP_PORT = "hal.http_port";
     public static final String PROPERTY_MAP_BACKGROUND_IMAGE = "hal.map_bgimage";
 
@@ -41,9 +40,8 @@ public class HalContext {
 
     public static final String RESOURCE_WEB_ROOT = HalContext.RESOURCE_ROOT + "/resource/web";
 
-    private static final String CONF_FILE       = "hal.conf";
-    static final String DB_FILE         = "hal.db";
-    private static final String DEFAULT_DB_FILE = HalContext.RESOURCE_ROOT + "/resource/hal-default.db";
+    private static final String CONF_FILE = "hal.conf";
+    static final String DB_FILE           = "hal.db";
 
     // Variables
     private static DBConnection db; // TODO: Should probably be a db pool as we have multiple threads accessing the DB
@@ -70,17 +68,13 @@ public class HalContext {
                 logger.info("No hal.conf file found");
             }
 
-            if (FileUtil.find(DEFAULT_DB_FILE) == null){
-                logger.severe("Unable to find default DB: " + DEFAULT_DB_FILE);
-                System.exit(1);
-            }
-
             // Init DB
             File dbFile = FileUtil.find(DB_FILE);
             db = new DBConnection(DBConnection.DBMS.SQLite, DB_FILE);
 
             if (dbFile == null){
-                logger.info("No database file found, creating new DB...");
+                logger.severe("Unable to find Hal DB: " + DB_FILE);
+                System.exit(1);
             } else {
                 dbConf = db.exec("SELECT * FROM conf", new PropertiesSQLResult());
             }

@@ -56,7 +56,6 @@ distributions {
     main {
         contents {
             from 'hal.conf.example'
-            from 'hal-default.db'
             from 'logging.properties'
 
             from "${buildDir}/resources"

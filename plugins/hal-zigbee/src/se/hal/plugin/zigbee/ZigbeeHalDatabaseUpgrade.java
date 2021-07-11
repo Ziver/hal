@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.logging.Logger;
 
 /**
- * The DB upgrade class for Hal-Core
+ * The DB upgrade class for Hal-Zigbee plugin
  */
 public class ZigbeeHalDatabaseUpgrade extends HalDatabaseUpgrade {
     private static final int    REFERENCE_DB_VERSION = 1;

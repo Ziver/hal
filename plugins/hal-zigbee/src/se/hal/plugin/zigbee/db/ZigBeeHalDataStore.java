@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.zigbee;
+package se.hal.plugin.zigbee.db;
 
 import com.zsmartsystems.zigbee.IeeeAddress;
 import com.zsmartsystems.zigbee.database.ZigBeeNetworkDataStore;

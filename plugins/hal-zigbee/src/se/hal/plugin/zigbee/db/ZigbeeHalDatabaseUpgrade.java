@@ -1,4 +1,4 @@
-package se.hal.plugin.zigbee;
+package se.hal.plugin.zigbee.db;
 
 import se.hal.HalContext;
 import se.hal.intf.HalDatabaseUpgrade;

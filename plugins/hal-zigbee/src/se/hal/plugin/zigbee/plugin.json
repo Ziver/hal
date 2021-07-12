@@ -3,7 +3,7 @@
 	"name": "Hal-Zigbee",
 	"description": "A Zigbee plugin for directly connecting to a controller device over serial port.",
 	"interfaces": [
-		{"se.hal.intf.HalDatabaseUpgrade":  "se.hal.plugin.zigbee.ZigbeeHalDatabaseUpgrade"},
+		{"se.hal.intf.HalDatabaseUpgrade":  "se.hal.plugin.zigbee.db.ZigbeeHalDatabaseUpgrade"},
 
 		{"se.hal.intf.HalEventConfig":  "se.hal.plugin.zigbee.device.ZigbeeOnOffConfig"},
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.zigbee.device.ZigbeeHumidityConfig"},

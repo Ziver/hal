@@ -22,6 +22,7 @@ import com.zsmartsystems.zigbee.zcl.clusters.*;
 import com.zsmartsystems.zigbee.zdo.field.NodeDescriptor;
 import se.hal.HalContext;
 import se.hal.intf.*;
+import se.hal.plugin.zigbee.db.ZigBeeHalDataStore;
 import se.hal.plugin.zigbee.device.*;
 import zutil.Timer;
 import zutil.log.LogUtil;

@@ -56,7 +56,9 @@ public abstract class ZigbeeHalDeviceConfig implements HalDeviceConfig {
         if (!(o instanceof ZigbeeHalDeviceConfig)) return false;
 
         ZigbeeHalDeviceConfig that = (ZigbeeHalDeviceConfig) o;
-        return Objects.equals(zigbeeNodeAddressStr, that.zigbeeNodeAddressStr);
+        return this.getClass() == that.getClass() &&
+                Objects.equals(zigbeeNodeAddressStr, that.zigbeeNodeAddressStr) &&
+                this.getZigbeeClusterId() == that.getZigbeeClusterId();
     }
 
 

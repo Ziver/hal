@@ -130,7 +130,7 @@ public class ZigBeeHalDataStore implements ZigBeeNetworkDataStore {
      * A private data storage object connected to the DB schema.
      */
     @DBBean.DBTable(ZIGBEE_NODE_TABLE)
-    private static class ZigbeeNodeDSO extends DBBean {
+    public static class ZigbeeNodeDSO extends DBBean {
         protected String address;
         protected String config;
 

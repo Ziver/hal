@@ -19,8 +19,8 @@ import java.util.logging.Logger;
 public class HalZWaveController implements HalSensorController, HalEventController, HalAutostartController, NotificationWatcher {
     private static final Logger logger = LogUtil.getLogger();
 
-    public static final String CONFIG_ZWAVE_PORT = "zwave.com_port";
-    public static final String CONFIG_ZWAVE_CFG_PATH = "zwave.cfg_path";
+    public static final String CONFIG_ZWAVE_PORT     = "hal_zwave.com_port";
+    public static final String CONFIG_ZWAVE_CFG_PATH = "hal_zwave.cfg_path";
 
     private String serialPort;
     private long homeId;

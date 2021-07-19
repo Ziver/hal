@@ -1,5 +1,35 @@
 <h1 class="page-header">Zigbee Node Overview</h1>
 
+<h2>Network info</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default drop-shadow">
+            <div class="panel-heading">Node Description</div>
+            <div class="panel-body">
+                <table class="table table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th class="text-right">PAN ID:</th>
+                        <td>{{controller.getZigbeePanId()}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Extended PAN ID:</th>
+                        <td>{{controller.getZigbeeExtendedPanId()}}</td>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <th class="text-right">Channel:</th>
+                        <td>{{controller.getZigbeeChannel()}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2>Connected Nodes</h2>
+
 {{#nodes}}
 <div class="col-md-12">
     <div class="panel panel-default drop-shadow">

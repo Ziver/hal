@@ -54,7 +54,7 @@ import java.util.logging.Logger;
 public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implements HalDaemon {
     private static final Logger logger = LogUtil.getLogger();
 
-    public static final String PROPERTY_SYNC_PORT = "powerchallenge.sync_port";
+    public static final String PROPERTY_SYNC_PORT = "hal_powerchallenge.sync_port";
     public static final int PROTOCOL_VERSION = 5; // Increment for protocol changes
 
 

@@ -50,7 +50,7 @@ public class TellstickSerialComm implements Runnable,
         HalSensorController, HalEventController, HalAutostartController {
     private static final Logger logger = LogUtil.getLogger();
 
-    private static String CONFIG_TELLSTICK_COM_PORT = "tellstick.com_port";
+    private static String CONFIG_TELLSTICK_COM_PORT = "hal_tellstick.com_port";
     private static final long TRANSMISSION_UNIQUENESS_TTL = 1000; // milliseconds
 
     private static TellstickSerialComm instance; // Todo: Don't like this but it is the best I could come up with

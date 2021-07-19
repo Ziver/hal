@@ -52,7 +52,7 @@ public class HalServer {
             // init variables
             pluginManager = new PluginManager();
             daemonExecutor = Executors.newScheduledThreadPool(1); // We set only one thread for easier troubleshooting
-            http = new HttpServer(HalContext.getIntegerProperty(HalContext.PROPERTY_HTTP_PORT));
+            http = new HttpServer(HalContext.getIntegerProperty(HalContext.CONFIG_HTTP_PORT));
 
             // Upgrade database
             HalDatabaseUpgradeManager.initialize(pluginManager);

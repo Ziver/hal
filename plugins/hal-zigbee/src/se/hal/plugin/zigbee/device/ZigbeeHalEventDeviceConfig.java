@@ -42,15 +42,15 @@ public abstract class ZigbeeHalEventDeviceConfig extends ZigbeeHalDeviceConfig {
                         (CommandResult) ZclCluster.class.getMethod("sendCommand", ZclCommand.class).invoke(command);
 
                 if (result.isError() || result.isTimeout()) {
-                    logger.warning("[Endpoint: " + cluster.getZigBeeAddress() + "] Command failed with error: " + result.isError() + " (timeout=" + result.isTimeout() + ")");
+                    logger.warning("[Node: " + getZigbeeNodeAddress() + ", Endpoint: " + cluster.getZigBeeAddress() + "] Command failed with error: " + result.isError() + " (timeout=" + result.isTimeout() + ")");
                 } else {
-                    logger.info("[Endpoint: " + cluster.getZigBeeAddress() + "] Command has been successfully sent");
+                    logger.info("[Node: " + getZigbeeNodeAddress() + ", Endpoint: " + cluster.getZigBeeAddress() + "] Command has been successfully sent.");
                 }
             } catch (Exception e) {
-                logger.warning("[Endpoint: " + cluster.getZigBeeAddress() + "] Failed to send command [" + e.getMessage() + "]");
+                logger.warning("[Node: " + getZigbeeNodeAddress() + ", Endpoint: " + cluster.getZigBeeAddress() + "] Failed to send command: " + e.getMessage());
             }
         } else {
-            logger.warning("[Node: " + getZigbeeNodeAddress() + "] Unable to find cluster.");
+            logger.warning("[Node: " + getZigbeeNodeAddress() + "] Unable to find cluster: " + getZigbeeClusterId());
         }
     }
 

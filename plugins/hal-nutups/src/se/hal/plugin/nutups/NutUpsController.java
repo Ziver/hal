@@ -70,8 +70,8 @@ public class NutUpsController implements HalSensorController, HalAutostartContro
     public static Logger logger = LogUtil.getLogger();
 
     private static final int SYNC_INTERVAL = 60 * 1000;
-    public static final String PROPERTY_HOST = "nutups.host";
-    public static final String PROPERTY_PORT = "nutups.port";
+    public static final String CONFIG_HOST = "hal_nutups.host";
+    public static final String CONFIG_PORT = "hal_nutups.port";
 
     private HashMap<String, NutUpsDevice> registeredDevices = new HashMap<>();
     private NutUPSClient client;
@@ -82,16 +82,16 @@ public class NutUpsController implements HalSensorController, HalAutostartContro
 
     @Override
     public boolean isAvailable() {
-        return HalContext.containsProperty(PROPERTY_HOST);
+        return HalContext.containsProperty(CONFIG_HOST);
     }
     @Override
     public void initialize() throws Exception {
         if (client == null) {
             int port = NutUPSClient.DEFAULT_PORT;
-            if (HalContext.containsProperty(PROPERTY_PORT))
-                port = HalContext.getIntegerProperty(PROPERTY_PORT);
+            if (HalContext.containsProperty(CONFIG_PORT))
+                port = HalContext.getIntegerProperty(CONFIG_PORT);
 
-            client = new NutUPSClient(HalContext.getStringProperty(PROPERTY_HOST), port);
+            client = new NutUPSClient(HalContext.getStringProperty(CONFIG_HOST), port);
 
             executor = Executors.newScheduledThreadPool(1);
             executor.scheduleAtFixedRate(this, 5000, SYNC_INTERVAL, TimeUnit.MILLISECONDS);

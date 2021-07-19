@@ -1,10 +1,7 @@
 package se.hal;
 
-import se.hal.struct.User;
 import zutil.ObjectUtil;
 import zutil.db.DBConnection;
-import zutil.db.DBUpgradeHandler;
-import zutil.db.SQLResultHandler;
 import zutil.db.handler.PropertiesSQLResult;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
@@ -12,12 +9,11 @@ import zutil.log.LogUtil;
 import java.io.File;
 import java.io.FileReader;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -25,8 +21,8 @@ public class HalContext {
     private static final Logger logger = LogUtil.getLogger();
 
     // Constants
-    public static final String PROPERTY_HTTP_PORT = "hal.http_port";
-    public static final String PROPERTY_MAP_BACKGROUND_IMAGE = "hal.map_bgimage";
+    public static final String CONFIG_HTTP_PORT = "hal_core.http_port";
+    public static final String CONFIG_MAP_BACKGROUND_IMAGE = "hal_core.map_bgimage";
 
     public static final String RESOURCE_ROOT;
     static {
@@ -53,7 +49,7 @@ public class HalContext {
 
     static {
         // Set default values to get Hal up and running
-        fileConf.setProperty(PROPERTY_HTTP_PORT, "" + 8080);
+        fileConf.setProperty(CONFIG_HTTP_PORT, "" + 8080);
     }
 
 
@@ -141,12 +137,16 @@ public class HalContext {
         return getBooleanProperty(key);
     }
 
-    public static void setProperty(String key, String value) throws SQLException {
-        PreparedStatement stmt = db.getPreparedStatement("REPLACE INTO conf (key, value) VALUES (?, ?)");
-        stmt.setObject(1, key);
-        stmt.setObject(2, value);
-        DBConnection.exec(stmt);
-        dbConf.setProperty(key, value);
+    public static void setProperty(String key, String value) {
+        try {
+            PreparedStatement stmt = db.getPreparedStatement("REPLACE INTO conf (key, value) VALUES (?, ?)");
+            stmt.setObject(1, key);
+            stmt.setObject(2, value);
+            DBConnection.exec(stmt);
+            dbConf.setProperty(key, value);
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Was unable to save property: " + key + " = " + value, e);
+        }
     }
 
 

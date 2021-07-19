@@ -51,8 +51,13 @@ public class ZigbeeController implements HalSensorController,
     public static final String ZIGBEE_DONGLE_CONBEE = "CONBEE";
     public static final String ZIGBEE_DONGLE_XBEE   = "XBEE";
 
-    private static final String CONFIG_ZIGBEE_PORT = "zigbee.com_port";
-    private static final String CONFIG_ZIGBEE_DONGLE = "zigbee.dongle";
+    private static final String CONFIG_ZIGBEE_DONGLE          = "hal_zigbee.dongle";
+    private static final String CONFIG_ZIGBEE_PORT            = "hal_zigbee.com_port";
+    private static final String CONFIG_ZIGBEE_NETWORK_CHANNEL = "hal_zigbee.network.channel";
+    private static final String CONFIG_ZIGBEE_NETWORK_PANID   = "hal_zigbee.network.panid";
+    private static final String CONFIG_ZIGBEE_NETWORK_EPANID  = "hal_zigbee.network.epanid";
+    private static final String CONFIG_ZIGBEE_NETWORK_NWKKEY  = "hal_zigbee.network.nwkey";
+    private static final String CONFIG_ZIGBEE_NETWORK_LINKKEY = "hal_zigbee.network.linkkey";
 
     private ZigBeePort serialPort;
     protected ZigBeeNetworkManager networkManager;
@@ -140,16 +145,28 @@ public class ZigbeeController implements HalSensorController,
         networkManager.addSupportedServerCluster(ZclWindowCoveringCluster.CLUSTER_ID);
         networkManager.addSupportedServerCluster(ZclBinaryInputBasicCluster.CLUSTER_ID);
 
+        // Prepare defaults
+
+        if (!HalContext.containsProperty(CONFIG_ZIGBEE_NETWORK_CHANNEL))
+            HalContext.setProperty(CONFIG_ZIGBEE_NETWORK_CHANNEL, "11");
+        if (!HalContext.containsProperty(CONFIG_ZIGBEE_NETWORK_PANID))
+            HalContext.setProperty(CONFIG_ZIGBEE_NETWORK_PANID, "" + (int) Math.floor((Math.random() * 65534)));
+        if (!HalContext.containsProperty(CONFIG_ZIGBEE_NETWORK_EPANID))
+            HalContext.setProperty(CONFIG_ZIGBEE_NETWORK_EPANID, "" + ExtendedPanId.createRandom());
+        if (!HalContext.containsProperty(CONFIG_ZIGBEE_NETWORK_NWKKEY))
+            HalContext.setProperty(CONFIG_ZIGBEE_NETWORK_NWKKEY, "" + ZigBeeKey.createRandom());
+        if (!HalContext.containsProperty(CONFIG_ZIGBEE_NETWORK_LINKKEY))
+            HalContext.setProperty(CONFIG_ZIGBEE_NETWORK_LINKKEY, "" + new ZigBeeKey(new int[] {
+                    0x5A, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6C, 0x6C, 0x69, 0x61, 0x6E, 0x63, 0x65, 0x30, 0x39 })); // Add the default ZigBeeAlliance09 HA link key
+
         // Configure network
 
+        networkManager.setZigBeeChannel(ZigBeeChannel.create(HalContext.getIntegerProperty(CONFIG_ZIGBEE_NETWORK_CHANNEL, 11)));
+        networkManager.setZigBeePanId(HalContext.getIntegerProperty(CONFIG_ZIGBEE_NETWORK_PANID));
+        networkManager.setZigBeeExtendedPanId(new ExtendedPanId(HalContext.getStringProperty(CONFIG_ZIGBEE_NETWORK_EPANID)));
+        networkManager.setZigBeeNetworkKey(new ZigBeeKey(HalContext.getStringProperty(CONFIG_ZIGBEE_NETWORK_NWKKEY)));
+        networkManager.setZigBeeLinkKey(new ZigBeeKey(HalContext.getStringProperty(CONFIG_ZIGBEE_NETWORK_LINKKEY)));
         networkManager.setDefaultProfileId(ZigBeeProfileType.ZIGBEE_HOME_AUTOMATION.getKey());
-        networkManager.setZigBeeNetworkKey(ZigBeeKey.createRandom());//new ZigBeeKey("552FAAF9B5F49E75F1ADDA12215C2CA1")); // ZigBeeKey.createRandom();
-        networkManager.setZigBeeLinkKey(new ZigBeeKey(new int[] { // Add the default ZigBeeAlliance09 HA link key
-                0x5A, 0x69, 0x67, 0x42, 0x65, 0x65, 0x41, 0x6C, 0x6C, 0x69, 0x61, 0x6E, 0x63, 0x65, 0x30, 0x39 }));
-        networkManager.setZigBeeChannel(ZigBeeChannel.create(11));
-        networkManager.setZigBeePanId(65534); // (int) Math.floor((Math.random() * 65534));
-        networkManager.setZigBeeExtendedPanId(new ExtendedPanId("00124B001CCE1B5F")); // ExtendedPanId.createRandom();
-
         //transportOptions.addOption(TransportConfigOption.TRUST_CENTRE_JOIN_MODE, TrustCentreJoinMode.TC_JOIN_INSECURE); // TC_JOIN_SECURE
         dongle.updateTransportConfig(transportOptions);
 
@@ -184,6 +201,24 @@ public class ZigbeeController implements HalSensorController,
 
         networkManager.shutdown();
         serialPort.close();
+    }
+
+    // ------------------------------------------
+    // Getters
+    // ------------------------------------------
+
+    public ZigBeeChannel getZigbeeChannel() {
+        return networkManager.getZigBeeChannel();
+    }
+    public int getZigbeePanId() {
+        return networkManager.getZigBeePanId();
+    }
+    public ExtendedPanId getZigbeeExtendedPanId() {
+        return networkManager.getZigBeeExtendedPanId();
+    }
+
+    public Set<ZigBeeNode> getNodes() {
+        return networkManager.getNodes();
     }
 
     // ------------------------------------------
@@ -235,10 +270,6 @@ public class ZigbeeController implements HalSensorController,
     public void nodeRemoved(final ZigBeeNode node) {
         node.removeNetworkEndpointListener(this);
         logger.fine("[Node: " + node.getIeeeAddress() + "]: Node registration has been removed.");
-    }
-
-    public Set<ZigBeeNode> getNodes() {
-        return networkManager.getNodes();
     }
 
     // ------------------------------------------

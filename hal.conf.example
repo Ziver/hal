@@ -2,7 +2,7 @@
 # Core settings
 # ------------------------------------
 
-hal.http_port=8080
+hal_core.http_port=8080
 
 # ------------------------------------------------------------------------
 # Plugin configurations
@@ -13,31 +13,31 @@ hal.http_port=8080
 # ------------------------------------
 
 ## Tellstick plugin
-#tellstick.com_port=COM5
-#tellstick.com_port=/dev/serial/by-id/usb-Telldus_TellStick_Duo_A6XNNE6Z-if00-port0
+#hal_tellstick.com_port=COM5
+#hal_tellstick.com_port=/dev/serial/by-id/usb-Telldus_TellStick_Duo_A6XNNE6Z-if00-port0
 
 ## NetUPS plugin
-#nutups.host=
-#nutups.port=
+#hal_nutups.host=
+#hal_nutups.port=
 
 ## NetScan plugin
 # Network scanning should probably be disabled in some networks (default on)
-#netscan.ipscan=false
+#hal_netscan.ipscan=false
 
 ## Zigbee plugin
-#zigbee.com_port=COM4
-#zigbee.dongle=CC2531|CONBEE|XBEE
+#hal_zigbee.com_port=COM4
+#hal_zigbee.dongle=CC2531|CONBEE|XBEE
 
 ## ZWave plugin
-#zwave.com_port=COM4
+#hal_zwave.com_port=COM4
 
 ## Power Challenge Plugin
-powerchallenge.sync_port=6666
+hal_powerchallenge.sync_port=6666
 
 # ------------------------------------
 # Assistants
 # ------------------------------------
 
 ## Google Assistant
-assistant.google.port=8081
-assistant.google.client_id=https://oauth-redirect.googleusercontent.com/r/optimal-comfort-XXXXX
+hal_assistant.google.port=8081
+hal_assistant.google.client_id=https://oauth-redirect.googleusercontent.com/r/optimal-comfort-XXXXX

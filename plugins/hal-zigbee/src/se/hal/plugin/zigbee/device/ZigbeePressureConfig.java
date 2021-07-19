@@ -19,7 +19,11 @@ public class ZigbeePressureConfig extends ZigbeeHalDeviceConfig implements HalSe
 
     @Override
     public HalDeviceData getDeviceData(ZclAttribute zclAttribute) {
-        return new PressureSensorData(((int) zclAttribute.getLastValue()), zclAttribute.getLastReportTime().getTimeInMillis());
+        if (zclAttribute.getId() == ZclTemperatureMeasurementCluster.ATTR_MAXMEASUREDVALUE)
+            return new PressureSensorData(
+                    (int) zclAttribute.getLastValue(),
+                    zclAttribute.getLastReportTime().getTimeInMillis());
+        return null;
     }
 
     @Override

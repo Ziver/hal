@@ -27,12 +27,12 @@ import se.hal.plugin.zigbee.device.*;
 import zutil.Timer;
 import zutil.log.LogUtil;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.zsmartsystems.zigbee.zcl.clusters.ZclBasicCluster.*;
 
 /**
  * Controller that will connect to a Zigbee USB coordinator.
@@ -289,15 +289,30 @@ public class ZigbeeController implements HalSensorController,
             ZclCluster cluster = endpoint.getInputCluster(inputClusterId);
             ZigbeeHalDeviceConfig config = createDeviceConfig(inputClusterId);
 
-            if (cluster != null && config != null) {
+            // Read basic attributes
+            if (cluster instanceof ZclBasicCluster) {
+                try {
+                    cluster.readAttributes(Arrays.asList(
+                            ZclBasicCluster.ATTR_MANUFACTURERNAME,
+                            ZclBasicCluster.ATTR_MODELIDENTIFIER,
+                            ZclBasicCluster.ATTR_HWVERSION,
+                            ZclBasicCluster.ATTR_APPLICATIONVERSION,
+                            ZclBasicCluster.ATTR_STACKVERSION,
+                            ZclBasicCluster.ATTR_ZCLVERSION,
+                            ZclBasicCluster.ATTR_DATECODE
+                    )).get();
+                } catch (Exception e) {
+                    logger.log(Level.WARNING, "Was unable to read basic device information.", e);
+                }
+            }
+            // Handle specific node attributes
+            else if (cluster != null && config != null) {
                 config.setZigbeeNodeAddress(endpoint.getIeeeAddress());
+                config.initialize(cluster);
 
                 cluster.addAttributeListener(new ZclAttributeListener() {
                     @Override
                     public void attributeUpdated(ZclAttribute attribute, Object value) {
-                        if (attribute.getId() != 0) // Only report on Measured Value attribute updates
-                            return;
-
                         logger.finer("[Node: " + endpoint.getIeeeAddress() + ", Endpoint: " + endpoint.getEndpointId() + ", Cluster: " +  attribute.getCluster().getId() + "] Attribute " + config.getClass().getSimpleName() + " updated: id=" + attribute.getId() + ", attribute_name=" + attribute.getName() + ", value=" + attribute.getLastValue());
                         for (HalDeviceReportListener deviceListener : deviceListeners) {
                             deviceListener.reportReceived(config, config.getDeviceData(attribute));

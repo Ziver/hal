@@ -134,7 +134,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
      */
     @Override
     public void reportReceived(HalDeviceConfig sensorConfig, HalDeviceData sensorData) {
-        if (!(sensorConfig instanceof HalSensorConfig && sensorData instanceof HalSensorData))
+        if (!(sensorConfig instanceof HalSensorConfig))
             return;
 
         try{
@@ -142,13 +142,15 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
             Sensor sensor = HalDeviceUtil.findDevice(sensorConfig, registeredSensors);
 
             if (sensor != null) {
-                logger.finest("Received report from sensor(" + sensorConfig.getClass().getSimpleName() + "): " + sensorConfig);
-                PreparedStatement stmt =
-                        db.getPreparedStatement("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUES(?, ?, ?)");
-                stmt.setLong(1, sensorData.getTimestamp());
-                stmt.setLong(2, sensor.getId());
-                stmt.setDouble(3, sensorData.getData());
-                DBConnection.exec(stmt);
+                if (sensorData != null) {
+                    logger.finest("Received report from sensor(" + sensorConfig.getClass().getSimpleName() + "): " + sensorConfig);
+                    PreparedStatement stmt =
+                            db.getPreparedStatement("INSERT INTO sensor_data_raw (timestamp, sensor_id, data) VALUES(?, ?, ?)");
+                    stmt.setLong(1, sensorData.getTimestamp());
+                    stmt.setLong(2, sensor.getId());
+                    stmt.setDouble(3, sensorData.getData());
+                    DBConnection.exec(stmt);
+                }
             }
             else { // unknown sensor
                 logger.finest("Received report from unregistered sensor" +
@@ -160,7 +162,9 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
                 }
                 sensor.setDeviceConfig((HalSensorConfig) sensorConfig);
             }
+
             sensor.setDeviceData((HalSensorData) sensorData);
+
             // call listeners
             for (HalDeviceReportListener listener : sensor.getReportListeners())
                 listener.reportReceived(sensorConfig, sensorData);

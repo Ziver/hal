@@ -18,7 +18,11 @@ public class ZigbeeTemperatureConfig extends ZigbeeHalDeviceConfig implements Ha
 
     @Override
     public HalDeviceData getDeviceData(ZclAttribute zclAttribute) {
-        return new TemperatureSensorData(((int) zclAttribute.getLastValue()) / 100.0, zclAttribute.getLastReportTime().getTimeInMillis());
+        if (zclAttribute.getId() == ZclTemperatureMeasurementCluster.ATTR_MEASUREDVALUE)
+            return new TemperatureSensorData(
+                    ((int) zclAttribute.getLastValue()) / 100.0,
+                    zclAttribute.getLastReportTime().getTimeInMillis());
+        return null;
     }
 
     @Override

@@ -132,7 +132,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
      */
     @Override
     public void reportReceived(HalDeviceConfig eventConfig, HalDeviceData eventData) {
-        if (!(eventConfig instanceof HalEventConfig && eventData instanceof HalEventData))
+        if (!(eventConfig instanceof HalEventConfig))
             return;
 
         try {
@@ -140,13 +140,15 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
             Event event = HalDeviceUtil.findDevice(eventConfig, registeredEvents);
 
             if (event != null) {
-                logger.finest("Received report from event(" + eventConfig.getClass().getSimpleName() + "): " + eventConfig);
-                PreparedStatement stmt =
-                        db.getPreparedStatement("INSERT INTO event_data_raw (timestamp, event_id, data) VALUES(?, ?, ?)");
-                stmt.setLong(1, eventData.getTimestamp());
-                stmt.setLong(2, event.getId());
-                stmt.setDouble(3, eventData.getData());
-                DBConnection.exec(stmt);
+                if (eventData != null) {
+                    logger.finest("Received report from event(" + eventConfig.getClass().getSimpleName() + "): " + eventConfig);
+                    PreparedStatement stmt =
+                            db.getPreparedStatement("INSERT INTO event_data_raw (timestamp, event_id, data) VALUES(?, ?, ?)");
+                    stmt.setLong(1, eventData.getTimestamp());
+                    stmt.setLong(2, event.getId());
+                    stmt.setDouble(3, eventData.getData());
+                    DBConnection.exec(stmt);
+                }
             }
             else { // unknown sensor
                 logger.info("Received report from unregistered event" +
@@ -158,12 +160,14 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
                 }
                 event.setDeviceConfig((HalEventConfig) eventConfig);
             }
+
             event.setDeviceData((HalEventData) eventData);
+
             // call listeners
             for (HalDeviceReportListener listener : event.getReportListeners())
                 listener.reportReceived(event.getDeviceConfig(), eventData);
 
-        }catch (SQLException e){
+        } catch (SQLException e){
             logger.log(Level.WARNING, "Unable to store event report", e);
         }
     }
@@ -171,6 +175,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
     public void send(Event event){
         HalEventController controller = getControllerInstance(event.getController());
         if (controller != null) {
+            event.getDeviceData().setTimestamp(System.currentTimeMillis()); // Set timestamp to now
             controller.send(event.getDeviceConfig(), event.getDeviceData());
             reportReceived(event.getDeviceConfig(), event.getDeviceData()); // save action to db
         }

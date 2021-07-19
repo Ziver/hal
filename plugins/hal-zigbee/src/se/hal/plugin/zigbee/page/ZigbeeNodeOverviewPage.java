@@ -27,16 +27,17 @@ public class ZigbeeNodeOverviewPage extends HalWebPage {
             Map<String, String> request)
             throws Exception {
 
-        Set<ZigBeeNode> nodes = null;
-        for (HalAbstractController controller : HalAbstractControllerManager.getControllers()) {
-            if (controller instanceof ZigbeeController) {
-                nodes = ((ZigbeeController) controller).getNodes();
+        ZigbeeController controller = null;
+        for (HalAbstractController cont : HalAbstractControllerManager.getControllers()) {
+            if (cont instanceof ZigbeeController) {
+                controller = ((ZigbeeController) cont);
                 break;
             }
         }
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
-        tmpl.set("nodes", nodes);
+        tmpl.set("controller", controller);
+        tmpl.set("nodes", controller.getNodes());
         return tmpl;
     }
 }

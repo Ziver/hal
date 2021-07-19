@@ -2,6 +2,7 @@ package se.hal.plugin.zigbee.device;
 
 import com.zsmartsystems.zigbee.IeeeAddress;
 import com.zsmartsystems.zigbee.zcl.ZclAttribute;
+import com.zsmartsystems.zigbee.zcl.ZclCluster;
 import se.hal.intf.HalAbstractController;
 import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
@@ -29,6 +30,14 @@ public abstract class ZigbeeHalDeviceConfig implements HalDeviceConfig {
     // --------------------------
     // Abstract Methods
     // --------------------------
+
+    /**
+     * Method will configured a newly discovered or updated cluster. Method by default
+     * does nothing and will need to be extended by subclasses to add specific initialization logic.
+     *
+     * @param cluster is the cluster to be initialized.
+     */
+    public void initialize(ZclCluster cluster) {}
 
     /**
      * @param zclAttribute

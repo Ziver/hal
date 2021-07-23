@@ -118,6 +118,22 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
     }
 
     /**
+     * @param controllerClass the class of the wanted controller
+     * @return the first controller matching the given class, null if no controller was found.
+     */
+    public static <T> T getController(Class<T> controllerClass) {
+        for (HalAbstractController controller : HalAbstractControllerManager.getControllers()) {
+            if (controllerClass.isAssignableFrom(controller.getClass())) {
+                return (T) controller;
+            }
+        }
+
+        return null;
+    }
+
+
+
+    /**
      * Will return a singleton controller instance of the given class.
      * If a instance does not exist yet the a new instance will be allocated
      * depending on if the controller is ready thorough the {@link HalAbstractController#isAvailable()} method.

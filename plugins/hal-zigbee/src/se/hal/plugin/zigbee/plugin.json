@@ -11,6 +11,7 @@
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.zigbee.device.ZigbeeTemperatureConfig"},
 
 		{"se.hal.intf.HalAutostartController": "se.hal.plugin.zigbee.ZigbeeController"},
+		{"se.hal.intf.HalDaemon": "se.hal.plugin.zigbee.ZigbeeAttributeUpdateDaemon"},
 
 		{"se.hal.intf.HalWebPage": "se.hal.plugin.zigbee.page.ZigbeeNodeOverviewPage"}
 	]

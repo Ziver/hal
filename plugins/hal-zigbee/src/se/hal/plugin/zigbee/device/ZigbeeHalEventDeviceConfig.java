@@ -7,6 +7,7 @@ import com.zsmartsystems.zigbee.ZigBeeNode;
 import com.zsmartsystems.zigbee.zcl.ZclCluster;
 import com.zsmartsystems.zigbee.zcl.ZclCommand;
 import se.hal.intf.HalEventData;
+import se.hal.plugin.zigbee.ZigbeeController;
 import zutil.log.LogUtil;
 
 import java.lang.reflect.Method;
@@ -21,22 +22,9 @@ public abstract class ZigbeeHalEventDeviceConfig extends ZigbeeHalDeviceConfig {
     private static final Logger logger = LogUtil.getLogger();
 
 
-    public ZclCluster getZigbeeCluster(ZigBeeNetworkManager networkManager) {
-        ZigBeeNode node = networkManager.getNode(getZigbeeNodeAddress());
-
-        for (ZigBeeEndpoint endpoint : node.getEndpoints()) {
-            ZclCluster cluster = endpoint.getInputCluster(getZigbeeClusterId());
-            if (cluster != null) {
-                return cluster;
-            }
-        }
-
-        return null;
-    }
-
     @SuppressWarnings("unchecked")
-    public void sendZigbeeCommand(ZigBeeNetworkManager networkManager, HalEventData data) {
-        ZclCluster cluster = getZigbeeCluster(networkManager);
+    public void sendZigbeeCommand(ZigbeeController controller, HalEventData data) {
+        ZclCluster cluster = getZigbeeCluster(controller);
 
         if (cluster != null) {
             try {

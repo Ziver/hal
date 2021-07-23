@@ -32,8 +32,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.zsmartsystems.zigbee.zcl.clusters.ZclBasicCluster.*;
-
 /**
  * Controller that will connect to a Zigbee USB coordinator.
  */
@@ -217,8 +215,14 @@ public class ZigbeeController implements HalSensorController,
         return networkManager.getZigBeeExtendedPanId();
     }
 
+    public ZigBeeNode getNode(IeeeAddress address) {
+        return networkManager.getNode(address);
+    }
     public Set<ZigBeeNode> getNodes() {
         return networkManager.getNodes();
+    }
+    public List<ZigbeeHalDeviceConfig> getRegisteredDevices() {
+        return registeredDevices;
     }
 
     // ------------------------------------------
@@ -372,7 +376,7 @@ public class ZigbeeController implements HalSensorController,
     @Override
     public void send(HalEventConfig eventConfig, HalEventData eventData) {
         if (eventConfig instanceof ZigbeeHalEventDeviceConfig) {
-            ((ZigbeeHalEventDeviceConfig) eventConfig).sendZigbeeCommand(networkManager, eventData);
+            ((ZigbeeHalEventDeviceConfig) eventConfig).sendZigbeeCommand(this, eventData);
         }
     }
 

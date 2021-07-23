@@ -27,13 +27,7 @@ public class ZigbeeNodeOverviewPage extends HalWebPage {
             Map<String, String> request)
             throws Exception {
 
-        ZigbeeController controller = null;
-        for (HalAbstractController cont : HalAbstractControllerManager.getControllers()) {
-            if (cont instanceof ZigbeeController) {
-                controller = ((ZigbeeController) cont);
-                break;
-            }
-        }
+        ZigbeeController controller = HalAbstractControllerManager.getController(ZigbeeController.class);
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("controller", controller);

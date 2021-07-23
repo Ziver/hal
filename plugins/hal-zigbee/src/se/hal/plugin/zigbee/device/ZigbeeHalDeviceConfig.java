@@ -1,6 +1,8 @@
 package se.hal.plugin.zigbee.device;
 
 import com.zsmartsystems.zigbee.IeeeAddress;
+import com.zsmartsystems.zigbee.ZigBeeEndpoint;
+import com.zsmartsystems.zigbee.ZigBeeNode;
 import com.zsmartsystems.zigbee.zcl.ZclAttribute;
 import com.zsmartsystems.zigbee.zcl.ZclCluster;
 import se.hal.intf.HalAbstractController;
@@ -25,6 +27,20 @@ public abstract class ZigbeeHalDeviceConfig implements HalDeviceConfig {
 
     public IeeeAddress getZigbeeNodeAddress() {
         return new IeeeAddress(zigbeeNodeAddressStr);
+    }
+
+
+    public ZclCluster getZigbeeCluster(ZigbeeController controller) {
+        ZigBeeNode node = controller.getNode(getZigbeeNodeAddress());
+
+        for (ZigBeeEndpoint endpoint : node.getEndpoints()) {
+            ZclCluster cluster = endpoint.getInputCluster(getZigbeeClusterId());
+            if (cluster != null) {
+                return cluster;
+            }
+        }
+
+        return null;
     }
 
     // --------------------------

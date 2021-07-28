@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #ant clean
-ant package-all
+./gradlew build
 
 # Kill current session
 screen -S hal -X kill
@@ -10,4 +10,3 @@ screen -S hal -L -d -m ./gradlew run
 
 echo "-----------------"
 screen -list
-

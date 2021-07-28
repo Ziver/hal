@@ -19,7 +19,7 @@ subprojects {
     apply plugin: 'java-library'
 
     dependencies {
-        implementation 'se.koc:zutil:1.0.0-SNAPSHOT'
+        implementation 'se.koc:zutil:1.0.291'
 
         testImplementation 'junit:junit:4.12'
         testImplementation 'org.hamcrest:hamcrest-core:2.2'

@@ -1,0 +1,16 @@
+# This is a SystemD configuration for the Hal Server.
+#
+# To activate the service run:
+# - sudo cp hal.service /lib/systemd/system/
+# - sudo systemctl enable hal.service
+#
+
+[Unit]
+Description=Hal Server
+
+[Service]
+Type=idle
+ExecStart=/home/pi/repo/hal/run.sh --forground
+
+[Install]
+WantedBy=multi-user.target

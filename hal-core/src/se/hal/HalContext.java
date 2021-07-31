@@ -74,9 +74,6 @@ public class HalContext {
             } else {
                 dbConf = db.exec("SELECT * FROM conf", new PropertiesSQLResult());
             }
-
-
-
         } catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -90,7 +87,6 @@ public class HalContext {
         map.putAll(dbConf);
         map.putAll(fileConf);
         return map;
-
     }
     public static void registerProperty(String key) {
         registeredConf.put(key, "");
@@ -100,41 +96,33 @@ public class HalContext {
         return !ObjectUtil.isEmpty(getStringProperty(key));
     }
     public static String getStringProperty(String key){
+        return getStringProperty(key, null);
+    }
+    public static String getStringProperty(String key, String defaultValue){
         registerProperty(key);
 
         String value = null;
+        if (dbConf != null)
+            value = dbConf.getProperty(key);
         if (fileConf != null)
             value = fileConf.getProperty(key);
-        if (dbConf != null && value == null)
-            value = dbConf.getProperty(key);
-        return value;
-    }
-    public static String getStringProperty(String key, String defaultValue){
-        if (!containsProperty(key))
-            return defaultValue;
-        return getStringProperty(key);
+        return value != null ? value : defaultValue;
     }
 
     public static int getIntegerProperty(String key){
-        String value = getStringProperty(key);
-
-        if (getStringProperty(key) == null)
-            return 0;
-        return Integer.parseInt(value);
+        return getIntegerProperty(key, 0);
     }
     public static int getIntegerProperty(String key, int defaultValue){
-        if (!containsProperty(key))
-            return defaultValue;
-        return getIntegerProperty(key);
+        String value = getStringProperty(key);
+        return value != null ? getIntegerProperty(key) : defaultValue;
     }
 
     public static boolean getBooleanProperty(String key) {
-        return Boolean.parseBoolean(getStringProperty(key));
+        return getBooleanProperty(key, false);
     }
     public static boolean getBooleanProperty(String key, boolean defaultValue) {
-        if (!containsProperty(key))
-            return defaultValue;
-        return getBooleanProperty(key);
+        String value = getStringProperty(key);
+        return value != null ? Boolean.parseBoolean(getStringProperty(key)) : defaultValue;
     }
 
     public static void setProperty(String key, String value) {
@@ -148,7 +136,6 @@ public class HalContext {
             logger.log(Level.SEVERE, "Was unable to save property: " + key + " = " + value, e);
         }
     }
-
 
 
 

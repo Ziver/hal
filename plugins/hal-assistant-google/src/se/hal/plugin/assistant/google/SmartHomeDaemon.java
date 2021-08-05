@@ -25,9 +25,9 @@
 package se.hal.plugin.assistant.google;
 
 import se.hal.HalContext;
+import se.hal.HalServer;
 import se.hal.intf.HalDaemon;
 import zutil.log.LogUtil;
-import zutil.net.http.HttpServer;
 import zutil.net.http.page.oauth.OAuth2AuthorizationPage;
 import zutil.net.http.page.oauth.OAuth2Registry;
 import zutil.net.http.page.oauth.OAuth2TokenPage;
@@ -43,19 +43,16 @@ public class SmartHomeDaemon implements HalDaemon {
     public static final String ENDPOINT_TOKEN     = "api/assistant/google/auth/token";
     public static final String ENDPOINT_SMARTHOME = "api/assistant/google/smarthome";
 
-    private static final String CONFIG_PORT      = "hal_assistant.google.port";
     private static final String CONFIG_CLIENT_ID = "hal_assistant.google.client_id";
 
     private SmartHomeImpl smartHome;
     private OAuth2Registry oAuth2Registry;
-    private HttpServer httpServer;
 
     @Override
     public void initiate(ScheduledExecutorService executor) {
         if (smartHome == null) {
-            if (!HalContext.containsProperty(CONFIG_PORT) ||
-                    !HalContext.containsProperty(CONFIG_CLIENT_ID)) {
-                logger.severe("Missing configuration, abort initializations.");
+            if (!HalContext.containsProperty(CONFIG_CLIENT_ID)) {
+                logger.severe("Missing configuration, aborting initializations.");
                 return;
             }
 
@@ -65,11 +62,9 @@ public class SmartHomeDaemon implements HalDaemon {
             oAuth2Registry.addWhitelist(HalContext.getStringProperty(CONFIG_CLIENT_ID));
             oAuth2Registry.setTokenListener(smartHome);
 
-            httpServer = new HttpServer(HalContext.getIntegerProperty(CONFIG_PORT));
-            httpServer.setPage(ENDPOINT_AUTH, new OAuth2AuthorizationPage(oAuth2Registry));
-            httpServer.setPage(ENDPOINT_TOKEN, new OAuth2TokenPage(oAuth2Registry));
-            httpServer.setPage(ENDPOINT_SMARTHOME, new SmartHomePage(smartHome));
-            httpServer.start();
+            HalServer.registerExternalPage(ENDPOINT_AUTH, new OAuth2AuthorizationPage(oAuth2Registry));
+            HalServer.registerExternalPage(ENDPOINT_TOKEN, new OAuth2TokenPage(oAuth2Registry));
+            HalServer.registerExternalPage(ENDPOINT_SMARTHOME, new SmartHomePage(smartHome));
         }
     }
 

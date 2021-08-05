@@ -3,6 +3,8 @@
 # ------------------------------------
 
 hal_core.http_port=8080
+hal_core.http_external_port=8081
+#hal_core.http_external_domain=example.com
 
 # ------------------------------------------------------------------------
 # Plugin configurations
@@ -13,16 +15,15 @@ hal_core.http_port=8080
 # ------------------------------------
 
 ## Tellstick plugin
-#hal_tellstick.com_port=COM5
-#hal_tellstick.com_port=/dev/serial/by-id/usb-Telldus_TellStick_Duo_A6XNNE6Z-if00-port0
+#hal_tellstick.com_port=COM5|/dev/serial/by-id/usb-Telldus_TellStick_Duo_A6XNNE6Z-if00-port0
 
 ## NetUPS plugin
 #hal_nutups.host=
 #hal_nutups.port=
 
 ## NetScan plugin
-# Network scanning should probably be disabled in some networks (default on)
-#hal_netscan.ipscan=false
+# Network scanning should probably be disabled in some networks
+#hal_netscan.ipscan=true
 
 ## Zigbee plugin
 #hal_zigbee.com_port=COM4
@@ -39,5 +40,4 @@ hal_powerchallenge.sync_port=6666
 # ------------------------------------
 
 ## Google Assistant
-hal_assistant.google.port=8081
 hal_assistant.google.client_id=https://oauth-redirect.googleusercontent.com/r/optimal-comfort-XXXXX

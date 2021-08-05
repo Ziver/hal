@@ -4,15 +4,19 @@ package se.hal;
 import se.hal.intf.*;
 import se.hal.page.HalAlertManager;
 import se.hal.struct.PluginConfig;
+import se.hal.util.HalAcmeDataStore;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
+import zutil.net.acme.AcmeClient;
+import zutil.net.http.HttpPage;
 import zutil.net.http.HttpServer;
 import zutil.net.http.page.HttpFilePage;
 import zutil.net.http.page.HttpRedirectPage;
 import zutil.plugin.PluginData;
 import zutil.plugin.PluginManager;
 
+import java.security.cert.Certificate;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,6 +25,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static se.hal.HalContext.CONFIG_HTTP_EXTERNAL_DOMAIN;
+import static se.hal.HalContext.CONFIG_HTTP_EXTERNAL_PORT;
 
 /**
  * Main class for Hal
@@ -34,7 +41,7 @@ public class HalServer {
     private static List<HalDaemon> daemons = new ArrayList<>();
 
     private static HttpServer http;
-    private static List<HalWebPage> pages = new ArrayList<>();
+    private static HttpServer httpExternal;
 
     private static PluginManager pluginManager;
 
@@ -51,8 +58,9 @@ public class HalServer {
 
             // init variables
             pluginManager = new PluginManager();
-            daemonExecutor = Executors.newScheduledThreadPool(1); // We set only one thread for easier troubleshooting
+            daemonExecutor = Executors.newScheduledThreadPool(1); // We set only one thread for easier troubleshooting for now
             http = new HttpServer(HalContext.getIntegerProperty(HalContext.CONFIG_HTTP_PORT));
+            http.start();
 
             // Upgrade database
             HalDatabaseUpgradeManager.initialize(pluginManager);
@@ -64,6 +72,27 @@ public class HalServer {
             DBConnection db = HalContext.getDB();
 
             logger.info("Working directory: " + FileUtil.find(".").getAbsolutePath());
+
+            // ------------------------------------
+            // Initialize External HttpServer
+            // ------------------------------------
+
+            if (HalContext.containsProperty(CONFIG_HTTP_EXTERNAL_PORT) &&
+                    HalContext.containsProperty(CONFIG_HTTP_EXTERNAL_DOMAIN)) {
+                // Start a non secure server to retrieve handle the ACME protocol challenge
+                HttpServer tmpHttpExternal = new HttpServer(HalContext.getIntegerProperty(CONFIG_HTTP_EXTERNAL_PORT));
+                tmpHttpExternal.start();
+
+                AcmeClient acme = new AcmeClient(new HalAcmeDataStore());
+                Certificate certificate = acme.fetchCertificate(tmpHttpExternal, HalContext.getStringProperty(CONFIG_HTTP_EXTERNAL_DOMAIN));
+
+                tmpHttpExternal.close();
+                httpExternal = new HttpServer(HalContext.getIntegerProperty(CONFIG_HTTP_EXTERNAL_PORT));
+                httpExternal.start();
+            } else {
+                logger.warning("Missing '" + CONFIG_HTTP_EXTERNAL_PORT + "' and '" + CONFIG_HTTP_EXTERNAL_DOMAIN + "' configuration, will not setup external http server.");
+                return;
+            }
 
             // ------------------------------------
             // Initialize Plugins
@@ -124,7 +153,6 @@ public class HalServer {
                 registerPage(it.next());
             for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalWebPage.class); it.hasNext(); )
                 registerPage(it.next());
-            http.start();
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Startup failed.", e);
@@ -172,11 +200,45 @@ public class HalServer {
         daemon.initiate(daemonExecutor);
     }
 
+
     /**
-     * @param page  registers the given page with the intranet Hal web server.
+     * Registers the given page with the intranet Hal web server.
+     *
+     * @param url  is the web path to the page.
+     * @param page is the page to register with the server.
+     */
+    public static void registerPage(String url, HttpPage page){
+        http.setPage(url, page);
+    }
+
+    /**
+     * Registers the given page with the intranet Hal web server.
+     *
+     * @param page is the page to register with the server.
      */
     public static void registerPage(HalWebPage page){
-        pages.add(page);
-        http.setPage(page.getId(), page);
+        registerPage(page.getId(), page);
+    }
+
+    /**
+     * Registers the given page with the external Hal web server.
+     * Note: as this page will most likely be accessible trough the internet it needs to be robust and secure.
+     *
+     * @param url  is the web path to the page.
+     * @param page is the page to register with the server.
+     */
+    public static void registerExternalPage(String url, HttpPage page){
+        if (httpExternal != null)
+            httpExternal.setPage(url, page);
+    }
+
+    /**
+     * Registers the given page with the external Hal web server.
+     * Note: as this page will most likely be accessible trough the internet it needs to be robust and secure.
+     *
+     * @param page is the page to register with the server.
+     */
+    public static void registerExternalPage(HalWebPage page){
+        registerExternalPage(page.getId(), page);
     }
 }

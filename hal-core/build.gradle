@@ -4,4 +4,6 @@
 
 dependencies {
     implementation 'org.xerial:sqlite-jdbc:3.32.3.2'
+    implementation 'org.shredzone.acme4j:acme4j-client:2.12'
+    implementation 'org.shredzone.acme4j:acme4j-utils:2.12'
 }

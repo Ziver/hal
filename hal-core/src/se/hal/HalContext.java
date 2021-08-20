@@ -24,6 +24,7 @@ public class HalContext {
     public static final String CONFIG_HTTP_PORT = "hal_core.http_port";
     public static final String CONFIG_HTTP_EXTERNAL_PORT = "hal_core.http_external_port";
     public static final String CONFIG_HTTP_EXTERNAL_DOMAIN = "hal_core.http_external_domain";
+    public static final String CONFIG_HTTP_EXTERNAL_ACME_TYPE = "hal_core.http_external_acme_type";
     public static final String CONFIG_MAP_BACKGROUND_IMAGE = "hal_core.map_bgimage";
 
     public static final String RESOURCE_ROOT;
@@ -104,10 +105,10 @@ public class HalContext {
         registerProperty(key);
 
         String value = null;
-        if (dbConf != null)
-            value = dbConf.getProperty(key);
         if (fileConf != null)
             value = fileConf.getProperty(key);
+        if (value == null && dbConf != null)
+            value = dbConf.getProperty(key);
         return value != null ? value : defaultValue;
     }
 
@@ -116,7 +117,7 @@ public class HalContext {
     }
     public static int getIntegerProperty(String key, int defaultValue){
         String value = getStringProperty(key);
-        return value != null ? getIntegerProperty(key) : defaultValue;
+        return value != null ? Integer.parseInt(getStringProperty(key)) : defaultValue;
     }
 
     public static boolean getBooleanProperty(String key) {

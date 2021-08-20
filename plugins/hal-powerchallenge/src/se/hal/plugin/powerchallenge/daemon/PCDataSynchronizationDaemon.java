@@ -58,7 +58,7 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
     public static final int PROTOCOL_VERSION = 5; // Increment for protocol changes
 
 
-    public PCDataSynchronizationDaemon() {
+    public PCDataSynchronizationDaemon() throws IOException {
         super(HalContext.getIntegerProperty(PROPERTY_SYNC_PORT));
     }
 
@@ -81,20 +81,20 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
 
 
     private class DataSynchronizationDaemonThread implements ThreadedTCPNetworkServerThread{
-        private Socket s;
+        private Socket socket;
         private ObjectOutputStream out;
         private ObjectInputStream in;
 
 
-        public DataSynchronizationDaemonThread(Socket s) throws IOException{
-            this.s = s;
-            this.out = new ObjectOutputStream(s.getOutputStream());
-            this.in = new ObjectInputStream(s.getInputStream());
+        public DataSynchronizationDaemonThread(Socket socket) throws IOException{
+            this.socket = socket;
+            this.out = new ObjectOutputStream(socket.getOutputStream());
+            this.in = new ObjectInputStream(socket.getInputStream());
         }
 
 
         public void run(){
-            logger.fine("User connected: "+ s.getInetAddress().getHostName());
+            logger.fine("User connected: "+ socket.getInetAddress().getHostName());
             DBConnection db = HalContext.getDB();
 
             try {
@@ -166,12 +166,12 @@ public class PCDataSynchronizationDaemon extends ThreadedTCPNetworkServer implem
                 }
                 out.close();
                 in.close();
-                s.close();
+                socket.close();
 
             } catch (Exception e) {
                 logger.log(Level.SEVERE, null, e);
             }
-            logger.fine("User disconnected: "+ s.getInetAddress().getHostName());
+            logger.fine("User disconnected: "+ socket.getInetAddress().getHostName());
         }
     }
 

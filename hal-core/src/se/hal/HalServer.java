@@ -8,7 +8,10 @@ import se.hal.util.HalAcmeDataStore;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
+import zutil.net.acme.AcmeChallengeFactory;
 import zutil.net.acme.AcmeClient;
+import zutil.net.acme.AcmeHttpChallengeFactory;
+import zutil.net.acme.AcmeManualDnsChallengeFactory;
 import zutil.net.http.HttpPage;
 import zutil.net.http.HttpServer;
 import zutil.net.http.page.HttpFilePage;
@@ -79,16 +82,35 @@ public class HalServer {
 
             if (HalContext.containsProperty(CONFIG_HTTP_EXTERNAL_PORT) &&
                     HalContext.containsProperty(CONFIG_HTTP_EXTERNAL_DOMAIN)) {
-                // Start a non secure server to retrieve handle the ACME protocol challenge
-                HttpServer tmpHttpExternal = new HttpServer(HalContext.getIntegerProperty(CONFIG_HTTP_EXTERNAL_PORT));
-                tmpHttpExternal.start();
+                AcmeClient acme;
+                HttpServer tmpHttpServer = null;
 
-                AcmeClient acme = new AcmeClient(new HalAcmeDataStore());
-                Certificate certificate = acme.fetchCertificate(tmpHttpExternal, HalContext.getStringProperty(CONFIG_HTTP_EXTERNAL_DOMAIN));
+                if ("dns".equals(HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_ACME_TYPE, ""))) {
+                    acme = new AcmeClient(new HalAcmeDataStore(), new AcmeManualDnsChallengeFactory(), AcmeClient.ACME_SERVER_LETSENCRYPT_STAGING);
+                } else if ("http".equals(HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_ACME_TYPE, "http"))) {
+                    tmpHttpServer = new HttpServer(80);
+                    tmpHttpServer.start();
 
-                tmpHttpExternal.close();
-                httpExternal = new HttpServer(HalContext.getIntegerProperty(CONFIG_HTTP_EXTERNAL_PORT));
+                    acme = new AcmeClient(new HalAcmeDataStore(), new AcmeHttpChallengeFactory(tmpHttpServer), AcmeClient.ACME_SERVER_LETSENCRYPT_STAGING);
+                } else {
+                    throw new IllegalArgumentException("Unknown config value for " + HalContext.CONFIG_HTTP_EXTERNAL_ACME_TYPE + ": " +
+                            HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_ACME_TYPE));
+                }
+
+                acme.addDomain(HalContext.getStringProperty(CONFIG_HTTP_EXTERNAL_DOMAIN));
+                acme.prepareRequest();
+                Certificate certificate = acme.requestCertificate();
+
+                httpExternal = new HttpServer(HalContext.getIntegerProperty(CONFIG_HTTP_EXTERNAL_PORT), certificate);
                 httpExternal.start();
+
+                // Cleanup
+
+                if ("http".equals(HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_ACME_TYPE, "http"))) {
+                    tmpHttpServer.close();
+                }
+
+                logger.info("External https server up and running at: https://" + HalContext.getStringProperty(CONFIG_HTTP_EXTERNAL_DOMAIN) + ":" + HalContext.containsProperty(CONFIG_HTTP_EXTERNAL_PORT));
             } else {
                 logger.warning("Missing '" + CONFIG_HTTP_EXTERNAL_PORT + "' and '" + CONFIG_HTTP_EXTERNAL_DOMAIN + "' configuration, will not setup external http server.");
                 return;

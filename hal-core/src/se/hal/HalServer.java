@@ -95,12 +95,12 @@ public class HalServer {
                     HttpServer tmpHttpServer = null;
 
                     if ("dns".equals(HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_ACME_TYPE, ""))) {
-                        acme = new AcmeClient(acmeDataStore, new AcmeManualDnsChallengeFactory(), AcmeClient.ACME_SERVER_LETSENCRYPT_STAGING);
+                        acme = new AcmeClient(acmeDataStore, new AcmeManualDnsChallengeFactory());
                     } else if ("http".equals(HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_ACME_TYPE, "http"))) {
                         tmpHttpServer = new HttpServer(80);
                         tmpHttpServer.start();
 
-                        acme = new AcmeClient(acmeDataStore, new AcmeHttpChallengeFactory(tmpHttpServer), AcmeClient.ACME_SERVER_LETSENCRYPT_STAGING);
+                        acme = new AcmeClient(acmeDataStore, new AcmeHttpChallengeFactory(tmpHttpServer));
                     } else {
                         throw new IllegalArgumentException("Unknown config value for " + externalServerUrl);
                     }
@@ -118,7 +118,7 @@ public class HalServer {
                     }
                 }
 
-                httpExternal = new HttpServer(HalContext.getIntegerProperty(CONFIG_HTTP_EXTERNAL_PORT), certificate);
+                httpExternal = new HttpServer(HalContext.getIntegerProperty(CONFIG_HTTP_EXTERNAL_PORT), acmeDataStore.getDomainKeyPair().getPrivate(), certificate);
                 httpExternal.start();
 
                 logger.info("External https server up and running at: " + externalServerUrl);

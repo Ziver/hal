@@ -3,6 +3,12 @@
 # ------------------------------------
 
 hal_core.http_port=8080
+
+# External HTTP server requires SSL certificate which is provided by letsencrypt, for the authentication
+# to letsencrypt to work port 80 needs to be opened temporarily during the certificate generation process
+# make sure the firewall forwarding rules are setup for this process to work.
+# In the future DNS authentication will also be available so no port forwarding will be necessary.
+hal_core.http_acme_type=http|dns
 hal_core.http_external_port=8081
 #hal_core.http_external_domain=example.com
 

@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SensorDataAggregatorDaemon implements HalDaemon {
+public class SensorDataAggregatorDaemon implements HalDaemon, Runnable {
     private static final Logger logger = LogUtil.getLogger();
 
     public enum AggregationPeriodLength{

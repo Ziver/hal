@@ -5,7 +5,7 @@ import java.util.concurrent.ScheduledExecutorService;
 /**
  * Defines a standalone process that will run parallel to the main application
  */
-public interface HalDaemon extends Runnable {
+public interface HalDaemon {
 
     /**
      * Setup the execution of the daemon with the provided executor.

@@ -67,7 +67,4 @@ public class SmartHomeDaemon implements HalDaemon {
             HalServer.registerExternalPage(ENDPOINT_SMARTHOME, new SmartHomePage(smartHome));
         }
     }
-
-    @Override
-    public void run() { }
 }

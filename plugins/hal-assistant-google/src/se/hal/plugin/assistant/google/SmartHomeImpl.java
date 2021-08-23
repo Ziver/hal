@@ -65,6 +65,7 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
      *
      * TODO: https://developers.google.com/assistant/smarthome/traits/temperaturesetting
      */
+    @SuppressWarnings("unchecked")
     @Override
     public SyncResponse onSync(SyncRequest syncRequest, Map<?, ?> headers) {
         logger.fine("Received sync request.");

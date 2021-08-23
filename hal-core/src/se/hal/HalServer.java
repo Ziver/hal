@@ -124,7 +124,6 @@ public class HalServer {
                 logger.info("External https server up and running at: " + externalServerUrl);
             } else {
                 logger.warning("Missing '" + CONFIG_HTTP_EXTERNAL_PORT + "' and '" + CONFIG_HTTP_EXTERNAL_DOMAIN + "' configuration, will not setup external http server.");
-                return;
             }
 
             // ------------------------------------

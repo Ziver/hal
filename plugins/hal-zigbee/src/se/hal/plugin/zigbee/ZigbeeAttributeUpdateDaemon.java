@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ZigbeeAttributeUpdateDaemon implements HalDaemon {
+public class ZigbeeAttributeUpdateDaemon implements HalDaemon, Runnable {
     private static final Logger logger = LogUtil.getLogger();
 
 

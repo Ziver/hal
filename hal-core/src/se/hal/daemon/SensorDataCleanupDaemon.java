@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SensorDataCleanupDaemon implements HalDaemon {
+public class SensorDataCleanupDaemon implements HalDaemon, Runnable {
     private static final Logger logger = LogUtil.getLogger();
 
     public void initiate(ScheduledExecutorService executor){
@@ -44,7 +44,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
         if (sensor.getUser() != null) {
             cleanupSensorData(sensor.getId(), AggregationPeriodLength.FIVE_MINUTES, UTCTimeUtility.DAY_IN_MS);	//clear 5-minute data older than a day
             cleanupSensorData(sensor.getId(), AggregationPeriodLength.HOUR, UTCTimeUtility.WEEK_IN_MS);			//clear 1-hour data older than a week
-            //cleanupSensorData(sensor.getId(), AggregationPeriodLength.day, TimeUtility.INFINITY);			//clear 1-day data older than infinity
+            //cleanupSensorData(sensor.getId(), AggregationPeriodLength.day, TimeUtility.INFINITY);			    //clear 1-day data older than infinity
             //cleanupSensorData(sensor.getId(), AggregationPeriodLength.week, TimeUtility.INFINITY);			//clear 1-week data older than infinity
         }
     }
@@ -54,10 +54,10 @@ public class SensorDataCleanupDaemon implements HalDaemon {
      * Will clear periods if they are too old.
      *
      * @param sensorId
-     * @Param clearPeriodlength Will clear periods with this length
+     * @Param cleanupPeriodLength Will clear periods with this length
      * @param olderThan Data must be older than this many ms to be cleared from the DB
      */
-    private void cleanupSensorData(long sensorId, AggregationPeriodLength cleanupPeriodlength, long olderThan){
+    private void cleanupSensorData(long sensorId, AggregationPeriodLength cleanupPeriodLength, long olderThan){
         DBConnection db = HalContext.getDB();
         PreparedStatement stmt = null;
         try {
@@ -67,7 +67,7 @@ public class SensorDataCleanupDaemon implements HalDaemon {
                         + "AND timestamp_end-timestamp_start == ?"
                         + "AND timestamp_end < ?");
             stmt.setLong(1, sensorId);
-            switch(cleanupPeriodlength){
+            switch(cleanupPeriodLength){
                 case SECOND: stmt.setLong(2, UTCTimeUtility.SECOND_IN_MS-1); break;
                 case MINUTE: stmt.setLong(2, UTCTimeUtility.MINUTE_IN_MS-1); break;
                 case FIVE_MINUTES: stmt.setLong(2, UTCTimeUtility.FIVE_MINUTES_IN_MS-1); break;

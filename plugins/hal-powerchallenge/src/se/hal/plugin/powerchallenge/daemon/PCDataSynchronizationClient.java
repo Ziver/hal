@@ -51,7 +51,7 @@ import java.util.logging.Logger;
 
 import static zutil.ui.UserMessageManager.*;
 
-public class PCDataSynchronizationClient implements HalDaemon {
+public class PCDataSynchronizationClient implements HalDaemon, Runnable {
     private static final Logger logger = LogUtil.getLogger();
     private static final long SYNC_INTERVAL = 5 * 60 * 1000; // 5 min
 

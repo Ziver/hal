@@ -75,9 +75,9 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
 
         if (controller != null)
             controller.register(sensor.getDeviceConfig());
+
         registeredSensors.add(sensor);
-        detectedSensors.remove(
-                HalDeviceUtil.findDevice(sensor.getDeviceConfig(), detectedSensors)); // Remove if this device was detected
+        detectedSensors.remove(HalDeviceUtil.findDevice(sensor.getDeviceConfig(), detectedSensors)); // Remove if this device was detected
     }
 
     /**

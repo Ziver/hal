@@ -75,6 +75,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
 
         if (controller != null)
             controller.register(event.getDeviceConfig());
+
         registeredEvents.add(event);
         detectedEvents.remove(HalDeviceUtil.findDevice(event.getDeviceConfig(), detectedEvents)); // Remove if this device was detected
     }

@@ -45,7 +45,7 @@ public class ZigbeeAttributeUpdateDaemon implements HalDaemon, Runnable {
 
     @Override
     public void initiate(ScheduledExecutorService executor) {
-        executor.scheduleAtFixedRate(this, 0, 10, TimeUnit.MINUTES);
+        executor.scheduleAtFixedRate(this, 10, 10, TimeUnit.MINUTES);
     }
 
     @Override

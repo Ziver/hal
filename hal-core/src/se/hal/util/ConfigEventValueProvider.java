@@ -2,6 +2,7 @@ package se.hal.util;
 
 import se.hal.HalContext;
 import se.hal.struct.Event;
+import zutil.Timer;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.ui.conf.Configurator;
@@ -20,12 +21,20 @@ import java.util.logging.Logger;
 public class ConfigEventValueProvider implements Configurator.ConfigValueProvider<Event> {
     private static final Logger logger = LogUtil.getLogger();
 
-    private Event currentValue;
+    protected static int DEVICE_REFRESH_TIME_IN_SECONDS = 30;
+
     private Map<String, Event> events = new HashMap<>();
+    private Timer updateTimer = new Timer(DEVICE_REFRESH_TIME_IN_SECONDS * 1000);
 
 
-    public ConfigEventValueProvider(Class<Enum> fieldType, Object fieldValue) {
-        this.currentValue = (Event) fieldValue;
+    public ConfigEventValueProvider() {
+        refreshEventMap();
+    }
+
+
+    private void refreshEventMap() {
+        if (!updateTimer.hasTimedOut())
+            return;
 
         try {
             DBConnection db = HalContext.getDB();
@@ -33,10 +42,13 @@ public class ConfigEventValueProvider implements Configurator.ConfigValueProvide
             for (Event event : Event.getLocalEvents(db)) {
                 events.put(getValue(event), event);
             }
+
+            updateTimer.start();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Unable to retrieve local events.", e);
         }
     }
+
 
     @Override
     public String getValue(Event event) {
@@ -47,6 +59,7 @@ public class ConfigEventValueProvider implements Configurator.ConfigValueProvide
 
     @Override
     public List<String> getPossibleValues() {
+        refreshEventMap();
         return new ArrayList<>(events.keySet());
     }
 

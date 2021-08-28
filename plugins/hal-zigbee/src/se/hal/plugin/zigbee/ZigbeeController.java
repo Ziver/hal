@@ -328,7 +328,7 @@ public class ZigbeeController implements HalSensorController,
                     }
                 });
 
-                // // TODO: Notify listener that a device is online
+                // Notify listener that a device is online
                 for (HalDeviceReportListener deviceListener : deviceListeners) {
                     deviceListener.reportReceived(config, null);
                 }

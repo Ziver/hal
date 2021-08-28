@@ -8,6 +8,8 @@ import se.hal.plugin.dummy.DummyController;
 import se.hal.plugin.dummy.DummyDevice;
 import se.hal.struct.devicedata.OnOffEventData;
 
+import java.util.Objects;
+
 public class DummySwitchEvent implements DummyDevice, HalEventConfig {
 
 
@@ -32,6 +34,6 @@ public class DummySwitchEvent implements DummyDevice, HalEventConfig {
 
     @Override
     public boolean equals(Object obj) {
-        return this.equals(obj);
+        return super.equals(obj);
     }
 }

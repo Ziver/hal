@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class ConfigEventValueProvider implements Configurator.ConfigValueProvider<Event> {
     private static final Logger logger = LogUtil.getLogger();
 
-    protected static int DEVICE_REFRESH_TIME_IN_SECONDS = 30;
+    protected static int DEVICE_REFRESH_TIME_IN_SECONDS = 3;
 
     private Map<String, Event> events = new HashMap<>();
     private Timer updateTimer = new Timer(DEVICE_REFRESH_TIME_IN_SECONDS * 1000);

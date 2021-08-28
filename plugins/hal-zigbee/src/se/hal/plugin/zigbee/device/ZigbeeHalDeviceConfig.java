@@ -9,14 +9,18 @@ import se.hal.intf.HalAbstractController;
 import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
 import se.hal.plugin.zigbee.ZigbeeController;
+import zutil.log.LogUtil;
 import zutil.ui.conf.Configurator;
 
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * A generic class that is extended by all Endpoint config classes.
  */
 public abstract class ZigbeeHalDeviceConfig implements HalDeviceConfig {
+    private static final Logger logger = LogUtil.getLogger();
+
     @Configurator.Configurable(value = "Node IeeeAddress")
     private String zigbeeNodeAddressStr;
 
@@ -26,7 +30,13 @@ public abstract class ZigbeeHalDeviceConfig implements HalDeviceConfig {
     }
 
     public IeeeAddress getZigbeeNodeAddress() {
-        return new IeeeAddress(zigbeeNodeAddressStr);
+        IeeeAddress address = null;
+        try {
+            address = new IeeeAddress(zigbeeNodeAddressStr);
+        } catch (IllegalArgumentException e) {
+            logger.warning("Unable to parse Zigbee IeeeAddress: " + zigbeeNodeAddressStr);
+        }
+        return address;
     }
 
 

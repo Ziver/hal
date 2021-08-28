@@ -14,12 +14,16 @@ Currently supported devices:
 - **Network Scanner**, IP scanner to detect devices on local network
 - **NUT**, Linux UPS daemon
 - **Tellstick**, Supported devices:
-    - NexaSelfLearning
-    - Oregon0x1A2D
+  - NexaSelfLearning
+  - Oregon0x1A2D
 - **Raspberry Pi**, GPIO connected sensors
+- **[Zigbee](plugins/hal-zigbee/README.md)**
+  - Temperature Sensors
+  - Humidity Sensors
+  - Pressure Sensors
+  - OnnOff Devices
 
 Under development (Not ready to be used yet)
-- **[Zigbee](plugins/hal-zigbee/README.md)**
 - **Z-Wave**
 - **Google Assistant**
 - **MQTT Devices**

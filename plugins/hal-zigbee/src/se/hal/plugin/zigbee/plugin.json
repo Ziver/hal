@@ -1,5 +1,5 @@
 {
-	"version": 0.1,
+	"version": 0.5,
 	"name": "Hal-Zigbee",
 	"description": "A Zigbee plugin for directly connecting to a controller device over serial port.",
 	"interfaces": [

@@ -8,6 +8,7 @@
 		{"se.hal.intf.HalAbstractControllerManager": "se.hal.EventControllerManager"},
 		{"se.hal.intf.HalAbstractControllerManager": "se.hal.SensorControllerManager"},
 
+        {"se.hal.intf.HalDaemon": "se.hal.daemon.HalExternalWebDaemon"},
         {"se.hal.intf.HalDaemon": "se.hal.daemon.HalMulticastDnsDaemon"},
         {"se.hal.intf.HalDaemon": "se.hal.daemon.SensorDataAggregatorDaemon"},
         {"se.hal.intf.HalDaemon": "se.hal.daemon.SensorDataCleanupDaemon"},

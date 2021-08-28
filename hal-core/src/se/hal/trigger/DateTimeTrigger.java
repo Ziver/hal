@@ -2,6 +2,7 @@ package se.hal.trigger;
 
 import se.hal.intf.HalTrigger;
 import zutil.CronTimer;
+import zutil.ObjectUtil;
 import zutil.ui.conf.Configurator;
 
 import java.text.SimpleDateFormat;
@@ -28,6 +29,13 @@ public class DateTimeTrigger implements HalTrigger,Configurator.PostConfiguratio
 
     @Override
     public void postConfigurationAction(Configurator configurator, Object obj) {
+        if (ObjectUtil.isEmpty(minute))         minute = "*";
+        if (ObjectUtil.isEmpty(hour))             hour = "*";
+        if (ObjectUtil.isEmpty(dayOfMonth)) dayOfMonth = "*";
+        if (ObjectUtil.isEmpty(month))           month = "*";
+        if (ObjectUtil.isEmpty(dayOfWeek))   dayOfWeek = "*";
+        if (ObjectUtil.isEmpty(year))             year = "*";
+
         cronTimer = new CronTimer(minute, hour, dayOfMonth, month, dayOfWeek, year);
         reset();
     }
@@ -37,7 +45,7 @@ public class DateTimeTrigger implements HalTrigger,Configurator.PostConfiguratio
         if (cronTimer == null)
             return false;
         // have we passed the majority of the minute? then get next timeout
-        if (System.currentTimeMillis()-timeOut > 50*1000)
+        if (System.currentTimeMillis() - timeOut > 50*1000)
             reset();
         return timeOut <= System.currentTimeMillis();
     }

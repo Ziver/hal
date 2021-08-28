@@ -318,8 +318,12 @@ public class ZigbeeController implements HalSensorController,
                     @Override
                     public void attributeUpdated(ZclAttribute attribute, Object value) {
                         logger.finer("[Node: " + endpoint.getIeeeAddress() + ", Endpoint: " + endpoint.getEndpointId() + ", Cluster: " +  attribute.getCluster().getId() + "] Attribute " + config.getClass().getSimpleName() + " updated: id=" + attribute.getId() + ", attribute_name=" + attribute.getName() + ", value=" + attribute.getLastValue());
-                        for (HalDeviceReportListener deviceListener : deviceListeners) {
-                            deviceListener.reportReceived(config, config.getDeviceData(attribute));
+
+                        HalDeviceData data = config.getDeviceData(attribute);
+                        if (data != null) {
+                            for (HalDeviceReportListener deviceListener : deviceListeners) {
+                                deviceListener.reportReceived(config, data);
+                            }
                         }
                     }
                 });

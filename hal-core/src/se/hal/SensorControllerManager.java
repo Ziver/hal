@@ -26,7 +26,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
 
     /** List of all registered sensors **/
     private List<Sensor> registeredSensors = Collections.synchronizedList(new ArrayList<>());
-    /** List of auto detected sensors **/
+    /** List of auto-detected sensors **/
     private List<Sensor> detectedSensors = Collections.synchronizedList(new ArrayList<>());
 
 
@@ -122,7 +122,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
     }
 
     /**
-     * Removes all auto detected sensors.
+     * Removes all auto-detected sensors.
      */
     @Override
     public void clearDetectedDevices(){

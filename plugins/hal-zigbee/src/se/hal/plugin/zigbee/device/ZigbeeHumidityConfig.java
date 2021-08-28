@@ -18,7 +18,8 @@ public class ZigbeeHumidityConfig extends ZigbeeHalDeviceConfig implements HalSe
 
     @Override
     public HalDeviceData getDeviceData(ZclAttribute zclAttribute) {
-        if (zclAttribute.getId() == ZclRelativeHumidityMeasurementCluster.ATTR_MEASUREDVALUE)
+        if (zclAttribute.getCluster().getId() == getZigbeeClusterId() &&
+                zclAttribute.getId() == ZclRelativeHumidityMeasurementCluster.ATTR_MEASUREDVALUE)
             return new HumiditySensorData(
                     ((int) zclAttribute.getLastValue()) / 100.0,
                     zclAttribute.getLastReportTime().getTimeInMillis());

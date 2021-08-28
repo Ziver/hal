@@ -41,7 +41,8 @@ public class ZigbeeOnOffConfig extends ZigbeeHalEventDeviceConfig implements Hal
 
     @Override
     public HalDeviceData getDeviceData(ZclAttribute zclAttribute) {
-        if (zclAttribute.getId() == ZclOnOffCluster.ATTR_ONOFF)
+        if (zclAttribute.getCluster().getId() == getZigbeeClusterId() &&
+                zclAttribute.getId() == ZclOnOffCluster.ATTR_ONOFF)
             return new OnOffEventData(
                     (boolean) zclAttribute.getLastValue(),
                     zclAttribute.getLastReportTime().getTimeInMillis());

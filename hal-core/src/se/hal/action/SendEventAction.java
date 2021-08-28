@@ -28,15 +28,13 @@ public class SendEventAction implements HalAction {
     @Override
     public void execute() {
         try {
-            DBConnection db = HalContext.getDB();
             if (event != null) {
-                HalEventData dataObj = (HalEventData) event.getDeviceConfig().getDeviceDataClass().newInstance();
+                HalEventData dataObj = (HalEventData) event.getDeviceConfig().getDeviceDataClass().getDeclaredConstructor().newInstance();
                 dataObj.setData(data);
                 event.setDeviceData(dataObj);
                 // Send
                 EventControllerManager.getInstance().send(event);
-            }
-            else
+            } else
                 logger.warning("Unable to find event with id: "+ event.getId());
         } catch (Exception e) {
             logger.log(Level.SEVERE, null, e);

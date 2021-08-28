@@ -47,7 +47,7 @@ public class ConfigEventValueProvider implements Configurator.ConfigValueProvide
 
     @Override
     public List<String> getPossibleValues() {
-        return new ArrayList<String>(events.keySet());
+        return new ArrayList<>(events.keySet());
     }
 
     @Override

@@ -182,7 +182,7 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
                 try {
                     logger.fine("Received query request for: type=" + deviceRequest.getId());
 
-                    if (!deviceRequest.getCustomData().containsKey("type") && !deviceRequest.getCustomData().containsKey("id"))
+                    if (deviceRequest.getCustomData() == null || !deviceRequest.getCustomData().containsKey("type") || !deviceRequest.getCustomData().containsKey("id"))
                         throw new IllegalArgumentException("Device Type and ID was no supplied in customData: " + deviceRequest.getId());
 
                     String deviceTypeStr = (String) deviceRequest.getCustomData().get("type");
@@ -237,7 +237,7 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
         for (ExecuteRequest.Inputs.Payload.Commands command : ((ExecuteRequest.Inputs) executeRequest.inputs[0]).payload.commands) {
             for (ExecuteRequest.Inputs.Payload.Commands.Devices deviceRequest : command.devices) {
                 try {
-                    if (!deviceRequest.getCustomData().containsKey("type") && !deviceRequest.getCustomData().containsKey("id"))
+                    if (deviceRequest.getCustomData() == null || !deviceRequest.getCustomData().containsKey("type") || !deviceRequest.getCustomData().containsKey("id"))
                         throw new IllegalArgumentException("Device Type and ID was no supplied in customData: " + deviceRequest.getId());
 
                     String deviceTypeStr = (String) deviceRequest.getCustomData().get("type");

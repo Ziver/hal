@@ -25,34 +25,33 @@
 package se.hal.plugin.assistant.google.trait;
 
 
+import com.google.actions.api.smarthome.ExecuteRequest;
+import se.hal.EventControllerManager;
+import se.hal.intf.HalAbstractDevice;
 import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
+import se.hal.struct.Event;
+import se.hal.struct.devicedata.OnOffEventData;
 import se.hal.struct.devicedata.TemperatureSensorData;
 
 import java.util.HashMap;
 
 
 /**
- * https://developers.google.com/assistant/smarthome/traits/temperaturecontrol
+ * https://developers.google.com/assistant/smarthome/traits/onoff
  */
-public class TemperatureControlTrait extends DeviceTrait {
+public class OnOffTrait extends DeviceTrait {
 
     @Override
     String getId() {
-        return "action.devices.traits.TemperatureControl";
+        return "action.devices.traits.OnOff";
     }
 
     @Override
     public HashMap<String, Object> generateSyncResponse(HalDeviceConfig config) {
         HashMap<String, Object> response = new HashMap<>();
-        response.put("temperatureRange", new HashMap<String, Object>() {{
-            put("minThresholdCelsius", -20);
-            put("maxThresholdCelsius", 60);
-        }});
-        //response.put("temperatureStepCelsius", 0.5);
-        response.put("temperatureUnitForUX", "C");
-        //response.put("commandOnlyTemperatureControl", false);
-        response.put("queryOnlyTemperatureControl", true);
+        response.put("commandOnlyOnOff", false);
+        response.put("queryOnlyOnOff", false);
         return response;
     }
 
@@ -60,11 +59,24 @@ public class TemperatureControlTrait extends DeviceTrait {
     public HashMap<String, Object> generateQueryResponse(HalDeviceData data) {
         HashMap<String, Object> response = new HashMap<>();
 
-        if (data instanceof TemperatureSensorData) {
-            //response.put("temperatureSetpointCelsius", data.getData());
-            response.put("temperatureAmbientCelsius", data.getData());
+        if (data instanceof OnOffEventData) {
+            response.put("on", ((OnOffEventData) data).isOn());
         }
 
         return response;
+    }
+
+    @Override
+    public void execute(HalAbstractDevice device, ExecuteRequest.Inputs.Payload.Commands.Execution execution) {
+        if ("action.devices.commands.OnOff".equals(execution.command)) {
+            OnOffEventData eventData = new OnOffEventData();
+            if ("on".equals(execution.getParams().get("on")))
+                eventData.turnOn();
+            else
+                eventData.turnOff();
+
+            device.setDeviceData(eventData);
+            EventControllerManager.getInstance().send((Event) device);
+        }
     }
 }

@@ -31,6 +31,9 @@ import se.hal.struct.devicedata.HumiditySensorData;
 import java.util.HashMap;
 
 
+/**
+ * https://developers.google.com/assistant/smarthome/traits/humiditysetting
+ */
 public class HumiditySettingTrait extends DeviceTrait {
 
     @Override

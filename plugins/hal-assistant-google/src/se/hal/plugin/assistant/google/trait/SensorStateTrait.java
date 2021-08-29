@@ -27,44 +27,48 @@ package se.hal.plugin.assistant.google.trait;
 
 import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
-import se.hal.struct.devicedata.TemperatureSensorData;
+import se.hal.struct.devicedata.OpenClosedEventData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
 /**
- * https://developers.google.com/assistant/smarthome/traits/temperaturecontrol
+ * https://developers.google.com/assistant/smarthome/traits/openclose
  */
-public class TemperatureControlTrait extends DeviceTrait {
+public class SensorStateTrait extends DeviceTrait {
 
     @Override
     String getId() {
-        return "action.devices.traits.TemperatureControl";
+        return "action.devices.traits.SensorState";
     }
 
     @Override
     public HashMap<String, Object> generateSyncResponse(HalDeviceConfig config) {
         HashMap<String, Object> response = new HashMap<>();
-        response.put("temperatureRange", new HashMap<String, Object>() {{
-            put("minThresholdCelsius", -20);
+        ArrayList<HashMap> sensorStatesSupported = new ArrayList<>();
+
+        /*sensorStatesSupported.add(new HashMap<String, Object>() {{
+            put("name", xxx);
             put("maxThresholdCelsius", 60);
-        }});
-        //response.put("temperatureStepCelsius", 0.5);
-        response.put("temperatureUnitForUX", "C");
-        //response.put("commandOnlyTemperatureControl", false);
-        response.put("queryOnlyTemperatureControl", true);
+        }});*/
+
+        response.put("sensorStatesSupported", sensorStatesSupported);
         return response;
     }
 
     @Override
     public HashMap<String, Object> generateQueryResponse(HalDeviceData data) {
         HashMap<String, Object> response = new HashMap<>();
+        ArrayList<HashMap> currentSensorStateData = new ArrayList<>();
 
-        if (data instanceof TemperatureSensorData) {
-            //response.put("temperatureSetpointCelsius", data.getData());
-            response.put("temperatureAmbientCelsius", data.getData());
-        }
+        /*currentSensorStateData.add(new HashMap<String, Object>() {{
+            put("name", xxx);
+            put("currentSensorState", xxx);
+            put("rawValue", xxx);
+        }});*/
 
+        response.put("currentSensorStateData", currentSensorStateData);
         return response;
     }
 }

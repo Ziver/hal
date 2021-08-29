@@ -24,13 +24,16 @@ import com.google.home.graph.v1.HomeGraphApiServiceProto;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 import org.json.JSONObject;
+import se.hal.EventControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalAbstractDevice;
 import se.hal.plugin.assistant.google.trait.DeviceTrait;
 import se.hal.plugin.assistant.google.trait.DeviceTraitFactory;
+import se.hal.plugin.assistant.google.trait.OnOffTrait;
 import se.hal.plugin.assistant.google.type.DeviceType;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
+import se.hal.struct.devicedata.OnOffEventData;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.net.http.page.oauth.OAuth2Registry.TokenRegistrationListener;
@@ -64,8 +67,6 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
 
     /**
      * https://developers.google.com/assistant/smarthome/reference/intent/sync
-     *
-     * TODO: https://developers.google.com/assistant/smarthome/traits/temperaturesetting
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -124,10 +125,10 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
 
             // Set custom data
 
-            /*JSONObject customDataJson = new JSONObject();
+            JSONObject customDataJson = new JSONObject();
             customDataJson.put("type", device.getClass().getSimpleName());
             customDataJson.put("id", device.getId());
-            deviceBuilder.setCustomData(customDataJson);*/
+            deviceBuilder.setCustomData(customDataJson);
 
             res.payload.devices[i] = deviceBuilder.build();
         }
@@ -181,12 +182,11 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
                 try {
                     logger.fine("Received query request for: type=" + deviceRequest.getId());
 
-                    String[] deviceIdArray = deviceRequest.getId().split("-");
-                    if (deviceIdArray.length != 2)
-                        throw new IllegalArgumentException("Invalid device ID: " + deviceRequest.getId());
+                    if (!deviceRequest.getCustomData().containsKey("type") && !deviceRequest.getCustomData().containsKey("id"))
+                        throw new IllegalArgumentException("Device Type and ID was no supplied in customData: " + deviceRequest.getId());
 
-                    String deviceTypeStr = deviceIdArray[0];
-                    long deviceId = Long.parseLong(deviceIdArray[1]); // Get the number in the id "Sensor-<number>"
+                    String deviceTypeStr = (String) deviceRequest.getCustomData().get("type");
+                    long deviceId = Long.parseLong((String) deviceRequest.getCustomData().get("id"));
 
                     HalAbstractDevice device;
                     switch (deviceTypeStr) {
@@ -229,37 +229,47 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
      */
     @Override
     public ExecuteResponse onExecute(ExecuteRequest executeRequest, Map<?, ?> headers) {
-        logger.fine("Received execute request.");
+        DBConnection db = HalContext.getDB();
 
         ExecuteResponse res = new ExecuteResponse();
-
         List<ExecuteResponse.Payload.Commands> commandsResponse = new ArrayList<>();
-        List<String> successfulDevices = new ArrayList<>();
-        Map<String, Object> states = new HashMap<>();
 
-        ExecuteRequest.Inputs.Payload.Commands[] commands =
-                ((ExecuteRequest.Inputs) executeRequest.inputs[0]).payload.commands;
-/*        for (ExecuteRequest.Inputs.Payload.Commands command : commands) {
-            for (ExecuteRequest.Inputs.Payload.Commands.Devices device : command.devices) {
+        for (ExecuteRequest.Inputs.Payload.Commands command : ((ExecuteRequest.Inputs) executeRequest.inputs[0]).payload.commands) {
+            for (ExecuteRequest.Inputs.Payload.Commands.Devices deviceRequest : command.devices) {
                 try {
-                    states = database.execute(userId, device.id, command.execution[0]);
-                    successfulDevices.add(device.id);
-                    ReportState.makeRequest(this, userId, device.id, states);
+                    if (!deviceRequest.getCustomData().containsKey("type") && !deviceRequest.getCustomData().containsKey("id"))
+                        throw new IllegalArgumentException("Device Type and ID was no supplied in customData: " + deviceRequest.getId());
+
+                    String deviceTypeStr = (String) deviceRequest.getCustomData().get("type");
+                    long deviceId = Long.parseLong((String) deviceRequest.getCustomData().get("id"));
+
+                    HalAbstractDevice device;
+                    switch (deviceTypeStr) {
+                        case "Sensor": device = Sensor.getSensor(db, deviceId); break;
+                        case "Event":  device = Event.getEvent(db, deviceId); break;
+                        default: throw new IllegalArgumentException("Unknown device type: " + deviceTypeStr);
+                    }
+
+                    for (ExecuteRequest.Inputs.Payload.Commands.Execution execution : command.execution) {
+                        if ("action.devices.traits.OnOff".equals(execution.command)) { // TODO: This looks ugly!
+                            new OnOffTrait().execute(device, execution);
+                        } else
+                            throw new UnsupportedOperationException("Unsupported command requested: " + execution.command);
+                    }
+
+                    ExecuteResponse.Payload.Commands successfulCommands = new ExecuteResponse.Payload.Commands();
+                    successfulCommands.status = "SUCCESS";
+                    successfulCommands.ids = new String[]{deviceRequest.id};
+                    commandsResponse.add(successfulCommands);
                 } catch (Exception e) {
                     ExecuteResponse.Payload.Commands failedDevice = new ExecuteResponse.Payload.Commands();
-                    failedDevice.ids = new String[]{device.id};
+                    failedDevice.ids = new String[]{deviceRequest.id};
                     failedDevice.status = "ERROR";
                     failedDevice.setErrorCode(e.getMessage());
                     commandsResponse.add(failedDevice);
                 }
             }
-        }*/
-
-        ExecuteResponse.Payload.Commands successfulCommands = new ExecuteResponse.Payload.Commands();
-        successfulCommands.status = "SUCCESS";
-        successfulCommands.setStates(states);
-        successfulCommands.ids = successfulDevices.toArray(new String[]{});
-        commandsResponse.add(successfulCommands);
+        }
 
         res.requestId = executeRequest.requestId;
         ExecuteResponse.Payload payload = new ExecuteResponse.Payload(

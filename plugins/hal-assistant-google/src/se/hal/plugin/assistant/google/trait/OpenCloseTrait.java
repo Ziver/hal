@@ -24,26 +24,40 @@
 
 package se.hal.plugin.assistant.google.trait;
 
-import com.google.actions.api.smarthome.ExecuteRequest;
-import se.hal.intf.HalAbstractDevice;
+
 import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
+import se.hal.struct.devicedata.OnOffEventData;
+import se.hal.struct.devicedata.OpenClosedEventData;
 
 import java.util.HashMap;
 
+
 /**
- * https://developers.google.com/assistant/smarthome/traits
+ * https://developers.google.com/assistant/smarthome/traits/openclose
  */
-public abstract class DeviceTrait {
+public class OpenCloseTrait extends DeviceTrait {
 
-    /**
-     * @return the API specific ID of this trait
-     */
-    abstract String getId();
+    @Override
+    String getId() {
+        return "action.devices.traits.OpenClose";
+    }
 
-    public abstract HashMap<String, Object> generateSyncResponse(HalDeviceConfig config);
+    @Override
+    public HashMap<String, Object> generateSyncResponse(HalDeviceConfig config) {
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("queryOnlyOnOff", true);
+        return response;
+    }
 
-    public abstract HashMap<String, Object> generateQueryResponse(HalDeviceData data);
+    @Override
+    public HashMap<String, Object> generateQueryResponse(HalDeviceData data) {
+        HashMap<String, Object> response = new HashMap<>();
 
-    public void execute(HalAbstractDevice device, ExecuteRequest.Inputs.Payload.Commands.Execution execution) {}
+        if (data instanceof OpenClosedEventData) {
+            response.put("openPercent", ((OpenClosedEventData) data).isOpen() ? 100 : 0);
+        }
+
+        return response;
+    }
 }

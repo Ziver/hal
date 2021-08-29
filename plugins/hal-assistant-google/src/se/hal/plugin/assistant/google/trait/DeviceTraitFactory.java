@@ -46,17 +46,20 @@ public class DeviceTraitFactory {
         switch (device.getDeviceData().getClass().getName()) {
             case "se.hal.struct.devicedata.DimmerEventData":
             case "se.hal.struct.devicedata.OnOffEventData":
-                return new DeviceTrait[]{};
+                return new DeviceTrait[]{new OnOffTrait()};
+
+            case "se.hal.struct.devicedata.OpenClosedEventData":
+                return new DeviceTrait[]{new OpenCloseTrait()};
 
             case "se.hal.struct.devicedata.PowerConsumptionSensorData":
             case "se.hal.struct.devicedata.LightSensorData":
-                return new DeviceTrait[]{};
+                return new DeviceTrait[]{new SensorStateTrait()};
 
             case "se.hal.struct.devicedata.HumiditySensorData":
-                return new DeviceTrait[]{new HumiditySettingTrait()};
+                return new DeviceTrait[]{new SensorStateTrait(), new HumiditySettingTrait()};
 
             case "se.hal.struct.devicedata.TemperatureSensorData":
-                return new DeviceTrait[]{new TemperatureControlTrait()};
+                return new DeviceTrait[]{new SensorStateTrait(), new TemperatureControlTrait()};
 
             default:
                 throw new IllegalArgumentException("Unregistered Sensor device data: " + device.getDeviceData());

@@ -24,8 +24,8 @@
 
 package se.hal.plugin.assistant.google.trait;
 
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
-import se.hal.intf.HalSensorConfig;
 
 import java.util.HashMap;
 
@@ -39,7 +39,7 @@ public abstract class DeviceTrait {
      */
     abstract String getId();
 
-    public abstract HashMap<String, Object> generateSyncResponse(HalSensorConfig config);
+    public abstract HashMap<String, Object> generateSyncResponse(HalDeviceConfig config);
 
     public abstract HashMap<String, Object> generateQueryResponse(HalDeviceData data);
 }

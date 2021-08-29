@@ -24,6 +24,7 @@
 
 package se.hal.plugin.assistant.google.trait;
 
+import se.hal.intf.HalAbstractDevice;
 import se.hal.struct.Sensor;
 
 import java.util.ArrayList;
@@ -37,8 +38,8 @@ public class DeviceTraitFactory {
     private DeviceTraitFactory() {}
 
 
-    public static DeviceTrait[] getTraits(Sensor sensor) {
-        switch (sensor.getDeviceData().getClass().getName()) {
+    public static DeviceTrait[] getTraits(HalAbstractDevice device) {
+        switch (device.getDeviceData().getClass().getName()) {
             case "se.hal.struct.devicedata.DimmerEventData":
             case "se.hal.struct.devicedata.OnOffEventData":
                 return new DeviceTrait[]{};
@@ -54,7 +55,7 @@ public class DeviceTraitFactory {
                 return new DeviceTrait[]{new TemperatureControlTrait()};
 
             default:
-                throw new IllegalArgumentException("Unregistered Sensor device data: " + sensor.getDeviceData());
+                throw new IllegalArgumentException("Unregistered Sensor device data: " + device.getDeviceData());
         }
     }
 

@@ -25,9 +25,11 @@ import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 import org.json.JSONObject;
 import se.hal.HalContext;
+import se.hal.intf.HalAbstractDevice;
 import se.hal.plugin.assistant.google.trait.DeviceTrait;
 import se.hal.plugin.assistant.google.trait.DeviceTraitFactory;
 import se.hal.plugin.assistant.google.type.DeviceType;
+import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
@@ -74,32 +76,33 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
         res.setRequestId(syncRequest.requestId);
         res.setPayload(new SyncResponse.Payload());
 
-        List<Sensor> sensors = Collections.EMPTY_LIST;
+        List<HalAbstractDevice> deviceList = new LinkedList<>();
 
         try {
             DBConnection db = HalContext.getDB();
-            sensors = Sensor.getLocalSensors(db);
+            deviceList.addAll(Sensor.getLocalSensors(db));
+            deviceList.addAll(Event.getLocalEvents(db));
         } catch (SQLException e) {
-            logger.log(Level.WARNING, "Unable to retrieve sensor list.", e);
+            logger.log(Level.WARNING, "Unable to retrieve devices.", e);
         }
 
         res.payload.agentUserId = AGENT_USER_ID;
-        res.payload.devices = new SyncResponse.Payload.Device[sensors.size()];
+        res.payload.devices = new SyncResponse.Payload.Device[deviceList.size()];
         for (int i = 0; i < res.payload.devices.length; i++) {
-            Sensor sensor = sensors.get(i);
-            DeviceType type = DeviceType.getType(sensor);
-            DeviceTrait[] traits = DeviceTraitFactory.getTraits(sensor);
+            HalAbstractDevice device = deviceList.get(i);
+            DeviceType type = DeviceType.getType(device);
+            DeviceTrait[] traits = DeviceTraitFactory.getTraits(device);
 
             //  Generate payload
 
             SyncResponse.Payload.Device.Builder deviceBuilder =
                     new SyncResponse.Payload.Device.Builder()
-                            .setId("Sensor-" + sensor.getId())
+                            .setId(device.getClass().getSimpleName() + "-" + device.getId())
                             .setType(type.toString())
                             .setTraits(DeviceTraitFactory.getTraitIds(traits))
                             .setName(
                                     DeviceProto.DeviceNames.newBuilder()
-                                            .setName(sensor.getName())
+                                            .setName(device.getName())
                                             .build())
                             .setWillReportState(true)
                             //.setRoomHint(sensor.getRoom().getName())
@@ -113,18 +116,19 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
 
             JSONObject attribJson = new JSONObject();
             for (DeviceTrait trait : traits) {
-                for (Map.Entry<String,Object> entry : trait.generateSyncResponse(sensor.getDeviceConfig()).entrySet()) {
+                for (Map.Entry<String,Object> entry : trait.generateSyncResponse(device.getDeviceConfig()).entrySet()) {
                     attribJson.put(entry.getKey(), entry.getValue());
                 }
             }
             deviceBuilder.setAttributes(attribJson);
 
-            /*if (device.contains("customData")) {
-                Map<String, Object> customData = new HashMap<>();
+            // Set custom data
 
-                String customDataJson = new Gson().toJson(customData);
-                deviceBuilder.setCustomData(customDataJson);
-            }*/
+            JSONObject customDataJson = new JSONObject();
+            customDataJson.put("type", device.getClass().getSimpleName());
+            customDataJson.put("id", device.getId());
+            deviceBuilder.setCustomData(customDataJson);
+
             res.payload.devices[i] = deviceBuilder.build();
         }
 
@@ -162,8 +166,6 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
      */
     @Override
     public QueryResponse onQuery(QueryRequest queryRequest, Map<?, ?> headers) {
-        logger.fine("Received query request.");
-
         DBConnection db = HalContext.getDB();
 
         QueryResponse res = new QueryResponse();
@@ -175,30 +177,39 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
             if (!"action.devices.QUERY".equals(input.intent))
                 continue;
 
-            for (QueryRequest.Inputs.Payload.Device device : ((QueryRequest.Inputs) input).payload.devices) {
+            for (QueryRequest.Inputs.Payload.Device deviceRequest : ((QueryRequest.Inputs) input).payload.devices) {
                 try {
-                    if (!device.getId().startsWith("Sensor-"))
-                        throw new IllegalArgumentException("Invalid device ID supplied: " + device.getId());
+                    logger.fine("Received query request for: type=" + deviceRequest.getCustomData().get("type") + ", id=" + deviceRequest.getCustomData().get("id"));
 
-                    long sensorId = Long.parseLong(device.getId().substring(7)); // Get the number in the id "Sensor-<number>"
-                    Sensor sensor = Sensor.getSensor(db, sensorId);
-                    DeviceTrait[] traits = DeviceTraitFactory.getTraits(sensor);
+                    if (!deviceRequest.getCustomData().containsKey("type") && !deviceRequest.getCustomData().containsKey("id"))
+                        throw new IllegalArgumentException("Device Type and ID was no supplied: " + deviceRequest.getId());
+
+                    String deviceType = (String) deviceRequest.getCustomData().get("type");
+                    long deviceId = Long.parseLong((String) deviceRequest.getCustomData().get("id"));
+
+                    HalAbstractDevice device = null;
+                    switch (deviceType) {
+                        case "Sensor": device = Sensor.getSensor(db, deviceId); break;
+                        case "Event":  device = Event.getEvent(db, deviceId); break;
+                    }
+
+                    logger.fine("Generating response for sensor: " + device.getName() + " (Id: " + device.getId() + ")");
+
+                    DeviceTrait[] traits = DeviceTraitFactory.getTraits(device);
                     Map<String, Object> deviceState = new HashMap<>();
 
-                    logger.fine("Generating response for sensor: " + sensor.getName() + " (Id: " + sensor.getId() + ")");
-
                     for (DeviceTrait trait : traits) {
-                        deviceState.putAll(trait.generateQueryResponse(sensor.getDeviceData()));
+                        deviceState.putAll(trait.generateQueryResponse(device.getDeviceData()));
                     }
 
                     deviceState.put("status", "SUCCESS");
-                    deviceStates.put(device.getId(), deviceState);
+                    deviceStates.put(deviceRequest.getId(), deviceState);
                 } catch (Exception e) {
-                    logger.log(Level.SEVERE, "Query request failed for sensor: " + device.getId(), e);
+                    logger.log(Level.SEVERE, "Query request failed for sensor: " + deviceRequest.getId(), e);
                     Map<String, Object> failedDevice = new HashMap<>();
                     failedDevice.put("status", "ERROR");
                     failedDevice.put("errorCode", "deviceOffline");
-                    deviceStates.put(device.id, failedDevice);
+                    deviceStates.put(deviceRequest.id, failedDevice);
                 }
             }
         }
@@ -229,59 +240,6 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
                     successfulDevices.add(device.id);
                     ReportState.makeRequest(this, userId, device.id, states);
                 } catch (Exception e) {
-                    if (e.getMessage().equals("PENDING")) {
-                        ExecuteResponse.Payload.Commands pendingDevice = new ExecuteResponse.Payload.Commands();
-                        pendingDevice.ids = new String[]{device.id};
-                        pendingDevice.status = "PENDING";
-                        commandsResponse.add(pendingDevice);
-                        continue;
-                    }
-                    if (e.getMessage().equals("pinNeeded")) {
-                        ExecuteResponse.Payload.Commands failedDevice = new ExecuteResponse.Payload.Commands();
-                        failedDevice.ids = new String[]{device.id};
-                        failedDevice.status = "ERROR";
-                        failedDevice.setErrorCode("challengeNeeded");
-                        failedDevice.setChallengeNeeded(
-                                new HashMap<String, String>() {
-                                    {
-                                        put("type", "pinNeeded");
-                                    }
-                                });
-                        failedDevice.setErrorCode(e.getMessage());
-                        commandsResponse.add(failedDevice);
-                        continue;
-                    }
-                    if (e.getMessage().equals("challengeFailedPinNeeded")) {
-                        ExecuteResponse.Payload.Commands failedDevice = new ExecuteResponse.Payload.Commands();
-                        failedDevice.ids = new String[]{device.id};
-                        failedDevice.status = "ERROR";
-                        failedDevice.setErrorCode("challengeNeeded");
-                        failedDevice.setChallengeNeeded(
-                                new HashMap<String, String>() {
-                                    {
-                                        put("type", "challengeFailedPinNeeded");
-                                    }
-                                });
-                        failedDevice.setErrorCode(e.getMessage());
-                        commandsResponse.add(failedDevice);
-                        continue;
-                    }
-                    if (e.getMessage().equals("ackNeeded")) {
-                        ExecuteResponse.Payload.Commands failedDevice = new ExecuteResponse.Payload.Commands();
-                        failedDevice.ids = new String[]{device.id};
-                        failedDevice.status = "ERROR";
-                        failedDevice.setErrorCode("challengeNeeded");
-                        failedDevice.setChallengeNeeded(
-                                new HashMap<String, String>() {
-                                    {
-                                        put("type", "ackNeeded");
-                                    }
-                                });
-                        failedDevice.setErrorCode(e.getMessage());
-                        commandsResponse.add(failedDevice);
-                        continue;
-                    }
-
                     ExecuteResponse.Payload.Commands failedDevice = new ExecuteResponse.Payload.Commands();
                     failedDevice.ids = new String[]{device.id};
                     failedDevice.status = "ERROR";

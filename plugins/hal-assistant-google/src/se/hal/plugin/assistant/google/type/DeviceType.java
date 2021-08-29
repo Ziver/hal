@@ -48,6 +48,7 @@
 
 package se.hal.plugin.assistant.google.type;
 
+import se.hal.intf.HalAbstractDevice;
 import se.hal.struct.Sensor;
 
 /**
@@ -146,8 +147,8 @@ public enum DeviceType {
     }
 
 
-    public static DeviceType getType(Sensor sensor) {
-        switch (sensor.getDeviceData().getClass().getName()) {
+    public static DeviceType getType(HalAbstractDevice device) {
+        switch (device.getDeviceData().getClass().getName()) {
             case "se.hal.struct.devicedata.DimmerEventData":
             case "se.hal.struct.devicedata.OnOffEventData":
                 return LIGHT;
@@ -159,7 +160,7 @@ public enum DeviceType {
                 return SENSOR;
 
             default:
-                throw new IllegalArgumentException("Unregistered Sensor device data: " + sensor.getDeviceData());
+                throw new IllegalArgumentException("Unregistered Sensor device data: " + device.getDeviceData());
         }
     }
 }

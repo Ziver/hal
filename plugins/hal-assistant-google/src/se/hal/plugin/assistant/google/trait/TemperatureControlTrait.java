@@ -25,11 +25,12 @@
 package se.hal.plugin.assistant.google.trait;
 
 
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
-import se.hal.intf.HalSensorConfig;
 import se.hal.struct.devicedata.TemperatureSensorData;
 
 import java.util.HashMap;
+
 
 public class TemperatureControlTrait extends DeviceTrait {
 
@@ -39,7 +40,7 @@ public class TemperatureControlTrait extends DeviceTrait {
     }
 
     @Override
-    public HashMap<String, Object> generateSyncResponse(HalSensorConfig config) {
+    public HashMap<String, Object> generateSyncResponse(HalDeviceConfig config) {
         HashMap<String, Object> response = new HashMap<>();
         response.put("temperatureRange", new HashMap<String, Object>() {{
             put("minThresholdCelsius", -20);

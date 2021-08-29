@@ -28,6 +28,7 @@ import se.hal.intf.HalAbstractDevice;
 import se.hal.struct.Sensor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -63,6 +64,9 @@ public class DeviceTraitFactory {
     }
 
     public static List<String> getTraitIds(DeviceTrait[] traits) {
+        if (traits == null)
+            return Collections.emptyList();
+
         List<String> list = new ArrayList<>(traits.length);
 
         for (DeviceTrait trait : traits) {

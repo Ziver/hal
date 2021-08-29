@@ -200,11 +200,15 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
                     DeviceTrait[] traits = DeviceTraitFactory.getTraits(device);
                     Map<String, Object> deviceState = new HashMap<>();
 
-                    for (DeviceTrait trait : traits) {
-                        deviceState.putAll(trait.generateQueryResponse(device.getDeviceData()));
-                    }
+                    if (traits != null) {
+                        for (DeviceTrait trait : traits) {
+                            deviceState.putAll(trait.generateQueryResponse(device.getDeviceData()));
+                        }
 
-                    deviceState.put("status", "SUCCESS");
+                        deviceState.put("status", "SUCCESS");
+                    } else {
+                        deviceState.put("status", "UNKNOWN");
+                    }
                     deviceStates.put(deviceRequest.getId(), deviceState);
                 } catch (Exception e) {
                     logger.log(Level.SEVERE, "Query request failed for sensor: " + deviceRequest.getId(), e);

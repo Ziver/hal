@@ -98,5 +98,8 @@ public class HalExternalWebDaemon implements HalDaemon {
 
     public void setPage(String url, HttpPage page) {
         pageMap.put(url, page);
+
+        if (httpExternal != null)
+            httpExternal.setPage(url, page);
     }
 }

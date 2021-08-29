@@ -43,7 +43,7 @@ subprojects {
 }
 
 // ------------------------------------
-// Hal core configuration
+// Hal general configuration
 // ------------------------------------
 
 dependencies {
@@ -53,6 +53,9 @@ dependencies {
 }
 
 distributions {
+    distTar.enabled = false
+    distZip.enabled = false
+
     main {
         contents {
             from 'hal.conf.example'

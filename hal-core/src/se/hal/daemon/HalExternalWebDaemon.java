@@ -14,6 +14,7 @@ import zutil.net.http.HttpServer;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Logger;
 
@@ -24,10 +25,12 @@ import static se.hal.HalContext.CONFIG_HTTP_EXTERNAL_PORT;
 public class HalExternalWebDaemon implements HalDaemon {
     private static final Logger logger = LogUtil.getLogger();
 
+    private HalAcmeDataStore acmeDataStore = new HalAcmeDataStore();
     private HttpServer httpExternal;
     private String externalServerUrl;
-    private HalAcmeDataStore acmeDataStore = new HalAcmeDataStore();
     private X509Certificate certificate;
+    private HashMap<String, HttpPage> pageMap = new HashMap<>();
+
 
     @Override
     public void initiate(ScheduledExecutorService executor) {
@@ -83,6 +86,10 @@ public class HalExternalWebDaemon implements HalDaemon {
 
     private void startHttpServer() throws GeneralSecurityException, IOException {
         httpExternal = new HttpServer(HalContext.getIntegerProperty(CONFIG_HTTP_EXTERNAL_PORT), acmeDataStore.getDomainKeyPair().getPrivate(), certificate);
+
+        for (String url : pageMap.keySet()) {
+            httpExternal.setPage(url, pageMap.get(url));
+        }
         httpExternal.start();
 
         logger.info("External https server up and running at: " + externalServerUrl);
@@ -90,7 +97,6 @@ public class HalExternalWebDaemon implements HalDaemon {
 
 
     public void setPage(String url, HttpPage page) {
-        if (httpExternal != null)
-            httpExternal.setPage(url, page);
+        pageMap.put(url, page);
     }
 }

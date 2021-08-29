@@ -67,6 +67,9 @@ public class HalServer {
 
             logger.info("Working directory: " + FileUtil.find(".").getAbsolutePath());
 
+            httpExternal = new HalExternalWebDaemon();
+            registerDaemon(httpExternal);
+
             // ------------------------------------
             // Initialize Plugins
             // ------------------------------------
@@ -107,9 +110,6 @@ public class HalServer {
             for (Iterator<HalDaemon> it = pluginManager.getSingletonIterator(HalDaemon.class); it.hasNext(); ) {
                 HalDaemon daemon = it.next();
                 registerDaemon(daemon);
-
-                if (daemon instanceof HalExternalWebDaemon) // Keep a reference of the external web server
-                    httpExternal = (HalExternalWebDaemon) daemon;
             }
 
             // ------------------------------------
@@ -198,7 +198,7 @@ public class HalServer {
 
     /**
      * Registers the given page with the external Hal web server.
-     * Note: as this page will most likely be accessible trough the internet it needs to be robust and secure.
+     * Note: as this page will most likely be accessible through the internet it needs to be robust and secure.
      *
      * @param url  is the web path to the page.
      * @param page is the page to register with the server.
@@ -210,7 +210,7 @@ public class HalServer {
 
     /**
      * Registers the given page with the external Hal web server.
-     * Note: as this page will most likely be accessible trough the internet it needs to be robust and secure.
+     * Note: as this page will most likely be accessible through the internet it needs to be robust and secure.
      *
      * @param page is the page to register with the server.
      */

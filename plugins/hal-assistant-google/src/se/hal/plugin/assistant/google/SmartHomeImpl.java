@@ -186,7 +186,7 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
                         throw new IllegalArgumentException("Device Type and ID was no supplied in customData: " + deviceRequest.getId());
 
                     String deviceTypeStr = (String) deviceRequest.getCustomData().get("type");
-                    long deviceId = (Long) deviceRequest.getCustomData().get("id");
+                    int deviceId = (Integer) deviceRequest.getCustomData().get("id");
 
                     HalAbstractDevice device;
                     switch (deviceTypeStr) {
@@ -241,7 +241,7 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
                         throw new IllegalArgumentException("Device Type and ID was no supplied in customData: " + deviceRequest.getId());
 
                     String deviceTypeStr = (String) deviceRequest.getCustomData().get("type");
-                    long deviceId = (Long) deviceRequest.getCustomData().get("id");
+                    int deviceId = (Integer) deviceRequest.getCustomData().get("id");
 
                     HalAbstractDevice device;
                     switch (deviceTypeStr) {

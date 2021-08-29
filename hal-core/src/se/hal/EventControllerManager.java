@@ -10,7 +10,6 @@ import zutil.plugin.PluginManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -58,6 +57,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
      * Register a Event instance on the manager.
      * The manager will start to save reported data for the registered Event.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void register(Event event) {
         if (event.getDeviceConfig() == null) {
@@ -70,8 +70,8 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
         }
 
         logger.info("Registering new event(id: " + event.getId() + "): " + event.getDeviceConfig().getClass());
-        Class<? extends HalEventController> c = event.getController();
-        HalEventController controller = getControllerInstance(c);
+        Class<? extends HalEventController> controllerClass = (Class<? extends HalEventController>) event.getControllerClass();
+        HalEventController controller = getControllerInstance(controllerClass);
 
         if (controller != null)
             controller.register(event.getDeviceConfig());
@@ -85,6 +85,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
      * Data reported on the Event will no longer be saved but already saved data will not be modified.
      * The Controller that owns the Event will be deallocated if it has no more registered devices.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void deregister(Event event){
         if (event.getDeviceConfig() == null) {
@@ -92,15 +93,15 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
             return;
         }
 
-        Class<? extends HalEventController> c = event.getController();
-        HalEventController controller = (HalEventController) controllerMap.get(c);
+        Class<? extends HalEventController> controllerClass = (Class<? extends HalEventController>) event.getControllerClass();
+        HalEventController controller = (HalEventController) controllerMap.get(controllerClass);
         if (controller != null) {
             logger.info("Deregistering event(id: " + event.getId() + "): " + event.getDeviceConfig().getClass());
             controller.deregister(event.getDeviceConfig());
             registeredEvents.remove(event);
             removeControllerIfEmpty(controller);
         } else {
-            logger.warning("Controller not instantiated: "+ event.getController());
+            logger.warning("Controller not instantiated: "+ event.getControllerClass());
         }
     }
 
@@ -173,8 +174,11 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void send(Event event){
-        HalEventController controller = getControllerInstance(event.getController());
+        Class<? extends HalEventController> controllerClass = (Class<? extends HalEventController>) event.getControllerClass();
+        HalEventController controller = getControllerInstance(controllerClass);
+
         if (controller != null) {
             event.getDeviceData().setTimestamp(System.currentTimeMillis()); // Set timestamp to now
             controller.send(event.getDeviceConfig(), event.getDeviceData());

@@ -32,12 +32,6 @@ public class Event extends HalAbstractDevice<Event, HalEventConfig, HalEventData
     }
 
 
-
-    @Override
-    public Class<? extends HalEventController> getController(){
-        return (Class<? extends HalEventController>) getDeviceConfig().getDeviceControllerClass();
-    }
-
     @Override
     protected HalEventData getLatestDeviceData(DBConnection db) {
         try {

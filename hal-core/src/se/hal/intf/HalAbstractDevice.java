@@ -128,7 +128,9 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
     /**
      * @return the class of the Controller responsible for this device type.
      */
-    public abstract Class<? extends HalAbstractController> getController();
+    public Class<? extends HalAbstractController> getControllerClass() {
+        return getDeviceConfig().getDeviceControllerClass();
+    }
 
     // ----------------------------------------------------
     // Device data methods

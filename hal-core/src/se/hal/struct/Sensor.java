@@ -111,11 +111,6 @@ public class Sensor extends HalAbstractDevice<Sensor, HalSensorConfig, HalSensor
 
 
     @Override
-    public Class<? extends HalAbstractController> getController(){
-        return (Class<? extends HalAbstractController>) getDeviceConfig().getDeviceControllerClass();
-    }
-
-    @Override
     protected HalSensorData getLatestDeviceData(DBConnection db) {
         try {
             Class deviceDataClass = getDeviceConfig().getDeviceDataClass();

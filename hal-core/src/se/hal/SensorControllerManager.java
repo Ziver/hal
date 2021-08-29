@@ -70,7 +70,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
         }
 
         logger.info("Registering new sensor(id: " + sensor.getId() + "): " + sensor.getDeviceConfig().getClass());
-        Class<? extends HalAbstractController> c = sensor.getController();
+        Class<? extends HalAbstractController> c = sensor.getControllerClass();
         HalAbstractController controller = getControllerInstance(c);
 
         if (controller != null)
@@ -92,7 +92,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
             return;
         }
 
-        Class<? extends HalAbstractController> c = sensor.getController();
+        Class<? extends HalAbstractController> c = sensor.getControllerClass();
         HalAbstractController controller = controllerMap.get(c);
         if (controller != null) {
             logger.info("Deregistering sensor(id: " + sensor.getId() + "): " + sensor.getDeviceConfig().getClass());
@@ -100,7 +100,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
             registeredSensors.remove(sensor);
             removeControllerIfEmpty(controller);
         } else {
-            logger.warning("Controller not instantiated: " + sensor.getController());
+            logger.warning("Controller not instantiated: " + sensor.getControllerClass());
         }
     }
 

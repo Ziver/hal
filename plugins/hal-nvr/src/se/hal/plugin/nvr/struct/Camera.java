@@ -47,11 +47,6 @@ public class Camera extends HalAbstractDevice<Camera, HalCameraConfig, HalCamera
 
 
     @Override
-    public Class<? extends HalAbstractController> getController() {
-        return getDeviceConfig().getDeviceControllerClass();
-    }
-
-    @Override
     protected HalCameraData getLatestDeviceData(DBConnection db) {
         return null;
     }

@@ -251,7 +251,7 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
                     }
 
                     for (ExecuteRequest.Inputs.Payload.Commands.Execution execution : command.execution) {
-                        if ("action.devices.traits.OnOff".equals(execution.command)) { // TODO: This looks ugly!
+                        if ("action.devices.commands.OnOff".equals(execution.command)) { // TODO: This looks ugly!
                             new OnOffTrait().execute(device, execution);
                         } else
                             throw new UnsupportedOperationException("Unsupported command requested: " + execution.command);

@@ -41,7 +41,7 @@ public class DeviceTraitFactory {
 
     public static DeviceTrait[] getTraits(HalAbstractDevice device) {
         if (device == null || device.getDeviceData() == null)
-            return null;
+            return new DeviceTrait[0];
 
         switch (device.getDeviceData().getClass().getName()) {
             case "se.hal.struct.devicedata.DimmerEventData":
@@ -64,9 +64,6 @@ public class DeviceTraitFactory {
     }
 
     public static List<String> getTraitIds(DeviceTrait[] traits) {
-        if (traits == null)
-            return Collections.emptyList();
-
         List<String> list = new ArrayList<>(traits.length);
 
         for (DeviceTrait trait : traits) {

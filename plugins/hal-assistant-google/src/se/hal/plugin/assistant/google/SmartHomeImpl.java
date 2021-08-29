@@ -124,10 +124,10 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
 
             // Set custom data
 
-            JSONObject customDataJson = new JSONObject();
+            /*JSONObject customDataJson = new JSONObject();
             customDataJson.put("type", device.getClass().getSimpleName());
             customDataJson.put("id", device.getId());
-            deviceBuilder.setCustomData(customDataJson);
+            deviceBuilder.setCustomData(customDataJson);*/
 
             res.payload.devices[i] = deviceBuilder.build();
         }
@@ -179,18 +179,20 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
 
             for (QueryRequest.Inputs.Payload.Device deviceRequest : ((QueryRequest.Inputs) input).payload.devices) {
                 try {
-                    logger.fine("Received query request for: type=" + deviceRequest.getCustomData().get("type") + ", id=" + deviceRequest.getCustomData().get("id"));
+                    logger.fine("Received query request for: type=" + deviceRequest.getId());
 
-                    if (!deviceRequest.getCustomData().containsKey("type") && !deviceRequest.getCustomData().containsKey("id"))
-                        throw new IllegalArgumentException("Device Type and ID was no supplied: " + deviceRequest.getId());
+                    String[] deviceIdArray = deviceRequest.getId().split("-");
+                    if (deviceIdArray.length != 2)
+                        throw new IllegalArgumentException("Invalid device ID: " + deviceRequest.getId());
 
-                    String deviceType = (String) deviceRequest.getCustomData().get("type");
-                    long deviceId = Long.parseLong((String) deviceRequest.getCustomData().get("id"));
+                    String deviceTypeStr = deviceIdArray[0];
+                    long deviceId = Long.parseLong(deviceIdArray[1]); // Get the number in the id "Sensor-<number>"
 
-                    HalAbstractDevice device = null;
-                    switch (deviceType) {
+                    HalAbstractDevice device;
+                    switch (deviceTypeStr) {
                         case "Sensor": device = Sensor.getSensor(db, deviceId); break;
                         case "Event":  device = Event.getEvent(db, deviceId); break;
+                        default: throw new IllegalArgumentException("Unknown device type: " + deviceTypeStr);
                     }
 
                     logger.fine("Generating response for sensor: " + device.getName() + " (Id: " + device.getId() + ")");

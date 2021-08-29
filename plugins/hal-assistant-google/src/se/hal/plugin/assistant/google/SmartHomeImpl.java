@@ -200,7 +200,7 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
                     DeviceTrait[] traits = DeviceTraitFactory.getTraits(device);
                     Map<String, Object> deviceState = new HashMap<>();
 
-                    if (traits != null) {
+                    if (traits.length > 0) {
                         for (DeviceTrait trait : traits) {
                             deviceState.putAll(trait.generateQueryResponse(device.getDeviceData()));
                         }

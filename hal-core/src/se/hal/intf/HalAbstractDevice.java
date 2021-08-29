@@ -65,11 +65,12 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
         }
         return null;
     }
+    @SuppressWarnings("unchecked")
     public C getDeviceConfig() {
         if (deviceConfig == null || !deviceConfig.getClass().getName().equals(type)) {
             try {
-                Class c = Class.forName(type);
-                deviceConfig = (C) c.newInstance();
+                Class clazz = Class.forName(type);
+                deviceConfig = (C) clazz.getDeclaredConstructor().newInstance();
 
                 applyConfig();
                 deviceData = getLatestDeviceData(HalContext.getDB());
@@ -140,11 +141,13 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
      * @return the latest known data from the device
      */
     public D getDeviceData() {
+        if (deviceData == null)
+            deviceData = getLatestDeviceData(HalContext.getDB());
         return deviceData;
     }
 
-    public void setDeviceData(D latest) {
-        this.deviceData = latest;
+    public void setDeviceData(D deviceData) {
+        this.deviceData = deviceData;
     }
 
     /**

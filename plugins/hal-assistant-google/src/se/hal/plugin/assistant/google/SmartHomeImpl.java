@@ -98,7 +98,7 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
             SyncResponse.Payload.Device.Builder deviceBuilder =
                     new SyncResponse.Payload.Device.Builder()
                             .setId(device.getClass().getSimpleName() + "-" + device.getId())
-                            .setType(type.toString())
+                            .setType("" + type)
                             .setTraits(DeviceTraitFactory.getTraitIds(traits))
                             .setName(
                                     DeviceProto.DeviceNames.newBuilder()

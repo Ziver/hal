@@ -148,6 +148,9 @@ public enum DeviceType {
 
 
     public static DeviceType getType(HalAbstractDevice device) {
+        if (device == null || device.getDeviceData() == null)
+            return null;
+
         switch (device.getDeviceData().getClass().getName()) {
             case "se.hal.struct.devicedata.DimmerEventData":
             case "se.hal.struct.devicedata.OnOffEventData":

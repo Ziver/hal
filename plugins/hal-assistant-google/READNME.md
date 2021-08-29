@@ -1,3 +1,9 @@
+# Plugin Configuration
+
+|Config Parameter           |Value           |Description |
+|---------------------------|----------------|------------|
+|hal_assistant.google.client_id |String client ID|A value matching client ID configured in Google Actions Console|
+
 # Initial Setup
 
 This lazy is a modified version of https://www.home-assistant.io/integrations/google_assistant/
@@ -12,7 +18,7 @@ You will need to create a service account Create Service account key which allow
 * Click New Project and give your project a name.
 * Click on the Smart Home card, then click the Start Building button.
 * Click Build your Action, then click Add Action(s).
-* Add your Home Assistant URL: https://[HAL URL:PORT]/api/google_assistant in the Fulfillment URL box.
+* Add your Home Assistant URL: https://{Hal External URL}:{External Port}/api/google_assistant in the Fulfillment URL box.
 * Click Save.
 * Click on the Overview tab, which will lead you back to the app details screen.
 
@@ -23,8 +29,8 @@ Account linking is required for your app to interact with the server.
 * Enter the following: 
     * Client ID: https://oauth-redirect.googleusercontent.com/r/YOUR_PROJECT_ID. (Find your "YOUR_PROJECT_ID" by clicking on the three little dots (more) icon in the upper right corner of the console, selecting Project settings, your Project ID will be listed on the GENERAL tab of the Settings page.) 
     * Client Secret: Anything you like, Hal doesn't need this field.
-    * Authorization URL (replace with your actual URL): https://[HAL URL:PORT]/api/assistant/google/auth/authorize.
-    * Token URL (replace with your actual URL): https://[HAL URL:PORT]/api/assistant/google/auth/token.
+    * Authorization URL (replace with your actual URL): https://{Hal External URL}:{External Port}/api/assistant/google/auth/authorize.
+    * Token URL (replace with your actual URL): https://{Hal External URL}:{External Port}/api/assistant/google/auth/token.
     * Click Next, then Next again.
 * In the "Configure" your client Scopes textbox:
     * type "email" and click Add scope,
@@ -62,10 +68,3 @@ If you want to allow other household users to control the devices:
     * Copy and share the link with the new user.
     * When the new user opens the link with their own Google account, it will enable your draft test app under their account.
 * Have the new user go to their Google Assistant app to add [test] your app name to their account.
-
-# Plugin Configuration
-
-|Config Parameter           |Value           |Description |
-|---------------------------|----------------|------------|
-|assistant.google.port      |Port number     |The port where radio dongle is connected|
-|assistant.google.client_id |String client ID|A value matching client ID configured in Google Actions Console|

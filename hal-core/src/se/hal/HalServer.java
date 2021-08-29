@@ -204,8 +204,7 @@ public class HalServer {
      * @param page is the page to register with the server.
      */
     public static void registerExternalPage(String url, HttpPage page){
-        if (httpExternal != null)
-            httpExternal.setPage(url, page);
+        httpExternal.setPage(url, page);
     }
 
     /**

@@ -70,7 +70,7 @@ public class OnOffTrait extends DeviceTrait {
     public void execute(HalAbstractDevice device, ExecuteRequest.Inputs.Payload.Commands.Execution execution) {
         if ("action.devices.commands.OnOff".equals(execution.command)) {
             OnOffEventData eventData = new OnOffEventData();
-            if ("on".equals(execution.getParams().get("on")))
+            if ((boolean) execution.getParams().get("on"))
                 eventData.turnOn();
             else
                 eventData.turnOff();

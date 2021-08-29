@@ -175,14 +175,14 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
     }
 
     @SuppressWarnings("unchecked")
-    public void send(Event event){
+    public void send(Event event, HalEventData eventData){
         Class<? extends HalEventController> controllerClass = (Class<? extends HalEventController>) event.getControllerClass();
         HalEventController controller = getControllerInstance(controllerClass);
 
         if (controller != null) {
             event.getDeviceData().setTimestamp(System.currentTimeMillis()); // Set timestamp to now
-            controller.send(event.getDeviceConfig(), event.getDeviceData());
-            reportReceived(event.getDeviceConfig(), event.getDeviceData()); // save action to db
+            controller.send(event.getDeviceConfig(), eventData);
+            reportReceived(event.getDeviceConfig(), eventData); // save action to db
         }
         else
             logger.warning("No controller found for event id: "+ event.getId());

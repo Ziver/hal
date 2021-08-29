@@ -53,8 +53,7 @@ public class EventOverviewWebPage extends HalWebPage {
 
             logger.info("Modifying Event(" + id + ") state: " + eventData.toString());
             Event event = Event.getEvent(db, id);
-            event.setDeviceData(eventData);
-            EventControllerManager.getInstance().send(event);
+            EventControllerManager.getInstance().send(event, eventData);
         }
 
         int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));

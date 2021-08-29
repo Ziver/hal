@@ -31,9 +31,8 @@ public class SendEventAction implements HalAction {
             if (event != null) {
                 HalEventData dataObj = (HalEventData) event.getDeviceConfig().getDeviceDataClass().getDeclaredConstructor().newInstance();
                 dataObj.setData(data);
-                event.setDeviceData(dataObj);
                 // Send
-                EventControllerManager.getInstance().send(event);
+                EventControllerManager.getInstance().send(event, dataObj);
             } else
                 logger.warning("Unable to find event with id: "+ event.getId());
         } catch (Exception e) {

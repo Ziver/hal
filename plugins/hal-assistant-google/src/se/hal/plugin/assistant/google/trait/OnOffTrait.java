@@ -75,8 +75,7 @@ public class OnOffTrait extends DeviceTrait {
             else
                 eventData.turnOff();
 
-            device.setDeviceData(eventData);
-            EventControllerManager.getInstance().send((Event) device);
+            EventControllerManager.getInstance().send((Event) device, eventData);
         }
     }
 }

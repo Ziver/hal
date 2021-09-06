@@ -180,7 +180,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
         HalEventController controller = getControllerInstance(controllerClass);
 
         if (controller != null) {
-            event.getDeviceData().setTimestamp(System.currentTimeMillis()); // Set timestamp to now
+            eventData.setTimestamp(System.currentTimeMillis()); // Set timestamp to now
             controller.send(event.getDeviceConfig(), eventData);
             reportReceived(event.getDeviceConfig(), eventData); // save action to db
         }

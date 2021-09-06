@@ -48,7 +48,7 @@ subprojects {
 
 dependencies {
     project.subprojects.each { subProject ->
-        runtime subProject
+        runtimeOnly subProject
     }
 }
 

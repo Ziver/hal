@@ -5,15 +5,15 @@
 # -----------------------------------------------
 
 function printHelp() {
-        echo "Run code analysis through SonarQube.
+        echo "Wrapper for simplifying execution of Hal Server.
 Usage:
 
     $(basename $0)
         [-f|--foreground]
-	[-h|--help]
+        [-h|--help]
 
 Where:
-    --foreground        Run Hal Server in the foreground instead of detatching a new screen.
+    --foreground        Run Hal Server in the foreground instead of detaching a new screen.
     --help              Print this help message.
     "
 }
@@ -27,8 +27,15 @@ until [[ $# -eq 0 ]]; do
             shift
         ;;
 
+        -h|--help)
+            printHelp
+            exit 0
+        ;;
+
         *)
             echo "ERROR: Unknown input parameter: $1=$2"
+            echo ""
+            printHelp
             exit 1
         ;;
     esac
@@ -39,6 +46,10 @@ done
 # -----------------------------------------------
 # Execute
 # -----------------------------------------------
+
+# gradle returns normally when doing ctr-c so we need to add a
+# trap where the bash script exits instead of continuing.
+trap 'exit 130' INT
 
 # Build Hal source
 ./gradlew build

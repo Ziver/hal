@@ -120,6 +120,14 @@ public class HalContext {
         return value != null ? Integer.parseInt(getStringProperty(key)) : defaultValue;
     }
 
+    public static long getLongProperty(String key){
+        return getLongProperty(key, 0);
+    }
+    public static long getLongProperty(String key, long defaultValue){
+        String value = getStringProperty(key);
+        return value != null ? Long.parseLong(getStringProperty(key)) : defaultValue;
+    }
+
     public static boolean getBooleanProperty(String key) {
         return getBooleanProperty(key, false);
     }

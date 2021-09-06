@@ -24,7 +24,6 @@ import com.google.home.graph.v1.HomeGraphApiServiceProto;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 import org.json.JSONObject;
-import se.hal.EventControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalAbstractDevice;
 import se.hal.plugin.assistant.google.trait.DeviceTrait;
@@ -33,7 +32,6 @@ import se.hal.plugin.assistant.google.trait.OnOffTrait;
 import se.hal.plugin.assistant.google.type.DeviceType;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
-import se.hal.struct.devicedata.OnOffEventData;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.net.http.page.oauth.OAuth2Registry.TokenRegistrationListener;
@@ -46,9 +44,27 @@ import java.util.logging.Logger;
 
 public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationListener {
     private static final Logger logger = LogUtil.getLogger();
-    private static final String AGENT_USER_ID = "Hal-" + (int)(Math.random()*10000);
 
-    public SmartHomeImpl() { }
+    public static final String CONFIG_USER_AGENT = "hal_assistant_google.user_agent";
+    public static final String CONFIG_TOKEN = "hal_assistant_google.token";
+    public static final String CONFIG_TOKEN_TIMEOUT = "hal_assistant_google.token_timeout";
+
+    private final String userAgent;
+
+
+    public SmartHomeImpl() {
+        if (!HalContext.containsProperty(CONFIG_USER_AGENT))
+            HalContext.setProperty(CONFIG_USER_AGENT, "Hal-" + (int) (Math.random() * 10000));
+        userAgent = HalContext.getStringProperty(CONFIG_USER_AGENT);
+
+        if (HalContext.containsProperty(CONFIG_TOKEN)) {
+            // Restore previous token
+            onTokenRegistration(
+                    null,
+                    HalContext.getStringProperty(CONFIG_TOKEN),
+                    HalContext.getLongProperty(CONFIG_TOKEN_TIMEOUT));
+        }
+    }
 
 
     @Override
@@ -60,6 +76,9 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
             ));
             this.setCredentials(credentials);
             logger.fine("New OAuth2 token registered.");
+
+            HalContext.setProperty(CONFIG_TOKEN, token);
+            HalContext.setProperty(CONFIG_TOKEN_TIMEOUT, String.valueOf(timeoutMillis));
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Could not load google credentials", e);
         }
@@ -87,7 +106,7 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
             logger.log(Level.WARNING, "Unable to retrieve devices.", e);
         }
 
-        res.payload.agentUserId = AGENT_USER_ID;
+        res.payload.agentUserId = userAgent;
         res.payload.devices = new SyncResponse.Payload.Device[deviceList.size()];
         for (int i = 0; i < res.payload.devices.length; i++) {
             HalAbstractDevice device = deviceList.get(i);

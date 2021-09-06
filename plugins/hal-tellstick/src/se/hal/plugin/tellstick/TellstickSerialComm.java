@@ -252,7 +252,8 @@ public class TellstickSerialComm implements Runnable,
 
     @Override
     public void addListener(HalDeviceReportListener listener) {
-        deviceListeners.add(listener);
+        if (!deviceListeners.contains(listener))
+            deviceListeners.add(listener);
     }
 
 

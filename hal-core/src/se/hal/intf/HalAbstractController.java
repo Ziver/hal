@@ -60,6 +60,7 @@ public interface HalAbstractController {
 
     /**
      * Add a listener to the controller that will receive all device reports from registered devices.
+     * Multiple calls with the same listener should only add register the listener once any subsequent calls should be ignored.
      */
     void addListener(HalDeviceReportListener listener);
 

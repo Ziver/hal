@@ -135,7 +135,7 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
 
     /**
      * Will return a singleton controller instance of the given class.
-     * If a instance does not exist yet the a new instance will be allocated
+     * If a instance does not exist yet then a new instance will be allocated
      * depending on if the controller is ready thorough the {@link HalAbstractController#isAvailable()} method.
      *
      * @param clazz     is the class of the wanted object instance wanted
@@ -167,8 +167,10 @@ public abstract class HalAbstractControllerManager<T extends HalAbstractControll
             }
         }
 
-        // Assign the manager as a listener
-
+        // Assign the manager as a listener, This needs to be done every time as the controllerMap is a
+        // shared static for all HalControllerManagers and as we do not know if the current manager is
+        // added as listener or not we need to add it and let the implementation of addListener method
+        // handle duplicate calls.
         if (this instanceof HalDeviceReportListener)
             controller.addListener((HalDeviceReportListener) this);
 

@@ -21,7 +21,7 @@ public class DeviceDataSqlResult implements SQLResultHandler<HalDeviceData> {
     public HalDeviceData handleQueryResult(Statement stmt, ResultSet result) throws SQLException {
         try {
             if (result.next()) {
-                HalDeviceData dataObj = clazz.newInstance();
+                HalDeviceData dataObj = clazz.getDeclaredConstructor().newInstance();
                 dataObj.setData(result.getDouble("data"));
                 dataObj.setTimestamp(result.getLong("timestamp"));
                 return dataObj;

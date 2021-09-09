@@ -197,23 +197,11 @@ public class HalServer {
     }
 
     /**
-     * Registers the given page with the external Hal web server.
-     * Note: as this page will most likely be accessible through the internet it needs to be robust and secure.
-     *
-     * @param url  is the web path to the page.
-     * @param page is the page to register with the server.
+     * @return the HTTP server that handles external web pages.
      */
-    public static void registerExternalPage(String url, HttpPage page){
-        httpExternal.setPage(url, page);
+    public static HalExternalWebDaemon getExternalWebDaemon(){
+        return httpExternal;
     }
 
-    /**
-     * Registers the given page with the external Hal web server.
-     * Note: as this page will most likely be accessible through the internet it needs to be robust and secure.
-     *
-     * @param page is the page to register with the server.
-     */
-    public static void registerExternalPage(HalWebPage page){
-        registerExternalPage(page.getId(), page);
-    }
+
 }

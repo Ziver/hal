@@ -39,14 +39,11 @@ import java.util.logging.Logger;
 public class SmartHomeDaemon implements HalDaemon {
     private static final Logger logger = LogUtil.getLogger();
 
-    public static final String ENDPOINT_AUTH      = "api/assistant/google/auth/authorize";
-    public static final String ENDPOINT_TOKEN     = "api/assistant/google/auth/token";
-    public static final String ENDPOINT_SMARTHOME = "api/assistant/google/smarthome";
-
-    private static final String CONFIG_CLIENT_ID = "hal_assistant.google.client_id";
+    private   static final String ENDPOINT_SMARTHOME = "api/assistant/google/smarthome";
+    protected static final String CONFIG_CLIENT_ID   = "hal_assistant.google.client_id";
 
     private SmartHomeImpl smartHome;
-    private OAuth2Registry oAuth2Registry;
+
 
     @Override
     public void initiate(ScheduledExecutorService executor) {
@@ -58,13 +55,9 @@ public class SmartHomeDaemon implements HalDaemon {
 
             smartHome = new SmartHomeImpl();
 
-            oAuth2Registry = new OAuth2Registry();
-            oAuth2Registry.addWhitelist(HalContext.getStringProperty(CONFIG_CLIENT_ID));
-            oAuth2Registry.setTokenListener(smartHome);
-
-            HalServer.registerExternalPage(ENDPOINT_AUTH, new OAuth2AuthorizationPage(oAuth2Registry));
-            HalServer.registerExternalPage(ENDPOINT_TOKEN, new OAuth2TokenPage(oAuth2Registry));
-            HalServer.registerExternalPage(ENDPOINT_SMARTHOME, new SmartHomePage(smartHome));
+            HalServer.getExternalWebDaemon().getOAuth2Registry().addWhitelist(HalContext.getStringProperty(CONFIG_CLIENT_ID));
+            HalServer.getExternalWebDaemon().getOAuth2Registry().addTokenListener(smartHome);
+            HalServer.getExternalWebDaemon().registerPage(ENDPOINT_SMARTHOME, new SmartHomePage(smartHome));
         }
     }
 }

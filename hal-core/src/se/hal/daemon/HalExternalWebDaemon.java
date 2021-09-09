@@ -2,20 +2,27 @@ package se.hal.daemon;
 
 import org.shredzone.acme4j.exception.AcmeException;
 import se.hal.HalContext;
+import se.hal.HalServer;
 import se.hal.intf.HalDaemon;
+import se.hal.intf.HalWebPage;
 import se.hal.util.HalAcmeDataStore;
+import se.hal.util.HalOAuth2RegistryStore;
 import zutil.log.LogUtil;
 import zutil.net.acme.AcmeClient;
 import zutil.net.acme.AcmeHttpChallengeFactory;
 import zutil.net.acme.AcmeManualDnsChallengeFactory;
 import zutil.net.http.HttpPage;
 import zutil.net.http.HttpServer;
+import zutil.net.http.page.oauth.OAuth2AuthorizationPage;
+import zutil.net.http.page.oauth.OAuth2Registry;
+import zutil.net.http.page.oauth.OAuth2TokenPage;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static se.hal.HalContext.CONFIG_HTTP_EXTERNAL_DOMAIN;
@@ -25,15 +32,33 @@ import static se.hal.HalContext.CONFIG_HTTP_EXTERNAL_PORT;
 public class HalExternalWebDaemon implements HalDaemon {
     private static final Logger logger = LogUtil.getLogger();
 
+    public static final String ENDPOINT_AUTH  = "api/auth/authorize";
+    public static final String ENDPOINT_TOKEN = "api/auth/token";
+
+
+    // Certificate fields
     private HalAcmeDataStore acmeDataStore = new HalAcmeDataStore();
-    private HttpServer httpExternal;
     private String externalServerUrl;
     private X509Certificate certificate;
+
+    // Oauth fields
+    private OAuth2Registry oAuth2Registry;
+
+    // Web server fields
+    private HttpServer httpExternal;
     private HashMap<String, HttpPage> pageMap = new HashMap<>();
 
 
     @Override
     public void initiate(ScheduledExecutorService executor) {
+        // ------------------------------------
+        // Initialize Oauth2
+        // ------------------------------------
+
+        oAuth2Registry = new OAuth2Registry(new HalOAuth2RegistryStore());
+        registerPage(ENDPOINT_AUTH, new OAuth2AuthorizationPage(oAuth2Registry));
+        registerPage(ENDPOINT_TOKEN, new OAuth2TokenPage(oAuth2Registry));
+
         // ------------------------------------
         // Initialize External HttpServer
         // ------------------------------------
@@ -49,7 +74,7 @@ public class HalExternalWebDaemon implements HalDaemon {
                 logger.warning("Missing '" + CONFIG_HTTP_EXTERNAL_PORT + "' and '" + CONFIG_HTTP_EXTERNAL_DOMAIN + "' configuration, will not setup external http server.");
             }
         } catch (Exception e) {
-            logger.severe("Was unable to initiate external web server.");
+            logger.log(Level.SEVERE, "Was unable to initiate external web server.", e);
         }
     }
 
@@ -65,7 +90,7 @@ public class HalExternalWebDaemon implements HalDaemon {
                 tmpHttpServer = new HttpServer(80);
                 tmpHttpServer.start();
 
-                acme = new AcmeClient(acmeDataStore, new AcmeHttpChallengeFactory(tmpHttpServer));
+                acme = new AcmeClient(acmeDataStore, new AcmeHttpChallengeFactory(tmpHttpServer), AcmeClient.ACME_SERVER_LETSENCRYPT_STAGING);
             } else {
                 throw new IllegalArgumentException("Unknown config value for " + externalServerUrl);
             }
@@ -96,10 +121,34 @@ public class HalExternalWebDaemon implements HalDaemon {
     }
 
 
-    public void setPage(String url, HttpPage page) {
+    /**
+     * @return the OAuth2Registry used by the general OAuth2 authorization pages.
+     */
+    public OAuth2Registry getOAuth2Registry() {
+        return oAuth2Registry;
+    }
+
+    /**
+     * Registers the given page with the external Hal web server.
+     * Note: as this page will most likely be accessible through the internet it needs to be robust and secure.
+     *
+     * @param url  is the web path to the page.
+     * @param page is the page to register with the server.
+     */
+    public void registerPage(String url, HttpPage page) {
         pageMap.put(url, page);
 
         if (httpExternal != null)
             httpExternal.setPage(url, page);
+    }
+
+    /**
+     * Registers the given page with the external Hal web server.
+     * Note: as this page will most likely be accessible through the internet it needs to be robust and secure.
+     *
+     * @param page is the page to register with the server.
+     */
+    public void registerPage(HalWebPage page){
+        registerPage(page.getId(), page);
     }
 }

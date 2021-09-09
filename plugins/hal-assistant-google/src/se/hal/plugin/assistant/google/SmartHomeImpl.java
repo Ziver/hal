@@ -34,7 +34,7 @@ import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
-import zutil.net.http.page.oauth.OAuth2Registry.TokenRegistrationListener;
+import zutil.net.http.page.oauth.OAuth2Registry.OAuth2TokenRegistrationListener;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -42,14 +42,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationListener {
+public class SmartHomeImpl extends SmartHomeApp implements OAuth2TokenRegistrationListener {
     private static final Logger logger = LogUtil.getLogger();
 
     public static final String CONFIG_USER_AGENT = "hal_assistant_google.user_agent";
-    public static final String CONFIG_TOKEN = "hal_assistant_google.token";
-    public static final String CONFIG_TOKEN_TIMEOUT = "hal_assistant_google.token_timeout";
+
 
     private final String userAgent;
+    private final String clientId;
 
 
     public SmartHomeImpl() {
@@ -57,28 +57,22 @@ public class SmartHomeImpl extends SmartHomeApp implements TokenRegistrationList
             HalContext.setProperty(CONFIG_USER_AGENT, "Hal-" + (int) (Math.random() * 10000));
         userAgent = HalContext.getStringProperty(CONFIG_USER_AGENT);
 
-        if (HalContext.containsProperty(CONFIG_TOKEN)) {
-            // Restore previous token
-            onTokenRegistration(
-                    null,
-                    HalContext.getStringProperty(CONFIG_TOKEN),
-                    HalContext.getLongProperty(CONFIG_TOKEN_TIMEOUT));
-        }
+        clientId = HalContext.getStringProperty(SmartHomeDaemon.CONFIG_CLIENT_ID);
     }
 
 
     @Override
     public void onTokenRegistration(String clientId, String token, long timeoutMillis) {
+        if (this.clientId == null || !this.clientId.equals(clientId))
+            return; // Only assign the token for the Google client ID
+
         try {
             GoogleCredentials credentials = GoogleCredentials.create(new AccessToken(
                     token,
-                    new Date(System.currentTimeMillis() + timeoutMillis)
+                    new Date(timeoutMillis)
             ));
             this.setCredentials(credentials);
             logger.fine("New OAuth2 token registered.");
-
-            HalContext.setProperty(CONFIG_TOKEN, token);
-            HalContext.setProperty(CONFIG_TOKEN_TIMEOUT, String.valueOf(timeoutMillis));
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Could not load google credentials", e);
         }

@@ -1,8 +1,6 @@
 package se.hal.plugin.dummy;
 
-import se.hal.EventControllerManager;
 import se.hal.HalServer;
-import se.hal.SensorControllerManager;
 import se.hal.intf.*;
 
 import java.util.ArrayList;
@@ -51,6 +49,7 @@ public class DummyController implements HalSensorController, HalEventController,
             registeredDevices.add((DummyDevice) deviceConfig);
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     public synchronized void deregister(HalDeviceConfig deviceConfig) {
         registeredDevices.remove(deviceConfig);
@@ -74,6 +73,6 @@ public class DummyController implements HalSensorController, HalEventController,
 
     @Override
     public synchronized void close() {
-        registeredDevices = new ArrayList();
+        registeredDevices = new ArrayList<>();
     }
 }

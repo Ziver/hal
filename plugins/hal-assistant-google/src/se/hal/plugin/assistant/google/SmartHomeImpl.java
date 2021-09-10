@@ -25,6 +25,7 @@ import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 import org.json.JSONObject;
 import se.hal.HalContext;
+import se.hal.HalServer;
 import se.hal.intf.HalAbstractDevice;
 import se.hal.plugin.assistant.google.trait.DeviceTrait;
 import se.hal.plugin.assistant.google.trait.DeviceTraitFactory;
@@ -58,6 +59,13 @@ public class SmartHomeImpl extends SmartHomeApp implements OAuth2TokenRegistrati
         userAgent = HalContext.getStringProperty(CONFIG_USER_AGENT);
 
         clientId = HalContext.getStringProperty(SmartHomeDaemon.CONFIG_CLIENT_ID);
+        for (String token : HalServer.getExternalWebDaemon().getOAuth2Registry().getAccessTokens(clientId)) {
+            if (HalServer.getExternalWebDaemon().getOAuth2Registry().isAccessTokenValid(token)) {
+                onTokenRegistration(clientId,
+                        token,
+                        HalServer.getExternalWebDaemon().getOAuth2Registry().getAccessTokenTimeout(token));
+            }
+        }
     }
 
 

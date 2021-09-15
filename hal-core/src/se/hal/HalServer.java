@@ -4,6 +4,7 @@ package se.hal;
 import se.hal.daemon.HalExternalWebDaemon;
 import se.hal.intf.*;
 import se.hal.page.HalAlertManager;
+import se.hal.page.StartupWebPage;
 import se.hal.struct.PluginConfig;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -50,11 +51,13 @@ public class HalServer {
             // init logging
             LogUtil.readConfiguration("logging.properties");
 
+            http = new HttpServer(HalContext.getIntegerProperty(HalContext.CONFIG_HTTP_PORT));
+            http.setDefaultPage(new StartupWebPage());
+            http.start();
+
             // init variables
             pluginManager = new PluginManager();
             daemonExecutor = Executors.newScheduledThreadPool(1); // We set only one thread for easier troubleshooting for now
-            http = new HttpServer(HalContext.getIntegerProperty(HalContext.CONFIG_HTTP_PORT));
-            http.start();
 
             // Upgrade database
             HalDatabaseUpgradeManager.initialize(pluginManager);
@@ -125,6 +128,7 @@ public class HalServer {
             http.setDefaultPage(new HttpFilePage(FileUtil.find(HalContext.RESOURCE_WEB_ROOT)));
             http.setPage("/", new HttpRedirectPage("/map"));
             http.setPage(HalAlertManager.getInstance().getUrl(), HalAlertManager.getInstance());
+
             for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalJsonPage.class); it.hasNext(); )
                 registerPage(it.next());
             for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalWebPage.class); it.hasNext(); )

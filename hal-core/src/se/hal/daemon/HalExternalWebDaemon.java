@@ -2,7 +2,6 @@ package se.hal.daemon;
 
 import org.shredzone.acme4j.exception.AcmeException;
 import se.hal.HalContext;
-import se.hal.HalServer;
 import se.hal.intf.HalDaemon;
 import se.hal.intf.HalWebPage;
 import se.hal.util.HalAcmeDataStore;
@@ -83,24 +82,32 @@ public class HalExternalWebDaemon implements HalDaemon {
             // Prepare ACME Client
             AcmeClient acme;
             HttpServer tmpHttpServer = null;
+            String acmeType = HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_CERT, "acme_http");
 
-            if ("dns".equals(HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_ACME_TYPE, ""))) {
-                acme = new AcmeClient(acmeDataStore, new AcmeManualDnsChallengeFactory());
-            } else if ("http".equals(HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_ACME_TYPE, "http"))) {
+            if ("acme_http".equals(acmeType)) {
                 tmpHttpServer = new HttpServer(80);
                 tmpHttpServer.start();
 
                 acme = new AcmeClient(acmeDataStore, new AcmeHttpChallengeFactory(tmpHttpServer), AcmeClient.ACME_SERVER_LETSENCRYPT_STAGING);
+            } else if ("none".equals(acmeType)) {
+                acme = null;
+            } else if ("acme_dns".equals(acmeType)) {
+                acme = new AcmeClient(acmeDataStore, new AcmeManualDnsChallengeFactory());
             } else {
                 throw new IllegalArgumentException("Unknown config value for " + externalServerUrl);
             }
 
             // Request certificate and start the external webserver
 
-            acme.addDomain(HalContext.getStringProperty(CONFIG_HTTP_EXTERNAL_DOMAIN));
-            acme.prepareRequest();
-            certificate = acme.requestCertificate();
-            acmeDataStore.storeCertificate(certificate);
+            if (acme != null) {
+                acme.addDomain(HalContext.getStringProperty(CONFIG_HTTP_EXTERNAL_DOMAIN));
+                acme.prepareRequest();
+                certificate = acme.requestCertificate();
+                acmeDataStore.storeCertificate(certificate);
+            } else {
+                logger.warning("No SSL certificate is configured for external HTTP Server.");
+                certificate = null;
+            }
 
             // Cleanup
             if (tmpHttpServer != null) {
@@ -110,7 +117,16 @@ public class HalExternalWebDaemon implements HalDaemon {
     }
 
     private void startHttpServer() throws GeneralSecurityException, IOException {
-        httpExternal = new HttpServer(HalContext.getIntegerProperty(CONFIG_HTTP_EXTERNAL_PORT), acmeDataStore.getDomainKeyPair().getPrivate(), certificate);
+        // Shutdown old server
+        if (httpExternal != null)
+            httpExternal.close();
+
+        // Start new Server
+
+        if (certificate != null)
+            httpExternal = new HttpServer(HalContext.getIntegerProperty(CONFIG_HTTP_EXTERNAL_PORT), acmeDataStore.getDomainKeyPair().getPrivate(), certificate);
+        else
+            httpExternal = new HttpServer(HalContext.getIntegerProperty(CONFIG_HTTP_EXTERNAL_PORT));
 
         for (String url : pageMap.keySet()) {
             httpExternal.setPage(url, pageMap.get(url));

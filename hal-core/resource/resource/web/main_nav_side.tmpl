@@ -1,0 +1,10 @@
+        <!-- Sub navigation -->
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul id="sub-navbar" class="nav nav-sidebar">
+                {{#subNav}}
+                <li {{#.isActive()}}class="active"{{/.isActive()}}>
+                    <a href="{{.getURL()}}">{{.getName()}}</a>
+                </li>
+                {{/subNav}}
+            </ul>
+        </div>

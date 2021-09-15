@@ -20,16 +20,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NetScanController implements HalEventController, HalAutostartController, InetScanListener, Runnable {
+public class NetScanController implements
+        HalEventController,
+        HalAutostartController,
+        HalScannableController,
+        InetScanListener,
+        Runnable {
     public static Logger logger = LogUtil.getLogger();
+
     private static final int NETWORK_SYNC_INTERVAL = 3 * 60 * 60 * 1000; // 3 hours
     private static final int PING_INTERVAL = 10 * 1000; // 10 sec
-    private static final String PARAM_IPSCAN = "netscan.ipscan";
 
     private ScheduledExecutorService executor;
     private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
     /** A register and a cache of previous state **/
     private HashMap<NetworkDevice, AvailabilityEventData> devices = new HashMap<>();
+    private boolean scanRunning = false;
 
 
     @Override
@@ -41,22 +47,6 @@ public class NetScanController implements HalEventController, HalAutostartContro
     public void initialize() {
         executor = Executors.newScheduledThreadPool(2);
         executor.scheduleAtFixedRate(NetScanController.this, 10_000, PING_INTERVAL, TimeUnit.MILLISECONDS);
-        if (HalContext.getBooleanProperty(PARAM_IPSCAN, true)) {
-            executor.scheduleAtFixedRate(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        logger.fine("Starting network scan...");
-                        InetScanner scanner = new InetScanner();
-                        scanner.setListener(NetScanController.this);
-                        scanner.scan(InetUtil.getLocalInet4Address().get(0));
-                        logger.fine("Network scan done");
-                    } catch (Exception e) {
-                        logger.log(Level.SEVERE, null, e);
-                    }
-                }
-            }, 30_000, NETWORK_SYNC_INTERVAL, TimeUnit.MILLISECONDS);
-        }
     }
 
     @Override
@@ -89,6 +79,7 @@ public class NetScanController implements HalEventController, HalAutostartContro
             logger.log(Level.SEVERE, null, e);
         }
     }
+
     @Override
     public void foundInetAddress(InetAddress ip) {
         logger.fine("Auto Detected ip: " + ip.getHostAddress());
@@ -100,6 +91,34 @@ public class NetScanController implements HalEventController, HalAutostartContro
         }
     }
 
+
+    @Override
+    public synchronized void startScan() {
+        if (!scanRunning) {
+            scanRunning = true;
+            executor.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        logger.fine("Starting network scan...");
+                        InetScanner scanner = new InetScanner();
+                        scanner.setListener(NetScanController.this);
+                        scanner.scan(InetUtil.getLocalInet4Address().get(0));
+                        logger.fine("Network scan done");
+                    } catch (Exception e) {
+                        logger.log(Level.SEVERE, null, e);
+                    } finally {
+                        scanRunning = false;
+                    }
+                }
+            }, 0, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    @Override
+    public boolean isScanning() {
+        return scanRunning;
+    }
 
 
     @Override

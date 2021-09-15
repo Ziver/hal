@@ -10,7 +10,7 @@ Description=Hal Server
 
 [Service]
 Type=idle
-ExecStart=/home/pi/repo/hal/run.sh --forground
+ExecStart=/home/pi/repo/hal/run.sh --foreground
 
 [Install]
 WantedBy=multi-user.target

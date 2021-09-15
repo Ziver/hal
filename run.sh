@@ -22,8 +22,8 @@ MODE="SCREEN"
 
 until [[ $# -eq 0 ]]; do
     case "$1" in
-        -f|--forground)
-            MODE="FORGROUND"
+        -f|--foreground)
+            MODE="FOREGROUND"
             shift
         ;;
 
@@ -54,7 +54,7 @@ trap 'exit 130' INT
 # Build Hal source
 ./gradlew build
 
-if [[ ${MODE} == "FORGROUND" ]]; then
+if [[ ${MODE} == "FOREGROUND" ]]; then
     ./gradlew run
 else 
     # Kill current session

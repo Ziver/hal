@@ -37,11 +37,6 @@ public class ZigbeePressureConfig extends ZigbeeHalDeviceConfig implements HalSe
     // --------------------------
 
     @Override
-    public long getDataInterval() {
-        return 0;
-    }
-
-    @Override
     public AggregationMethod getAggregationMethod() {
         return AggregationMethod.AVERAGE;
     }

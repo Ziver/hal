@@ -13,7 +13,9 @@ public interface HalSensorConfig extends HalDeviceConfig {
     /**
      * @return the intended data reporting interval in milliseconds.
      */
-    long getDataInterval();
+    default long getDataInterval() {
+        return 60 * 60 * 1000; // 1 hour
+    }
 
     /**
      * @return which aggregation method that should be used to aggregate the reported data.

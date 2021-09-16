@@ -36,11 +36,6 @@ public class ZigbeeTemperatureConfig extends ZigbeeHalDeviceConfig implements Ha
     // --------------------------
 
     @Override
-    public long getDataInterval() {
-        return 0;
-    }
-
-    @Override
     public AggregationMethod getAggregationMethod() {
         return AggregationMethod.AVERAGE;
     }

@@ -33,8 +33,12 @@
 {{#nodes}}
 <div class="col-md-12">
     <div class="panel panel-default drop-shadow">
-        <div class="panel-heading">Node: {{.getIeeeAddress()}}</div>
-        <div class="panel-body">
+        <!-- NODE -->
+
+        <div class="panel-heading">
+            <a href="#a" data-toggle="collapse" data-target="#node-{{.getIeeeAddress()}}">Node: {{.getIeeeAddress()}}</a>
+        </div>
+        <div id="node-{{.getIeeeAddress()}}" class="panel-body collapse">
             <div class="col-md-6">
                 <div class="panel panel-default drop-shadow">
                     <div class="panel-heading">Node Description</div>
@@ -90,19 +94,24 @@
                 </div>
             </div>
 
+            <!-- ENDPOINTS -->
+
             <div class="col-md-12">
             {{#.getEndpoints()}}
             <div class="panel panel-default drop-shadow">
-                <div class="panel-heading">Endpoint: {{.getDeviceId()}}</div>
-                <div class="panel-body">
+                <div class="panel-heading">
+                    <a href="#a" data-toggle="collapse" data-target="#node-{{.getIeeeAddress()}}-endpoint-{{.getDeviceId()}}">Endpoint: {{.getDeviceId()}}</a>
+                </div>
+                <div id="node-{{.getIeeeAddress()}}-endpoint-{{.getDeviceId()}}" class="panel-body collapse">
 
-                    <p>Input Clusters:</p>
+                    <p><b>Input Clusters:</b></p>
 
                     {{#.inputClusters.values()}}
                     <div class="panel panel-default drop-shadow">
-                        <div class="panel-heading">Cluster: {{.getClusterId()}}</div>
-                        <div class="panel-body">
-
+                        <div class="panel-heading">
+                            <a href="#a" data-toggle="collapse" data-target="#node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-cluster-{{.getClusterId()}}">Cluster: {{.getClusterId()}}</a>
+                        </div>
+                        <div id="node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-cluster-{{.getClusterId()}}" class="panel-body collapse">
                             <table class="table table-hover table-condensed">
                                 <thead>
                                     <th>ID</th>
@@ -123,12 +132,14 @@
                     </div>
                     {{/.inputClusters.values()}}
 
-                    <p>Output Clusters:</p>
+                    <p><b>Output Clusters:</b></p>
 
                     {{#.outputClusters.values()}}
                     <div class="panel panel-default drop-shadow">
-                        <div class="panel-heading">Cluster: {{.getClusterId()}}</div>
-                        <div class="panel-body">
+                        <div class="panel-heading">
+                            <a data-toggle="collapse" data-target="#node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-cluster-{{.getClusterId()}}">Cluster: {{.getClusterId()}}</a>
+                        </div>
+                        <div id="node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-cluster-{{.getClusterId()}}" class="panel-body collapse">
 
                             <table class="table table-hover table-condensed">
                                 <thead>
@@ -157,3 +168,18 @@
     </div>
 </div>
 {{/nodes}}
+
+<script>
+    $('.collapse').each(function(index) {
+        if (localStorage.getItem($(this).attr("id"))) {
+            $(this).collapse('show');
+        }
+    });
+
+    $('.collapse').on('show.bs.collapse', function () {
+        localStorage.setItem($(this).attr("id"), true);
+    })
+    $('.collapse').on('hide.bs.collapse', function () {
+        localStorage.removeItem($(this).attr("id"));
+    })
+</script>

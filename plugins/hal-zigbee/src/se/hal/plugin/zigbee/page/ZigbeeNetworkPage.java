@@ -12,12 +12,12 @@ import zutil.parser.Templator;
 import java.util.Map;
 import java.util.Set;
 
-public class ZigbeeNodeOverviewPage extends HalWebPage {
-    private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/zigbee_node_overview.tmpl";
+public class ZigbeeNetworkPage extends HalWebPage {
+    private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/zigbee_network.tmpl";
 
-    public ZigbeeNodeOverviewPage() {
-        super("zigbee_overview");
-        super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Zigbee Overview").setWeight(10_000);
+    public ZigbeeNetworkPage() {
+        super("zigbee_network");
+        super.getRootNav().createSubNav("Settings").createSubNav(this.getId(), "Zigbee Network").setWeight(10_000);
     }
 
     @Override

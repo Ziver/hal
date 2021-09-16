@@ -109,9 +109,9 @@
                     {{#.inputClusters.values()}}
                     <div class="panel panel-default drop-shadow">
                         <div class="panel-heading">
-                            <a href="#a" data-toggle="collapse" data-target="#node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-cluster-{{.getClusterId()}}">Cluster: {{.getClusterId()}}</a>
+                            <a href="#a" data-toggle="collapse" data-target="#node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-in-cluster-{{.getClusterId()}}">Cluster: {{.getClusterId()}}</a>
                         </div>
-                        <div id="node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-cluster-{{.getClusterId()}}" class="panel-body collapse">
+                        <div id="node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-in-cluster-{{.getClusterId()}}" class="panel-body collapse">
                             <table class="table table-hover table-condensed">
                                 <thead>
                                     <th>ID</th>
@@ -137,9 +137,9 @@
                     {{#.outputClusters.values()}}
                     <div class="panel panel-default drop-shadow">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" data-target="#node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-cluster-{{.getClusterId()}}">Cluster: {{.getClusterId()}}</a>
+                            <a data-toggle="collapse" data-target="#node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-out-cluster-{{.getClusterId()}}">Cluster: {{.getClusterId()}}</a>
                         </div>
-                        <div id="node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-cluster-{{.getClusterId()}}" class="panel-body collapse">
+                        <div id="node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-out-cluster-{{.getClusterId()}}" class="panel-body collapse">
 
                             <table class="table table-hover table-condensed">
                                 <thead>

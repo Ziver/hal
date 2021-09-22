@@ -115,6 +115,11 @@ public class SmartHomeImpl extends SmartHomeApp implements OAuth2TokenRegistrati
             DeviceType type = DeviceType.getType(device);
             DeviceTrait[] traits = DeviceTraitFactory.getTraits(device);
 
+            if (type == null) {
+                logger.warning("DeviceType returned null for Hal device(" + device.getDeviceConfig() + "): " + device);
+                continue;
+            }
+
             //  Generate payload
 
             SyncResponse.Payload.Device.Builder deviceBuilder =

@@ -395,8 +395,7 @@ public class ZigbeeController implements HalSensorController,
         logger.info("Starting Zigbee pairing process.");
 
         networkManager.permitJoin(120);
-        permitJoinTimer = new Timer(120_000);
-        permitJoinTimer.start();
+        permitJoinTimer = new Timer(120_000).start();
     }
 
     @Override

@@ -40,10 +40,10 @@ public class DeviceTraitFactory {
 
 
     public static DeviceTrait[] getTraits(HalAbstractDevice device) {
-        if (device == null || device.getDeviceData() == null)
+        if (device == null || device.getDeviceConfig() == null)
             return new DeviceTrait[0];
 
-        switch (device.getDeviceData().getClass().getName()) {
+        switch (device.getDeviceConfig().getDeviceDataClass().getName()) {
             case "se.hal.struct.devicedata.DimmerEventData":
             case "se.hal.struct.devicedata.OnOffEventData":
                 return new DeviceTrait[]{new OnOffTrait()};

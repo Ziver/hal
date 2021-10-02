@@ -1,17 +1,15 @@
 package se.hal.plugin.zigbee.device;
 
 import com.zsmartsystems.zigbee.zcl.ZclAttribute;
-import com.zsmartsystems.zigbee.zcl.clusters.ZclTemperatureMeasurementCluster;
+import com.zsmartsystems.zigbee.zcl.clusters.ZclIlluminanceMeasurementCluster;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalSensorConfig;
-import se.hal.struct.devicedata.HumiditySensorData;
-import se.hal.struct.devicedata.PressureSensorData;
-import se.hal.struct.devicedata.TemperatureSensorData;
+import se.hal.struct.devicedata.IlluminanceSensorData;
 
 /**
  * A device configuration for a specific endpoint on a Zigbee device.
  */
-public class ZigbeePressureConfig extends ZigbeeHalDeviceConfig implements HalSensorConfig {
+public class ZigbeeIlluminanceConfig extends ZigbeeHalDeviceConfig implements HalSensorConfig {
 
     // --------------------------
     // Zigbee Methods
@@ -20,8 +18,8 @@ public class ZigbeePressureConfig extends ZigbeeHalDeviceConfig implements HalSe
     @Override
     public HalDeviceData getDeviceData(ZclAttribute zclAttribute) {
         if (zclAttribute.getCluster().getId() == getZigbeeClusterId() &&
-                zclAttribute.getId() == ZclTemperatureMeasurementCluster.ATTR_MEASUREDVALUE)
-            return new PressureSensorData(
+                zclAttribute.getId() == ZclIlluminanceMeasurementCluster.ATTR_MEASUREDVALUE)
+            return new IlluminanceSensorData(
                     (int) zclAttribute.getLastValue(),
                     zclAttribute.getLastReportTime().getTimeInMillis());
         return null;
@@ -29,7 +27,7 @@ public class ZigbeePressureConfig extends ZigbeeHalDeviceConfig implements HalSe
 
     @Override
     public int getZigbeeClusterId() {
-        return ZclTemperatureMeasurementCluster.CLUSTER_ID;
+        return ZclIlluminanceMeasurementCluster.CLUSTER_ID;
     }
 
     // --------------------------
@@ -43,6 +41,6 @@ public class ZigbeePressureConfig extends ZigbeeHalDeviceConfig implements HalSe
 
     @Override
     public Class<? extends HalDeviceData> getDeviceDataClass() {
-        return TemperatureSensorData.class;
+        return IlluminanceSensorData.class;
     }
 }

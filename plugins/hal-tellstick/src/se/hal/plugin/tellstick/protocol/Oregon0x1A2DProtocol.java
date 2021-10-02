@@ -6,7 +6,7 @@ import se.hal.plugin.tellstick.TellstickSerialComm;
 import se.hal.plugin.tellstick.device.Oregon0x1A2D;
 import se.hal.plugin.tellstick.device.Oregon0x1A2D.OregonSensorType;
 import se.hal.struct.devicedata.HumiditySensorData;
-import se.hal.struct.devicedata.LightSensorData;
+import se.hal.struct.devicedata.IlluminanceSensorData;
 import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.converter.Converter;
@@ -90,7 +90,7 @@ public class Oregon0x1A2DProtocol extends TellstickProtocol {
                     humidityFound = true;
                     break;
                 case LIGHT:
-                    dataObj = new LightSensorData(temperature, timestamp);
+                    dataObj = new IlluminanceSensorData(temperature, timestamp);
                     temperatureFound = true;
                     break;
                 case TEMPERATURE:

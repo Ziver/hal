@@ -32,7 +32,6 @@ import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
 import se.hal.struct.Event;
 import se.hal.struct.devicedata.OnOffEventData;
-import se.hal.struct.devicedata.TemperatureSensorData;
 
 import java.util.HashMap;
 
@@ -71,9 +70,9 @@ public class OnOffTrait extends DeviceTrait {
         if ("action.devices.commands.OnOff".equals(execution.command)) {
             OnOffEventData eventData = new OnOffEventData();
             if ((boolean) execution.getParams().get("on"))
-                eventData.turnOn();
+                eventData.setOn();
             else
-                eventData.turnOff();
+                eventData.setOff();
 
             EventControllerManager.getInstance().send((Event) device, eventData);
         }

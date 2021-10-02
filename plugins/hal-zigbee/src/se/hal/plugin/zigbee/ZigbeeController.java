@@ -20,10 +20,12 @@ import com.zsmartsystems.zigbee.zcl.ZclAttributeListener;
 import com.zsmartsystems.zigbee.zcl.ZclCluster;
 import com.zsmartsystems.zigbee.zcl.clusters.*;
 import com.zsmartsystems.zigbee.zdo.field.NodeDescriptor;
+
 import se.hal.HalContext;
 import se.hal.intf.*;
 import se.hal.plugin.zigbee.db.ZigBeeHalDataStore;
 import se.hal.plugin.zigbee.device.*;
+
 import zutil.Timer;
 import zutil.log.LogUtil;
 
@@ -291,7 +293,7 @@ public class ZigbeeController implements HalSensorController,
 
         for (int inputClusterId : endpoint.getInputClusterIds()) {
             ZclCluster cluster = endpoint.getInputCluster(inputClusterId);
-            ZigbeeHalDeviceConfig config = createDeviceConfig(inputClusterId);
+            ZigbeeHalDeviceConfig config = ZigbeeHalDeviceFactory.getDeviceConfig(inputClusterId);
 
             // Read basic attributes
             if (cluster instanceof ZclBasicCluster) {
@@ -337,18 +339,6 @@ public class ZigbeeController implements HalSensorController,
             }
         }
     }
-
-    private ZigbeeHalDeviceConfig createDeviceConfig(int clusterId) {
-        switch (clusterId) {
-            case ZclRelativeHumidityMeasurementCluster.CLUSTER_ID: return new ZigbeeHumidityConfig();
-            case ZclOnOffCluster.CLUSTER_ID:                       return new ZigbeeOnOffConfig();
-            case ZclPressureMeasurementCluster.CLUSTER_ID:         return new ZigbeePressureConfig();
-            case ZclTemperatureMeasurementCluster.CLUSTER_ID:      return new ZigbeeTemperatureConfig();
-        }
-
-        return null;
-    }
-
 
     @Override
     public void deviceRemoved(ZigBeeEndpoint endpoint) {

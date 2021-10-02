@@ -36,7 +36,9 @@
         <!-- NODE -->
 
         <div class="panel-heading">
-            <a href="#a" data-toggle="collapse" data-target="#node-{{.getIeeeAddress()}}">Node: {{.getIeeeAddress()}}</a>
+            <a href="#a" data-toggle="collapse" data-target="#node-{{.getIeeeAddress()}}">
+                Node: {{.getIeeeAddress()}}
+            </a>
         </div>
         <div id="node-{{.getIeeeAddress()}}" class="panel-body collapse">
             <div class="col-md-6">
@@ -100,7 +102,9 @@
             {{#.getEndpoints()}}
             <div class="panel panel-default drop-shadow">
                 <div class="panel-heading">
-                    <a href="#a" data-toggle="collapse" data-target="#node-{{.getIeeeAddress()}}-endpoint-{{.getDeviceId()}}">Endpoint: {{.getDeviceId()}}</a>
+                    <a href="#a" data-toggle="collapse" data-target="#node-{{.getIeeeAddress()}}-endpoint-{{.getDeviceId()}}">
+                        Endpoint: {{.getDeviceId()}}
+                    </a>
                 </div>
                 <div id="node-{{.getIeeeAddress()}}-endpoint-{{.getDeviceId()}}" class="panel-body collapse">
 
@@ -109,7 +113,9 @@
                     {{#.inputClusters.values()}}
                     <div class="panel panel-default drop-shadow">
                         <div class="panel-heading">
-                            <a href="#a" data-toggle="collapse" data-target="#node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-in-cluster-{{.getClusterId()}}">Cluster: {{.getClusterId()}}</a>
+                            <a href="#a" data-toggle="collapse" data-target="#node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-in-cluster-{{.getClusterId()}}">
+                                Cluster: {{.CLUSTER_NAME}} ({{.getClusterId()}})
+                            </a>
                         </div>
                         <div id="node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-in-cluster-{{.getClusterId()}}" class="panel-body collapse">
                             <table class="table table-hover table-condensed">
@@ -137,7 +143,9 @@
                     {{#.outputClusters.values()}}
                     <div class="panel panel-default drop-shadow">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" data-target="#node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-out-cluster-{{.getClusterId()}}">Cluster: {{.getClusterId()}}</a>
+                            <a data-toggle="collapse" data-target="#node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-out-cluster-{{.getClusterId()}}">
+                                Cluster: {{.CLUSTER_NAME}} ({{.getClusterId()}})
+                            </a>
                         </div>
                         <div id="node-{{.getZigBeeAddress().getAddress()}}-endpoint-{{.getZigBeeAddress().getEndpoint()}}-out-cluster-{{.getClusterId()}}" class="panel-body collapse">
 

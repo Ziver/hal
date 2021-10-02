@@ -2,13 +2,14 @@ package se.hal.struct.devicedata;
 
 import se.hal.intf.HalSensorData;
 
-public class LightSensorData extends HalSensorData {
+
+public class IlluminanceSensorData extends HalSensorData {
 
     private double lux;
 
 
-    public LightSensorData(){}
-    public LightSensorData(double lux, long timestamp){
+    public IlluminanceSensorData(){}
+    public IlluminanceSensorData(double lux, long timestamp){
         this.lux =  lux;
         this.setTimestamp(timestamp);
     }
@@ -16,7 +17,7 @@ public class LightSensorData extends HalSensorData {
 
     @Override
     public String toString(){
-        return lux+" lux";
+        return lux + " lux";
     }
 
     // ----------------------------------------
@@ -32,10 +33,10 @@ public class LightSensorData extends HalSensorData {
     }
 
     /**
-     * @param   lux     set the light intensity in lux
+     * @param   data     set the light intensity in lux
      */
     @Override
-    public void setData(double lux) {
-        this.lux = lux;
+    public void setData(double data) {
+        this.lux = data;
     }
 }

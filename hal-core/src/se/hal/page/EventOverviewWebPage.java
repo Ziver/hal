@@ -47,9 +47,9 @@ public class EventOverviewWebPage extends HalWebPage {
             // change event data
             OnOffEventData eventData = new OnOffEventData();
             if (request.containsKey("enabled") && "on".equals(request.get("enabled")))
-                eventData.turnOn();
+                eventData.setOn();
             else
-                eventData.turnOff();
+                eventData.setOff();
 
             logger.info("Modifying Event(" + id + ") state: " + eventData.toString());
             Event event = Event.getEvent(db, id);

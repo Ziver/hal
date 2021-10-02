@@ -37,10 +37,10 @@ public class OnOffEventData extends HalEventData {
     }
 
 
-    public void turnOn(){
+    public void setOn(){
         isOn = true;
     }
-    public void turnOff(){
+    public void setOff(){
         isOn = false;
     }
     public void toggle(){
@@ -66,7 +66,7 @@ public class OnOffEventData extends HalEventData {
     }
 
     @Override
-    public void setData(double enabled) {
-        this.isOn = enabled > 0;
+    public void setData(double data) {
+        this.isOn = data > 0;
     }
 }

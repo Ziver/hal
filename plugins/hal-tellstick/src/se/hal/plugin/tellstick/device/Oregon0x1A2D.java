@@ -7,7 +7,7 @@ import se.hal.plugin.tellstick.TellstickDevice;
 import se.hal.plugin.tellstick.TellstickSerialComm;
 import se.hal.plugin.tellstick.protocol.Oregon0x1A2DProtocol;
 import se.hal.struct.devicedata.HumiditySensorData;
-import se.hal.struct.devicedata.LightSensorData;
+import se.hal.struct.devicedata.IlluminanceSensorData;
 import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import se.hal.struct.devicedata.TemperatureSensorData;
 import zutil.log.LogUtil;
@@ -78,7 +78,7 @@ public class Oregon0x1A2D implements TellstickDevice, HalSensorConfig {
                 case HUMIDITY:
                     return HumiditySensorData.class;
                 case LIGHT:
-                    return LightSensorData.class;
+                    return IlluminanceSensorData.class;
                 case POWER:
                     return PowerConsumptionSensorData.class;
                 case TEMPERATURE:

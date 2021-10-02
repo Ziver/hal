@@ -29,7 +29,7 @@ public class TelstickSerialCommNexaOnOffTest {
             System.out.println("Up and Running");
             while (true) {
                 Thread.sleep(2000);
-                nexaData.turnOn();
+                nexaData.setOn();
                 nexaDevice.setUnit(0);
                 comm.send(nexaDevice, nexaData);
                 Thread.sleep(2000);
@@ -38,7 +38,7 @@ public class TelstickSerialCommNexaOnOffTest {
                 Thread.sleep(2000);
 
 
-                nexaData.turnOff();
+                nexaData.setOff();
                 nexaDevice.setUnit(0);
                 comm.send(nexaDevice, nexaData);
                 Thread.sleep(2000);

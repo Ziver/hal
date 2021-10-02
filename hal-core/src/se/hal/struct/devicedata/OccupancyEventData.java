@@ -25,34 +25,37 @@ package se.hal.struct.devicedata;
 import se.hal.intf.HalEventData;
 
 
-public class OpenClosedEventData extends HalEventData {
+public class OccupancyEventData extends HalEventData {
 
-    private boolean isOpen;
+    private boolean isOccupied;
 
 
-    public OpenClosedEventData() { }
-    public OpenClosedEventData(boolean isOpen, long timestamp) {
-        this.isOpen = isOpen;
+    public OccupancyEventData() { }
+    public OccupancyEventData(boolean isOccupied, long timestamp) {
+        this.isOccupied = isOccupied;
         this.setTimestamp(timestamp);
     }
 
-    public void setOpen(){
-        isOpen = true;
+    public void setOccupied(){
+        this.isOccupied = true;
     }
-    public void setClose(){
-        isOpen = false;
+    public void setOccupied(boolean isOccupied){
+        this.isOccupied = isOccupied;
+    }
+    public void setUnoccupied(){
+        this.isOccupied = false;
     }
     public void toggle(){
-        isOpen = !isOpen;
+        isOccupied = !isOccupied;
     }
 
-    public boolean isOpen(){
-        return isOpen;
+    public boolean isOccupied(){
+        return isOccupied;
     }
 
     @Override
     public String toString(){
-        return isOpen ? "Open" : "Closed";
+        return isOccupied ? "Occupied" : "Unoccupied";
     }
 
     // ----------------------------------------
@@ -61,11 +64,11 @@ public class OpenClosedEventData extends HalEventData {
 
     @Override
     public double getData() {
-        return (isOpen ? 1.0 : 0.0);
+        return (isOccupied ? 1.0 : 0.0);
     }
 
     @Override
     public void setData(double data) {
-        this.isOpen = data > 0;
+        this.isOccupied = data > 0;
     }
 }

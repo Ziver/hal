@@ -55,6 +55,8 @@ public abstract class ZigbeeHalEventDeviceConfig extends ZigbeeHalDeviceConfig {
      * @param data  is the Hal event data value that should be converted.
      * @return a new Zigbee command object or null if no equal representation can be created based on the data.
      */
-    protected abstract ZclCommand getZigbeeCommandObject(HalEventData data);
+    protected ZclCommand getZigbeeCommandObject(HalEventData data) {
+        return null;
+    }
 
 }

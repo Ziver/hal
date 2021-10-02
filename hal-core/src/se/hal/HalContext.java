@@ -25,6 +25,7 @@ public class HalContext {
     public static final String CONFIG_HTTP_EXTERNAL_PORT = "hal_core.http_external_port";
     public static final String CONFIG_HTTP_EXTERNAL_DOMAIN = "hal_core.http_external_domain";
     public static final String CONFIG_HTTP_EXTERNAL_CERT = "hal_core.http_external_cert";
+    public static final String CONFIG_DNS_LOCAL_DOMAIN = "hal_core.dns_local_domain";
     public static final String CONFIG_MAP_BACKGROUND_IMAGE = "hal_core.map_bgimage";
 
     public static final String RESOURCE_ROOT;

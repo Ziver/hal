@@ -12,6 +12,9 @@ hal_core.http_port=8080
 #hal_core.http_external_port=8081
 #hal_core.http_external_domain=example.com
 
+# Set the local domain that hal will announce to the local network. Default value is hal.local leave empty to disable.
+hal_core.dns_local_domain=hal.local|<empty>
+
 # ------------------------------------------------------------------------
 # Plugin configurations
 # ------------------------------------------------------------------------

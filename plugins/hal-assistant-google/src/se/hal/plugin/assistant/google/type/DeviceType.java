@@ -163,7 +163,7 @@ public enum DeviceType {
                 return SENSOR;
 
             default:
-                throw new IllegalArgumentException("Unregistered Sensor device data: " + device.getDeviceData());
+                throw new IllegalArgumentException("Unknown device device class: " + device.getDeviceConfig().getDeviceDataClass());
         }
     }
 }

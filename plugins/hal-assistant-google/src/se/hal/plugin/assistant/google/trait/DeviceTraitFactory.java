@@ -62,7 +62,7 @@ public class DeviceTraitFactory {
                 return new DeviceTrait[]{new SensorStateTrait(), new TemperatureControlTrait()};
 
             default:
-                throw new IllegalArgumentException("Unregistered Sensor device data: " + device.getDeviceData());
+                throw new IllegalArgumentException("Unknown device device class: " + device.getDeviceConfig().getDeviceDataClass());
         }
     }
 

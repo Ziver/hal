@@ -108,10 +108,8 @@ public class SmartHomeImpl extends SmartHomeApp implements OAuth2TokenRegistrati
             logger.log(Level.WARNING, "Unable to retrieve devices.", e);
         }
 
-        res.payload.agentUserId = userAgent;
-        res.payload.devices = new SyncResponse.Payload.Device[deviceList.size()];
-        for (int i = 0; i < res.payload.devices.length; i++) {
-            HalAbstractDevice device = deviceList.get(i);
+        ArrayList<SyncResponse.Payload.Device> responseDeviceList = new ArrayList<>(deviceList.size());
+        for (HalAbstractDevice device : deviceList) {
             DeviceType type = DeviceType.getType(device);
             DeviceTrait[] traits = DeviceTraitFactory.getTraits(device);
 
@@ -156,8 +154,12 @@ public class SmartHomeImpl extends SmartHomeApp implements OAuth2TokenRegistrati
             customDataJson.put("id", device.getId());
             deviceBuilder.setCustomData(customDataJson);
 
-            res.payload.devices[i] = deviceBuilder.build();
+            responseDeviceList.add(deviceBuilder.build());
         }
+
+        res.payload.agentUserId = userAgent;
+        res.payload.devices = responseDeviceList.toArray(
+                new SyncResponse.Payload.Device[responseDeviceList.size()]);
 
         return res;
     }

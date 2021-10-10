@@ -50,6 +50,9 @@ package se.hal.plugin.assistant.google.type;
 
 import se.hal.intf.HalAbstractDevice;
 import se.hal.struct.Sensor;
+import zutil.log.LogUtil;
+
+import java.util.logging.Logger;
 
 /**
  * Enum for https://developers.google.com/assistant/smarthome/types
@@ -134,6 +137,8 @@ public enum DeviceType {
     YOGURTMAKER("action.devices.types.YOGURTMAKER");
 
 
+    private static final Logger logger = LogUtil.getLogger();
+
     private final String typeId;
 
 
@@ -147,6 +152,10 @@ public enum DeviceType {
     }
 
 
+    /**
+     * @param device
+     * @return a DeviceType ENUM matching the given device or null if given device is not supported.
+     */
     public static DeviceType getType(HalAbstractDevice device) {
         if (device == null || device.getDeviceConfig() == null)
             return null;
@@ -163,7 +172,8 @@ public enum DeviceType {
                 return SENSOR;
 
             default:
-                throw new IllegalArgumentException("Unknown device device class: " + device.getDeviceConfig().getDeviceDataClass());
+                logger.warning("Unknown device data class (" + device.getDeviceConfig().getDeviceDataClass() + ") provided by device config: " + device.getDeviceConfig().getClass());
+                return null;
         }
     }
 }

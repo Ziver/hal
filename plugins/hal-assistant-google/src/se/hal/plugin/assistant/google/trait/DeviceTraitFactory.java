@@ -26,19 +26,26 @@ package se.hal.plugin.assistant.google.trait;
 
 import se.hal.intf.HalAbstractDevice;
 import se.hal.struct.Sensor;
+import zutil.log.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * A factory class that will associate traits to Hal devices
  */
 public class DeviceTraitFactory {
+    private static final Logger logger = LogUtil.getLogger();
 
     private DeviceTraitFactory() {}
 
 
+    /**
+     * @param device    the device to get supported DeviceTraits for.
+     * @return an array of DeviceTrait objects that are able to handle the given device type or empty array if there is no supported DeviceTrait available.
+     */
     public static DeviceTrait[] getTraits(HalAbstractDevice device) {
         if (device == null || device.getDeviceConfig() == null)
             return new DeviceTrait[0];
@@ -62,10 +69,15 @@ public class DeviceTraitFactory {
                 return new DeviceTrait[]{new SensorStateTrait(), new TemperatureControlTrait()};
 
             default:
-                throw new IllegalArgumentException("Unknown device device class: " + device.getDeviceConfig().getDeviceDataClass());
+                logger.warning("Unknown device data class (" + device.getDeviceConfig().getDeviceDataClass() + ") provided by device config: " + device.getDeviceConfig().getClass());
+                return new DeviceTrait[0];
         }
     }
 
+    /**
+     * @param traits
+     * @return a list integers of trait IDs matching the traits given.
+     */
     public static List<String> getTraitIds(DeviceTrait[] traits) {
         List<String> list = new ArrayList<>(traits.length);
 

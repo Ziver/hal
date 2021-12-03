@@ -1,6 +1,6 @@
 package se.hal;
 
-import se.hal.intf.HalDatabaseUpgrade;
+import se.hal.intf.HalDatabaseUpgrader;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.db.DBUpgradeHandler;
@@ -24,12 +24,12 @@ import java.util.logging.Logger;
 public class HalDatabaseUpgradeManager {
     private static final Logger logger = LogUtil.getLogger();
 
-    private static HalDatabaseUpgrade halCoreUpgrade;
-    private static Queue<HalDatabaseUpgrade> upgradeQueue;
+    private static HalDatabaseUpgrader halCoreUpgrade;
+    private static Queue<HalDatabaseUpgrader> upgradeQueue;
 
 
     /**
-     * Method will read in all HalDatabaseUpgrade plugins and populate the upgrade queue.
+     * Method will read in all HalDatabaseUpgrader plugins and populate the upgrade queue.
      * Node, method will only read in plugins on the first call, any subsequent calls will be ignored.
      *
      * @param pluginManager
@@ -40,10 +40,10 @@ public class HalDatabaseUpgradeManager {
 
         upgradeQueue = new LinkedList<>();
 
-        for (Iterator<HalDatabaseUpgrade> it = pluginManager.getSingletonIterator(HalDatabaseUpgrade.class); it.hasNext(); ) {
-            HalDatabaseUpgrade dbUpgrade = it.next();
+        for (Iterator<HalDatabaseUpgrader> it = pluginManager.getSingletonIterator(HalDatabaseUpgrader.class); it.hasNext(); ) {
+            HalDatabaseUpgrader dbUpgrade = it.next();
 
-            if (dbUpgrade instanceof HalCoreDatabaseUpgrade)
+            if (dbUpgrade instanceof HalCoreDatabaseUpgrader)
                 halCoreUpgrade = dbUpgrade;
             else
                 upgradeQueue.add(dbUpgrade);
@@ -68,7 +68,7 @@ public class HalDatabaseUpgradeManager {
         }
     }
 
-    private synchronized static void upgrade(HalDatabaseUpgrade dbUpgrade) {
+    private synchronized static void upgrade(HalDatabaseUpgrader dbUpgrade) {
         DBConnection mainDB = null;
         DBConnection referenceDB = null;
 
@@ -96,7 +96,7 @@ public class HalDatabaseUpgradeManager {
             // Evaluate if DB upgrade is needed?
 
             referenceDB = new DBConnection(DBConnection.DBMS.SQLite, referenceDBPath);
-            String mainDBVersionProperty = dbUpgrade.getClass().getSimpleName() + ".db_version";
+            String mainDBVersionProperty = "db_version." + dbUpgrade.getClass().getSimpleName();
 
             // Check DB version
             final int referenceDBVersion = dbUpgrade.getReferenceDBVersion();

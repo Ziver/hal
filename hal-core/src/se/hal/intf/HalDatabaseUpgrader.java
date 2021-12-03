@@ -7,20 +7,20 @@ import java.sql.SQLException;
 /**
  * A plugin interface for custom plugin DB changes.
  */
-public abstract class HalDatabaseUpgrade {
+public abstract class HalDatabaseUpgrader {
 
     private int referenceDBVersion;
     private String referenceDBPath;
 
 
-    public HalDatabaseUpgrade(int referenceDBVersion, String referenceDBPath) {
+    public HalDatabaseUpgrader(int referenceDBVersion, String referenceDBPath) {
         this.referenceDBVersion = referenceDBVersion;
         this.referenceDBPath = referenceDBPath;
     }
 
 
     /**
-     * @return the reference DB version which will be used as a to state during the upgrade process.
+     * @return the reference DB version which will be used as a to-state during the upgrade process.
      */
     public int getReferenceDBVersion() {
         return referenceDBVersion;

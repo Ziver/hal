@@ -1,6 +1,6 @@
 package se.hal;
 
-import se.hal.intf.HalDatabaseUpgrade;
+import se.hal.intf.HalDatabaseUpgrader;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 
@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 /**
  * The DB upgrade class for Hal-Core
  */
-public class HalCoreDatabaseUpgrade extends HalDatabaseUpgrade {
+public class HalCoreDatabaseUpgrader extends HalDatabaseUpgrader {
     private static final Logger logger = LogUtil.getLogger();
 
     private static final int    REFERENCE_DB_VERSION = 16;
@@ -20,7 +20,7 @@ public class HalCoreDatabaseUpgrade extends HalDatabaseUpgrade {
     private static final int CLEAR_EXTERNAL_AGGR_DATA_DB_VERSION = 0;
 
 
-    public HalCoreDatabaseUpgrade() {
+    public HalCoreDatabaseUpgrader() {
         super(REFERENCE_DB_VERSION, REFERENCE_DB_PATH);
     }
 

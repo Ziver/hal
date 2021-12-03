@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class DummyController implements HalSensorController, HalEventController, Runnable, HalDaemon {
-    private List<DummyDevice> registeredDevices = new ArrayList();
+    private List<DummyDevice> registeredDevices = new ArrayList<>();
     private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
 
 

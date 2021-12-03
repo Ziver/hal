@@ -26,6 +26,7 @@ package se.hal.plugin.zigbee;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.zsmartsystems.zigbee.transport.ZigBeePort;
+import com.zsmartsystems.zigbee.zcl.field.ByteArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,6 +190,19 @@ public class ZigBeeJSerialCommPort implements ZigBeePort {
             serialOutputStream.write(value);
         } catch (IOException e) {
             logger.error("Was unable to write to serial port.", e);
+        }
+    }
+
+    //@Override
+    public void write(int[] bytes) {
+        if (serialOutputStream == null)
+            throw new RuntimeException("Unable to write, Serial port is not open.");
+
+        try {
+            ByteArray arr = new ByteArray(bytes);
+            serialOutputStream.write(arr.get());
+        } catch (IOException e) {
+            logger.error("Was unable to write byte array to serial port.", e);
         }
     }
 

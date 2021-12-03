@@ -4,6 +4,7 @@ import org.shredzone.acme4j.exception.AcmeException;
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
 import se.hal.intf.HalWebPage;
+import se.hal.page.HalAlertManager;
 import se.hal.util.HalAcmeDataStore;
 import se.hal.util.HalOAuth2RegistryStore;
 import zutil.log.LogUtil;
@@ -15,6 +16,7 @@ import zutil.net.http.HttpServer;
 import zutil.net.http.page.oauth.OAuth2AuthorizationPage;
 import zutil.net.http.page.oauth.OAuth2Registry;
 import zutil.net.http.page.oauth.OAuth2TokenPage;
+import zutil.ui.UserMessageManager;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -71,9 +73,13 @@ public class HalExternalWebDaemon implements HalDaemon {
                 startHttpServer();
             } else {
                 logger.warning("Missing '" + CONFIG_HTTP_EXTERNAL_PORT + "' and '" + CONFIG_HTTP_EXTERNAL_DOMAIN + "' configuration, will not setup external http server.");
+                HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
+                        UserMessageManager.MessageLevel.WARNING, "Missing '" + CONFIG_HTTP_EXTERNAL_PORT + "' and '" + CONFIG_HTTP_EXTERNAL_DOMAIN + "' configuration, will not setup external http server.", UserMessageManager.MessageTTL.DISMISSED));
             }
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Was unable to initiate external web server.", e);
+            HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
+                    UserMessageManager.MessageLevel.ERROR, "Was unable to initiate external web server.", UserMessageManager.MessageTTL.DISMISSED));
         }
     }
 
@@ -104,8 +110,14 @@ public class HalExternalWebDaemon implements HalDaemon {
                 acme.prepareRequest();
                 certificate = acme.requestCertificate();
                 acmeDataStore.storeCertificate(certificate);
+
+                logger.info("SSL certificate successfully generated.");
+                HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
+                        UserMessageManager.MessageLevel.INFO, "SSL certificate successfully generated.", UserMessageManager.MessageTTL.DISMISSED));
             } else {
                 logger.warning("No SSL certificate is configured for external HTTP Server.");
+                HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
+                        UserMessageManager.MessageLevel.WARNING, "No SSL certificate is configured for external HTTP Server.", UserMessageManager.MessageTTL.DISMISSED));
                 certificate = null;
             }
 

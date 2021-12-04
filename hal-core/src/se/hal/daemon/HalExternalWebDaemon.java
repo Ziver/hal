@@ -101,7 +101,7 @@ public class HalExternalWebDaemon implements HalDaemon {
                     tmpHttpServer = new HttpServer(80);
                     tmpHttpServer.start();
 
-                    acme = new AcmeClient(acmeDataStore, new AcmeHttpChallengeFactory(tmpHttpServer), AcmeClient.ACME_SERVER_LETSENCRYPT_STAGING);
+                    acme = new AcmeClient(acmeDataStore, new AcmeHttpChallengeFactory(tmpHttpServer));
                 } else if ("none".equals(acmeType)) {
                     acme = null;
                 } else if ("acme_dns".equals(acmeType)) {

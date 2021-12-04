@@ -13,6 +13,7 @@ import zutil.net.acme.AcmeHttpChallengeFactory;
 import zutil.net.acme.AcmeManualDnsChallengeFactory;
 import zutil.net.http.HttpPage;
 import zutil.net.http.HttpServer;
+import zutil.net.http.HttpURL;
 import zutil.net.http.page.oauth.OAuth2AuthorizationPage;
 import zutil.net.http.page.oauth.OAuth2Registry;
 import zutil.net.http.page.oauth.OAuth2TokenPage;
@@ -66,7 +67,12 @@ public class HalExternalWebDaemon implements HalDaemon {
 
         try {
             if (HalContext.containsProperty(CONFIG_HTTP_EXTERNAL_DOMAIN) && HalContext.containsProperty(CONFIG_HTTP_EXTERNAL_PORT)) {
-                externalServerUrl = "https://" + HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_DOMAIN) + ":" + HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_PORT);
+                HttpURL urlGenerator = new HttpURL();
+                urlGenerator.setProtocol("https");
+                urlGenerator.setHost(HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_DOMAIN));
+                urlGenerator.setPort(HalContext.getIntegerProperty(HalContext.CONFIG_HTTP_EXTERNAL_PORT));
+                externalServerUrl = urlGenerator.getURL();
+
                 certificate = acmeDataStore.getCertificate();
 
                 renewCertificate();

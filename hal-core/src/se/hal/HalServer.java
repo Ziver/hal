@@ -51,6 +51,8 @@ public class HalServer {
             // init logging
             LogUtil.readConfiguration("logging.properties");
 
+            HalAlertManager.initialize();
+
             http = new HttpServer(HalContext.getIntegerProperty(HalContext.CONFIG_HTTP_PORT));
             http.setDefaultPage(new StartupWebPage());
             http.start();
@@ -95,7 +97,6 @@ public class HalServer {
 
             logger.info("Initializing managers.");
 
-            HalAlertManager.initialize();
             TriggerManager.initialize(pluginManager);
 
             for (Iterator<HalAbstractControllerManager> it = pluginManager.getSingletonIterator(HalAbstractControllerManager.class); it.hasNext(); ) {
@@ -175,9 +176,13 @@ public class HalServer {
      * @param daemon    registers the given daemon and starts execution of the Runnable.
      */
     public static void registerDaemon(HalDaemon daemon){
-        logger.info("Registering daemon: " + daemon.getClass());
-        daemons.add(daemon);
-        daemon.initiate(daemonExecutor);
+        try {
+            logger.info("Registering daemon: " + daemon.getClass());
+            daemons.add(daemon);
+            daemon.initiate(daemonExecutor);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Unable to initialize daemon: " + daemon.getClass(), e);
+        }
     }
 
 

@@ -121,15 +121,11 @@ public class HalExternalWebDaemon implements HalDaemon {
                             UserMessageManager.MessageLevel.WARNING, "No SSL certificate is configured for external web-server.", UserMessageManager.MessageTTL.DISMISSED));
                     certificate = null;
                 }
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, "Unable to request cert from ACME service.", e);
-                HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
-                        UserMessageManager.MessageLevel.WARNING, "Was unable to generate SSL certificate for external web-server: " + e.getMessage(), UserMessageManager.MessageTTL.DISMISSED));
-            }
-
-            // Cleanup
-            if (tmpHttpServer != null) {
-                tmpHttpServer.close();
+            } finally {
+                // Cleanup
+                if (tmpHttpServer != null) {
+                    tmpHttpServer.close();
+                }
             }
         }
     }

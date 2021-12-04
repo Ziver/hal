@@ -79,7 +79,7 @@ public class HalExternalWebDaemon implements HalDaemon {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Was unable to initiate external web-server.", e);
             HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
-                    UserMessageManager.MessageLevel.ERROR, "Was unable to initiate external web-server.", UserMessageManager.MessageTTL.DISMISSED));
+                    UserMessageManager.MessageLevel.ERROR, "Was unable to initiate external web-server: " + e.getMessage(), UserMessageManager.MessageTTL.DISMISSED));
         }
     }
 
@@ -116,9 +116,7 @@ public class HalExternalWebDaemon implements HalDaemon {
                     HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
                             UserMessageManager.MessageLevel.INFO, "SSL certificate successfully generated for external web-server.", UserMessageManager.MessageTTL.DISMISSED));
                 } else {
-                    logger.warning("No SSL certificate is configured for external HTTP Server.");
-                    HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
-                            UserMessageManager.MessageLevel.WARNING, "No SSL certificate is configured for external web-server.", UserMessageManager.MessageTTL.DISMISSED));
+                    logger.warning("No SSL certificate is configured for external web-server, will run server in unsecure mode (not recommended).");
                     certificate = null;
                 }
             } finally {

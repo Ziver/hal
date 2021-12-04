@@ -72,14 +72,14 @@ public class HalExternalWebDaemon implements HalDaemon {
                 renewCertificate();
                 startHttpServer();
             } else {
-                logger.warning("Missing '" + CONFIG_HTTP_EXTERNAL_PORT + "' and '" + CONFIG_HTTP_EXTERNAL_DOMAIN + "' configuration, will not setup external http server.");
+                logger.warning("Missing '" + CONFIG_HTTP_EXTERNAL_PORT + "' and '" + CONFIG_HTTP_EXTERNAL_DOMAIN + "' configuration, will not setup external web-server.");
                 HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
-                        UserMessageManager.MessageLevel.WARNING, "Missing '" + CONFIG_HTTP_EXTERNAL_PORT + "' and '" + CONFIG_HTTP_EXTERNAL_DOMAIN + "' configuration, will not setup external http server.", UserMessageManager.MessageTTL.DISMISSED));
+                        UserMessageManager.MessageLevel.WARNING, "Missing '" + CONFIG_HTTP_EXTERNAL_PORT + "' and '" + CONFIG_HTTP_EXTERNAL_DOMAIN + "' configuration, will not setup external web-server.", UserMessageManager.MessageTTL.DISMISSED));
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Was unable to initiate external web server.", e);
+            logger.log(Level.SEVERE, "Was unable to initiate external web-server.", e);
             HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
-                    UserMessageManager.MessageLevel.ERROR, "Was unable to initiate external web server.", UserMessageManager.MessageTTL.DISMISSED));
+                    UserMessageManager.MessageLevel.ERROR, "Was unable to initiate external web-server.", UserMessageManager.MessageTTL.DISMISSED));
         }
     }
 
@@ -90,35 +90,41 @@ public class HalExternalWebDaemon implements HalDaemon {
             HttpServer tmpHttpServer = null;
             String acmeType = HalContext.getStringProperty(HalContext.CONFIG_HTTP_EXTERNAL_CERT, "acme_http");
 
-            if ("acme_http".equals(acmeType)) {
-                tmpHttpServer = new HttpServer(80);
-                tmpHttpServer.start();
+            try {
+                if ("acme_http".equals(acmeType)) {
+                    tmpHttpServer = new HttpServer(80);
+                    tmpHttpServer.start();
 
-                acme = new AcmeClient(acmeDataStore, new AcmeHttpChallengeFactory(tmpHttpServer), AcmeClient.ACME_SERVER_LETSENCRYPT_STAGING);
-            } else if ("none".equals(acmeType)) {
-                acme = null;
-            } else if ("acme_dns".equals(acmeType)) {
-                acme = new AcmeClient(acmeDataStore, new AcmeManualDnsChallengeFactory());
-            } else {
-                throw new IllegalArgumentException("Unknown config value for " + externalServerUrl);
-            }
+                    acme = new AcmeClient(acmeDataStore, new AcmeHttpChallengeFactory(tmpHttpServer), AcmeClient.ACME_SERVER_LETSENCRYPT_STAGING);
+                } else if ("none".equals(acmeType)) {
+                    acme = null;
+                } else if ("acme_dns".equals(acmeType)) {
+                    acme = new AcmeClient(acmeDataStore, new AcmeManualDnsChallengeFactory());
+                } else {
+                    throw new IllegalArgumentException("Unknown config value for " + externalServerUrl);
+                }
 
-            // Request certificate and start the external webserver
+                // Request certificate and start the external webserver
 
-            if (acme != null) {
-                acme.addDomain(HalContext.getStringProperty(CONFIG_HTTP_EXTERNAL_DOMAIN));
-                acme.prepareRequest();
-                certificate = acme.requestCertificate();
-                acmeDataStore.storeCertificate(certificate);
+                if (acme != null) {
+                    acme.addDomain(HalContext.getStringProperty(CONFIG_HTTP_EXTERNAL_DOMAIN));
+                    acme.prepareRequest();
+                    certificate = acme.requestCertificate();
+                    acmeDataStore.storeCertificate(certificate);
 
-                logger.info("SSL certificate successfully generated.");
+                    logger.info("SSL certificate successfully generated.");
+                    HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
+                            UserMessageManager.MessageLevel.INFO, "SSL certificate successfully generated for external web-server.", UserMessageManager.MessageTTL.DISMISSED));
+                } else {
+                    logger.warning("No SSL certificate is configured for external HTTP Server.");
+                    HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
+                            UserMessageManager.MessageLevel.WARNING, "No SSL certificate is configured for external web-server.", UserMessageManager.MessageTTL.DISMISSED));
+                    certificate = null;
+                }
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "Unable to request cert from ACME service.", e);
                 HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
-                        UserMessageManager.MessageLevel.INFO, "SSL certificate successfully generated.", UserMessageManager.MessageTTL.DISMISSED));
-            } else {
-                logger.warning("No SSL certificate is configured for external HTTP Server.");
-                HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
-                        UserMessageManager.MessageLevel.WARNING, "No SSL certificate is configured for external HTTP Server.", UserMessageManager.MessageTTL.DISMISSED));
-                certificate = null;
+                        UserMessageManager.MessageLevel.WARNING, "Was unable to generate SSL certificate for external web-server: " + e.getMessage(), UserMessageManager.MessageTTL.DISMISSED));
             }
 
             // Cleanup

@@ -72,11 +72,11 @@ public class CameraOverviewWebPage extends HalWebPage {
             return tmpl;
         }
         else {
-            List<Event> events = Event.getLocalEvents(db);
-            Collections.sort(events, DeviceNameComparator.getInstance());
+            List<Camera> cameras = Camera.getCameras(db);
+            Collections.sort(cameras, DeviceNameComparator.getInstance());
 
             Templator tmpl = new Templator(FileUtil.find(OVERVIEW_TEMPLATE));
-            tmpl.set("events", events);
+            tmpl.set("cameras", cameras);
             return tmpl;
         }
     }

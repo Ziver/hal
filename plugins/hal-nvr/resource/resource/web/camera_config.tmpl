@@ -82,9 +82,9 @@
                     <div class="form-group">
                         <label class="control-label">Type:</label>
                         <select class="form-control" name="type">
-                            {{#availableCameras}}
+                            {{#availableCameraConfigClasses}}
                             <option>{{.getName()}}</option>
-                            {{/availableCameras}}
+                            {{/availableCameraConfigClasses}}
                         </select>
                     </div>
 
@@ -102,7 +102,7 @@
     </div>
 </div>
 <div id="camera-data-conf-template" class="hidden">
-    {{#cameraConf}}
+    {{#availableCameraObjectConfig}}
     <div id="{{.clazz.getName()}}">
         {{#.params}}
         <div class="form-group">
@@ -118,6 +118,6 @@
         </div>
         {{/.params}}
     </div>
-    {{/cameraConf}}
+    {{/availableCameraObjectConfig}}
 </div>
 

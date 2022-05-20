@@ -9,15 +9,11 @@
                 <thead>
                     <th class="col-md-4">Name</th>
                     <th class="col-md-3">Type</th>
-                    <th class="col-md-2">Data</th>
-                    <th class="col-md-2">Last Update</th>
                 </thead>
                 {{#cameras}}
                 <tr>
                     <td><a href="?id={{.getId()}}">{{.getName()}}</a></td>
                     <td>{{.getDeviceConfig().getClass().getSimpleName()}}</td>
-                    <td>{{.getDeviceData()}}</td>
-                    <td><span class="timestamp">{{.getDeviceData().getTimestamp()}}</span></td>
                 </tr>
                 {{/cameras}}
             </table>

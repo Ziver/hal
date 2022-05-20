@@ -24,6 +24,7 @@
 
 package se.hal.plugin.nvr.rtsp;
 
+import se.hal.HalContext;
 import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceReportListener;
 import se.hal.plugin.nvr.intf.HalCameraController;
@@ -31,7 +32,7 @@ import zutil.log.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 
@@ -40,7 +41,8 @@ public class RTSPController implements HalCameraController {
 
     private static final String CONFIG_RECORDING_PATH = "nvr.recording_path";
 
-    private List<RTSPCameraConfig> cameras = new ArrayList<>();
+    private static ExecutorService threadPool = Executors.newCachedThreadPool();
+    private List<RTSPCameraRecorder> recorders = new ArrayList<>();
     private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
 
 
@@ -67,24 +69,42 @@ public class RTSPController implements HalCameraController {
 
     @Override
     public void register(HalDeviceConfig deviceConfig) {
-        if (deviceConfig instanceof RTSPCameraConfig)
-            cameras.add((RTSPCameraConfig) deviceConfig);
+        if (deviceConfig instanceof RTSPCameraConfig) {
+            RTSPCameraConfig rtspCam = (RTSPCameraConfig) deviceConfig;
+            RTSPCameraRecorder recorder = new RTSPCameraRecorder(rtspCam,
+                    HalContext.getStringProperty(CONFIG_RECORDING_PATH, HalContext.RESOURCE_WEB_ROOT + "/recordings/" + deviceConfig.hashCode()));
+
+            recorders.add(recorder);
+            threadPool.execute(recorder);
+        }
     }
 
     @Override
     public void deregister(HalDeviceConfig deviceConfig) {
-        cameras.remove(deviceConfig);
+        RTSPCameraRecorder recorder = getRecorder((RTSPCameraConfig) deviceConfig);
+        if (recorder != null) {
+            recorder.close();
+            recorders.remove(recorder);
+        }
     }
 
     @Override
     public int size() {
-        return cameras.size();
+        return recorders.size();
     }
 
     @Override
     public void addListener(HalDeviceReportListener listener) {
         if (!deviceListeners.contains(listener))
             deviceListeners.add(listener);
+    }
+
+    private RTSPCameraRecorder getRecorder(RTSPCameraConfig cameraConfig) {
+        for (RTSPCameraRecorder recorder : recorders) {
+            if (recorder.getCamera().equals(cameraConfig))
+                return recorder;
+        }
+        return null;
     }
 
 }

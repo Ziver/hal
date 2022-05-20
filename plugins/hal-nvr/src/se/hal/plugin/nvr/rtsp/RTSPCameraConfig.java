@@ -27,9 +27,11 @@ package se.hal.plugin.nvr.rtsp;
 import se.hal.intf.HalDeviceData;
 import se.hal.plugin.nvr.intf.HalCameraConfig;
 import se.hal.plugin.nvr.intf.HalCameraController;
+import zutil.ui.conf.Configurator;
 
 public class RTSPCameraConfig implements HalCameraConfig {
 
+    @Configurator.Configurable(value = "RTSP URL", description = "Url to the RTSP stream of the camera. (Should start with rtsp://)")
     private String rtspUrl;
 
 
@@ -54,10 +56,24 @@ public class RTSPCameraConfig implements HalCameraConfig {
         return null; // TODO:
     }
 
+
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof RTSPCameraConfig)
-            return rtspUrl.equals(((RTSPCameraConfig) obj).rtspUrl);
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RTSPCameraConfig)) return false;
+
+        RTSPCameraConfig that = (RTSPCameraConfig) o;
+
+        return rtspUrl != null ? rtspUrl.equals(that.rtspUrl) : that.rtspUrl == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return rtspUrl != null ? rtspUrl.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "URL: " + rtspUrl;
     }
 }

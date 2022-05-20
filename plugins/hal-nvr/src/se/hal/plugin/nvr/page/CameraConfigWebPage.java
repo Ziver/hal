@@ -24,6 +24,7 @@
 
 package se.hal.plugin.nvr.page;
 
+import se.hal.EventControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
 import se.hal.page.HalAlertManager;
@@ -83,7 +84,7 @@ public class CameraConfigWebPage extends HalWebPage {
                     camera.setUser(localUser);
                     camera.getDeviceConfigurator().setValues(request).applyConfiguration();
                     camera.save(db);
-                    //ControllerManager.getInstance().register(camera);
+                    CameraControllerManager.getInstance().register(camera);
 
                     HalAlertManager.getInstance().addAlert(new UserMessage(
                             MessageLevel.SUCCESS, "Successfully created new camera: " + camera.getName(), MessageTTL.ONE_VIEW));
@@ -100,7 +101,7 @@ public class CameraConfigWebPage extends HalWebPage {
                         camera.save(db);
 
                         HalAlertManager.getInstance().addAlert(new UserMessage(
-                                MessageLevel.SUCCESS, "Successfully saved camera: "+camera.getName(), MessageTTL.ONE_VIEW));
+                                MessageLevel.SUCCESS, "Successfully saved camera: " + camera.getName(), MessageTTL.ONE_VIEW));
                     } else {
                         logger.warning("Unknown camera id: " + id);
                         HalAlertManager.getInstance().addAlert(new UserMessage(
@@ -112,15 +113,15 @@ public class CameraConfigWebPage extends HalWebPage {
                     camera = Camera.getCamera(db, id);
                     if (camera != null) {
                         logger.info("Removing camera: " + camera.getName());
-                        //ControllerManager.getInstance().deregister(camera);
+                        CameraControllerManager.getInstance().deregister(camera);
                         camera.delete(db);
 
                         HalAlertManager.getInstance().addAlert(new UserMessage(
-                                MessageLevel.SUCCESS, "Successfully removed camera: "+camera.getName(), MessageTTL.ONE_VIEW));
+                                MessageLevel.SUCCESS, "Successfully removed camera: " + camera.getName(), MessageTTL.ONE_VIEW));
                     } else {
                         logger.warning("Unknown camera id: " + id);
                         HalAlertManager.getInstance().addAlert(new UserMessage(
-                                MessageLevel.ERROR, "Unknown camera id: "+id, MessageTTL.ONE_VIEW));
+                                MessageLevel.ERROR, "Unknown camera id: " + id, MessageTTL.ONE_VIEW));
                     }
                     break;
             }
@@ -129,6 +130,8 @@ public class CameraConfigWebPage extends HalWebPage {
         // Output
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("cameras", Camera.getCameras(db));
+        tmpl.set("availableCameraConfigClasses", CameraControllerManager.getInstance().getAvailableDeviceConfigs());
+        tmpl.set("availableCameraObjectConfig", cameraConfigurations);
 
         return tmpl;
 

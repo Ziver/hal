@@ -24,7 +24,6 @@
 
 package se.hal.plugin.nvr.struct;
 
-import se.hal.intf.HalAbstractController;
 import se.hal.intf.HalAbstractDevice;
 import se.hal.plugin.nvr.intf.HalCameraConfig;
 import se.hal.plugin.nvr.intf.HalCameraData;
@@ -34,7 +33,7 @@ import zutil.db.bean.DBBean;
 import java.sql.SQLException;
 import java.util.List;
 
-
+@DBBean.DBTable(value="camera", superBean=true)
 public class Camera extends HalAbstractDevice<Camera, HalCameraConfig, HalCameraData> {
 
     public static List<Camera> getCameras(DBConnection db) throws SQLException{
@@ -45,6 +44,10 @@ public class Camera extends HalAbstractDevice<Camera, HalCameraConfig, HalCamera
         return DBBean.load(db, Camera.class, id);
     }
 
+
+    public String getPlaylistRelativeUrl() {
+        return "recordings/" + getDeviceConfig().hashCode() + "/playlist.m3u8";
+    }
 
     @Override
     protected HalCameraData getLatestDeviceData(DBConnection db) {

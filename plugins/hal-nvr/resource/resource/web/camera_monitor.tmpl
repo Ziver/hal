@@ -1,9 +1,7 @@
-<h1 class="page-header">Camera Monitor</h1>
-
 <style>
     .monitor-view {
         width: 100%;
-        height: 600px;
+        height: 740px;
     }
 </style>
 
@@ -11,7 +9,7 @@
     <tr>
         <td>
             <video id="view1" class="video-js vjs-fill" preload="auto" data-setup='{}' controls autoplay muted >
-                <source src="{{stream1}}">
+                <source src="{{camera1.getPlaylistRelativeUrl()}}">
                 <p class="vjs-no-js">
                     To view this video please enable JavaScript, and consider upgrading to a web browser that
                     <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video.</a>
@@ -21,7 +19,7 @@
 
         <td>
             <video id="view2" class="video-js vjs-fill" preload="auto" data-setup='{}' controls autoplay muted >
-                <source src="{{stream2}}">
+                <source src="{{camera2.getPlaylistRelativeUrl()}}">
             </video>
         </td>
     </tr>
@@ -29,13 +27,13 @@
     <tr>
         <td>
             <video id="view3" class="video-js vjs-fill" preload="auto" data-setup='{}' controls autoplay muted >
-                <source src="{{stream3}}">
+                <source src="{{camera3.getPlaylistRelativeUrl()}}">
             </video>
         </td>
 
         <td>
             <video id="view4" class="video-js vjs-fill" preload="auto" data-setup='{}' controls autoplay muted >
-                <source src="{{stream4}}">
+                <source src="{{camera4.getPlaylistRelativeUrl()}}">
             </video>
         </td>
     </tr>

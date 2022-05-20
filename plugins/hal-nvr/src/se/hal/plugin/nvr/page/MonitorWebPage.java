@@ -26,10 +26,12 @@ package se.hal.plugin.nvr.page;
 
 import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
+import se.hal.plugin.nvr.struct.Camera;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
 
+import java.util.List;
 import java.util.Map;
 
 public class MonitorWebPage extends HalWebPage {
@@ -45,10 +47,11 @@ public class MonitorWebPage extends HalWebPage {
         DBConnection db = HalContext.getDB();
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
-        tmpl.set("stream1", "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8");
-        tmpl.set("stream2", "http://vjs.zencdn.net/v/oceans.mp4");
-        tmpl.set("stream3", "http://vjs.zencdn.net/v/oceans.mp4");
-        tmpl.set("stream4", "http://vjs.zencdn.net/v/oceans.mp4");
+
+        List<Camera> cameras = Camera.getCameras(db);
+        for (int i = 0; i < cameras.size(); i++) {
+            tmpl.set("camera" + (i+1), cameras.get(i));
+        }
 
         return tmpl;
     }

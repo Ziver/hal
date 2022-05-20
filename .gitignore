@@ -2,6 +2,7 @@
 /hal.conf
 /hal.db*
 /lib/zutil-*
+/recordings/
 
 # Runtime files
 /screenlog.0*

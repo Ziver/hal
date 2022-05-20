@@ -85,7 +85,14 @@ public class HalServer {
             for (PluginData plugin : getAllPlugins()) {
                 PluginConfig pluginConfig = PluginConfig.getPluginConfig(db, plugin.getName());
 
-                if (pluginConfig != null && !pluginConfig.isEnabled() && !plugin.getName().equals("Hal-Core")) {
+                // If plugin is not found in DB then disable it and create  an entry.
+                if (pluginConfig == null) {
+                    pluginConfig = new PluginConfig(plugin.getName());
+                    pluginConfig.setEnabled(false);
+                    pluginConfig.save(db);
+                }
+
+                if (!pluginConfig.isEnabled() && !plugin.getName().equals("Hal-Core")) {
                     logger.info("Disabling plugin '" + plugin.getName() + "'.");
                     plugin.setEnabled(false);
                 }
@@ -126,7 +133,10 @@ public class HalServer {
             HalWebPage.getRootNav().createSubNav("Events").setWeight(100);
             HalWebPage.getRootNav().createSubNav("Settings").setWeight(200);
 
-            http.setDefaultPage(new HttpFilePage(FileUtil.find(HalContext.RESOURCE_WEB_ROOT)));
+            HttpFilePage filePage = new HttpFilePage(FileUtil.find(HalContext.RESOURCE_WEB_ROOT));
+            filePage.disableCaching(".*\\.m3u8");
+
+            http.setDefaultPage(filePage);
             http.setPage("/", new HttpRedirectPage("/map"));
             http.setPage(HalAlertManager.getInstance().getUrl(), HalAlertManager.getInstance());
 
@@ -153,9 +163,9 @@ public class HalServer {
             pluginConfig = new PluginConfig(name);
 
         logger.info("Plugin '" + name + "' has been " + (enabled ? "enabled" : "disabled") + ", change will take affect after restart.");
-        pluginManager.getPluginData(name).setEnabled(enabled);
 
         pluginConfig.setEnabled(enabled);
+        pluginManager.getPluginData(name).setEnabled(pluginConfig.isEnabled());
         pluginConfig.save(db);
     }
 

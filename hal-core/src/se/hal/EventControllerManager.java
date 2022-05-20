@@ -26,7 +26,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
 
     /** List of all registered events **/
     private List<Event> registeredEvents = Collections.synchronizedList(new ArrayList<>());
-    /** List of auto detected events **/
+    /** List of auto-detected events **/
     private List<Event> detectedEvents = Collections.synchronizedList(new ArrayList<>());
 
 
@@ -42,7 +42,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
             logger.info("Reading in existing events.");
 
             for (Event event : Event.getLocalEvents(db)) {
-                EventControllerManager.getInstance().register(event);
+                register(event);
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Unable to read in existing events.", e);
@@ -54,7 +54,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
     // ----------------------------------------------------
 
     /**
-     * Register a Event instance on the manager.
+     * Register an Event instance on the manager.
      * The manager will start to save reported data for the registered Event.
      */
     @SuppressWarnings("unchecked")
@@ -81,7 +81,7 @@ public class EventControllerManager extends HalAbstractControllerManager<HalEven
     }
 
     /**
-     * Deregisters a Event from the manager.
+     * Deregister an Event from the manager.
      * Data reported on the Event will no longer be saved but already saved data will not be modified.
      * The Controller that owns the Event will be deallocated if it has no more registered devices.
      */

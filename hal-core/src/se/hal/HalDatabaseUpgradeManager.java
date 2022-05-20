@@ -110,7 +110,7 @@ public class HalDatabaseUpgradeManager {
                 // Prepare upgrade
                 // ----------------------------------------
 
-                logger.info("Starting DB upgrade from v" + mainDBVersion + " to v" + referenceDBVersion + "...");
+                logger.info("Starting DB upgrade from " + (mainDBVersion < 0 ? "scratch" : "v" + mainDBVersion) + " to v" + referenceDBVersion + "...");
 
                 final DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);
                 handler.setForcedDBUpgrade(false);

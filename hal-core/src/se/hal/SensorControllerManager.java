@@ -43,7 +43,7 @@ public class SensorControllerManager extends HalAbstractControllerManager<HalAbs
             logger.info("Reading in existing sensors.");
 
             for (Sensor sensor : Sensor.getLocalSensors(db)) {
-                SensorControllerManager.getInstance().register(sensor);
+                register(sensor);
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Unable to read in existing sensors.", e);

@@ -316,19 +316,10 @@ public class ZigbeeController implements HalSensorController,
                 config.setZigbeeNodeAddress(endpoint.getIeeeAddress());
                 config.initialize(cluster);
 
-                cluster.addAttributeListener(new ZclAttributeListener() {
-                    @Override
-                    public void attributeUpdated(ZclAttribute attribute, Object value) {
-                        logger.finer("[Node: " + endpoint.getIeeeAddress() + ", Endpoint: " + endpoint.getEndpointId() + ", Cluster: " +  attribute.getCluster().getId() + "] Attribute " + config.getClass().getSimpleName() + " updated: id=" + attribute.getId() + ", attribute_name=" + attribute.getName() + ", value=" + attribute.getLastValue());
+                ZigbeeAttributeListener attributeListener = new ZigbeeAttributeListener(endpoint, config);
 
-                        HalDeviceData data = config.getDeviceData(attribute);
-                        if (data != null) {
-                            for (HalDeviceReportListener deviceListener : deviceListeners) {
-                                deviceListener.reportReceived(config, data);
-                            }
-                        }
-                    }
-                });
+                cluster.removeAttributeListener(attributeListener); // Make sure we do not have duplicates
+                cluster.addAttributeListener(attributeListener);
 
                 // Notify listener that a device is online
                 for (HalDeviceReportListener deviceListener : deviceListeners) {
@@ -391,5 +382,40 @@ public class ZigbeeController implements HalSensorController,
     @Override
     public boolean isScanning() {
         return permitJoinTimer != null && !permitJoinTimer.hasTimedOut();
+    }
+
+    // ------------------------------------------
+    // Helpers
+    // ------------------------------------------
+
+    private class ZigbeeAttributeListener implements ZclAttributeListener {
+        private ZigBeeEndpoint endpoint;
+        private ZigbeeHalDeviceConfig config;
+
+
+        public ZigbeeAttributeListener(ZigBeeEndpoint endpoint, ZigbeeHalDeviceConfig config) {
+            this.endpoint = endpoint;
+            this.config = config;
+        }
+
+        @Override
+        public void attributeUpdated(ZclAttribute attribute, Object value) {
+            logger.finer("[Node: " + endpoint.getIeeeAddress() + ", Endpoint: " + endpoint.getEndpointId() + ", Cluster: " +  attribute.getCluster().getId() + "] Attribute " + config.getClass().getSimpleName() + " updated: id=" + attribute.getId() + ", attribute_name=" + attribute.getName() + ", value=" + attribute.getLastValue());
+
+            HalDeviceData data = config.getDeviceData(attribute);
+            if (data != null) {
+                for (HalDeviceReportListener deviceListener : deviceListeners) {
+                    deviceListener.reportReceived(config, data);
+                }
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ZigbeeAttributeListener that = (ZigbeeAttributeListener) o;
+            return endpoint.equals(that.endpoint) && config.equals(that.config);
+        }
     }
 }

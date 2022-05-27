@@ -1,7 +1,7 @@
 // Jenkinsfile (Pipeline Script)
 node {
     // Configure environment
-    env.JAVA_HOME = tool name: 'jdk8'
+    env.JAVA_HOME = tool name: 'jdk-11'
     env.REPO_URL = "repo.koc.se/hal.git" //scm.getUserRemoteConfigs()[0].getUrl()
     env.BUILD_NAME = "BUILD-${env.BUILD_ID}"
 

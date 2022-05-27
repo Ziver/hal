@@ -10,7 +10,7 @@ node {
 
     stage('Build') {
         sh './gradlew clean'
-        sh './gradle build'
+        sh './gradlew build'
     }
 
     stage('Test') {

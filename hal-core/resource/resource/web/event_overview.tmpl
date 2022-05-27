@@ -5,20 +5,20 @@
         <div class="panel-heading">Local Events</div>
         <div class="panel-body">
 
-            <table class="table table-hover table-condensed">
+            <table id="event-device-table" class="table table-hover table-condensed">
                 <thead>
                     <th class="col-md-4">Name</th>
                     <th class="col-md-3">Type</th>
-                    <th class="col-md-2">Data</th>
+                    <th class="col-md-1">Data</th>
                     <th class="col-md-2">Last Update</th>
-                    <th class="col-md-1 text-right">Actions</th>
+                    <th class="col-md-2 text-right">Actions</th>
                 </thead>
                 {{#events}}
-                <tr>
+                <tr data-device-id="{{.getId()}}">
                     <td><a href="?id={{.getId()}}">{{.getName()}}</a></td>
                     <td>{{.getDeviceConfig().getClass().getSimpleName()}}</td>
                     <td>{{.getDeviceData()}}</td>
-                    <td><span class="timestamp">{{.getDeviceData().getTimestamp()}}</span></td>
+                    <td class="timestamp">{{.getDeviceData().getTimestamp()}}</td>
                     <td>
                         <form method="POST">
                             <input type="hidden" name="action" value="modify">
@@ -44,4 +44,25 @@
             $(this).closest('form').submit();
         });
     });
+
+    // Auto update
+
+    setInterval(function() {
+        fetch('/api/event')
+            .then(response => response.json())
+            .then(data => {
+                var table = document.getElementById('event-device-table');
+
+                for (const row of table.rows) {
+                    var dataItem = data.find(item => item.id == row.dataset.deviceId);
+
+                    if (dataItem) {
+                        row.cells[2].innerHTML = dataItem.data?.valueStr;
+                        row.cells[3].innerHTML = dataItem.data?.timestamp;
+                        $(row.cells[3]).relTimestamp();
+                        $(row.cells[4].querySelector('[type="checkbox"]')).bootstrapSwitch('state', dataItem.data?.value === 1, true);
+                    }
+                }
+            });
+    }, 3000);
 </script>

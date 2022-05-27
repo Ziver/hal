@@ -101,26 +101,32 @@ function createChart(elementId, url, updateTime=-1){
     });
 }
 function updateChart(chart, url, updateTime=-1){
-    console.log('Updating chart: '+chart.element.id);
-    $.getJSON(url, function(json){
+    console.log('Updating chart: ' + chart.element.id);
+
+    $.getJSON(url, function(json) {
         chart.load(getChartData(json));
     });
-    if (updateTime > 0)
-        setTimeout(function(){ updateChart(chart, url, updateTime); }, updateTime);
+
+    if (updateTime > 0) {
+        setTimeout(function() {
+            updateChart(chart, url, updateTime);
+        }, updateTime);
+    }
 }
 function getChartData(json){
     var dataXaxis = {};
     var dataYaxis = {};
     var data = [];
     var labels = [];
-    json.forEach(function(sensor, i) {
-        var index = 'data'+i;
-        labels[index] = sensor.user +": "+ sensor.name;
-        dataXaxis[index] = 'data'+i+'x';
-        data.push([index+'x'].concat(sensor.timestamps));
-        data.push([index].concat(sensor.data));
 
-        if (sensor.type == "PowerConsumptionSensorData")
+    json.forEach(function(sensor, i) {
+        var index = 'data' + i;
+        labels[index] = sensor.user + ': ' + sensor.name;
+        dataXaxis[index] = 'data' + i + 'x';
+        data.push([index + 'x'].concat(sensor.aggregate.timestamps));
+        data.push([index].concat(sensor.aggregate.data));
+
+        if (sensor.type == 'PowerConsumptionSensorData')
             dataYaxis[index] = 'y';
         else //if (sensor.type == "TemperatureSensorData")
             dataYaxis[index] = 'y2';

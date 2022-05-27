@@ -12,8 +12,9 @@
         {"se.hal.intf.HalDaemon": "se.hal.daemon.SensorDataAggregatorDaemon"},
         {"se.hal.intf.HalDaemon": "se.hal.daemon.SensorDataCleanupDaemon"},
 
-		{"se.hal.intf.HalJsonPage": "se.hal.page.MapJsonPage"},
-		{"se.hal.intf.HalJsonPage": "se.hal.page.SensorJsonPage"},
+		{"se.hal.intf.HalJsonPage": "se.hal.page.api.MapJsonPage"},
+		{"se.hal.intf.HalJsonPage": "se.hal.page.api.EventJsonPage"},
+		{"se.hal.intf.HalJsonPage": "se.hal.page.api.SensorJsonPage"},
 
 		{"se.hal.intf.HalWebPage": "se.hal.page.MapWebPage"},
 		{"se.hal.intf.HalWebPage": "se.hal.page.SensorOverviewWebPage"},

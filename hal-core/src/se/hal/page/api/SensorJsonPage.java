@@ -1,4 +1,4 @@
-package se.hal.page;
+package se.hal.page.api;
 
 import se.hal.HalContext;
 import se.hal.daemon.SensorDataAggregatorDaemon;
@@ -7,6 +7,7 @@ import se.hal.struct.Sensor;
 import se.hal.util.AggregateDataListSqlResult;
 import se.hal.util.UTCTimeUtility;
 import zutil.ArrayUtil;
+import zutil.ObjectUtil;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
 import zutil.parser.DataNode;
@@ -32,7 +33,7 @@ public class SensorJsonPage extends HalJsonPage {
 
 
     public SensorJsonPage() {
-        super("data/sensor");
+        super("api/sensor");
     }
 
     @Override
@@ -44,27 +45,25 @@ public class SensorJsonPage extends HalJsonPage {
         DBConnection db = HalContext.getDB();
         DataNode root = new DataNode(DataNode.DataType.List);
 
-        //// Get sensors
-        String[] req_ids = null;
+        // Get sensors
+        String[] req_ids = new String[0];
         if (request.get("id") != null)
             req_ids = request.get("id").split(",");
         String req_type = request.get("type");
 
         List<Sensor> sensors = new ArrayList<>();
         for (Sensor sensor : Sensor.getSensors(db)) {
-            if (sensor.getDeviceConfig() == null) // Show all sensors for now
-                continue;
-
-            if (req_ids == null && req_type==null) // no options defined, then add all sensors
+            if (ArrayUtil.contains(req_ids, "" + sensor.getId())) { // id filtering
                 sensors.add(sensor);
-            else if (req_ids != null && ArrayUtil.contains(req_ids, ""+sensor.getId())) // id filtering
+            } else if (!ObjectUtil.isEmpty(req_type) &&
+                    sensor.getDeviceConfig().getDeviceDataClass().getSimpleName().contains(req_type)) { // device type filtering
                 sensors.add(sensor);
-            else if (req_type != null && !req_type.isEmpty() &&
-                    sensor.getDeviceConfig().getDeviceDataClass().getSimpleName().contains(req_type)) // device type filtering
+            } else { // no options defined, then add all sensors
                 sensors.add(sensor);
+            }
         }
 
-        //// Figure out aggregation period
+        // Figure out aggregation period
         SensorDataAggregatorDaemon.AggregationPeriodLength aggrType = null;
         long aggrLength = -1;
         if (request.get("aggr") != null) {
@@ -88,34 +87,33 @@ public class SensorJsonPage extends HalJsonPage {
             }
         }
 
-        /// Generate DataNode
+        // Generate DataNode
         for (Sensor sensor : sensors) {
-            DataNode deviceNode = new DataNode(DataNode.DataType.Map);
-            deviceNode.set("id", sensor.getId());
-            deviceNode.set("name", sensor.getName());
-            deviceNode.set("user", sensor.getUser().getUsername());
-            deviceNode.set("type", sensor.getDeviceConfig().getDeviceDataClass().getSimpleName());
-            deviceNode.set("x", sensor.getX());
-            deviceNode.set("y", sensor.getY());
+            DataNode deviceNode = sensor.getDataNode();
 
             if (aggrLength > 0) {
-                addAggregateDataToDataNode(deviceNode, aggrLength,
+                DataNode aggregateNode = getAggregateDataNode(aggrLength,
                     AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, aggrType, aggrLength));
+                deviceNode.set("aggregate", aggregateNode);
             }
+
             root.add(deviceNode);
         }
 
         return root;
     }
 
-    private void addAggregateDataToDataNode(DataNode deviceNode, long endTime, List<AggregateDataListSqlResult.AggregateData> dataList) {
+    private DataNode getAggregateDataNode(long endTime, List<AggregateDataListSqlResult.AggregateData> dataList) {
+        DataNode aggregateNode = new DataNode(DataNode.DataType.Map);
         DataNode timestampNode = new DataNode(DataNode.DataType.List);
         DataNode dataNode = new DataNode(DataNode.DataType.List);
+
         // end timestamp
         if (endTime != UTCTimeUtility.INFINITY) {
             timestampNode.add(System.currentTimeMillis() - endTime);
             dataNode.add((String)null);
         }
+
         // actual data
         for (AggregateDataListSqlResult.AggregateData data : dataList) {
             timestampNode.add(data.timestamp);
@@ -124,12 +122,15 @@ public class SensorJsonPage extends HalJsonPage {
             else
                 dataNode.add(data.data);
         }
+
         // start timestamp
         timestampNode.add(System.currentTimeMillis());
         dataNode.add((String)null);
 
-        deviceNode.set("timestamps", timestampNode);
-        deviceNode.set("data", dataNode);
+        aggregateNode.set("timestamps", timestampNode);
+        aggregateNode.set("data", dataNode);
+
+        return aggregateNode;
     }
 
 }

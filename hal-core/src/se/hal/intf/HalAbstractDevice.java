@@ -6,6 +6,7 @@ import se.hal.util.HalDeviceChangeListener;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.log.LogUtil;
+import zutil.parser.DataNode;
 import zutil.parser.json.JSONParser;
 import zutil.parser.json.JSONWriter;
 import zutil.ui.conf.Configurator;
@@ -213,5 +214,36 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
     }
     public List<HalDeviceReportListener> getReportListeners() {
         return deviceListeners;
+    }
+
+    /**
+     * @return a DataNode object containing general Device information that can be written in JSON format.
+     */
+    public DataNode getDataNode() {
+        DataNode deviceNode = new DataNode(DataNode.DataType.Map);
+        deviceNode.set("id", getId());
+        deviceNode.set("name", getName());
+        deviceNode.set("user", getUser().getUsername());
+        deviceNode.set("x", getX());
+        deviceNode.set("y", getY());
+
+        if (getDeviceConfig() != null) {
+            DataNode configNode = deviceNode.set("config", DataNode.DataType.Map);
+            configNode.set("type", getDeviceConfig().getClass().getSimpleName());
+            configNode.set("typeData", getDeviceConfig().getDeviceDataClass().getSimpleName());
+
+            for (Configurator.ConfigurationParam param : getDeviceConfigurator().getConfiguration()) {
+                configNode.set(param.getName(), param.getString());
+            }
+        }
+
+        if (getDeviceData() != null) {
+            DataNode dataNode = deviceNode.set("data", DataNode.DataType.Map);
+            dataNode.set("value", getDeviceData().getData());
+            dataNode.set("valueStr", getDeviceData().toString());
+            dataNode.set("timestamp", getDeviceData().getTimestamp());
+        }
+
+        return deviceNode;
     }
 }

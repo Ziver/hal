@@ -1,4 +1,4 @@
-package se.hal.page;
+package se.hal.page.api;
 
 import se.hal.HalContext;
 import se.hal.intf.HalAbstractDevice;
@@ -20,7 +20,7 @@ public class MapJsonPage extends HalJsonPage {
     private static final Logger logger = LogUtil.getLogger();
 
     public MapJsonPage() {
-        super("data/map");
+        super("api/map");
     }
 
 

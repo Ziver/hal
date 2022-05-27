@@ -136,7 +136,7 @@
 
     function drawMap(){
         // Get map data
-        $.getJSON("/data/map?action=getdata", function(json){
+        $.getJSON("/api/map?action=getdata", function(json){
             // reset map
             svg.clear();
 
@@ -183,7 +183,7 @@
         $.ajax({
             async: false,
             dataType: "json",
-            url: "/data/map?",
+            url: "/api/map?",
             data: {
                 action: "save",
                 id: element.attr("device-id"),

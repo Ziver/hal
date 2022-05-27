@@ -5,7 +5,7 @@
         <div class="panel-heading">Local Sensors</div>
         <div class="panel-body">
 
-            <table class="table table-hover table-condensed">
+            <table id="sensor-device-table" class="table table-hover table-condensed">
                 <thead>
                     <th class="col-md-4">Name</th>
                     <th class="col-md-3">Type</th>
@@ -13,11 +13,11 @@
                     <th class="col-md-2">Last Update</th>
                 </thead>
                 {{#sensors}}
-                <tr>
+                <tr data-device-id="{{.getId()}}">
                     <td><a href="?id={{.getId()}}">{{.getName()}}</a></td>
                     <td>{{.getDeviceConfig().getClass().getSimpleName()}}</td>
                     <td>{{.getDeviceData()}}</td>
-                    <td><span class="timestamp">{{.getDeviceData().getTimestamp()}}</span></td>
+                    <td class="timestamp">{{.getDeviceData().getTimestamp()}}</td>
                 </tr>
                 {{/sensors}}
             </table>
@@ -31,4 +31,25 @@
             $(this).closest('form').submit();
         });
     });
+
+    // Auto update
+
+    setInterval(function() {
+        fetch('/api/sensor')
+            .then(response => response.json())
+            .then(data => {
+                var table = document.getElementById('sensor-device-table');
+
+                for (const row of table.rows) {
+                    var dataItem = data.find(item => item.id == row.dataset.deviceId);
+
+                    if (dataItem) {
+                        row.cells[2].innerHTML = dataItem.data?.valueStr;
+                        row.cells[3].innerHTML = dataItem.data?.timestamp;
+
+                        $(row.cells[3]).relTimestamp();
+                    }
+                }
+            });
+    }, 3000);
 </script>

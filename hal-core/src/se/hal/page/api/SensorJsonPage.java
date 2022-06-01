@@ -55,10 +55,15 @@ public class SensorJsonPage extends HalJsonPage {
         for (Sensor sensor : Sensor.getSensors(db)) {
             if (ArrayUtil.contains(req_ids, "" + sensor.getId())) { // id filtering
                 sensors.add(sensor);
-            } else if (!ObjectUtil.isEmpty(req_type) &&
+            }
+
+            if (!ObjectUtil.isEmpty(req_type) &&
                     sensor.getDeviceConfig().getDeviceDataClass().getSimpleName().contains(req_type)) { // device type filtering
                 sensors.add(sensor);
-            } else { // no options defined, then add all sensors
+            }
+
+            // no options defined, then add all sensors
+            if (ObjectUtil.isEmpty(req_ids, req_type)) {
                 sensors.add(sensor);
             }
         }

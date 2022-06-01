@@ -1,7 +1,6 @@
 package se.hal.page.api;
 
 import se.hal.HalContext;
-import se.hal.daemon.SensorDataAggregatorDaemon;
 import se.hal.intf.HalJsonPage;
 import se.hal.struct.Event;
 import zutil.ArrayUtil;
@@ -40,7 +39,7 @@ public class EventJsonPage extends HalJsonPage {
         DBConnection db = HalContext.getDB();
         DataNode root = new DataNode(DataNode.DataType.List);
 
-        // Get sensors
+        // Get Events
 
         String[] req_ids = new String[0];
         if (request.get("id") != null)
@@ -49,21 +48,25 @@ public class EventJsonPage extends HalJsonPage {
 
         List<Event> events = new ArrayList<>();
         for (Event event : Event.getLocalEvents(db)) {
-
             if (ArrayUtil.contains(req_ids, "" + event.getId())) { // id filtering
                 events.add(event);
-            } else if (!ObjectUtil.isEmpty(req_type) &&
+            }
+
+            if (!ObjectUtil.isEmpty(req_type) &&
                     event.getDeviceConfig().getDeviceDataClass().getSimpleName().contains(req_type)) { // device type filtering
                 events.add(event);
-            } else { // no options defined, then add all sensors
+            }
+
+            // no options defined, then add all events
+            if (ObjectUtil.isEmpty(req_ids, req_type)) {
                 events.add(event);
             }
         }
 
         // Generate DataNode
 
-        for (Event sensor : events) {
-            DataNode deviceNode = sensor.getDataNode();
+        for (Event event : events) {
+            DataNode deviceNode = event.getDataNode();
             root.add(deviceNode);
         }
 

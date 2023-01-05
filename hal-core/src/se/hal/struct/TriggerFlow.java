@@ -114,6 +114,9 @@ public class TriggerFlow extends DBBean {
     public void execute(){
         if (!enabled)
             return;
+
+        logger.info("Executing flow(id: " + getId() + "): " + getName());
+
         for (Action action : actionList){
             action.execute();
         }

@@ -153,8 +153,9 @@ function initDynamicModalForm(modalId, formTemplateId = null, templateID = null)
     if (formTemplateId != null) {
         dynamicConf[formTemplateId] = [];
         $("#" + templateID + " div").each(function(){
-            dynamicConf[formTemplateId][$(this).attr("id")] = $(this).html();
+            dynamicConf[formTemplateId][$(this).prop("id")] = $(this).html();
         });
+
         // Update dynamic inputs
         $("#" + modalId + " select[name=type]").change(function(){
             $("#" + modalId + " #" + formTemplateId).html(dynamicConf[formTemplateId][$(this).val()]);
@@ -170,26 +171,36 @@ function initDynamicModalForm(modalId, formTemplateId = null, templateID = null)
         if (formTemplateId != null)
             modal.find("#" + formTemplateId).empty(); // clear form div
 
-        // select dynamic form
-        var selector = modal.find("select[name=type]");
-        selector.val(button.data("type"));
-        selector.change(); // Update dynamic inputs
         // set dynamic form data
         $.each(button.attr(), function(fieldName, value) {
             if(fieldName.startsWith("data-")) {
-                fieldName = fieldName.substring(5);
+                fieldName = fieldName.substring(5); // remove prefix data-
+
                 // case insensitive search
-                input = modal.find("input").filter(function() {
-                       return this.name.toLowerCase() == fieldName;
+                var input = modal.find("input, select").filter(function() {
+                    if (this.name.toLowerCase() == fieldName) {
+                       if (this.type == "hidden" && modal.find("input[type=checkbox][name=" + fieldName + "]") != null)
+                            return false; // Workaround for the default(false) boolean input
+                       return true;
+                   }
+                   return false;
                 });
-                if (input.attr("type") == "checkbox") { // special handling for checkboxes
-                    input.attr("value", "true");
-                    if (value=="true") input.attr("checked", "true");
-                    else               input.removeAttr("checked");
-                    // Add default false value as a unchecked checkbox is not included in the post
-                    input.parent().prepend("<input type='hidden' name='" + input.attr("name") + "' value='false' />");
-                } else {
-                    input.val(value);
+
+                if (input != null) {
+                    if (input.prop("type") == "checkbox") { // special handling for checkboxes
+                        input.prop("value", "true");
+                        input.prop("checked", value == "true");
+
+                        if (modal.find("input[type=hidden][name=" + fieldName + "]") == null) {
+                            // Add default false value as a unchecked checkbox is not included in the post
+                            input.parent().prepend("<input type='hidden' name='" + input.prop("name") + "' value='false' />");
+                        }
+                    } else {
+                        input.val(value);
+
+                        if (input.prop("tagName") == "SELECT")
+                            input.change(); // required for select elements to update properly
+                    }
                 }
             }
         });

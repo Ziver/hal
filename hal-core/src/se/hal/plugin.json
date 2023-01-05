@@ -32,6 +32,7 @@
 		{"se.hal.intf.HalTrigger": "se.hal.trigger.SensorTrigger"},
 		{"se.hal.intf.HalTrigger": "se.hal.trigger.TimerTrigger"},
 
+		{"se.hal.intf.HalAction": "se.hal.action.AlertAction"},
 		{"se.hal.intf.HalAction": "se.hal.action.SendEventAction"}
 	]
 }

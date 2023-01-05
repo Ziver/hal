@@ -64,15 +64,19 @@ public class TriggerWebPage extends HalWebPage {
                     break;
 
                 case "modify_flow":
-                    logger.info("Modifying flow: " + flow.getName());
+                    logger.info("Modifying flow(id: " + flow.getId() + "): " + flow.getName());
                     flow.setEnabled("on".equals(request.get("enabled")));
                     flow.setName(request.get("name"));
                     flow.save(db);
                     break;
 
                 case "remove_flow":
-                    logger.info("Removing flow: " + flow.getName());
+                    logger.info("Removing flow(id: " + flow.getId() + "): " + flow.getName());
                     flow.delete(db);
+                    break;
+
+                case "execute_flow":
+                    flow.execute();
                     break;
 
                 // Triggers

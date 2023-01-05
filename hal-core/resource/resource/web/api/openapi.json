@@ -170,7 +170,7 @@
                 "min",
                 "hour",
                 "day",
-                "week",
+                "week"
               ]
             },
             "in": "query",

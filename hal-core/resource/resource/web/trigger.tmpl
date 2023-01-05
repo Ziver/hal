@@ -14,15 +14,23 @@
     <div class="panel panel-default drop-shadow">
         <div class="panel-heading clearfix" style="padding: 4px 15px;">
             <b class="panel-title">{{.getName()}}</b>
-            <div class="pull-right">
-                <button type="button" class="btn btn-default btn-xs" data-toggle="modal" style="padding: 1px 20px;"
-                        data-target="#flowModal"
-                        data-flow-id="{{.getId()}}"
-                        data-enabled="{{.isEnabled()}}"
-                        data-name="{{.getName()}}" >
-                    <span class="glyphicon glyphicon-pencil"></span>
-                </button>
-            </div>
+                <form method="POST">
+                    <input type="hidden" name="flow-id" value="{{.getId()}}">
+
+                    <div class="btn-toolbar pull-right">
+                        <button type="submit" class="btn btn-primary btn-xs" name="action" value="execute_flow">
+                            <small class="glyphicon glyphicon-play"></small>
+                        </button>
+
+                        <button type="button" class="btn btn-default btn-xs" data-toggle="modal" style="padding: 1px 20px;"
+                                data-target="#flowModal"
+                                data-flow-id="{{.getId()}}"
+                                data-enabled="{{.isEnabled()}}"
+                                data-name="{{.getName()}}" >
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                    </div>
+                </form>
         </div>
         <div class="panel-body {{^.isEnabled()}}disabled{{/.isEnabled()}}" style="padding-bottom: 0px;">
             <table class="table table-condensed" style="margin-bottom: 0px;">

@@ -1,7 +1,7 @@
 package se.hal.page.api;
 
 import se.hal.HalContext;
-import se.hal.intf.HalJsonPage;
+import se.hal.intf.HalApiEndpoint;
 import se.hal.struct.Event;
 import zutil.ArrayUtil;
 import zutil.ObjectUtil;
@@ -22,11 +22,11 @@ import java.util.logging.Logger;
  * type: event data type name
  * </pre>
  */
-public class EventJsonPage extends HalJsonPage {
+public class EventApiEndpoint extends HalApiEndpoint {
     private static final Logger logger = LogUtil.getLogger();
 
 
-    public EventJsonPage() {
+    public EventApiEndpoint() {
         super("api/event");
     }
 
@@ -39,31 +39,49 @@ public class EventJsonPage extends HalJsonPage {
         DBConnection db = HalContext.getDB();
         DataNode root = new DataNode(DataNode.DataType.List);
 
-        // Get Events
+        // --------------------------------------
+        // Get Action
+        // --------------------------------------
 
         String[] req_ids = new String[0];
         if (request.get("id") != null)
             req_ids = request.get("id").split(",");
-        String req_type = request.get("type");
+
+        String req_typeConfig = request.get("typeConfig");
+        String req_typeData = request.get("typeData");
+
+        // Filter devices
 
         List<Event> events = new ArrayList<>();
         for (Event event : Event.getLocalEvents(db)) {
-            if (ArrayUtil.contains(req_ids, "" + event.getId())) { // id filtering
-                events.add(event);
+            boolean filter_match = true;
+
+            // id filtering
+            if (!ObjectUtil.isEmpty(req_ids) && !ArrayUtil.contains(req_ids, "" + event.getId())) {
+                filter_match = false;
             }
 
-            if (!ObjectUtil.isEmpty(req_type) &&
-                    event.getDeviceConfig().getDeviceDataClass().getSimpleName().contains(req_type)) { // device type filtering
-                events.add(event);
+            // device type filtering
+            if (!ObjectUtil.isEmpty(req_typeConfig) &&
+                    !event.getDeviceConfig().getClass().getSimpleName().equals(req_typeConfig)) {
+                filter_match = false;
             }
 
-            // no options defined, then add all events
-            if (ObjectUtil.isEmpty(req_ids, req_type)) {
+            // data type filtering
+            if (!ObjectUtil.isEmpty(req_typeData) &&
+                    !event.getDeviceConfig().getDeviceDataClass().getSimpleName().equals(req_typeData)) {
+                filter_match = false;
+            }
+
+            // Check the filter
+            if (filter_match) {
                 events.add(event);
             }
         }
 
+        // --------------------------------------
         // Generate DataNode
+        // --------------------------------------
 
         for (Event event : events) {
             DataNode deviceNode = event.getDataNode();

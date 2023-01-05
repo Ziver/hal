@@ -140,7 +140,7 @@ public class HalServer {
             http.setPage("/", new HttpRedirectPage("/map"));
             http.setPage(HalAlertManager.getInstance().getUrl(), HalAlertManager.getInstance());
 
-            for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalJsonPage.class); it.hasNext(); )
+            for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalApiEndpoint.class); it.hasNext(); )
                 registerPage(it.next());
             for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalWebPage.class); it.hasNext(); )
                 registerPage(it.next());

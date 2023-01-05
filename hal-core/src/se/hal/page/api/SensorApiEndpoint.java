@@ -2,7 +2,7 @@ package se.hal.page.api;
 
 import se.hal.HalContext;
 import se.hal.daemon.SensorDataAggregatorDaemon;
-import se.hal.intf.HalJsonPage;
+import se.hal.intf.HalApiEndpoint;
 import se.hal.struct.Sensor;
 import se.hal.util.AggregateDataListSqlResult;
 import se.hal.util.UTCTimeUtility;
@@ -28,11 +28,11 @@ import java.util.logging.Logger;
  * aggr: Aggregation periods, needs to be provided to retrieve data. Possible values: minute,hour,day,week
  * </pre>
  */
-public class SensorJsonPage extends HalJsonPage {
+public class SensorApiEndpoint extends HalApiEndpoint {
     private static final Logger logger = LogUtil.getLogger();
 
 
-    public SensorJsonPage() {
+    public SensorApiEndpoint() {
         super("api/sensor");
     }
 
@@ -45,60 +45,83 @@ public class SensorJsonPage extends HalJsonPage {
         DBConnection db = HalContext.getDB();
         DataNode root = new DataNode(DataNode.DataType.List);
 
-        // Get sensors
-        String[] req_ids = new String[0];
+        // --------------------------------------
+        // Get Action
+        // --------------------------------------
+
+        String[] reqIds = new String[0];
         if (request.get("id") != null)
-            req_ids = request.get("id").split(",");
-        String req_type = request.get("type");
+            reqIds = request.get("id").split(",");
+
+        String reqTypeConfig = request.get("typeConfig");
+        String reqTypeData = request.get("typeData");
+
 
         List<Sensor> sensors = new ArrayList<>();
         for (Sensor sensor : Sensor.getSensors(db)) {
-            if (ArrayUtil.contains(req_ids, "" + sensor.getId())) { // id filtering
-                sensors.add(sensor);
+            boolean filter_match = true;
+
+            // id filtering
+            if (!ObjectUtil.isEmpty(reqIds) && !ArrayUtil.contains(reqIds, "" + sensor.getId())) {
+                filter_match = false;
             }
 
-            if (!ObjectUtil.isEmpty(req_type) &&
-                    sensor.getDeviceConfig().getDeviceDataClass().getSimpleName().contains(req_type)) { // device type filtering
-                sensors.add(sensor);
+            // device type filtering
+            if (!ObjectUtil.isEmpty(reqTypeConfig) &&
+                    !sensor.getDeviceConfig().getClass().getSimpleName().equals(reqTypeConfig)) {
+                filter_match = false;
             }
 
-            // no options defined, then add all sensors
-            if (ObjectUtil.isEmpty(req_ids, req_type)) {
+            // data type filtering
+            if (!ObjectUtil.isEmpty(reqTypeData) &&
+                    !sensor.getDeviceConfig().getDeviceDataClass().getSimpleName().equals(reqTypeData)) {
+                filter_match = false;
+            }
+
+            // Check the filter
+            if (filter_match) {
                 sensors.add(sensor);
             }
         }
 
-        // Figure out aggregation period
+        // --------------------------------------
+        // Was aggregated data requested
+        // --------------------------------------
+
         SensorDataAggregatorDaemon.AggregationPeriodLength aggrType = null;
-        long aggrLength = -1;
-        if (request.get("aggr") != null) {
-            switch (request.get("aggr")) {
+        long aggregationLength = -1;
+
+        if (request.get("aggregation") != null) {
+            switch (request.get("aggregation")) {
                 case "minute":
                     aggrType = SensorDataAggregatorDaemon.AggregationPeriodLength.FIVE_MINUTES;
-                    aggrLength = UTCTimeUtility.DAY_IN_MS;
+                    aggregationLength = UTCTimeUtility.DAY_IN_MS;
                     break;
                 case "hour":
                     aggrType = SensorDataAggregatorDaemon.AggregationPeriodLength.HOUR;
-                    aggrLength = UTCTimeUtility.WEEK_IN_MS;
+                    aggregationLength = UTCTimeUtility.WEEK_IN_MS;
                     break;
                 case "day":
                     aggrType = SensorDataAggregatorDaemon.AggregationPeriodLength.DAY;
-                    aggrLength = UTCTimeUtility.INFINITY;
+                    aggregationLength = UTCTimeUtility.INFINITY;
                     break;
                 case "week":
                     aggrType = SensorDataAggregatorDaemon.AggregationPeriodLength.WEEK;
-                    aggrLength = UTCTimeUtility.INFINITY;
+                    aggregationLength = UTCTimeUtility.INFINITY;
                     break;
             }
         }
 
+        // --------------------------------------
         // Generate DataNode
+        // --------------------------------------
+
         for (Sensor sensor : sensors) {
             DataNode deviceNode = sensor.getDataNode();
 
-            if (aggrLength > 0) {
-                DataNode aggregateNode = getAggregateDataNode(aggrLength,
-                    AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, aggrType, aggrLength));
+            if (aggregationLength > 0) {
+                DataNode aggregateNode = getAggregateDataNode(aggregationLength,
+                    AggregateDataListSqlResult.getAggregateDataForPeriod(db, sensor, aggrType, aggregationLength));
                 deviceNode.set("aggregate", aggregateNode);
             }
 

@@ -15,10 +15,10 @@ import java.util.logging.Logger;
 /**
  * A interface defining a Hal json endpoint
  */
-public abstract class HalJsonPage extends HalWebPage {
+public abstract class HalApiEndpoint extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
 
-    public HalJsonPage(String id) {
+    public HalApiEndpoint(String id) {
         super(id);
     }
 

@@ -2,7 +2,7 @@ package se.hal.page.api;
 
 import se.hal.HalContext;
 import se.hal.intf.HalAbstractDevice;
-import se.hal.intf.HalJsonPage;
+import se.hal.intf.HalApiEndpoint;
 import se.hal.struct.Event;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
@@ -16,10 +16,10 @@ import java.util.logging.Logger;
 /**
  * TODO: This json endpoint might not be needed as we have SensorJsonPage?
  */
-public class MapJsonPage extends HalJsonPage {
+public class MapApiEndpoint extends HalApiEndpoint {
     private static final Logger logger = LogUtil.getLogger();
 
-    public MapJsonPage() {
+    public MapApiEndpoint() {
         super("api/map");
     }
 

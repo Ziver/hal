@@ -20,10 +20,10 @@
 <script>
 
     $(function(){
-		createChart("#minute-power-chart", "/api/sensor?aggr=minute", 5*60*1000);
-		createChart("#hour-power-chart", "/api/sensor?aggr=hour", 60*60*1000);
-		createChart("#day-power-chart", "/api/sensor?aggr=day", 24*60*60*1000);
-		createChart("#week-power-chart", "/api/sensor?aggr=week", 7*24*60*60*1000);
+		createChart("#minute-power-chart", "/api/sensor?aggregation=minute", 5*60*1000);
+		createChart("#hour-power-chart", "/api/sensor?aggregation=hour", 60*60*1000);
+		createChart("#day-power-chart", "/api/sensor?aggregation=day", 24*60*60*1000);
+		createChart("#week-power-chart", "/api/sensor?aggregation=week", 7*24*60*60*1000);
 	});
 </script>
 

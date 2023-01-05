@@ -224,12 +224,12 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
         deviceNode.set("id", getId());
         deviceNode.set("name", getName());
         deviceNode.set("user", getUser().getUsername());
-        deviceNode.set("x", getX());
-        deviceNode.set("y", getY());
+        deviceNode.set("map_x", getX());
+        deviceNode.set("map_y", getY());
 
         if (getDeviceConfig() != null) {
             DataNode configNode = deviceNode.set("config", DataNode.DataType.Map);
-            configNode.set("type", getDeviceConfig().getClass().getSimpleName());
+            configNode.set("typeConfig", getDeviceConfig().getClass().getSimpleName());
             configNode.set("typeData", getDeviceConfig().getDeviceDataClass().getSimpleName());
 
             for (Configurator.ConfigurationParam param : getDeviceConfigurator().getConfiguration()) {

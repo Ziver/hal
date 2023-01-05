@@ -1,0 +1,189 @@
+{
+  "components": {
+    "schemas": {
+      "sensorClass": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "$ref": "#/components/schemas/dataClass"
+          },
+          "name": {"type": "string"},
+          "id": {"type": "integer"},
+          "map_x": {"type": "number"},
+          "map_y": {"type": "number"},
+          "user": {"type": "string"},
+          "config": {
+            "type": "object",
+            "$ref": "#/components/schemas/configClass"
+          },
+          "aggregate": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "timestamps": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "eventClass": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "$ref": "#/components/schemas/dataClass"
+          },
+          "name": {"type": "string"},
+          "id": {"type": "integer"},
+          "map_x": {"type": "number"},
+          "map_y": {"type": "number"},
+          "user": {"type": "string"},
+          "config": {
+            "type": "object",
+            "$ref": "#/components/schemas/configClass"
+          }
+        }
+      },
+
+      "configClass": {
+        "type": "object",
+        "properties": {
+          "typeConfig": {"type": "string"},
+          "typeData": {"type": "string"}
+        }
+      },
+      "dataClass": {
+        "type": "object",
+        "properties": {
+          "valueStr": {"type": "string"},
+          "value": {"type": "number"},
+          "timestamp": {"type": "integer"}
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Hal Server",
+      "url": "/api"
+    }
+  ],
+  "openapi": "3.0.1",
+  "paths": {
+    "/event": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/eventClass"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "name": "id",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "typeConfig",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "typeData",
+            "required": false
+          }
+        ]
+      }
+    },
+    "/sensor": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/sensorClass"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "name": "id",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "typeConfig",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "typeData",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "min",
+                "hour",
+                "day",
+                "week",
+              ]
+            },
+            "in": "query",
+            "name": "aggregation",
+            "required": false
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "description": "This API allows developers and external tools to interface to Hal data and trigger different actions.",
+    "title": "Hal REST API",
+    "version": ""
+  }
+}

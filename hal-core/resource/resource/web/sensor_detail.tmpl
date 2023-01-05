@@ -93,8 +93,8 @@
 
 <script>
     $(function(){
-		createChart("#min-chart", "/api/sensor?aggr=minute&id={{sensor.getId()}}", 5*60*1000);
-		createChart("#hour-chart", "/api/sensor?aggr=hour&id={{sensor.getId()}}", 60*60*1000);
-		createChart("#week-chart", "/api/sensor?aggr=week&id={{sensor.getId()}}", 7*24*60*60*1000);
+		createChart("#min-chart", "/api/sensor?aggregation=minute&id={{sensor.getId()}}", 5*60*1000);
+		createChart("#hour-chart", "/api/sensor?aggregation=hour&id={{sensor.getId()}}", 60*60*1000);
+		createChart("#week-chart", "/api/sensor?aggregation=week&id={{sensor.getId()}}", 7*24*60*60*1000);
 	});
 </script>

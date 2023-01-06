@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 public class HalCoreDatabaseUpgrader extends HalDatabaseUpgrader {
     private static final Logger logger = LogUtil.getLogger();
 
-    private static final int    REFERENCE_DB_VERSION = 16;
+    private static final int    REFERENCE_DB_VERSION = 17;
     private static final String REFERENCE_DB_PATH = HalContext.RESOURCE_ROOT + "/resource/hal-core-reference.db";
 
     private static final int CLEAR_INTERNAL_AGGR_DATA_DB_VERSION = 11;

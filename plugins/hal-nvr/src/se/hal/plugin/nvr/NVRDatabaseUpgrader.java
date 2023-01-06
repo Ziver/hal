@@ -7,7 +7,7 @@ import se.hal.intf.HalDatabaseUpgrader;
  * The DB upgrade class for Hal-NVR plugin
  */
 public class NVRDatabaseUpgrader extends HalDatabaseUpgrader {
-    private static final int    REFERENCE_DB_VERSION = 1;
+    private static final int REFERENCE_DB_VERSION = 2;
     private static final String REFERENCE_DB_PATH = HalContext.RESOURCE_ROOT + "/resource/hal-nvr-reference.db";
 
 

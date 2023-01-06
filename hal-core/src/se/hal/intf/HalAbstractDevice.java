@@ -1,6 +1,7 @@
 package se.hal.intf;
 
 import se.hal.HalContext;
+import se.hal.struct.Room;
 import se.hal.struct.User;
 import se.hal.util.HalDeviceChangeListener;
 import zutil.db.DBConnection;
@@ -41,11 +42,14 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
     @DBColumn("user_id")
     private User user;
 
+    @DBColumn("room_id")
+    private Room room;
+
     // UI variables
     @DBColumn("map_x")
-    private double x;
+    private double mapX = 0;
     @DBColumn("map_y")
-    private double y;
+    private double mapY = 0;
 
     protected transient List<HalDeviceReportListener> deviceListeners = new LinkedList<>();
 
@@ -186,6 +190,9 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
         }
     }
 
+    /**
+     * @return the owner of this device.
+     */
     public User getUser() {
         return user;
     }
@@ -193,17 +200,31 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
         this.user = user;
     }
 
-    public double getX() {
-        return x;
+    /**
+     * @return the room that this device is located in.
+     */
+    public Room getRoom() {
+        return room;
     }
-    public void setX(double x) {
-        this.x = x;
+    public void setRoom(Room room) {
+        this.room = room;
     }
-    public double getY() {
-        return y;
+
+    /**
+     * @return the X coordinate of this device on the floor map
+     */
+    public double getMapX() {
+        return mapX;
     }
-    public void setY(double y) {
-        this.y = y;
+    /**
+     * @return the Y coordinate of this device on the floor map
+     */
+    public double getMapY() {
+        return mapY;
+    }
+    public void setMapCoordinates(double x, double y) {
+        this.mapX = x;
+        this.mapY = y;
     }
 
     public void addReportListener(HalDeviceReportListener listener) {
@@ -224,8 +245,10 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
         deviceNode.set("id", getId());
         deviceNode.set("name", getName());
         deviceNode.set("user", getUser().getUsername());
-        deviceNode.set("map_x", getX());
-        deviceNode.set("map_y", getY());
+
+        DataNode mapNode = deviceNode.set("map", DataNode.DataType.Map);
+        mapNode.set("x", getMapX());
+        mapNode.set("y", getMapY());
 
         if (getDeviceConfig() != null) {
             DataNode configNode = deviceNode.set("config", DataNode.DataType.Map);

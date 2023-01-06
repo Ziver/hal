@@ -34,7 +34,8 @@
                             <div class="btn-toolbar pull-right">
                                 <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#sensorModal"
                                         data-action="modify_local_sensor"
-                                        data-id="{{.getId()}}"
+                                        data-sensor-id="{{.getId()}}"
+                                        data-room-id="{{.getRoom().getId()}}"
                                         data-name="{{.getName()}}"
                                         data-type="{{.getType()}}"
                                         data-sync="{{.isSynced()}}"
@@ -140,7 +141,7 @@
                             <div class="btn-toolbar pull-right">
                                 <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#userModal"
                                         data-action="modify_external_user"
-                                        data-id="{{.getId()}}"
+                                        data-user-id="{{.getId()}}"
                                         data-hostname="{{.getHostname()}}"
                                         data-port="{{.getPort()}}">
                                     <span class="glyphicon glyphicon-pencil"></span>
@@ -225,10 +226,26 @@
             <form method="POST">
                 <div class="modal-body">
                     <input type="hidden" id="action" name="action" value="">
-                    <input type="hidden" id="id" name="id">
+                    <input type="hidden" id="sensor-id" name="sensor-id">
+
+                    <div class="form-group">
+                        <label class="control-label">Located in room:</label>
+                        <select class="form-control" name="room-id">
+                            <option value=""></option>
+                            {{#rooms}}
+                            <option value="{{.getId()}}">{{.getName()}} (id: {{.getId()}})</option>
+                            {{/rooms}}
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label class="control-label">Name:</label>
                         <input type="text" class="form-control" name="name">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="sync" value="true">
+                            Public
+                        </label>
                     </div>
                     <div class="form-group">
                         <label class="control-label">Type:</label>
@@ -238,13 +255,6 @@
                             {{/availableSensorConfigClasses}}
                         </select>
                     </div>
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" name="sync" value="true">
-                            Public
-                        </label>
-                    </div>
-
 
                     <hr>
                     <div id="sensor-data-conf">
@@ -290,7 +300,7 @@
             <form method="POST">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="">
-                    <input type="hidden" name="id">
+                    <input type="hidden" name="user-id">
                     <div class="form-group">
                         <label class="control-label">Hostname/IP:</label>
                         <input type="text" class="form-control" name="hostname">

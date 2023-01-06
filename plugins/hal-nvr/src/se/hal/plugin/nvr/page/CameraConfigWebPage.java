@@ -30,8 +30,10 @@ import se.hal.intf.HalWebPage;
 import se.hal.page.HalAlertManager;
 import se.hal.plugin.nvr.CameraControllerManager;
 import se.hal.plugin.nvr.struct.Camera;
+import se.hal.struct.Room;
 import se.hal.util.ClassConfigurationFacade;
 import se.hal.struct.User;
+import se.hal.util.RoomValueProvider;
 import zutil.ObjectUtil;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -73,12 +75,27 @@ public class CameraConfigWebPage extends HalWebPage {
         // Save new input
         if (request.containsKey("action")){
             int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));
-            Camera camera;
+            int roomId = (ObjectUtil.isEmpty(request.get("room-id")) ? -1 : Integer.parseInt(request.get("room-id")));
+
+            Camera camera = null;
+            Room room = (roomId >= 0 ? Room.getRoom(db, roomId) : null);
+
+            if (id >= 0) {
+                // Read in requested id
+                camera = Camera.getCamera(db, id);
+
+                if (camera == null) {
+                    logger.warning("Unknown camera id: " + id);
+                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                            MessageLevel.ERROR, "Unknown camera id: " + id, MessageTTL.ONE_VIEW));
+                }
+            }
 
             switch(request.get("action")) {
                 case "create_camera":
                     logger.info("Creating new camera: " + request.get("name"));
                     camera = new Camera();
+                    camera.setRoom(room);
                     camera.setName(request.get("name"));
                     camera.setType(request.get("type"));
                     camera.setUser(localUser);
@@ -91,9 +108,9 @@ public class CameraConfigWebPage extends HalWebPage {
                     break;
 
                 case "modify_camera":
-                    camera = Camera.getCamera(db, id);
                     if (camera != null) {
-                        logger.info("Modifying camera: " + camera.getName());
+                        logger.info("Modifying camera(id: " + camera.getId() + "): " + camera.getName());
+                        camera.setRoom(room);
                         camera.setName(request.get("name"));
                         camera.setType(request.get("type"));
                         camera.setUser(localUser);
@@ -102,26 +119,17 @@ public class CameraConfigWebPage extends HalWebPage {
 
                         HalAlertManager.getInstance().addAlert(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully saved camera: " + camera.getName(), MessageTTL.ONE_VIEW));
-                    } else {
-                        logger.warning("Unknown camera id: " + id);
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
-                                MessageLevel.ERROR, "Unknown camera id: " + id, MessageTTL.ONE_VIEW));
                     }
                     break;
 
                 case "remove_camera":
-                    camera = Camera.getCamera(db, id);
                     if (camera != null) {
-                        logger.info("Removing camera: " + camera.getName());
+                        logger.info("Removing camera(id: " + camera.getId() + "): " + camera.getName());
                         CameraControllerManager.getInstance().deregister(camera);
                         camera.delete(db);
 
                         HalAlertManager.getInstance().addAlert(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully removed camera: " + camera.getName(), MessageTTL.ONE_VIEW));
-                    } else {
-                        logger.warning("Unknown camera id: " + id);
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
-                                MessageLevel.ERROR, "Unknown camera id: " + id, MessageTTL.ONE_VIEW));
                     }
                     break;
             }
@@ -129,6 +137,7 @@ public class CameraConfigWebPage extends HalWebPage {
 
         // Output
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
+        tmpl.set("rooms", Room.getRooms(db));
         tmpl.set("cameras", Camera.getCameras(db));
         tmpl.set("availableCameraConfigClasses", CameraControllerManager.getInstance().getAvailableDeviceConfigs());
         tmpl.set("availableCameraObjectConfig", cameraConfigurations);

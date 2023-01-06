@@ -167,26 +167,24 @@ function initDynamicModalForm(modalId, formTemplateId = null, templateID = null)
         var button = $(event.relatedTarget);
         var modal = $(this);
 
-        // Reset all inputs
-        if (formTemplateId != null)
-            modal.find("#" + formTemplateId).empty(); // clear form div
+        modal.find(" input, select").val('').change(); // Reset all inputs
 
-        // set dynamic form data
+        // Set dynamic form data
         $.each(button.attr(), function(fieldName, value) {
             if(fieldName.startsWith("data-")) {
                 fieldName = fieldName.substring(5); // remove prefix data-
 
-                // case insensitive search
+                // Case-insensitive search
                 var input = modal.find("input, select").filter(function() {
                     if (this.name.toLowerCase() == fieldName) {
-                       if (this.type == "hidden" && modal.find("input[type=checkbox][name=" + fieldName + "]") != null)
+                       if (this.type == "hidden" && modal.find("input[type=checkbox][name=" + fieldName + "]").length > 0)
                             return false; // Workaround for the default(false) boolean input
                        return true;
                    }
                    return false;
                 });
 
-                if (input != null) {
+                if (input.length > 0) {
                     if (input.prop("type") == "checkbox") { // special handling for checkboxes
                         input.prop("value", "true");
                         input.prop("checked", value == "true");
@@ -196,10 +194,7 @@ function initDynamicModalForm(modalId, formTemplateId = null, templateID = null)
                             input.parent().prepend("<input type='hidden' name='" + input.prop("name") + "' value='false' />");
                         }
                     } else {
-                        input.val(value);
-
-                        if (input.prop("tagName") == "SELECT")
-                            input.change(); // required for select elements to update properly
+                        input.val(value).change();
                     }
                 }
             }

@@ -1,6 +1,39 @@
 {
   "components": {
     "schemas": {
+      "eventClass": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "$ref": "#/components/schemas/dataClass"
+          },
+          "name": {"type": "string"},
+          "id": {"type": "integer"},
+          "map": {
+            "type": "object",
+            "$ref": "#/components/schemas/mapClass"
+          },
+          "user": {"type": "string"},
+          "config": {
+            "type": "object",
+            "$ref": "#/components/schemas/configClass"
+          }
+        }
+      },
+
+      "roomClass": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "map": {
+            "type": "object",
+            "$ref": "#/components/schemas/mapClass"
+          }
+        }
+      },
+
       "sensorClass": {
         "type": "object",
         "properties": {
@@ -10,8 +43,10 @@
           },
           "name": {"type": "string"},
           "id": {"type": "integer"},
-          "map_x": {"type": "number"},
-          "map_y": {"type": "number"},
+          "map": {
+            "type": "object",
+            "$ref": "#/components/schemas/mapClass"
+          },
           "user": {"type": "string"},
           "config": {
             "type": "object",
@@ -36,24 +71,6 @@
           }
         }
       },
-      "eventClass": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "$ref": "#/components/schemas/dataClass"
-          },
-          "name": {"type": "string"},
-          "id": {"type": "integer"},
-          "map_x": {"type": "number"},
-          "map_y": {"type": "number"},
-          "user": {"type": "string"},
-          "config": {
-            "type": "object",
-            "$ref": "#/components/schemas/configClass"
-          }
-        }
-      },
 
       "configClass": {
         "type": "object",
@@ -62,6 +79,7 @@
           "typeData": {"type": "string"}
         }
       },
+
       "dataClass": {
         "type": "object",
         "properties": {
@@ -69,16 +87,29 @@
           "value": {"type": "number"},
           "timestamp": {"type": "integer"}
         }
-      }
+      },
+
+      "mapClass": {
+        "type": "object",
+        "properties": {
+          "x": {"type": "number"},
+          "y": {"type": "number"},
+          "width": {"type": "number"},
+          "height": {"type": "number"}
+        }
+      },
     }
   },
+
   "servers": [
     {
       "description": "Hal Server",
       "url": "/api"
     }
   ],
+
   "openapi": "3.0.1",
+
   "paths": {
     "/event": {
       "get": {
@@ -123,6 +154,35 @@
         ]
       }
     },
+
+    "/room": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/roomClass"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "name": "id",
+            "required": false
+          }
+        ]
+      }
+    },
+
     "/sensor": {
       "get": {
         "responses": {

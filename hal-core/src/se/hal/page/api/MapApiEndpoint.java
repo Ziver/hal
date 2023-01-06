@@ -46,8 +46,7 @@ public class MapApiEndpoint extends HalApiEndpoint {
             else if ("event".equals(request.get("type")))
                 device = Event.getEvent(db, id);
 
-            device.setX(Float.parseFloat(request.get("x")));
-            device.setY(Float.parseFloat(request.get("y")));
+            device.setMapCoordinates(Float.parseFloat(request.get("x")), Float.parseFloat(request.get("y")));
             device.save(db);
         }
         return root;
@@ -78,8 +77,8 @@ public class MapApiEndpoint extends HalApiEndpoint {
         DataNode deviceNode = new DataNode(DataNode.DataType.Map);
         deviceNode.set("id", device.getId());
         deviceNode.set("name", device.getName());
-        deviceNode.set("x", device.getX());
-        deviceNode.set("y", device.getY());
+        deviceNode.set("x", device.getMapX());
+        deviceNode.set("y", device.getMapY());
         return deviceNode;
     }
 

@@ -4,7 +4,7 @@
     <div class="panel panel-default drop-shadow">
         <div class="panel-heading">Cameras</div>
         <div class="panel-body">
-            <p>This is a list of cameras connected to this node.</p>
+            <p>This is a list of all cameras connected to this server.</p>
 
             <table class="table table-hover table-condensed">
                 <thead>
@@ -33,6 +33,7 @@
                                         data-target="#cameraModal"
                                         data-action="modify_camera"
                                         data-id="{{.getId()}}"
+                                        data-room-id="{{.getRoom().getId()}}"
                                         data-name="{{.getName()}}"
                                         data-type="{{.getType()}}"
                                         {{#.getDeviceConfigurator().getConfiguration()}}
@@ -75,6 +76,16 @@
                 <div class="modal-body">
                     <input type="hidden" id="action" name="action">
                     <input type="hidden" id="id" name="id">
+
+                    <div class="form-group">
+                        <label class="control-label">Located in room:</label>
+                        <select class="form-control" name="room-id">
+                            <option value=""></option>
+                            {{#rooms}}
+                            <option value="{{.getId()}}">{{.getName()}} (id: {{.getId()}})</option>
+                            {{/rooms}}
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label class="control-label">Name:</label>
                         <input type="text" class="form-control" name="name">

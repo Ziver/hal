@@ -6,9 +6,11 @@ import se.hal.intf.HalAbstractController;
 import se.hal.intf.HalAbstractControllerManager;
 import se.hal.intf.HalScannableController;
 import se.hal.intf.HalWebPage;
+import se.hal.struct.Room;
 import se.hal.util.ClassConfigurationFacade;
 import se.hal.struct.Event;
 import se.hal.struct.User;
+import se.hal.util.RoomValueProvider;
 import zutil.ObjectUtil;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -43,7 +45,7 @@ public class EventConfigWebPage extends HalWebPage {
             Map<String, Object> session,
             Map<String, String> cookie,
             Map<String, String> request)
-            throws Exception{
+            throws Exception {
 
         DBConnection db = HalContext.getDB();
         User localUser = User.getLocalUser(db);
@@ -51,12 +53,27 @@ public class EventConfigWebPage extends HalWebPage {
         // Save new input
         if (request.containsKey("action")) {
             int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));
-            Event event;
+            int roomId = (ObjectUtil.isEmpty(request.get("room-id")) ? -1 : Integer.parseInt(request.get("room-id")));
+
+            Event event = null;
+            Room room = (roomId >= 0 ? Room.getRoom(db, roomId) : null);
+
+            if (id >= 0) {
+                // Read in requested id
+                event = Event.getEvent(db, id);
+
+                if (event == null) {
+                    logger.warning("Unknown event id: " + id);
+                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                            MessageLevel.ERROR, "Unknown event id: " + id, MessageTTL.ONE_VIEW));
+                }
+            }
 
             switch(request.get("action")) {
                 case "create_local_event":
                     logger.info("Creating new event: " + request.get("name"));
                     event = new Event();
+                    event.setRoom(room);
                     event.setName(request.get("name"));
                     event.setType(request.get("type"));
                     event.setUser(localUser);
@@ -69,9 +86,9 @@ public class EventConfigWebPage extends HalWebPage {
                     break;
 
                 case "modify_local_event":
-                    event = Event.getEvent(db, id);
                     if (event != null) {
-                        logger.info("Modifying event: " + event.getName());
+                        logger.info("Modifying event(id: " + event.getId() + "): " + event.getName());
+                        event.setRoom(room);
                         event.setName(request.get("name"));
                         event.setType(request.get("type"));
                         event.setUser(localUser);
@@ -80,26 +97,17 @@ public class EventConfigWebPage extends HalWebPage {
 
                         HalAlertManager.getInstance().addAlert(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully saved event: "+event.getName(), MessageTTL.ONE_VIEW));
-                    } else {
-                        logger.warning("Unknown event id: " + id);
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
-                                MessageLevel.ERROR, "Unknown event id: " + id, MessageTTL.ONE_VIEW));
                     }
                     break;
 
                 case "remove_local_event":
-                    event = Event.getEvent(db, id);
                     if (event != null) {
-                        logger.info("Removing event: " + event.getName());
+                        logger.info("Removing event(id: " + event.getId() + "): " + event.getName());
                         EventControllerManager.getInstance().deregister(event);
                         event.delete(db);
 
                         HalAlertManager.getInstance().addAlert(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully removed event: "+event.getName(), MessageTTL.ONE_VIEW));
-                    } else {
-                        logger.warning("Unknown event id: " + id);
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
-                                MessageLevel.ERROR, "Unknown event id: "+id, MessageTTL.ONE_VIEW));
                     }
                     break;
 
@@ -132,6 +140,7 @@ public class EventConfigWebPage extends HalWebPage {
         // Output
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("user", localUser);
+        tmpl.set("rooms", Room.getRooms(db));
         tmpl.set("scanning", scanning);
         tmpl.set("localEvents", Event.getLocalEvents(db));
         tmpl.set("detectedEvents", EventControllerManager.getInstance().getDetectedDevices());

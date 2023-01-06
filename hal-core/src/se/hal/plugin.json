@@ -14,17 +14,19 @@
 
 		{"se.hal.intf.HalApiEndpoint": "se.hal.page.api.EventApiEndpoint"},
 		{"se.hal.intf.HalApiEndpoint": "se.hal.page.api.MapApiEndpoint"},
+		{"se.hal.intf.HalApiEndpoint": "se.hal.page.api.RoomApiEndpoint"},
 		{"se.hal.intf.HalApiEndpoint": "se.hal.page.api.SensorApiEndpoint"},
 
-		{"se.hal.intf.HalWebPage": "se.hal.page.MapWebPage"},
-		{"se.hal.intf.HalWebPage": "se.hal.page.SensorOverviewWebPage"},
-		{"se.hal.intf.HalWebPage": "se.hal.page.SensorConfigWebPage"},
 		{"se.hal.intf.HalWebPage": "se.hal.page.EventOverviewWebPage"},
 		{"se.hal.intf.HalWebPage": "se.hal.page.EventConfigWebPage"},
-		{"se.hal.intf.HalWebPage": "se.hal.page.TriggerWebPage"},
-		{"se.hal.intf.HalWebPage": "se.hal.page.UserConfigWebPage"},
 		{"se.hal.intf.HalWebPage": "se.hal.page.PropertyConfigWebPage"},
 		{"se.hal.intf.HalWebPage": "se.hal.page.PluginConfigWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.MapWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.RoomConfigWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.SensorOverviewWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.SensorConfigWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.TriggerWebPage"},
+		{"se.hal.intf.HalWebPage": "se.hal.page.UserConfigWebPage"},
 
 
 		{"se.hal.intf.HalTrigger": "se.hal.trigger.DateTimeTrigger"},

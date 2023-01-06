@@ -35,6 +35,7 @@
                                         data-target="#eventModal"
                                         data-action="modify_local_event"
                                         data-id="{{.getId()}}"
+                                        data-room-id="{{.getRoom().getId()}}"
                                         data-name="{{.getName()}}"
                                         data-type="{{.getType()}}"
                                         {{#.getDeviceConfigurator().getConfiguration()}}
@@ -125,6 +126,16 @@
                 <div class="modal-body">
                     <input type="hidden" id="action" name="action">
                     <input type="hidden" id="id" name="id">
+
+                    <div class="form-group">
+                        <label class="control-label">Located in room:</label>
+                        <select class="form-control" name="room-id">
+                            <option value=""></option>
+                            {{#rooms}}
+                            <option value="{{.getId()}}">{{.getName()}} (id: {{.getId()}})</option>
+                            {{/rooms}}
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label class="control-label">Name:</label>
                         <input type="text" class="form-control" name="name">

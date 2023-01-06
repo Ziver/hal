@@ -24,8 +24,11 @@ public class Sensor extends HalAbstractDevice<Sensor, HalSensorConfig, HalSensor
     private static final Logger logger = LogUtil.getLogger();
 
     private long external_id = -1;
-    /** local sensor= if sensor should be public. external sensor= if sensor should be requested from host **/
+    /** The value of this field represents different things depending on if it is a local device or not:
+     * - local sensor: if sensor should be public to external users.
+     * - external sensor: if sensor should be requested from host **/
     private boolean sync = false;
+    /** Indicates how far a sync has proceeded, is used to be able to do differential sync. */
     private long aggr_version;
 
 

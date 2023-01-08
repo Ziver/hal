@@ -105,7 +105,13 @@ function drawMap(){
 
         // Background
 
-        svg.image("?bgimage", "100%", "100%").x(0).y(0).addClass("bg-image");
+        if (SVG.find("svg .bg-image").length > 0) {
+            var bg_image = svg.image("?bgimage").addClass("bg-image")
+                .x(0)
+                .y(0)
+                .width("100%")
+                .height("100%");
+        }
 
         // Rooms
 

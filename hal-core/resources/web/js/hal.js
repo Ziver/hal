@@ -2,6 +2,8 @@
 //                      Autostart
 // --------------------------------------------------------
 
+"use strict";
+
 $(function(){
     $(".toggle-switch").bootstrapSwitch({inverse: true, size: "mini"});
 

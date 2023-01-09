@@ -30,9 +30,9 @@ public class HalContext {
 
     public static final String RESOURCE_ROOT;
     static {
-        if (FileUtil.find("build/resources/") != null)
+        if (FileUtil.find("build/resources/") != null) // Development environment
             RESOURCE_ROOT = "build/resources";
-        else if (FileUtil.find("resources/") != null)
+        else if (FileUtil.find("resources/") != null) // Release package environment
             RESOURCE_ROOT = "resources";
         else
             RESOURCE_ROOT = ".";

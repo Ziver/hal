@@ -223,8 +223,8 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
         return mapY;
     }
     public void setMapCoordinates(double x, double y) {
-        this.mapX = x;
-        this.mapY = y;
+        this.mapX = Math.max(0.0, x);
+        this.mapY = Math.max(0.0, y);
     }
 
     public void addReportListener(HalDeviceReportListener listener) {

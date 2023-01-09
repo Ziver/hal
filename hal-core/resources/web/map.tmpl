@@ -13,8 +13,9 @@
 </style>
 
 <div class="col-sm-9 col-sm-offset-1 col-md-10 col-md-offset-1">
-    <svg id="map" width="100%" width="500" viewBox="0 0 1000 500"></svg>
+    <svg id="map"></svg>
 </div>
+
 <div class="col-sm-1 col-md-1">
     <a id="button-edit" class="view-mode" href="#">
         <span class="view-mode glyphicon glyphicon-wrench" aria-hidden="true"></span>
@@ -41,16 +42,18 @@
     </div>
 </div>
 
-
-<script src="js/lib/svg.min.js"></script>
-<script src="js/lib/svg.title.js"></script>
-<script src="js/lib/svg.draggable.min.js"></script>
-<script src="js/lib/jquery.filer.min.js"></script>
 <link href="css/jquery.filer.css" rel="stylesheet">
+<link href="css/svg.select.min.js" rel="stylesheet">
+
+<script src="js/lib/jquery.filer.min.js"></script>
+<script src="js/lib/svg.min.js"></script>
+<script src="js/lib/svg.select.min.js"></script>
+<script src="js/lib/svg.draggable.min.js"></script>
 <script src="js/map.js"></script>
 
 
 <!------------------ MODALS ---------------------->
+
 <div class="modal fade" id="bgUploadModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">

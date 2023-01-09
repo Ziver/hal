@@ -1,17 +1,19 @@
+"use strict";
+
 var svg;
+var data = {
+    rooms: [],
+    sensors: [],
+    events: []
+};
 var editModeEnabled = false;
 
 $(function(){
-    if (!SVG.supported) {
-        alert("Image format(SVG) not supported by your browser.");
-        return;
-    }
-
     // ------------------------------------------
     // Setup map
     // ------------------------------------------
 
-    svg = SVG("map");
+    svg = SVG("#map").size("100%", "700").viewbox(0, 0, 1000, 700);
 
     // Initialize events
 
@@ -58,7 +60,7 @@ $(function(){
                 $("#bg-file-progress").addClass("progress-bar-danger");
             },
             onProgress: function(t){
-                $("#bg-file-progress").css("width", t+"%");
+                $("#bg-file-progress").css("width", t + "%");
             },
         }
     });
@@ -67,114 +69,171 @@ $(function(){
     // Start draw loop
     // ------------------------------------------
 
+    fetchData(drawMap);
+
     setInterval(function() {
-        if (editModeEnabled == false)
-            drawMap();
+        if (editModeEnabled == false) {
+            fetchData(drawMap);
+        }
     }, 3000); // 3 sec
+    //}, 10000); // 10 sec
 
 });
 
+// ----------------------------------------------
+// Events
+// ----------------------------------------------
 
 function editMode(enable){
-    if (editModeEnabled == enable)
+    if (editModeEnabled == enable) {
         return;
+    }
+
     editModeEnabled = enable;
-    if (editModeEnabled){
+
+    if (editModeEnabled) {
         $(".edit-mode").show();
         $(".view-mode").hide();
         $("#map").css("border-color", "#6eb16e");
-        svg.select(".draggable").draggable(true);
-    }
-    else {
+    } else {
+        $(".room").selectize(false)
         $(".edit-mode").hide();
         $(".view-mode").show();
         $("#map").css("border-color", "");
-        svg.select(".draggable").draggable(false);
     }
 }
 
-function drawMap(){
-    // Get map data
-    $.getJSON("/api/map?action=getdata", function(json){
-        // Reset map
-        svg.clear();
+function beforeDragEvent(e) {
+    if (editModeEnabled == false) {
+        e.preventDefault(); // Prevent drag
+    }
+}
 
-        // --------------------------------------
-        // Draw
-        // --------------------------------------
+function selectEntity(e) {
+    if (editModeEnabled == false) {
+        e.target.selectize();
+    }
+}
 
-        // Background
+// --------------------------------------
+// Draw
+// --------------------------------------
 
-        if (SVG.find("svg .bg-image").length > 0) {
-            var bg_image = svg.image("?bgimage").addClass("bg-image")
-                .x(0)
-                .y(0)
-                .width("100%")
-                .height("100%");
-        }
+function drawMap() {
+    // Reset map
+    //svg.clear();
 
-        // Rooms
+    // Background
 
-        if (json.rooms != null) {
-            $.each(json.rooms, function(i, room) {
-                var group = svg.group();
+    if (svg.find(".bg-image").length <= 0) {
+        var bgImage = svg.image("?bgimage").addClass("bg-image")
+            .x(0)
+            .y(0)
+            .width("100%")
+            .height("100%");
+    }
 
-                group.rect(room.width, room.height);
-                group.text(room.name).move(10, 10).fill('#999');
+    // Rooms
 
-                group.addClass("draggable").addClass("room")
-                    .x(room.x)
-                    .y(room.y)
-                    .attr("room-id", room.id);
-            });
-        }
+    if (data.rooms != null) {
+        $.each(data.rooms, function(i, room) {
+            svg.find("#room-" + room.id).remove();
 
-        // Sensors
+            var group = svg.group();
 
-        if (json.sensors != null) {
-            $.each(json.sensors, function(i, sensor) {
-                var group = svg.group();
+            group.text(room.name).move(5, 5).fill('#999');
+            group.rect(room.map.width, room.map.height).selectize();
 
-                group.image("/img/temperature.svg");
-                group.text(sensor.data).move(45, 15).fill('#999');
+            group.addClass("room")
+                .attr("id", "room-" + room.id)
+                .attr("room-id", room.id)
+                .x(room.map.x)
+                .y(room.map.y);
 
-                group.addClass("draggable").addClass("sensor")
-                    .x(sensor.x)
-                    .y(sensor.y)
-                    .attr("sensor-id", sensor.id);
-                group.title(sensor.name);
-            });
-        }
+            group.draggable().on('beforedrag', beforeDragEvent);
+            //group.on('mousedown', selectEntity, false);
+        });
+    }
 
-        // Events
+    // Sensors
 
-        if (json.event != null) {
-            $.each(json.events, function(i, event) {
-                var group = svg.group();
+    if (data.sensors != null) {
+        $.each(data.sensors, function(i, sensor) {
+            svg.find("#sensor-" + sensor.id).remove();
 
-                var img = "/img/lightbulb_off.svg";
-                if (event.data == "ON")
-                    img = "/img/lightbulb_on.svg";
-                group.image(img);
+            var group = svg.group();
+            group.element('title').words(sensor.name);
 
-                group.addClass("draggable").addClass("event")
-                    .x(event.x)
-                    .y(event.y)
-                    .attr("event-id", event.id);
-                group.title(event.name);
-            });
-        }
-    });
+            group.text(sensor.data.valueStr).move(45, 15).fill('#999');
+            group.image("/img/temperature.svg").size(50, 50);
+
+            group.addClass("sensor")
+                .attr("id", "sensor-" + sensor.id)
+                .attr("sensor-id", sensor.id)
+                .x(sensor.map.x)
+                .y(sensor.map.y);
+            group.draggable().on('beforedrag', beforeDragEvent);
+        });
+    }
+
+    // Events
+
+    if (data.events != null) {
+        $.each(data.events, function(i, event) {
+            svg.find("#event-" + event.id).remove();
+
+            var group = svg.group();
+            group.element('title').words(event.name);
+
+            var img = "/img/lightbulb_off.svg";
+            if (event.data.valueStr == "ON")
+                img = "/img/lightbulb_on.svg";
+            group.image(img).size(50, 50);
+
+            group.addClass("event")
+                .attr("id", "event-" + event.id)
+                .attr("event-id", event.id)
+                .x(event.map.x)
+                .y(event.map.y);
+            group.draggable().on('beforedrag', beforeDragEvent);
+        });
+    }
+}
+
+// ----------------------------------------------
+// Load and Store data
+// ----------------------------------------------
+
+async function fetchData(callback) {
+    await fetch('/api/room')
+        .then(response => response.json())
+        .then(json => {
+            data.rooms = json;
+        })
+
+    await fetch('/api/sensor')
+        .then(response => response.json())
+        .then(json => {
+            data.sensors = json;
+        })
+
+    await fetch('/api/event')
+        .then(response => response.json())
+        .then(json => {
+            data.events = json;
+        })
+
+    callback();
 }
 
 function saveMap(){
-    svg.select(".room").each(function(){
+    svg.find(".room").each(function(){
         saveDevice(this, "room", "room-id");
     });
-    svg.select(".sensor").each(function(){
+    svg.find(".sensor").each(function(){
         saveDevice(this, "sensor", "sensor-id");
     });
-    svg.select(".event").each(function(){
+    svg.find(".event").each(function(){
         saveDevice(this, "event", "event-id");
     });
 }

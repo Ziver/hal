@@ -30,6 +30,7 @@ subprojects {
             java {
                 srcDirs 'src'
             }
+            // We do not want the resource folder to be included in the jar file
             //resources {
             //    srcDir 'resource'
             //}

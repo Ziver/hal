@@ -8,7 +8,7 @@ import se.hal.intf.HalDatabaseUpgrader;
  */
 public class NVRDatabaseUpgrader extends HalDatabaseUpgrader {
     private static final int REFERENCE_DB_VERSION = 2;
-    private static final String REFERENCE_DB_PATH = HalContext.RESOURCE_ROOT + "/resource/hal-nvr-reference.db";
+    private static final String REFERENCE_DB_PATH = HalContext.RESOURCE_ROOT + "/hal-nvr-reference.db";
 
 
     public NVRDatabaseUpgrader() {

@@ -32,7 +32,7 @@ import zutil.parser.Templator;
 import java.util.Map;
 
 public class PCHeatMapWebPage extends HalWebPage {
-    private static final String TEMPLATE = HalContext.RESOURCE_ROOT + "/resource/web/pc_heatmap.tmpl";
+    private static final String TEMPLATE = HalContext.RESOURCE_ROOT + "/web/pc_heatmap.tmpl";
 
 
     public PCHeatMapWebPage() {

@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class RTSPCameraRecorder implements Runnable {
     private static final Logger logger = LogUtil.getLogger();
 
-    private static final File FFMPEG_BINARY_PATH = FileUtil.find(HalContext.RESOURCE_ROOT + "/resource/bin/");
+    private static final File FFMPEG_BINARY_PATH = FileUtil.find(HalContext.RESOURCE_ROOT + "/bin/");
 
     private RTSPCameraConfig camera;
     private String storagePath;

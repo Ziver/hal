@@ -32,13 +32,13 @@ public class HalContext {
     static {
         if (FileUtil.find("build/resources/") != null)
             RESOURCE_ROOT = "build/resources";
-        else if (FileUtil.find("resource/resource/") != null)
-            RESOURCE_ROOT = "resource";
+        else if (FileUtil.find("resources/") != null)
+            RESOURCE_ROOT = "resources";
         else
             RESOURCE_ROOT = ".";
     }
 
-    public static final String RESOURCE_WEB_ROOT = HalContext.RESOURCE_ROOT + "/resource/web";
+    public static final String RESOURCE_WEB_ROOT = HalContext.RESOURCE_ROOT + "/web";
 
     private static final String CONF_FILE = "hal.conf";
     static final String DB_FILE           = "hal.db";

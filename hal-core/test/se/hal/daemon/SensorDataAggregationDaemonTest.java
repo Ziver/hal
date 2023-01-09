@@ -11,7 +11,7 @@ import zutil.log.LogUtil;
 import java.sql.PreparedStatement;
 
 public class SensorDataAggregationDaemonTest {
-    private static final String DEFAULT_DB_FILE = "resource/resource/hal-core-reference.db";
+    private static final String DEFAULT_DB_FILE = HalContext.RESOURCE_ROOT + "/hal-core-reference.db";
 
     private static DBConnection db;
 
@@ -28,7 +28,7 @@ public class SensorDataAggregationDaemonTest {
         db = new DBConnection(DBConnection.DBMS.SQLite, ":memory:");
         HalContext.setDB(db);
 
-        //upgrade the database to latest version
+        //upgrade the database to the latest version
         System.out.println("Upgrading in-memory database to latest version");
         DBConnection referenceDB = new DBConnection(DBConnection.DBMS.SQLite, DEFAULT_DB_FILE);
         final DBUpgradeHandler handler = new DBUpgradeHandler(referenceDB);

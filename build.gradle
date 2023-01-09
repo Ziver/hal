@@ -72,7 +72,7 @@ task copyRecources(type: Copy) {
     }
 
     project.subprojects.each { subProject ->
-        from "${subProject.projectDir}/resource"
+        from "${subProject.projectDir}/resources"
     }
 
     into("${buildDir}/resources")

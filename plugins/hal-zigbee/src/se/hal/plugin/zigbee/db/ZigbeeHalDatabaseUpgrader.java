@@ -8,7 +8,7 @@ import se.hal.intf.HalDatabaseUpgrader;
  */
 public class ZigbeeHalDatabaseUpgrader extends HalDatabaseUpgrader {
     private static final int    REFERENCE_DB_VERSION = 1;
-    private static final String REFERENCE_DB_PATH = HalContext.RESOURCE_ROOT + "/resource/hal-zigbee-reference.db";
+    private static final String REFERENCE_DB_PATH = HalContext.RESOURCE_ROOT + "/hal-zigbee-reference.db";
 
 
     public ZigbeeHalDatabaseUpgrader() {

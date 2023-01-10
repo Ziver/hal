@@ -4,6 +4,7 @@ import se.hal.HalContext;
 import se.hal.intf.HalAbstractDevice;
 import se.hal.intf.HalApiEndpoint;
 import se.hal.struct.Event;
+import se.hal.struct.Room;
 import se.hal.struct.Sensor;
 import zutil.db.DBConnection;
 import zutil.log.LogUtil;
@@ -35,20 +36,38 @@ public class MapApiEndpoint extends HalApiEndpoint {
 
         if ("save".equals(request.get("action"))) {
             int id = Integer.parseInt(request.get("id"));
-            HalAbstractDevice device = null;
 
-            logger.info("Saving Sensor coordinates.");
+            logger.info("Saving map coordinates.");
 
-            if ("sensor".equals(request.get("type")))
-                device = Sensor.getSensor(db, id);
-            else if ("event".equals(request.get("type")))
-                device = Event.getEvent(db, id);
+            switch (request.get("type")) {
+                case "room":
+                    Room room = Room.getRoom(db, id);
+                    room.setMapCoordinates(
+                            Float.parseFloat(request.get("x")),
+                            Float.parseFloat(request.get("y")),
+                            Float.parseFloat(request.get("width")),
+                            Float.parseFloat(request.get("height")));
+                    room.save(db);
+                    break;
 
-            device.setMapCoordinates(
-                    Float.parseFloat(request.get("x")),
-                    Float.parseFloat(request.get("y")));
-            device.save(db);
+                case "sensor":
+                    Sensor sensor = Sensor.getSensor(db, id);
+                    sensor.setMapCoordinates(
+                            Float.parseFloat(request.get("x")),
+                            Float.parseFloat(request.get("y")));
+                    sensor.save(db);
+                    break;
+
+                case "event":
+                    Event event = Event.getEvent(db, id);
+                    event.setMapCoordinates(
+                            Float.parseFloat(request.get("x")),
+                            Float.parseFloat(request.get("y")));
+                    event.save(db);
+                    break;
+            }
         }
+
         return root;
     }
 }

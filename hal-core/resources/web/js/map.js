@@ -13,7 +13,7 @@ $(function(){
     // Setup map
     // ------------------------------------------
 
-    svg = SVG("#map").size("100%", "700").viewbox(0, 0, 1000, 700);
+    svg = SVG('map');
 
     // Initialize events
 
@@ -23,11 +23,11 @@ $(function(){
     $("#button-save").click(function() {
         saveMap();
         editMode(false);
-        drawMap();
+        fetchData(drawMap);
     });
     $("#button-cancel").click(function() {
         editMode(false);
-        drawMap();
+        fetchData(drawMap);
     });
 
     // Initialize background image uploader
@@ -92,14 +92,23 @@ function editMode(enable){
     editModeEnabled = enable;
 
     if (editModeEnabled) {
-        $(".edit-mode").show();
-        $(".view-mode").hide();
-        $("#map").css("border-color", "#6eb16e");
+        $('.edit-mode').show();
+        $('.view-mode').hide();
+        $('#map').css('border-color', '#6eb16e');
+
+        svg.select('.draggable').draggable(true);
+        //svg.select('.resizable').on('click', selectEvent, false);
+        svg.select('.resizable').selectize({
+            points: ['rt', 'lb', 'rb'], // Add selection points on the corners
+            rotationPoint: false
+        }).resize()
     } else {
-        $(".room").selectize(false)
-        $(".edit-mode").hide();
-        $(".view-mode").show();
-        $("#map").css("border-color", "");
+        $('.edit-mode').hide();
+        $('.view-mode').show();
+        $('#map').css('border-color', '');
+
+        svg.select('.draggable').draggable(false);
+        svg.select('resizable').selectize(false);
     }
 }
 
@@ -109,9 +118,12 @@ function beforeDragEvent(e) {
     }
 }
 
-function selectEntity(e) {
-    if (editModeEnabled == false) {
-        e.target.selectize();
+function selectEvent(e) {
+    if (editModeEnabled == true) {
+        e.target.selectize({
+            points: ['rt', 'lb', 'rb'], // Add selection points on the corners
+            rotationPoint: false
+        }).resize();
     }
 }
 
@@ -121,11 +133,11 @@ function selectEntity(e) {
 
 function drawMap() {
     // Reset map
-    //svg.clear();
+    svg.clear();
 
     // Background
 
-    if (svg.find(".bg-image").length <= 0) {
+    if (svg.select(".bg-image").length() <= 0) {
         var bgImage = svg.image("?bgimage").addClass("bg-image")
             .x(0)
             .y(0)
@@ -137,21 +149,25 @@ function drawMap() {
 
     if (data.rooms != null) {
         $.each(data.rooms, function(i, room) {
-            svg.find("#room-" + room.id).remove();
+            svg.select("#room-" + room.id).remove();
 
             var group = svg.group();
 
             group.text(room.name).move(5, 5).fill('#999');
-            group.rect(room.map.width, room.map.height).selectize();
+            var rect = group.rect(room.map.width, room.map.height);
+            rect.fill('none').stroke({
+                color: '#000',
+                opacity: 0.6,
+                width: 3
+            });
+            rect.addClass("resizable");
 
             group.addClass("room")
                 .attr("id", "room-" + room.id)
                 .attr("room-id", room.id)
                 .x(room.map.x)
-                .y(room.map.y);
-
-            group.draggable().on('beforedrag', beforeDragEvent);
-            //group.on('mousedown', selectEntity, false);
+                .y(room.map.y)
+                .addClass("draggable");
         });
     }
 
@@ -159,7 +175,7 @@ function drawMap() {
 
     if (data.sensors != null) {
         $.each(data.sensors, function(i, sensor) {
-            svg.find("#sensor-" + sensor.id).remove();
+            svg.select("#sensor-" + sensor.id).remove();
 
             var group = svg.group();
             group.element('title').words(sensor.name);
@@ -171,8 +187,8 @@ function drawMap() {
                 .attr("id", "sensor-" + sensor.id)
                 .attr("sensor-id", sensor.id)
                 .x(sensor.map.x)
-                .y(sensor.map.y);
-            group.draggable().on('beforedrag', beforeDragEvent);
+                .y(sensor.map.y)
+                .addClass("draggable");
         });
     }
 
@@ -180,7 +196,7 @@ function drawMap() {
 
     if (data.events != null) {
         $.each(data.events, function(i, event) {
-            svg.find("#event-" + event.id).remove();
+            svg.select("#event-" + event.id).remove();
 
             var group = svg.group();
             group.element('title').words(event.name);
@@ -194,8 +210,8 @@ function drawMap() {
                 .attr("id", "event-" + event.id)
                 .attr("event-id", event.id)
                 .x(event.map.x)
-                .y(event.map.y);
-            group.draggable().on('beforedrag', beforeDragEvent);
+                .y(event.map.y)
+                .addClass("draggable");
         });
     }
 }
@@ -227,27 +243,35 @@ async function fetchData(callback) {
 }
 
 function saveMap(){
-    svg.find(".room").each(function(){
+    svg.select(".room").each(function(){
         saveDevice(this, "room", "room-id");
     });
-    svg.find(".sensor").each(function(){
+    svg.select(".sensor").each(function(){
         saveDevice(this, "sensor", "sensor-id");
     });
-    svg.find(".event").each(function(){
+    svg.select(".event").each(function(){
         saveDevice(this, "event", "event-id");
     });
 }
-function saveDevice(element, type, id){
+function saveDevice(element, type, id) {
+    var data = {
+        action: "save",
+        id: element.attr(id),
+        type: type,
+        x: element.x(),
+        y: element.y()
+    };
+
+    var resizable = element.select(".resizable");
+    if (resizable.length() > 0) {
+        data.width = resizable.get(0).width();
+        data.height = resizable.get(0).height();
+    }
+
     $.ajax({
         async: false,
         dataType: "json",
         url: "/api/map?",
-        data: {
-            action: "save",
-            id: element.attr(id),
-            type: type,
-            x: element.x(),
-            y: element.y()
-        },
+        data: data
     });
 }

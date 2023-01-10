@@ -18,7 +18,7 @@ import java.util.Map;
 public class StartupWebPage implements HttpPage {
     private static final String TEMPLATE = HalContext.RESOURCE_WEB_ROOT + "/startup.tmpl";
     private static final List<String> ACCEPTED_FILE_LIST = Arrays.asList(
-            "/css/bootstrap.min.css",
+            "/css/lib/bootstrap.min.css",
             "/css/hal.css",
             "/fonts/glyphicons-halflings-regular.ttf",
             "/fonts/glyphicons-halflings-regular.woff",

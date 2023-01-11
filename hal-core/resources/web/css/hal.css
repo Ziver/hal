@@ -146,3 +146,37 @@ body {
     transform: rotate(359deg);
   }
 }
+
+/*
+ * Animations
+ */
+
+.pulse-border {
+	animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+	0% {
+		stroke-width: 3;
+		opacity: 1;
+	}
+
+	10% {
+        stroke-width: 5;
+        opacity: 0.2;
+	}
+	15% {
+        stroke-width: 5;
+        opacity: 0.2;
+    }
+
+	50% {
+        stroke-width: 3;
+        opacity: 1;
+	}
+
+    100% {
+        stroke-width: 3;
+        opacity: 1;
+    }
+}

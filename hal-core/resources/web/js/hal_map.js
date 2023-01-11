@@ -155,11 +155,7 @@ function drawMap() {
 
             group.text(room.name).move(5, 5).fill('#999');
             var rect = group.rect(room.map.width, room.map.height);
-            rect.fill('none').stroke({
-                color: '#000',
-                opacity: 0.6,
-                width: 3
-            });
+            setAlertStyle(rect, (room.alert == null ? null : room.alert.level));
             rect.addClass("resizable");
 
             group.addClass("room")
@@ -274,4 +270,37 @@ function saveDevice(element, type, id) {
         url: "/api/map?",
         data: data
     });
+}
+
+// ----------------------------------------------
+// Colors
+// ----------------------------------------------
+
+function setAlertStyle(target, level=null) {
+    target.addClass("pulse-border");
+    target.fill('none');
+
+    switch(level) {
+        case "ERROR":
+            target.stroke({opacity: 1, color: '#f00'});
+            break;
+        case "WARNING":
+            target.stroke({opacity: 1, color: '#ffa500'});
+            break;
+        case "SUCCESS":
+            target.stroke({opacity: 1, color: '#90EE90'});
+            break;
+        case "INFO":
+            target.stroke({opacity: 1, color: '#87CEFA'});
+            break;
+
+        default:
+            target.removeClass("pulse-border");
+            target.stroke({
+                color: '#000',
+                opacity: 0.6,
+                width: 3
+            });;
+            break;
+    }
 }

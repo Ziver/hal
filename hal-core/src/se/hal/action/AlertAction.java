@@ -33,6 +33,6 @@ public class AlertAction implements HalAction {
 
 
     public String toString(){
-        return "Send Alert: " + severity + ": " + title;
+        return "Generate Alert: " + severity + ": " + title;
     }
 }

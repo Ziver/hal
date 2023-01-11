@@ -36,6 +36,8 @@
 		{"se.hal.intf.HalTrigger": "se.hal.trigger.TimerTrigger"},
 
 		{"se.hal.intf.HalAction": "se.hal.action.AlertAction"},
+		{"se.hal.intf.HalAction": "se.hal.action.DismissRoomAlertAction"},
+		{"se.hal.intf.HalAction": "se.hal.action.RoomAlertAction"},
 		{"se.hal.intf.HalAction": "se.hal.action.SendEventAction"}
 	]
 }

@@ -130,7 +130,7 @@ public class SmartHomeImpl extends SmartHomeApp implements OAuth2TokenRegistrati
                                             .setName(device.getName())
                                             .build())
                             .setWillReportState(true)
-                            //.setRoomHint(sensor.getRoom().getName())
+                            .setRoomHint((device.getRoom() != null ? device.getRoom().getName() : ""))
                             .setDeviceInfo(
                                     DeviceProto.DeviceInfo.newBuilder()
                                             //.setManufacturer((String) device.get("manufacturer"))

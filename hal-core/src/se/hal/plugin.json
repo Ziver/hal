@@ -12,6 +12,7 @@
         {"se.hal.intf.HalDaemon": "se.hal.daemon.SensorDataAggregatorDaemon"},
         {"se.hal.intf.HalDaemon": "se.hal.daemon.SensorDataCleanupDaemon"},
 
+		{"se.hal.intf.HalApiEndpoint": "se.hal.page.api.AlertApiEndpoint"},
 		{"se.hal.intf.HalApiEndpoint": "se.hal.page.api.EventApiEndpoint"},
 		{"se.hal.intf.HalApiEndpoint": "se.hal.page.api.MapApiEndpoint"},
 		{"se.hal.intf.HalApiEndpoint": "se.hal.page.api.RoomApiEndpoint"},

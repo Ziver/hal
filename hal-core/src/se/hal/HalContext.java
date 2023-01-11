@@ -5,6 +5,7 @@ import zutil.db.DBConnection;
 import zutil.db.handler.PropertiesSQLResult;
 import zutil.io.file.FileUtil;
 import zutil.log.LogUtil;
+import zutil.ui.UserMessageManager;
 
 import java.io.File;
 import java.io.FileReader;
@@ -50,6 +51,7 @@ public class HalContext {
     private static Properties fileConf = new Properties();
     private static Properties dbConf = new Properties();
 
+    private static UserMessageManager messageManager = new UserMessageManager();
 
     static {
         // Set default values to get Hal up and running
@@ -162,4 +164,8 @@ public class HalContext {
         HalContext.db = db;
     }
 
+
+    public static UserMessageManager getUserMessageManager() {
+        return messageManager;
+    }
 }

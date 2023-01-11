@@ -1,6 +1,17 @@
 {
   "components": {
     "schemas": {
+      "alertClass": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "level": {"type": "string"},
+          "ttl": {"type": "integer"},
+          "title": {"type": "string"},
+          "description": {"type": "string"}
+        }
+      },
+
       "eventClass": {
         "type": "object",
         "properties": {
@@ -111,6 +122,50 @@
   "openapi": "3.0.1",
 
   "paths": {
+    "/alert": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/alertClass"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "poll",
+                "peek",
+                "dismiss"
+              ]
+            },
+            "in": "query",
+            "name": "action",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "name": "id",
+            "required": false
+          }
+        ]
+      }
+    },
+
     "/event": {
       "get": {
         "responses": {
@@ -119,8 +174,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/eventClass"
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/eventClass"
+                  }
                 }
               }
             }
@@ -163,8 +221,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/roomClass"
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/roomClass"
+                  }
                 }
               }
             }
@@ -191,8 +252,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/sensorClass"
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/sensorClass"
+                  }
                 }
               }
             }

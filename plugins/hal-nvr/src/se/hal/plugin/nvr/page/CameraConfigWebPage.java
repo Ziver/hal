@@ -24,16 +24,13 @@
 
 package se.hal.plugin.nvr.page;
 
-import se.hal.EventControllerManager;
 import se.hal.HalContext;
 import se.hal.intf.HalWebPage;
-import se.hal.page.HalAlertManager;
 import se.hal.plugin.nvr.CameraControllerManager;
 import se.hal.plugin.nvr.struct.Camera;
 import se.hal.struct.Room;
 import se.hal.util.ClassConfigurationFacade;
 import se.hal.struct.User;
-import se.hal.util.RoomValueProvider;
 import zutil.ObjectUtil;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -45,6 +42,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import static zutil.ui.UserMessageManager.*;
+
 
 public class CameraConfigWebPage extends HalWebPage {
     private static final Logger logger = LogUtil.getLogger();
@@ -86,7 +84,7 @@ public class CameraConfigWebPage extends HalWebPage {
 
                 if (camera == null) {
                     logger.warning("Unknown camera id: " + id);
-                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                    HalContext.getUserMessageManager().add(new UserMessage(
                             MessageLevel.ERROR, "Unknown camera id: " + id, MessageTTL.ONE_VIEW));
                 }
             }
@@ -103,7 +101,7 @@ public class CameraConfigWebPage extends HalWebPage {
                     camera.save(db);
                     CameraControllerManager.getInstance().register(camera);
 
-                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                    HalContext.getUserMessageManager().add(new UserMessage(
                             MessageLevel.SUCCESS, "Successfully created new camera: " + camera.getName(), MessageTTL.ONE_VIEW));
                     break;
 
@@ -117,7 +115,7 @@ public class CameraConfigWebPage extends HalWebPage {
                         camera.getDeviceConfigurator().setValues(request).applyConfiguration();
                         camera.save(db);
 
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully saved camera: " + camera.getName(), MessageTTL.ONE_VIEW));
                     }
                     break;
@@ -128,7 +126,7 @@ public class CameraConfigWebPage extends HalWebPage {
                         CameraControllerManager.getInstance().deregister(camera);
                         camera.delete(db);
 
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully removed camera: " + camera.getName(), MessageTTL.ONE_VIEW));
                     }
                     break;

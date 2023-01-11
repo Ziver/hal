@@ -26,7 +26,6 @@ package se.hal.plugin.powerchallenge.daemon;
 
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
-import se.hal.page.HalAlertManager;
 import se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationDaemon.PeerDataRspDTO;
 import se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationDaemon.SensorDTO;
 import se.hal.plugin.powerchallenge.daemon.PCDataSynchronizationDaemon.SensorDataDTO;
@@ -157,7 +156,7 @@ public class PCDataSynchronizationClient implements HalDaemon, Runnable {
 
                 } catch (NoRouteToHostException|UnknownHostException|ConnectException|SocketTimeoutException e) {
                     logger.warning("Unable to connect to "+ user.getHostname()+":"+user.getPort() +", "+ e.getMessage());
-                    HalAlertManager.getInstance().addAlert(new UserMessage(MessageLevel.WARNING,
+                    HalContext.getUserMessageManager().add(new UserMessage(MessageLevel.WARNING,
                             "Unable to connect to user with host: "+user.getHostname(), MessageTTL.DISMISSED));
                 } catch (Exception e) {
                     logger.log(Level.SEVERE, null, e);

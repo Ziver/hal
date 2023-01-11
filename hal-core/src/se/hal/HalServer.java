@@ -3,7 +3,6 @@ package se.hal;
 
 import se.hal.daemon.HalExternalWebDaemon;
 import se.hal.intf.*;
-import se.hal.page.HalAlertManager;
 import se.hal.page.StartupWebPage;
 import se.hal.struct.PluginConfig;
 import zutil.db.DBConnection;
@@ -50,8 +49,6 @@ public class HalServer {
 
             // init logging
             LogUtil.readConfiguration("logging.properties");
-
-            HalAlertManager.initialize();
 
             http = new HttpServer(HalContext.getIntegerProperty(HalContext.CONFIG_HTTP_PORT));
             http.setDefaultPage(new StartupWebPage());
@@ -138,7 +135,6 @@ public class HalServer {
 
             http.setDefaultPage(filePage);
             http.setPage("/", new HttpRedirectPage("/map"));
-            http.setPage(HalAlertManager.getInstance().getUrl(), HalAlertManager.getInstance());
 
             for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalApiEndpoint.class); it.hasNext(); )
                 registerPage(it.next());

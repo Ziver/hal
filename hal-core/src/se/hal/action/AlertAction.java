@@ -1,7 +1,7 @@
 package se.hal.action;
 
+import se.hal.HalContext;
 import se.hal.intf.HalAction;
-import se.hal.page.HalAlertManager;
 import zutil.log.LogUtil;
 import zutil.ui.UserMessageManager.MessageTTL;
 import zutil.ui.conf.Configurator;
@@ -20,17 +20,19 @@ public class AlertAction implements HalAction {
     private MessageLevel severity = MessageLevel.INFO;
     @Configurator.Configurable("Alert Message")
     private MessageTTL ttl = MessageTTL.ONE_VIEW;
-    @Configurator.Configurable("Alert Message")
-    private String message = "";
+    @Configurator.Configurable("Alert Title")
+    private String title = "";
+    @Configurator.Configurable("Alert Description")
+    private String description = "";
 
 
     @Override
     public void execute() {
-        HalAlertManager.getInstance().addAlert(new UserMessage(severity, message, ttl));
+        HalContext.getUserMessageManager().add(new UserMessage(severity, title, description, ttl));
     }
 
 
     public String toString(){
-        return "Send Alert: " + severity + ": " + message;
+        return "Send Alert: " + severity + ": " + title;
     }
 }

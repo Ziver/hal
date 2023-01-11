@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 
 /**
  * REST service to fetch event device information.
+ * For web interface definition see the OpenApi definition hal-core/resources/web/api/doc.html
  */
 public class RoomApiEndpoint extends HalApiEndpoint {
     private static final Logger logger = LogUtil.getLogger();
@@ -49,7 +50,7 @@ public class RoomApiEndpoint extends HalApiEndpoint {
             boolean filter_match = true;
 
             // id filtering
-            if (!ObjectUtil.isEmpty(req_ids) && !ArrayUtil.contains(req_ids, "" + room.getId())) {
+            if (!ObjectUtil.isEmpty((Object) req_ids) && !ArrayUtil.contains(req_ids, "" + room.getId())) {
                 filter_match = false;
             }
 

@@ -64,7 +64,7 @@ public class EventConfigWebPage extends HalWebPage {
 
                 if (event == null) {
                     logger.warning("Unknown event id: " + id);
-                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                    HalContext.getUserMessageManager().add(new UserMessage(
                             MessageLevel.ERROR, "Unknown event id: " + id, MessageTTL.ONE_VIEW));
                 }
             }
@@ -81,7 +81,7 @@ public class EventConfigWebPage extends HalWebPage {
                     event.save(db);
                     EventControllerManager.getInstance().register(event);
 
-                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                    HalContext.getUserMessageManager().add(new UserMessage(
                             MessageLevel.SUCCESS, "Successfully created new event: " + event.getName(), MessageTTL.ONE_VIEW));
                     break;
 
@@ -95,7 +95,7 @@ public class EventConfigWebPage extends HalWebPage {
                         event.getDeviceConfigurator().setValues(request).applyConfiguration();
                         event.save(db);
 
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully saved event: "+event.getName(), MessageTTL.ONE_VIEW));
                     }
                     break;
@@ -106,7 +106,7 @@ public class EventConfigWebPage extends HalWebPage {
                         EventControllerManager.getInstance().deregister(event);
                         event.delete(db);
 
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully removed event: "+event.getName(), MessageTTL.ONE_VIEW));
                     }
                     break;
@@ -120,7 +120,7 @@ public class EventConfigWebPage extends HalWebPage {
                         if (controller instanceof HalScannableController) {
                             ((HalScannableController) controller).startScan();
 
-                            HalAlertManager.getInstance().addAlert(new UserMessage(
+                            HalContext.getUserMessageManager().add(new UserMessage(
                                     MessageLevel.SUCCESS, "Initiated scanning on controller: " + controller.getClass().getName(), MessageTTL.ONE_VIEW));
                         }
                     }

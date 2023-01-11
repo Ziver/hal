@@ -49,7 +49,7 @@ public class UserConfigWebPage extends HalWebPage {
                     localUser.setAddress(request.get("address"));
                     localUser.save(db);
 
-                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                    HalContext.getUserMessageManager().add(new UserMessage(
                             MessageLevel.SUCCESS, "Successfully saved profile changes", MessageTTL.ONE_VIEW));
                     break;
             }

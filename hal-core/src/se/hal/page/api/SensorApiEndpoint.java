@@ -18,15 +18,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Available HTTP Get Request parameters:
- * <pre>
- * Sensor filtering parameters:
- * id: comma separated numeric id for specific sensors
- * type: sensor data type name
- *
- * Data filtering parameters:
- * aggr: Aggregation periods, needs to be provided to retrieve data. Possible values: minute,hour,day,week
- * </pre>
+ * RESTish API for accessing and managing Sensors.
+ * For web interface definition see the OpenApi definition hal-core/resources/web/api/doc.html
  */
 public class SensorApiEndpoint extends HalApiEndpoint {
     private static final Logger logger = LogUtil.getLogger();
@@ -62,7 +55,7 @@ public class SensorApiEndpoint extends HalApiEndpoint {
             boolean filter_match = true;
 
             // id filtering
-            if (!ObjectUtil.isEmpty(reqIds) && !ArrayUtil.contains(reqIds, "" + sensor.getId())) {
+            if (!ObjectUtil.isEmpty((Object) reqIds) && !ArrayUtil.contains(reqIds, "" + sensor.getId())) {
                 filter_match = false;
             }
 

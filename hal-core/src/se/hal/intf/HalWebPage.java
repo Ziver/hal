@@ -1,7 +1,6 @@
 package se.hal.intf;
 
 import se.hal.HalContext;
-import se.hal.page.HalAlertManager;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -78,7 +77,6 @@ public abstract class HalWebPage implements HttpPage{
             main.set("navigation", navigationTemplate);
             main.set("side_navigation", subNavigationTemplate);
             main.set("content", httpRespond(session, cookie, request));
-            main.set("alerts", HalAlertManager.getInstance().generateAlerts()); // do last so we don't miss any alerts
 
             out.print(main.compile());
         } catch (Exception e) {

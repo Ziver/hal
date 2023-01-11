@@ -3,7 +3,6 @@ package se.hal.daemon;
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
 import se.hal.intf.HalSensorConfig.AggregationMethod;
-import se.hal.page.HalAlertManager;
 import se.hal.struct.Sensor;
 import se.hal.util.UTCTimePeriod;
 import se.hal.util.UTCTimeUtility;
@@ -119,7 +118,7 @@ public class SensorDataAggregatorDaemon implements HalDaemon, Runnable {
                             "at <span class=\"timestamp\">"+dbMaxRawTimestamp+"</span>",
                             MessageTTL.DISMISSED);
                     alertMap.put(sensor.getId(), alert);
-                    HalAlertManager.getInstance().addAlert(alert);
+                    HalContext.getUserMessageManager().add(alert);
                 }
                 else {
                     // Sensor has responded remove alert

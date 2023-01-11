@@ -66,7 +66,7 @@ public class SensorConfigWebPage extends HalWebPage {
 
                 if (sensor == null) {
                     logger.warning("Unknown sensor id: " + sensorId);
-                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                    HalContext.getUserMessageManager().add(new UserMessage(
                             MessageLevel.ERROR, "Unknown sensor id: " + sensorId, MessageTTL.ONE_VIEW));
                 }
             }
@@ -77,7 +77,7 @@ public class SensorConfigWebPage extends HalWebPage {
 
                 if (user == null) {
                     logger.warning("Unknown user id: " + userId);
-                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                    HalContext.getUserMessageManager().add(new UserMessage(
                             MessageLevel.ERROR, "Unknown user id: " + userId, MessageTTL.ONE_VIEW));
                 }
             }
@@ -99,7 +99,7 @@ public class SensorConfigWebPage extends HalWebPage {
                     sensor.save(db);
                     SensorControllerManager.getInstance().register(sensor);
 
-                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                    HalContext.getUserMessageManager().add(new UserMessage(
                             MessageLevel.SUCCESS, "Successfully created new sensor: " + sensor.getName(), MessageTTL.ONE_VIEW));
                     break;
 
@@ -113,7 +113,7 @@ public class SensorConfigWebPage extends HalWebPage {
                         sensor.getDeviceConfigurator().setValues(request).applyConfiguration();
                         sensor.save(db);
 
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully saved sensor: " + sensor.getName(), MessageTTL.ONE_VIEW));
                     }
                     break;
@@ -124,7 +124,7 @@ public class SensorConfigWebPage extends HalWebPage {
                         SensorControllerManager.getInstance().deregister(sensor);
                         sensor.delete(db);
 
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully removed sensor: " + sensor.getName(), MessageTTL.ONE_VIEW));
                     }
                     break;
@@ -138,7 +138,7 @@ public class SensorConfigWebPage extends HalWebPage {
                         if (controller instanceof HalScannableController) {
                             ((HalScannableController) controller).startScan();
 
-                            HalAlertManager.getInstance().addAlert(new UserMessage(
+                            HalContext.getUserMessageManager().add(new UserMessage(
                                     MessageLevel.SUCCESS, "Initiated scanning on controller: " + controller.getClass().getName(), MessageTTL.ONE_VIEW));
                         }
                     }
@@ -156,7 +156,7 @@ public class SensorConfigWebPage extends HalWebPage {
                     user.setExternal(true);
                     user.save(db);
 
-                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                    HalContext.getUserMessageManager().add(new UserMessage(
                             MessageLevel.SUCCESS, "Successfully created new external user with host: "+user.getHostname(), MessageTTL.ONE_VIEW));
                     break;
 
@@ -167,7 +167,7 @@ public class SensorConfigWebPage extends HalWebPage {
                         user.setPort(Integer.parseInt(request.get("port")));
                         user.save(db);
 
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully saved external user with host: "+user.getHostname(), MessageTTL.ONE_VIEW));
                     }
                     break;
@@ -176,7 +176,7 @@ public class SensorConfigWebPage extends HalWebPage {
                         logger.info("Removing external user: " + user.getHostname());
                         user.delete(db);
 
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully removed user with host: "+user.getHostname(), MessageTTL.ONE_VIEW));
                     }
                     break;
@@ -191,7 +191,7 @@ public class SensorConfigWebPage extends HalWebPage {
                         sensor.setSynced(Boolean.parseBoolean(request.get("sync")));
                         sensor.save(db);
 
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully saved external sensor: " + sensor.getName(), MessageTTL.ONE_VIEW));
                     }
                     break;

@@ -1,11 +1,11 @@
 package se.hal.struct;
 
+import se.hal.page.api.AlertApiEndpoint;
 import zutil.db.DBConnection;
 import zutil.db.bean.DBBean;
 import zutil.db.bean.DBBeanSQLResultHandler;
 import zutil.parser.DataNode;
 import zutil.ui.UserMessageManager.UserMessage;
-import zutil.ui.conf.Configurator;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -77,16 +77,21 @@ public class Room extends DBBean {
     }
 
     public DataNode getDataNode() {
-        DataNode deviceNode = new DataNode(DataNode.DataType.Map);
-        deviceNode.set("id", getId());
-        deviceNode.set("name", getName());
+        DataNode rootNode = new DataNode(DataNode.DataType.Map);
+        rootNode.set("id", getId());
+        rootNode.set("name", getName());
 
-        DataNode mapNode = deviceNode.set("map", DataNode.DataType.Map);
+        DataNode mapNode = rootNode.set("map", DataNode.DataType.Map);
         mapNode.set("x", getMapX());
         mapNode.set("y", getMapY());
         mapNode.set("width", getMapWidth());
         mapNode.set("height", getMapHeight());
 
-        return deviceNode;
+        if (roomAlert != null) {
+            DataNode alertNode = AlertApiEndpoint.getUserMessageDataNode(roomAlert);
+            rootNode.set("alert", alertNode);
+        }
+
+        return rootNode;
     }
 }

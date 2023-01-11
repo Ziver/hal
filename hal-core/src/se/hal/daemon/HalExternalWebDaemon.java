@@ -4,7 +4,6 @@ import org.shredzone.acme4j.exception.AcmeException;
 import se.hal.HalContext;
 import se.hal.intf.HalDaemon;
 import se.hal.intf.HalWebPage;
-import se.hal.page.HalAlertManager;
 import se.hal.util.HalAcmeDataStore;
 import se.hal.util.HalOAuth2RegistryStore;
 import zutil.log.LogUtil;
@@ -79,12 +78,12 @@ public class HalExternalWebDaemon implements HalDaemon {
                 startHttpServer();
             } else {
                 logger.warning("Missing '" + CONFIG_HTTP_EXTERNAL_PORT + "' and '" + CONFIG_HTTP_EXTERNAL_DOMAIN + "' configuration, will not setup external web-server.");
-                HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
+                HalContext.getUserMessageManager().add(new UserMessageManager.UserMessage(
                         UserMessageManager.MessageLevel.WARNING, "Missing '" + CONFIG_HTTP_EXTERNAL_PORT + "' and '" + CONFIG_HTTP_EXTERNAL_DOMAIN + "' configuration, will not setup external web-server.", UserMessageManager.MessageTTL.DISMISSED));
             }
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Was unable to initiate external web-server.", e);
-            HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
+            HalContext.getUserMessageManager().add(new UserMessageManager.UserMessage(
                     UserMessageManager.MessageLevel.ERROR, "Was unable to initiate external web-server: " + e.getMessage(), UserMessageManager.MessageTTL.DISMISSED));
         }
     }
@@ -119,7 +118,7 @@ public class HalExternalWebDaemon implements HalDaemon {
                     acmeDataStore.storeCertificate(certificate);
 
                     logger.info("SSL certificate successfully generated.");
-                    HalAlertManager.getInstance().addAlert(new UserMessageManager.UserMessage(
+                    HalContext.getUserMessageManager().add(new UserMessageManager.UserMessage(
                             UserMessageManager.MessageLevel.INFO, "SSL certificate successfully generated for external web-server.", UserMessageManager.MessageTTL.DISMISSED));
                 } else {
                     logger.warning("No SSL certificate is configured for external web-server, will run server in unsecure mode (not recommended).");

@@ -43,10 +43,10 @@ public class PluginConfigWebPage extends HalWebPage {
                         HalServer.enablePlugin(name,
                                 (request.containsKey("enabled") && "on".equals(request.get("enabled"))));
 
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully updated plugin " + name + ", change will take affect after restart.", MessageTTL.ONE_VIEW));
                     } else {
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.ERROR, "Hal-Core cannot be disabled as it is critical component of Hal.", MessageTTL.ONE_VIEW));
                     }
                     break;
@@ -66,14 +66,14 @@ public class PluginConfigWebPage extends HalWebPage {
                         if (controller instanceof HalScannableController) {
                             ((HalScannableController) controller).startScan();
 
-                            HalAlertManager.getInstance().addAlert(new UserMessage(
+                            HalContext.getUserMessageManager().add(new UserMessage(
                                     MessageLevel.SUCCESS, "Initiated scanning on controller: " + controllerName, MessageTTL.ONE_VIEW));
                         } else {
-                            HalAlertManager.getInstance().addAlert(new UserMessage(
+                            HalContext.getUserMessageManager().add(new UserMessage(
                                     MessageLevel.ERROR, "Controller " + controllerName + " does not support scanning.", MessageTTL.ONE_VIEW));
                         }
                     } else {
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.ERROR, "Unable to find controller: " + controllerName, MessageTTL.ONE_VIEW));
                     }
                     break;

@@ -73,7 +73,7 @@ public class RoomConfigWebPage extends HalWebPage {
 
                 if (room == null) {
                     logger.warning("Unknown room id: " + id);
-                    HalAlertManager.getInstance().addAlert(new UserMessage(
+                    HalContext.getUserMessageManager().add(new UserMessage(
                             MessageLevel.ERROR, "Unknown room id: " + id, MessageTTL.ONE_VIEW));
                 }
             }
@@ -90,7 +90,7 @@ public class RoomConfigWebPage extends HalWebPage {
                         room.setName(request.get("name"));
                         room.save(db);
 
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully updated room: " + room.getName(), MessageTTL.ONE_VIEW));
                     }
                     break;
@@ -100,7 +100,7 @@ public class RoomConfigWebPage extends HalWebPage {
                         logger.info("Removing room(id: " + room.getId() + "): " + room.getName());
                         room.delete(db);
 
-                        HalAlertManager.getInstance().addAlert(new UserMessage(
+                        HalContext.getUserMessageManager().add(new UserMessage(
                                 MessageLevel.SUCCESS, "Successfully removed room: " + room.getName(), MessageTTL.ONE_VIEW));
                     }
                     break;

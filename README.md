@@ -28,7 +28,7 @@ Under development (Not ready to be used yet)
 - **Google Assistant**
 - **MQTT Devices**
 
-The project is currently in alpha state, and as such things will change and break.
+The project is currently in alpha state, and as such things will change and break continuously.
 
 ### Screenshots
 ![Week Graph](screenshot_01.jpg)

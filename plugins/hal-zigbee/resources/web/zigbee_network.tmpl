@@ -124,6 +124,7 @@
                                     <th>Name</th>
                                     <th>Last Value</th>
                                     <th>Last Report Time</th>
+                                    <th></th>
                                 </thead>
                                 {{#.getAttributes()}}
                                 <tr>
@@ -131,6 +132,20 @@
                                     <td>{{.getName()}}</td>
                                     <td>{{.getLastValue()}}</td>
                                     <td><span class="timestamp">{{.getLastReportTime().getTimeInMillis()}}</span></td>
+                                    <td>
+                                        <form method="POST">
+                                            <input type="hidden" name="nodeAddress" value="{{.cluster.zigbeeEndpoint.node.getIeeeAddress()}}">
+                                            <input type="hidden" name="endpointId" value="{{.cluster.zigbeeEndpoint.getEndpointId()}}">
+                                            <input type="hidden" name="clusterId" value="{{.cluster.getClusterId()}}">
+                                            <input type="hidden" name="attributeId" value="{{.getId()}}">
+
+                                            <div class="btn-toolbar pull-right">
+                                                <button type="submit" class="btn btn-primary btn-xs" name="action" value="refresh">
+                                                    <span class="glyphicon glyphicon-refresh"></span>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </td>
                                 </tr>
                                 {{/.getAttributes()}}
                             </table>
@@ -163,20 +178,7 @@
                                     <td>{{.getName()}}</td>
                                     <td>{{.getLastValue()}}</td>
                                     <td><span class="timestamp">{{.getLastReportTime().getTimeInMillis()}}</span></td>
-                                    <td>
-                                        <form method="POST">
-                                            <input type="hidden" name="nodeAddress" value="{{.cluster.zigbeeEndpoint.node.getIeeeAddress()}}">
-                                            <input type="hidden" name="endpointId" value="{{.cluster.zigbeeEndpoint.getEndpointId()}}">
-                                            <input type="hidden" name="clusterId" value="{{.cluster.getClusterId()}}">
-                                            <input type="hidden" name="attributeId" value="{{.getId()}}">
-
-                                            <div class="btn-toolbar pull-right">
-                                                <button type="submit" class="btn btn-primary btn-xs" name="action" value="refresh">
-                                                    <span class="glyphicon glyphicon-refresh"></span>
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </td>
+                                    <td></td>
                                 </tr>
                                 {{/.getAttributes()}}
                             </table>

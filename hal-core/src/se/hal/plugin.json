@@ -38,6 +38,7 @@
 		{"se.hal.intf.HalAction": "se.hal.action.AlertAction"},
 		{"se.hal.intf.HalAction": "se.hal.action.DismissRoomAlertAction"},
 		{"se.hal.intf.HalAction": "se.hal.action.RoomAlertAction"},
-		{"se.hal.intf.HalAction": "se.hal.action.SendEventAction"}
+		{"se.hal.intf.HalAction": "se.hal.action.SendEventAction"},
+		{"se.hal.intf.HalAction": "se.hal.action.TelegramMessageAction"}
 	]
 }

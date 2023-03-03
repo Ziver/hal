@@ -110,14 +110,15 @@ if [[ ${MODE} == "FOREGROUND" ]]; then
 
     while [[ ${EXIT_CODE} -eq 200 ]]; do
         # Restart as long as we have a exit code of 200, this allows the application to restart itself
-        startHal
+        #startHal
+        ./gradlew run
         EXIT_CODE=$?
     done
 elif [[ ${MODE} == "BACKGROUND" ]]; then
     # Kill current session
     screen -S hal -X kill
     # Start new session
-    screen -S hal -L -d -m ./run --foreground
+    screen -S hal -L -d -m $(dirname "$0")/run.sh --foreground
 
     echo "-------------------------"
     screen -list

@@ -2,6 +2,8 @@
 	"version": 0.1,
 	"name": "Hal-MQTT",
 	"interfaces": [
-		{"se.hal.intf.HalAutostartController": "se.hal.plugin.mqtt.HalMqttController"}
+		{"se.hal.intf.HalAutostartController": "se.hal.plugin.mqtt.HalMqttController"},
+
+		{"se.hal.intf.HalWebPage": "se.hal.plugin.mqtt.page.MqttOverviewPage"}
 	]
 }

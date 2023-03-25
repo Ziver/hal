@@ -24,6 +24,7 @@
 
 package se.hal.plugin.mqtt;
 
+import se.hal.daemon.HalMulticastDnsDaemon;
 import se.hal.intf.*;
 import se.hal.plugin.mqtt.device.HalMqttDeviceConfig;
 import se.hal.plugin.mqtt.device.HalMqttDeviceData;
@@ -44,7 +45,6 @@ import java.util.logging.Logger;
 public class HalMqttController implements HalAutostartController, MqttSubscriptionListener, HalEventController {
     private final Logger logger = LogUtil.getLogger();
 
-    private MulticastDnsServer mDns;
     private MqttBroker mqttBroker;
 
     private HashMap<String, HalMqttDeviceConfig> topics = new HashMap<>();
@@ -57,13 +57,13 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
     @Override
     public void initialize() {
         try {
-            InetAddress serverIp = InetUtil.getLocalInet4Address().get(0);
-
-            logger.info("Starting up mDNS Server");
-            mDns = new MulticastDnsServer();
-            mDns.addEntry("_mqtt._tcp.local", serverIp);
-            mDns.addEntry("_hal._tcp.local", serverIp);
-            mDns.start();
+            if (HalMulticastDnsDaemon.getInstance() != null) {
+                logger.info("Register MQTT in mDNS");
+                InetAddress serverIp = InetUtil.getLocalInet4Address().get(0);
+                HalMulticastDnsDaemon.getInstance().addDnsEntry("_mqtt._tcp.local", serverIp);
+            } else {
+                logger.info("mDNS not available");
+            }
 
             logger.info("Starting up MQTT Server");
             mqttBroker = new MqttBroker();
@@ -83,12 +83,6 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
 
     @Override
     public void close(){
-        if (mDns != null) {
-            logger.info("Shutting down mDNS Server");
-            mDns.close();
-            mDns = null;
-        }
-
         if (mqttBroker != null) {
             logger.info("Shutting down MQTT Server");
             mqttBroker.close();
@@ -113,6 +107,10 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
                 }
             }
         }
+    }
+
+    public MqttBroker getBroker() {
+        return mqttBroker;
     }
 
     // --------------------------

@@ -1,0 +1,23 @@
+<h1 class="page-header">MQTT Overview</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel panel-default drop-shadow">
+            <div class="panel-heading">Published Topic Data</div>
+            <div class="panel-body">
+                <table class="table table-hover table-condensed">
+                    <tr>
+                        <th>Topic</th>
+                        <th>Published Data</th>
+                    </tr>
+                    {{#topics}}
+                    <tr>
+                        <td style="font-family:monospace;">{{.getKey()}}</td>
+                        <td><pre style="white-space: pre-wrap;">{{.getValue()}}</pre></td>
+                    </tr>
+                    {{/topics}}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

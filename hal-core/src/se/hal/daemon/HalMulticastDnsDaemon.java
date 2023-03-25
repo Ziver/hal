@@ -11,16 +11,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static se.hal.HalContext.CONFIG_DNS_LOCAL_DOMAIN;
-
 
 public class HalMulticastDnsDaemon implements HalDaemon {
     private static final Logger logger = LogUtil.getLogger();
+    private static HalMulticastDnsDaemon instance;
 
     private MulticastDnsServer server;
 
     @Override
-    public void initiate(ScheduledExecutorService executor) {
+    public synchronized void initiate(ScheduledExecutorService executor) {
+        if (instance != null)
+            return;
+
         String localDomain = HalContext.getStringProperty(HalContext.CONFIG_DNS_LOCAL_DOMAIN, "hal.local");
 
         if (!localDomain.isEmpty()) {
@@ -30,6 +32,8 @@ public class HalMulticastDnsDaemon implements HalDaemon {
                 server = new MulticastDnsServer();
                 server.addEntry(localDomain, InetAddress.getLocalHost());
                 server.start();
+
+                instance = this;
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "Was unable to start mDNS Server.", e);
             }
@@ -38,4 +42,12 @@ public class HalMulticastDnsDaemon implements HalDaemon {
         }
     }
 
+    public void addDnsEntry(String name, InetAddress ip) {
+        server.addEntry(name, ip);
+    }
+
+
+    public static HalMulticastDnsDaemon getInstance() {
+        return instance;
+    }
 }

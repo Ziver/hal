@@ -69,6 +69,7 @@ function updateAlerts() {
 
                 alertElement.find(".alert-title").html(alert.title);
                 alertElement.find(".alert-description").html(alert.description);
+                alertElement.find(".timestamp").relTimestamp();
             });
         });
 }

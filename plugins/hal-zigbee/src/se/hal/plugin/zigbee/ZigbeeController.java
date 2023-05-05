@@ -231,6 +231,10 @@ public class ZigbeeController implements HalSensorController,
     // Zigbee Node Methods
     // ------------------------------------------
 
+    public void unPairNode(ZigBeeNode node) {
+        networkManager.leave(node.getNetworkAddress(), node.getIeeeAddress(), true);
+    }
+
     @Override
     public void deviceStatusUpdate(ZigBeeNodeStatus deviceStatus, Integer networkAddress, IeeeAddress ieeeAddress) {
         logger.fine("New device connected to network: " + ieeeAddress + "(" + deviceStatus + ")");
@@ -402,7 +406,7 @@ public class ZigbeeController implements HalSensorController,
         public void attributeUpdated(ZclAttribute attribute, Object value) {
             logger.finer("[Node: " + endpoint.getIeeeAddress() + ", Endpoint: " + endpoint.getEndpointId() + ", Cluster: " +  attribute.getCluster().getId() + "] Attribute " + config.getClass().getSimpleName() + " updated: id=" + attribute.getId() + ", attribute_name=" + attribute.getName() + ", value=" + attribute.getLastValue());
 
-            HalDeviceData data = config.getDeviceData(attribute);
+            HalDeviceData data = config.getDeviceData(endpoint, attribute);
             if (data != null) {
                 for (HalDeviceReportListener deviceListener : deviceListeners) {
                     deviceListener.reportReceived(config, data);

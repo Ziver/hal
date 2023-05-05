@@ -62,6 +62,11 @@ public class ZigbeeNetworkPage extends HalWebPage {
             }
 
             switch (request.get("action")) {
+                case "node_remove":
+                    if (node != null)
+                        controller.unPairNode(node);
+                    break;
+
                 case "refresh":
                     if (attribute != null)
                         attribute.readValue(0);

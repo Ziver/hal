@@ -25,6 +25,9 @@ package se.hal.struct.devicedata;
 import se.hal.intf.HalEventData;
 
 
+/**
+ * Represents an 'Opened' or 'Closed' state based event.
+ */
 public class OpenClosedEventData extends HalEventData {
 
     private boolean isOpen;

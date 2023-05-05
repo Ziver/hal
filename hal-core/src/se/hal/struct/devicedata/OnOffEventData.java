@@ -24,7 +24,9 @@ package se.hal.struct.devicedata;
 
 import se.hal.intf.HalEventData;
 
-
+/**
+ * Represents a 'ON' or 'OFF' state based event.
+ */
 public class OnOffEventData extends HalEventData {
 
     private boolean isOn;

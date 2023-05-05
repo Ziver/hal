@@ -15,8 +15,10 @@ public class ZigbeeHalDeviceFactory {
 
     private static final HashMap<Integer, Class<? extends ZigbeeHalDeviceConfig>> clusterDeviceMap = new HashMap<>();
     static {
+        clusterDeviceMap.put(new ZigbeeColorConfig().getZigbeeClusterId(), ZigbeeColorConfig.class);
         clusterDeviceMap.put(new ZigbeeHumidityConfig().getZigbeeClusterId(), ZigbeeHumidityConfig.class);
         clusterDeviceMap.put(new ZigbeeIlluminanceConfig().getZigbeeClusterId(), ZigbeeIlluminanceConfig.class);
+        clusterDeviceMap.put(new ZigbeeLevelConfig().getZigbeeClusterId(), ZigbeeLevelConfig.class);
         clusterDeviceMap.put(new ZigbeeOccupancyConfig().getZigbeeClusterId(), ZigbeeOccupancyConfig.class);
         clusterDeviceMap.put(new ZigbeeOnOffConfig().getZigbeeClusterId(), ZigbeeOnOffConfig.class);
         clusterDeviceMap.put(new ZigbeePressureConfig().getZigbeeClusterId(), ZigbeePressureConfig.class);

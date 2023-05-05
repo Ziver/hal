@@ -1,5 +1,6 @@
 package se.hal.plugin.zigbee.device;
 
+import com.zsmartsystems.zigbee.ZigBeeEndpoint;
 import com.zsmartsystems.zigbee.zcl.ZclAttribute;
 import com.zsmartsystems.zigbee.zcl.ZclCluster;
 import com.zsmartsystems.zigbee.zcl.ZclCommand;
@@ -40,8 +41,8 @@ public class ZigbeeOnOffConfig extends ZigbeeHalEventDeviceConfig implements Hal
     }
 
     @Override
-    public HalDeviceData getDeviceData(ZclAttribute zclAttribute) {
-        if (zclAttribute.getCluster().getId() == getZigbeeClusterId() &&
+    public HalDeviceData getDeviceData(ZigBeeEndpoint endpoint, ZclAttribute zclAttribute) {
+        if (zclAttribute.getClusterType().getId() == getZigbeeClusterId() &&
                 zclAttribute.getId() == ZclOnOffCluster.ATTR_ONOFF)
             return new OnOffEventData(
                     (boolean) zclAttribute.getLastValue(),

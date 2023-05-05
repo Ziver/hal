@@ -27,15 +27,14 @@ package se.hal.plugin.mqtt;
 import se.hal.daemon.HalMulticastDnsDaemon;
 import se.hal.intf.*;
 import se.hal.plugin.mqtt.device.HalMqttDeviceConfig;
-import se.hal.plugin.mqtt.device.HalMqttDeviceData;
 import zutil.InetUtil;
 import zutil.log.LogUtil;
-import zutil.net.dns.MulticastDnsServer;
 import zutil.net.mqtt.MqttBroker;
 import zutil.net.mqtt.MqttSubscriptionListener;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -47,7 +46,7 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
 
     private MqttBroker mqttBroker;
 
-    private HashMap<String, HalMqttDeviceConfig> topics = new HashMap<>();
+    private HashMap<String, List<HalMqttDeviceConfig>> topics = new HashMap<>();
     private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
 
     // --------------------------
@@ -67,6 +66,7 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
 
             logger.info("Starting up MQTT Server");
             mqttBroker = new MqttBroker();
+            mqttBroker.addGlobalSubscriber(this);
             mqttBroker.start();
 
         } catch (IOException e) {
@@ -96,14 +96,16 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
 
     @Override
     public void dataPublished(String topic, byte[] data) {
-        HalMqttDeviceConfig eventConfig = topics.get(topic);
+        List<HalMqttDeviceConfig> devices = topics.get(topic);
 
-        if (eventConfig != null && data.length > 0) {
-            HalMqttDeviceData eventData = new HalMqttDeviceData(data);
+        if (devices != null && data.length > 0) {
+            for (HalMqttDeviceConfig deviceConfig : devices) {
+                HalDeviceData deviceData = deviceConfig.getDeviceData(data);
 
-            if (deviceListeners != null) {
-                for (HalDeviceReportListener deviceListener : deviceListeners) {
-                    deviceListener.reportReceived(eventConfig, eventData);
+                if (deviceListeners != null) {
+                    for (HalDeviceReportListener deviceListener : deviceListeners) {
+                        deviceListener.reportReceived(deviceConfig, deviceData);
+                    }
                 }
             }
         }
@@ -121,7 +123,10 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
     public void register(HalDeviceConfig deviceConfig) {
         if (deviceConfig instanceof HalMqttDeviceConfig) {
             HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) deviceConfig;
-            topics.put(mqttEvent.getTopic(), mqttEvent);
+
+            if (!topics.containsKey(mqttEvent.getTopic()))
+                topics.put(mqttEvent.getTopic(), new ArrayList<>());
+            topics.get(mqttEvent.getTopic()).add(mqttEvent);
         } else {
             throw new IllegalArgumentException(
                     "Device config is not an instance of " + HalMqttDeviceConfig.class + ": " + deviceConfig.getClass());
@@ -132,7 +137,8 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
     public void deregister(HalDeviceConfig deviceConfig) {
         if (deviceConfig instanceof HalMqttDeviceConfig) {
             HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) deviceConfig;
-            topics.remove(mqttEvent.getTopic());
+            if (topics.containsKey(mqttEvent.getTopic()))
+                topics.get(mqttEvent.getTopic()).remove(deviceConfig);
         }
     }
 
@@ -147,7 +153,11 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
 
     @Override
     public int size() {
-        return topics.size();
+        int size = 0;
+        for (List<HalMqttDeviceConfig> devices : topics.values()) {
+            size += devices.size();
+        }
+        return size;
     }
 
     @Override

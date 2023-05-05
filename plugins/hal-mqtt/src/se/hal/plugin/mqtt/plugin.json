@@ -4,6 +4,8 @@
 	"interfaces": [
 		{"se.hal.intf.HalAutostartController": "se.hal.plugin.mqtt.HalMqttController"},
 
+		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.mqtt.device.HalMqttParticularMatterDeviceConfig"},
+
 		{"se.hal.intf.HalWebPage": "se.hal.plugin.mqtt.page.MqttOverviewPage"}
 	]
 }

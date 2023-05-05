@@ -2,8 +2,11 @@ package se.hal.page;
 
 import se.hal.EventControllerManager;
 import se.hal.HalContext;
+import se.hal.intf.HalEventData;
 import se.hal.intf.HalWebPage;
 import se.hal.struct.Event;
+import se.hal.struct.devicedata.ColorEventData;
+import se.hal.struct.devicedata.LevelEventData;
 import se.hal.struct.devicedata.OnOffEventData;
 import se.hal.util.DeviceNameComparator;
 import se.hal.util.HistoryDataListSqlResult;
@@ -41,24 +44,40 @@ public class EventOverviewWebPage extends HalWebPage {
 
         DBConnection db = HalContext.getDB();
 
-        if (request.containsKey("action")) {
-            int id = (ObjectUtil.isEmpty(request.get("action_id")) ? -1 : Integer.parseInt(request.get("action_id")));
+        if ("modify".equals(request.get("action"))) {
+            int id = (ObjectUtil.isEmpty(request.get("action-id")) ? -1 : Integer.parseInt(request.get("action-id")));
 
             // change event data
-            OnOffEventData eventData = new OnOffEventData();
-            if (request.containsKey("enabled") && "on".equals(request.get("enabled")))
-                eventData.setOn();
-            else
-                eventData.setOff();
+            HalEventData eventData = null;
 
-            logger.info("Modifying Event(" + id + ") state: " + eventData.toString());
-            Event event = Event.getEvent(db, id);
-            EventControllerManager.getInstance().send(event, eventData);
+            switch (request.get("type")) {
+                case "level":
+                    eventData = new LevelEventData(Integer.parseInt(request.get("data")) / 100.0, 0);
+                    break;
+
+                case "color":
+                    eventData = new ColorEventData(request.get("data"), 0);
+                    break;
+
+                case "on-off":
+                    eventData = new OnOffEventData("on".equals(request.get("data")), 0);
+                    break;
+            }
+
+            if (eventData != null) {
+                logger.info("Modifying Event(" + id + ") state: " + eventData.toString());
+                Event event = Event.getEvent(db, id);
+                EventControllerManager.getInstance().send(event, eventData);
+            } else {
+                logger.warning("Unable to process event change request, data type most likely not supported: " + request.get("type"));
+            }
         }
 
         int id = (ObjectUtil.isEmpty(request.get("id")) ? -1 : Integer.parseInt(request.get("id")));
 
-        // Save new input
+        // --------------------------------------
+        // Detailed page
+        // --------------------------------------
         if (id >= 0) {
             Event event = Event.getEvent(db, id);
 
@@ -74,6 +93,9 @@ public class EventOverviewWebPage extends HalWebPage {
             tmpl.set("history", history);
             return tmpl;
         }
+        // --------------------------------------
+        // Overview page
+        // --------------------------------------
         else {
             List<Event> events = Event.getLocalEvents(db);
             Collections.sort(events, DeviceNameComparator.getInstance());

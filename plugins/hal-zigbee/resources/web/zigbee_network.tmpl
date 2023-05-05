@@ -35,10 +35,19 @@
     <div class="panel panel-default drop-shadow">
         <!-- NODE -->
 
-        <div class="panel-heading">
-            <a href="#a" data-toggle="collapse" data-target="#node-{{.getIeeeAddress()}}">
-                Node: {{.getIeeeAddress()}}
-            </a>
+        <div class="panel-heading clearfix">
+            <a href="#a" class="pull-left" data-toggle="collapse" data-target="#node-{{.getIeeeAddress()}}">
+               Node: {{.getIeeeAddress()}}
+           </a>
+
+            <div class="btn-toolbar pull-right">
+                <form method="POST">
+                    <input type="hidden" name="nodeAddress" value="{{.getIeeeAddress()}}">
+                    <button type="submit" class="btn btn-danger btn-xs" name="action" value="node_remove">
+                        <small class="glyphicon glyphicon-trash"></small>
+                    </button>
+                </form>
+            </div>
         </div>
         <div id="node-{{.getIeeeAddress()}}" class="panel-body collapse">
             <div class="col-md-6">
@@ -122,6 +131,7 @@
                                 <thead>
                                     <th>ID</th>
                                     <th>Name</th>
+                                    <th>Type</th>
                                     <th>Last Value</th>
                                     <th>Last Report Time</th>
                                     <th></th>
@@ -130,6 +140,7 @@
                                 <tr>
                                     <td>{{.getId()}}</td>
                                     <td>{{.getName()}}</td>
+                                    <td>{{.getDataType()}}</td>
                                     <td>{{.getLastValue()}}</td>
                                     <td><span class="timestamp">{{.getLastReportTime().getTimeInMillis()}}</span></td>
                                     <td>
@@ -168,6 +179,7 @@
                                 <thead>
                                     <th>ID</th>
                                     <th>Name</th>
+                                    <th>Type</th>
                                     <th>Last Value</th>
                                     <th>Last Report Time</th>
                                     <th></th>
@@ -176,6 +188,7 @@
                                 <tr>
                                     <td>{{.getId()}}</td>
                                     <td>{{.getName()}}</td>
+                                    <td>{{.getDataType()}}</td>
                                     <td>{{.getLastValue()}}</td>
                                     <td><span class="timestamp">{{.getLastReportTime().getTimeInMillis()}}</span></td>
                                     <td></td>

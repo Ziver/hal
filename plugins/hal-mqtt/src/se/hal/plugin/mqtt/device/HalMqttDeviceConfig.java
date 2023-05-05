@@ -48,22 +48,33 @@
 
 package se.hal.plugin.mqtt.device;
 
-import se.hal.intf.HalEventConfig;
+import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalEventData;
+import se.hal.intf.HalSensorConfig;
 import se.hal.plugin.mqtt.HalMqttController;
+import zutil.ui.conf.Configurator;
 
-public class HalMqttDeviceConfig implements HalEventConfig {
-    private final String topic;
-
-
-    public HalMqttDeviceConfig(String topic) {
-        this.topic = topic;
-    }
+public abstract class HalMqttDeviceConfig implements HalSensorConfig {
+    @Configurator.Configurable(value = "MQTT Topic")
+    private String topic;
+    @Configurator.Configurable(value = "JSON Path", description = "If the value of the topic is a JSON then this parameter can be used to specify the path to the e.g. temperature value." +
+            "<br>THe parameter uses the JSON-Path syntax where it always starts with $ and object fields can be accessed by .<key> and a array element by [index]")
+    private String jsonPath;
 
 
     public String getTopic() {
         return topic;
+    }
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+    public String getJsonPath() {
+        return jsonPath;
+    }
+    public void setJsonPath(String jsonPath) {
+        this.jsonPath = jsonPath;
     }
 
     // --------------------------
@@ -75,15 +86,25 @@ public class HalMqttDeviceConfig implements HalEventConfig {
         return HalMqttController.class;
     }
 
-    @Override
-    public Class<? extends HalEventData> getDeviceDataClass() {
-        return HalMqttDeviceData.class;
-    }
+    /**
+     * @param data the data published to the MQTT topic.
+     * @return a new data object instance containing the device data based on the input data.
+     */
+    public abstract HalDeviceData getDeviceData(byte[] data);
+
+    // --------------------------
+    // Java Methods
+    // --------------------------
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof HalMqttDeviceConfig)
-            return topic.equals(((HalMqttDeviceConfig) obj).topic);
+            return topic.equals(((HalMqttDeviceConfig) obj).topic) && jsonPath.equals(((HalMqttDeviceConfig) obj).jsonPath);
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Topic: " + topic + ", JSON Path: " + jsonPath;
     }
 }

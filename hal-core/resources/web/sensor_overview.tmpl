@@ -41,11 +41,11 @@
                 var table = document.getElementById('sensor-device-table');
 
                 for (const row of table.rows) {
-                    var dataItem = data.find(item => item.id == row.dataset.deviceId);
+                    var deviceData = data.find(item => item.id == row.dataset.deviceId);
 
-                    if (dataItem) {
-                        row.cells[2].innerHTML = dataItem.data?.valueStr;
-                        row.cells[3].innerHTML = dataItem.data?.timestamp;
+                    if (deviceData) {
+                        row.cells[2].innerHTML = deviceData.data?.valueStr;
+                        row.cells[3].innerHTML = deviceData.data?.timestamp;
 
                         $(row.cells[3]).relTimestamp();
                     }

@@ -1,7 +1,5 @@
 /*
- * The MIT License (MIT)
- *
- * Copyright (c) 2020 Ziver Koc
+ * Copyright (c) 2015 Ziver
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,38 +20,40 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.mqtt.device;
+package se.hal.struct.devicedata;
 
 import se.hal.intf.HalEventData;
-import zutil.StringUtil;
-import zutil.log.LogUtil;
 
-import java.util.logging.Logger;
+/**
+ * Represents a percentage based level event.
+ */
+public class LevelEventData extends HalEventData {
 
-public class HalMqttDeviceData extends HalEventData {
-    private static final Logger logger = LogUtil.getLogger();
-
-    private double data;
+    private double percent;
 
 
-    public HalMqttDeviceData(byte[] byteData) {
-        String str = new String(byteData);
-
-        if (StringUtil.isDecimalNumber(str)) {
-            data = Double.parseDouble(str);
-        } else {
-            logger.warning("Received non numeric MQTT data.");
-        }
+    public LevelEventData() { }
+    public LevelEventData(double percent, long timestamp) {
+        setData(percent);
+        this.setTimestamp(timestamp);
     }
 
+    @Override
+    public String toString(){
+        return Math.floor(percent * 100) + "%";
+    }
+
+    // ----------------------------------------
+    // Storage methods
+    // ----------------------------------------
 
     @Override
     public double getData() {
-        return data;
+        return percent;
     }
 
     @Override
     public void setData(double data) {
-        this.data = data;
+        this.percent = data;
     }
 }

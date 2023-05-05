@@ -5,9 +5,11 @@
 	"interfaces": [
 		{"se.hal.intf.HalDatabaseUpgrader":  "se.hal.plugin.zigbee.db.ZigbeeHalDatabaseUpgrader"},
 
+		{"se.hal.intf.HalEventConfig":  "se.hal.plugin.zigbee.device.ZigbeeColorConfig"},
 		{"se.hal.intf.HalEventConfig":  "se.hal.plugin.zigbee.device.ZigbeeOnOffConfig"},
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.zigbee.device.ZigbeeHumidityConfig"},
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.zigbee.device.ZigbeeIlluminanceConfig"},
+		{"se.hal.intf.HalEventConfig":  "se.hal.plugin.zigbee.device.ZigbeeLevelConfig"},
 		{"se.hal.intf.HalEventConfig":  "se.hal.plugin.zigbee.device.ZigbeeOccupancyConfig"},
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.zigbee.device.ZigbeePressureConfig"},
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.zigbee.device.ZigbeeTemperatureConfig"},

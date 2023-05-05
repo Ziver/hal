@@ -58,6 +58,7 @@ function updateAlerts() {
         .then(data => {
             data.forEach(alert => {
                 var alertElement = $("#alert-id-" + alert.id);
+
                 if (alertElement.length <= 0) {
                     alertElement = $(alertTemplate[alert.level]);
                     $("#" + alertDivId).append(alertElement);

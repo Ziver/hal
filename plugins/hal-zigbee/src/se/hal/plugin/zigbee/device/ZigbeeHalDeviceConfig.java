@@ -66,10 +66,11 @@ public abstract class ZigbeeHalDeviceConfig implements HalDeviceConfig {
     public void initialize(ZclCluster cluster) {}
 
     /**
+     * @param endpoint
      * @param zclAttribute is the object that should be mapped to a HalDeviceFata object.
      * @return a HalDeviceData object containing the same value representation as the endpoint or null if this attribute is not translatable.
      */
-    public abstract HalDeviceData getDeviceData(ZclAttribute zclAttribute);
+    public abstract HalDeviceData getDeviceData(ZigBeeEndpoint endpoint, ZclAttribute zclAttribute);
 
     /**
      * @return the cluster ID that is supported by this device config class

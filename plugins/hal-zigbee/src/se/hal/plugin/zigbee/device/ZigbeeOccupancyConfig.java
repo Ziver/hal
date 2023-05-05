@@ -1,5 +1,6 @@
 package se.hal.plugin.zigbee.device;
 
+import com.zsmartsystems.zigbee.ZigBeeEndpoint;
 import com.zsmartsystems.zigbee.zcl.ZclAttribute;
 import com.zsmartsystems.zigbee.zcl.ZclCluster;
 import com.zsmartsystems.zigbee.zcl.clusters.ZclOccupancySensingCluster;
@@ -37,8 +38,8 @@ public class ZigbeeOccupancyConfig extends ZigbeeHalEventDeviceConfig implements
     }
 
     @Override
-    public HalDeviceData getDeviceData(ZclAttribute zclAttribute) {
-        if (zclAttribute.getCluster().getId() == getZigbeeClusterId() &&
+    public HalDeviceData getDeviceData(ZigBeeEndpoint endpoint, ZclAttribute zclAttribute) {
+        if (zclAttribute.getClusterType().getId() == getZigbeeClusterId() &&
                 zclAttribute.getId() == ZclOccupancySensingCluster.ATTR_OCCUPANCY)
             return new OccupancyEventData(
                     (boolean) zclAttribute.getLastValue(),

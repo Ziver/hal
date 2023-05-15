@@ -19,6 +19,7 @@ Where:
 }
 
 MODE="FOREGROUND"
+GRADLE_COLOR="--console=rich"
 
 until [[ $# -eq 0 ]]; do
     case "$1" in
@@ -29,6 +30,11 @@ until [[ $# -eq 0 ]]; do
 
         -b|--background)
             MODE="BACKGROUND"
+            shift
+        ;;
+
+        --no-color)
+            GRADLE_COLOR="--no-color"
             shift
         ;;
 
@@ -88,7 +94,7 @@ if [[ -d "./hal-core/src" ]]; then
     echo "INFO: Operating in source directory, will build Hal."
     INSTALL_DIR="./build/install/Hal"
 
-    ./gradlew --console=rich installDist
+    ./gradlew ${GRADLE_COLOR} installDist
     EXIT_CODE=$?
 
     if [[ ${EXIT_CODE} -ne 0 ]]; then
@@ -111,14 +117,14 @@ if [[ ${MODE} == "FOREGROUND" ]]; then
     while [[ ${EXIT_CODE} -eq 200 ]]; do
         # Restart as long as we have a exit code of 200, this allows the application to restart itself
         #startHal
-        ./gradlew run
+        ./gradlew ${GRADLE_COLOR} run
         EXIT_CODE=$?
     done
 elif [[ ${MODE} == "BACKGROUND" ]]; then
     # Kill current session
     screen -S hal -X kill
     # Start new session
-    screen -S hal -L -d -m $(dirname "$0")/run.sh --foreground
+    screen -S hal -L -d -m $(dirname "$0")/run.sh --foreground --no-color
 
     echo "-------------------------"
     screen -list

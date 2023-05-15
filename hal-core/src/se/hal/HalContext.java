@@ -54,7 +54,7 @@ public class HalContext {
     private static UserMessageManager messageManager = new UserMessageManager();
 
     static {
-        // Set default values to get Hal up and running
+        // Set default values to get Hal up and running before DB is read in
         fileConf.setProperty(CONFIG_HTTP_PORT, "" + 8080);
     }
 

@@ -47,27 +47,28 @@ public class HalServer {
             // Initialize Hal
             // ------------------------------------
 
-            // init logging
+            // Init basic dependencies
+
             LogUtil.readConfiguration("logging.properties");
+            HalContext.initialize();
+            DBConnection db = HalContext.getDB();
+
+            pluginManager = new PluginManager();
+            daemonExecutor = Executors.newScheduledThreadPool(1); // We set only one thread for easier troubleshooting for now
+
+            // Init core web server
 
             http = new HttpServer(HalContext.getIntegerProperty(HalContext.CONFIG_HTTP_PORT));
             http.setDefaultPage(new StartupWebPage());
             http.start();
 
-            // init variables
-            pluginManager = new PluginManager();
-            daemonExecutor = Executors.newScheduledThreadPool(1); // We set only one thread for easier troubleshooting for now
-
             // Upgrade database
+
+            logger.info("Working directory: " + FileUtil.find(".").getAbsolutePath());
             HalDatabaseUpgradeManager.initialize(pluginManager);
             HalDatabaseUpgradeManager.upgrade();
 
-            // init DB and other configurations
-
-            HalContext.initialize();
-            DBConnection db = HalContext.getDB();
-
-            logger.info("Working directory: " + FileUtil.find(".").getAbsolutePath());
+            // Init external web server
 
             httpExternal = new HalExternalWebDaemon();
             registerDaemon(httpExternal);

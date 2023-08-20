@@ -58,8 +58,8 @@ public class HumiditySettingTrait extends DeviceTrait {
         HashMap<String, Object> response = new HashMap<>();
 
         if (data instanceof HumiditySensorData) {
-            //response.put("humiditySetpointPercent", data.getData());
-            response.put("humidityAmbientPercent", data.getData());
+            //response.put("humiditySetpointPercent", (int) data.getData());
+            response.put("humidityAmbientPercent", (int) data.getData());
         }
 
         return response;

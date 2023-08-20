@@ -18,7 +18,7 @@ You will need to create a service account Create Service account key which allow
 * Click New Project and give your project a name.
 * Click on the Smart Home card, then click the Start Building button.
 * Click Build your Action, then click Add Action(s).
-* Add your Home Assistant URL: https://{Hal External URL}:{External Port}/api/google_assistant in the Fulfillment URL box.
+* Add your Home Assistant URL: https://{Hal External URL}:{External Port}/api/assistant/google/smarthome in the Fulfillment URL box.
 * Click Save.
 * Click on the Overview tab, which will lead you back to the app details screen.
 

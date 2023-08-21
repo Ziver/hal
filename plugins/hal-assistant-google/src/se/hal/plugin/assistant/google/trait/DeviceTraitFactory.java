@@ -58,6 +58,9 @@ public class DeviceTraitFactory {
             case "se.hal.struct.devicedata.OpenClosedEventData":
                 return new DeviceTrait[]{new OpenCloseTrait()};
 
+            case "se.hal.struct.devicedata.ParticulateMatterSensorData":
+                return new DeviceTrait[]{new SensorStateTrait()};
+
             case "se.hal.struct.devicedata.PowerConsumptionSensorData":
             case "se.hal.struct.devicedata.LightSensorData":
                 return new DeviceTrait[]{new SensorStateTrait()};

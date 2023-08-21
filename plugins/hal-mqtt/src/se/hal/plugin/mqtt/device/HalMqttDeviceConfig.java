@@ -50,10 +50,11 @@ package se.hal.plugin.mqtt.device;
 
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalEventController;
-import se.hal.intf.HalEventData;
 import se.hal.intf.HalSensorConfig;
 import se.hal.plugin.mqtt.HalMqttController;
 import zutil.ui.conf.Configurator;
+
+import java.util.Objects;
 
 public abstract class HalMqttDeviceConfig implements HalSensorConfig {
     @Configurator.Configurable(value = "MQTT Topic")
@@ -97,10 +98,21 @@ public abstract class HalMqttDeviceConfig implements HalSensorConfig {
     // --------------------------
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof HalMqttDeviceConfig)
-            return topic.equals(((HalMqttDeviceConfig) obj).topic) && jsonPath.equals(((HalMqttDeviceConfig) obj).jsonPath);
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HalMqttDeviceConfig that = (HalMqttDeviceConfig) o;
+
+        if (!Objects.equals(topic, that.topic)) return false;
+        return Objects.equals(jsonPath, that.jsonPath);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = topic != null ? topic.hashCode() : 0;
+        result = 31 * result + (jsonPath != null ? jsonPath.hashCode() : 0);
+        return result;
     }
 
     @Override

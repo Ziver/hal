@@ -51,7 +51,7 @@ package se.hal.plugin.mqtt.device;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalEventController;
 import se.hal.plugin.mqtt.HalMqttController;
-import se.hal.struct.devicedata.TemperatureSensorData;
+import se.hal.struct.devicedata.ParticulateMatterSensorData;
 import zutil.ObjectUtil;
 import zutil.converter.Converter;
 import zutil.parser.DataNode;
@@ -73,7 +73,7 @@ public class HalMqttParticularMatterDeviceConfig extends HalMqttDeviceConfig {
 
     @Override
     public Class<? extends HalDeviceData> getDeviceDataClass() {
-        return TemperatureSensorData.class;
+        return ParticulateMatterSensorData.class;
     }
 
     @Override
@@ -84,11 +84,11 @@ public class HalMqttParticularMatterDeviceConfig extends HalMqttDeviceConfig {
             DataNode deviceDataValue = DataNodePath.search(getJsonPath(), json);
 
             if (deviceDataValue != null)
-                return new TemperatureSensorData(deviceDataValue.getDouble(), System.currentTimeMillis());
+                return new ParticulateMatterSensorData(deviceDataValue.getDouble(), System.currentTimeMillis());
             else
                 return null;
         }
-        return new TemperatureSensorData(Converter.toInt(data), System.currentTimeMillis());
+        return new ParticulateMatterSensorData(Converter.toInt(data), System.currentTimeMillis());
     }
 
     @Override

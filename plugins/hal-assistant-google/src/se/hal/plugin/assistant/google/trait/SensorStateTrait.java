@@ -27,14 +27,14 @@ package se.hal.plugin.assistant.google.trait;
 
 import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
-import se.hal.struct.devicedata.OpenClosedEventData;
+import se.hal.struct.devicedata.ParticulateMatterSensorData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
 /**
- * https://developers.google.com/assistant/smarthome/traits/openclose
+ * https://developers.home.google.com/cloud-to-cloud/traits/sensorstate
  */
 public class SensorStateTrait extends DeviceTrait {
 
@@ -48,10 +48,14 @@ public class SensorStateTrait extends DeviceTrait {
         HashMap<String, Object> response = new HashMap<>();
         ArrayList<HashMap> sensorStatesSupported = new ArrayList<>();
 
-        /*sensorStatesSupported.add(new HashMap<String, Object>() {{
-            put("name", xxx);
-            put("maxThresholdCelsius", 60);
-        }});*/
+        sensorStatesSupported.add(new HashMap<String, Object>() {{
+            if (config.getDeviceDataClass() == ParticulateMatterSensorData.class) {
+                put("name", "PM2.5");
+                put("numericCapabilities", new HashMap<String, Object>() {{
+                    put("rawValueUnit", "MICROGRAMS_PER_CUBIC_METER");
+                }});
+            }
+        }});
 
         response.put("sensorStatesSupported", sensorStatesSupported);
         return response;
@@ -62,11 +66,13 @@ public class SensorStateTrait extends DeviceTrait {
         HashMap<String, Object> response = new HashMap<>();
         ArrayList<HashMap> currentSensorStateData = new ArrayList<>();
 
-        /*currentSensorStateData.add(new HashMap<String, Object>() {{
-            put("name", xxx);
-            put("currentSensorState", xxx);
-            put("rawValue", xxx);
-        }});*/
+        currentSensorStateData.add(new HashMap<String, Object>() {{
+            if (data instanceof ParticulateMatterSensorData) {
+                put("name", "PM2.5");
+                //put("currentSensorState", xxx);
+                put("rawValue", data.getData());
+            }
+        }});
 
         response.put("currentSensorStateData", currentSensorStateData);
         return response;

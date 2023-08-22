@@ -104,7 +104,7 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
 
         List<HalMqttDeviceConfig> devices = topics.get(topic);
         if (ObjectUtil.isEmpty(devices))
-            devices = Arrays.asList(new HalMqttUnknownDeviceConfig(topic));
+            devices = Arrays.asList(new HalMqttUnknownDeviceConfig(topic, data));
 
         for (HalMqttDeviceConfig deviceConfig : devices) {
             HalDeviceData deviceData = deviceConfig.getDeviceData(data);

@@ -27,15 +27,22 @@ package se.hal.plugin.mqtt.device;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalEventController;
 import se.hal.plugin.mqtt.HalMqttController;
+import se.hal.struct.devicedata.TemperatureSensorData;
+
+import java.nio.charset.StandardCharsets;
 
 /**
- * Represents a unknown device data type
+ * Represents an unknown device data type
  */
 public class HalMqttUnknownDeviceConfig extends HalMqttDeviceConfig {
 
+    /** Save data so it can be provided to user for analysis, the data will not be used in any other way */
+    transient String data;
 
-    public HalMqttUnknownDeviceConfig(String topic) {
+
+    public HalMqttUnknownDeviceConfig(String topic, byte[] data) {
         setTopic(topic);
+        this.data = new String(data, StandardCharsets.UTF_8);
     }
 
     // --------------------------
@@ -49,7 +56,7 @@ public class HalMqttUnknownDeviceConfig extends HalMqttDeviceConfig {
 
     @Override
     public Class<? extends HalDeviceData> getDeviceDataClass() {
-        return null;
+        return TemperatureSensorData.class; // Just return any data class just so we do not get so many error logs
     }
 
     @Override
@@ -60,5 +67,10 @@ public class HalMqttUnknownDeviceConfig extends HalMqttDeviceConfig {
     @Override
     public AggregationMethod getAggregationMethod() {
         return AggregationMethod.AVERAGE;
+    }
+
+    @Override
+    public String toString() {
+        return "Topic: " + getTopic() + ", Data: " + data;
     }
 }

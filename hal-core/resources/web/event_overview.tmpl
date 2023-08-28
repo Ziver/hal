@@ -53,41 +53,44 @@
 
                     // Update Cells
 
-                    row.dataset.deviceId = deviceData.id
-                    row.cells[0].innerHTML = deviceData.name;
-                    row.cells[1].innerHTML = deviceData.config?.typeConfig;
-                    row.cells[2].innerHTML = deviceData.data?.valueStr;
+                    if (row.dataset.deviceId != deviceData.id || row.cells[3].innerHTML != deviceData.data?.timestamp) {
+                        // Only update if data has changed
+                        row.dataset.deviceId = deviceData.id;
+                        row.cells[0].innerHTML = deviceData.name;
+                        row.cells[1].innerHTML = deviceData.config?.typeConfig;
+                        row.cells[2].innerHTML = deviceData.data?.valueStr;
 
-                    row.cells[3].innerHTML = deviceData.data?.timestamp;
-                    $(row.cells[3]).relTimestamp();
+                        row.cells[3].innerHTML = deviceData.data?.timestamp;
+                        $(row.cells[3]).relTimestamp();
 
-                    var actionHtml = "";
-                    switch (deviceData.config?.typeData) {
-                        case "ColorEventData":
-                            actionHtml =
-                                    '<input type="hidden" name="type" value="color">' +
-                                    '<input type="color" name="data" onchange="this.form.submit()" value="' + deviceData.data?.valueStr + '">';
-                            break;
-                        case "LevelEventData":
-                            actionHtml =
-                                    '<input type="hidden" name="type" value="level">' +
-                                    '<input type="range" name="data" min="0" max="100" step="10" onchange="this.form.submit()" value="' + (deviceData.data?.value * 100) + '">';
-                            break;
-                        case "OnOffEventData":
-                            actionHtml =
-                                    '<input type="hidden" name="type" value="on-off">' +
-                                    '<input class="toggle-switch" type="checkbox" name="data" data-on-color="danger" onchange="this.form.submit()" ' + (deviceData.data?.valueStr=="ON" ? "checked" : "") + '>';
-                                //$(row.cells[4].querySelector('[type="checkbox"]')).bootstrapSwitch('state', deviceData.data?.value === 1, true);
-                            break;
+                        var actionHtml = "";
+                        switch (deviceData.config?.typeData) {
+                            case "ColorEventData":
+                                actionHtml =
+                                        '<input type="hidden" name="type" value="color">' +
+                                        '<input type="color" name="data" onchange="this.form.submit()" value="' + deviceData.data?.valueStr + '">';
+                                break;
+                            case "LevelEventData":
+                                actionHtml =
+                                        '<input type="hidden" name="type" value="level">' +
+                                        '<input type="range" name="data" min="0" max="100" step="10" onchange="this.form.submit()" value="' + (deviceData.data?.value * 100) + '">';
+                                break;
+                            case "OnOffEventData":
+                                actionHtml =
+                                        '<input type="hidden" name="type" value="on-off">' +
+                                        '<input class="toggle-switch" type="checkbox" name="data" data-on-color="danger" onchange="this.form.submit()" ' + (deviceData.data?.valueStr=="ON" ? "checked" : "") + '>';
+                                    //$(row.cells[4].querySelector('[type="checkbox"]')).bootstrapSwitch('state', deviceData.data?.value === 1, true);
+                                break;
 
 
+                        }
+                        row.cells[4].innerHTML = '<form method="POST">' +
+                            '<input type="hidden" name="action" value="modify">' +
+                            '<input type="hidden" name="action-id" value="' + deviceData.id + '">' +
+                            '<div class="btn-toolbar pull-right">' + actionHtml + '</div>';
+
+                        $(".toggle-switch").bootstrapSwitch({inverse: true, size: "mini"});
                     }
-                    row.cells[4].innerHTML = '<form method="POST">' +
-                        '<input type="hidden" name="action" value="modify">' +
-                        '<input type="hidden" name="action-id" value="' + deviceData.id + '">' +
-                        '<div class="btn-toolbar pull-right">' + actionHtml + '</div>';
-
-                    $(".toggle-switch").bootstrapSwitch({inverse: true, size: "mini"});
                 }
             });
     }

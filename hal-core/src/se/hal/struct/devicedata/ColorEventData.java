@@ -105,7 +105,7 @@ public class ColorEventData extends HalEventData {
 
     @Override
     public String toString(){
-        return "Red: " +  red + ", Green: " + green + ", Blue: " + blue;
+        return getHex(); //return "Red: " +  red + ", Green: " + green + ", Blue: " + blue;
     }
 
     // ----------------------------------------

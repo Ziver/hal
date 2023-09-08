@@ -45,7 +45,6 @@ public class SensorStateTrait extends DeviceTrait {
 
     @Override
     public HashMap<String, Object> generateSyncResponse(HalDeviceConfig config) {
-        HashMap<String, Object> response = new HashMap<>();
         ArrayList<HashMap> sensorStatesSupported = new ArrayList<>();
 
         sensorStatesSupported.add(new HashMap<String, Object>() {{
@@ -57,13 +56,13 @@ public class SensorStateTrait extends DeviceTrait {
             }
         }});
 
+        HashMap<String, Object> response = new HashMap<>();
         response.put("sensorStatesSupported", sensorStatesSupported);
         return response;
     }
 
     @Override
     public HashMap<String, Object> generateQueryResponse(HalDeviceData data) {
-        HashMap<String, Object> response = new HashMap<>();
         ArrayList<HashMap> currentSensorStateData = new ArrayList<>();
 
         currentSensorStateData.add(new HashMap<String, Object>() {{
@@ -74,6 +73,7 @@ public class SensorStateTrait extends DeviceTrait {
             }
         }});
 
+        HashMap<String, Object> response = new HashMap<>();
         response.put("currentSensorStateData", currentSensorStateData);
         return response;
     }

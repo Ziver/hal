@@ -161,14 +161,15 @@ public enum DeviceType {
             return null;
 
         switch (device.getDeviceConfig().getDeviceDataClass().getName()) {
-            case "se.hal.struct.devicedata.DimmerEventData":
+            case "se.hal.struct.devicedata.ColorEventData":
+            case "se.hal.struct.devicedata.LevelEventData":
             case "se.hal.struct.devicedata.OnOffEventData":
                 return LIGHT;
 
+            case "se.hal.struct.devicedata.HumiditySensorData":
+            case "se.hal.struct.devicedata.IlluminanceSensorData":
             case "se.hal.struct.devicedata.PowerConsumptionSensorData":
             case "se.hal.struct.devicedata.TemperatureSensorData":
-            case "se.hal.struct.devicedata.HumiditySensorData":
-            case "se.hal.struct.devicedata.LightSensorData":
                 return SENSOR;
 
             default:

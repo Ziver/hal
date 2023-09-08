@@ -51,6 +51,15 @@ public class DeviceTraitFactory {
             return new DeviceTrait[0];
 
         switch (device.getDeviceConfig().getDeviceDataClass().getName()) {
+            case "se.hal.struct.devicedata.LevelEventData":
+                return new DeviceTrait[]{new BrightnessSetting()};
+
+            case "se.hal.struct.devicedata.ColorEventData":
+                return new DeviceTrait[]{new ColorSetting()};
+
+            case "se.hal.struct.devicedata.HumiditySensorData":
+                return new DeviceTrait[]{new SensorStateTrait(), new HumiditySettingTrait()};
+
             case "se.hal.struct.devicedata.DimmerEventData":
             case "se.hal.struct.devicedata.OnOffEventData":
                 return new DeviceTrait[]{new OnOffTrait()};
@@ -59,14 +68,9 @@ public class DeviceTraitFactory {
                 return new DeviceTrait[]{new OpenCloseTrait()};
 
             case "se.hal.struct.devicedata.ParticulateMatterSensorData":
-                return new DeviceTrait[]{new SensorStateTrait()};
-
             case "se.hal.struct.devicedata.PowerConsumptionSensorData":
             case "se.hal.struct.devicedata.LightSensorData":
                 return new DeviceTrait[]{new SensorStateTrait()};
-
-            case "se.hal.struct.devicedata.HumiditySensorData":
-                return new DeviceTrait[]{new SensorStateTrait(), new HumiditySettingTrait()};
 
             case "se.hal.struct.devicedata.TemperatureSensorData":
                 return new DeviceTrait[]{new SensorStateTrait(), new TemperatureControlTrait()};

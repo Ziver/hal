@@ -41,6 +41,7 @@ public class ColorEventData extends HalEventData {
 
 
     public ColorEventData() { }
+
     /**
      * Create object based on sRGB.
      */

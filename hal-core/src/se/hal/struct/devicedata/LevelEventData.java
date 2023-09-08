@@ -33,20 +33,34 @@ public class LevelEventData extends HalEventData {
 
 
     public LevelEventData() { }
+    /**
+     * @param percent   a percentage value (from 0.0 to 1.0).
+     * @param timestamp a timestamp value when this event was triggered.
+     */
     public LevelEventData(double percent, long timestamp) {
         setData(percent);
         this.setTimestamp(timestamp);
     }
 
+    /**
+     * @return percentage in integer format (from 0 to 100)
+     */
+    public int getPercent() {
+        return (int) Math.floor(percent * 100);
+    }
+
     @Override
     public String toString(){
-        return Math.floor(percent * 100) + "%";
+        return getPercent() + "%";
     }
 
     // ----------------------------------------
     // Storage methods
     // ----------------------------------------
 
+    /**
+     * @return a percentage value (from 0.0 to 1.0)
+     */
     @Override
     public double getData() {
         return percent;

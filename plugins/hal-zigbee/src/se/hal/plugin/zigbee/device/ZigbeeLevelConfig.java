@@ -44,7 +44,7 @@ public class ZigbeeLevelConfig extends ZigbeeHalEventDeviceConfig implements Hal
         if (zclAttribute.getClusterType().getId() == getZigbeeClusterId() &&
                 zclAttribute.getId() == ZclLevelControlCluster.ATTR_CURRENTLEVEL)
             return new LevelEventData(
-                    (Integer) zclAttribute.getLastValue(),
+                    ((int) zclAttribute.getLastValue()) / 255.0,
                     zclAttribute.getLastReportTime().getTimeInMillis());
         return null;
     }

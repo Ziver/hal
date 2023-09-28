@@ -53,13 +53,14 @@
 
                     // Update Cells
 
-                    if (row.dataset.deviceId != deviceData.id || row.cells[3].innerHTML != deviceData.data?.timestamp) {
+                    if (row.dataset.deviceId != deviceData.id || row.dataset.timestamp != deviceData.data?.timestamp) {
                         // Only update if data has changed
                         row.dataset.deviceId = deviceData.id;
                         row.cells[0].innerHTML = deviceData.name;
                         row.cells[1].innerHTML = deviceData.config?.typeConfig;
                         row.cells[2].innerHTML = deviceData.data?.valueStr;
 
+                        row.dataset.timestamp = deviceData.data?.timestamp;
                         row.cells[3].innerHTML = deviceData.data?.timestamp;
                         $(row.cells[3]).relTimestamp();
 

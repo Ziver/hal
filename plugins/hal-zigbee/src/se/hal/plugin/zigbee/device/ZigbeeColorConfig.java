@@ -70,7 +70,7 @@ public class ZigbeeColorConfig extends ZigbeeHalEventDeviceConfig implements Hal
             return null;
 
         float[] cieXYZ = ((ColorEventData) data).getCieXYZ();
-        return new MoveToColorCommand((int) cieXYZ[0], (int) cieXYZ[1], 1);
+        return new MoveToColorCommand((int) (cieXYZ[0] * 65536), (int) (cieXYZ[2] * 65536), 1);
     }
 
     // --------------------------

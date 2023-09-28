@@ -2,7 +2,7 @@ package se.hal.plugin.zigbee.device;
 
 import com.zsmartsystems.zigbee.ZigBeeEndpoint;
 import com.zsmartsystems.zigbee.zcl.ZclAttribute;
-import com.zsmartsystems.zigbee.zcl.clusters.ZclTemperatureMeasurementCluster;
+import com.zsmartsystems.zigbee.zcl.clusters.ZclPressureMeasurementCluster;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalSensorConfig;
 import se.hal.struct.devicedata.PressureSensorData;
@@ -19,7 +19,7 @@ public class ZigbeePressureConfig extends ZigbeeHalDeviceConfig implements HalSe
     @Override
     public HalDeviceData getDeviceData(ZigBeeEndpoint endpoint, ZclAttribute zclAttribute) {
         if (zclAttribute.getClusterType().getId() == getZigbeeClusterId() &&
-                zclAttribute.getId() == ZclTemperatureMeasurementCluster.ATTR_MEASUREDVALUE)
+                zclAttribute.getId() == ZclPressureMeasurementCluster.ATTR_MEASUREDVALUE)
             return new PressureSensorData(
                     (int) zclAttribute.getLastValue(),
                     zclAttribute.getLastReportTime().getTimeInMillis());
@@ -28,7 +28,7 @@ public class ZigbeePressureConfig extends ZigbeeHalDeviceConfig implements HalSe
 
     @Override
     public int getZigbeeClusterId() {
-        return ZclTemperatureMeasurementCluster.CLUSTER_ID;
+        return ZclPressureMeasurementCluster.CLUSTER_ID;
     }
 
     // --------------------------

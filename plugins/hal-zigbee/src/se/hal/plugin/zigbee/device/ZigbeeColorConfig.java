@@ -32,11 +32,9 @@ public class ZigbeeColorConfig extends ZigbeeHalEventDeviceConfig implements Hal
 
         try {
             ZclAttribute attribute = cluster.getAttribute(ZclColorControlCluster.ATTR_CURRENTHUE);
-            attribute.setReporting(1, 900).get();
             attribute.readValue(60);
 
             attribute = cluster.getAttribute(ZclColorControlCluster.ATTR_CURRENTSATURATION);
-            attribute.setReporting(1, 900).get();
             attribute.readValue(60);
         } catch (Exception e) {
             logger.log(Level.WARNING, "Was unable to initialize cluster reporting rate.", e);

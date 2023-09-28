@@ -117,7 +117,7 @@ if [[ ${MODE} == "FOREGROUND" ]]; then
     while [[ ${EXIT_CODE} -eq 200 ]]; do
         # Restart as long as we have a exit code of 200, this allows the application to restart itself
         #startHal
-        ./gradlew ${GRADLE_COLOR} --warning-mode none run
+        ./gradlew ${GRADLE_COLOR} --console=plain run
         EXIT_CODE=$?
     done
 elif [[ ${MODE} == "BACKGROUND" ]]; then

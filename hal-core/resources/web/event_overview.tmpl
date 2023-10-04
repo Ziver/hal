@@ -56,7 +56,7 @@
                     if (row.dataset.deviceId != deviceData.id || row.dataset.timestamp != deviceData.data?.timestamp) {
                         // Only update if data has changed
                         row.dataset.deviceId = deviceData.id;
-                        row.cells[0].innerHTML = deviceData.name;
+                        row.cells[0].innerHTML = "<a href='?id=" + deviceData.id + "'>" + deviceData.name + "</a>";
                         row.cells[1].innerHTML = deviceData.config?.typeConfig;
                         row.cells[2].innerHTML = deviceData.data?.valueStr;
 

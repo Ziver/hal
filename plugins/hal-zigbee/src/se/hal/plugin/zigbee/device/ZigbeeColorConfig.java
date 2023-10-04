@@ -6,9 +6,11 @@ import com.zsmartsystems.zigbee.zcl.ZclCluster;
 import com.zsmartsystems.zigbee.zcl.ZclCommand;
 import com.zsmartsystems.zigbee.zcl.clusters.ZclColorControlCluster;
 import com.zsmartsystems.zigbee.zcl.clusters.colorcontrol.MoveToColorCommand;
+import com.zsmartsystems.zigbee.zcl.clusters.colorcontrol.MoveToHueAndSaturationCommand;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventData;
+import se.hal.plugin.zigbee.util.Cie;
 import se.hal.struct.devicedata.ColorEventData;
 import zutil.log.LogUtil;
 
@@ -32,9 +34,11 @@ public class ZigbeeColorConfig extends ZigbeeHalEventDeviceConfig implements Hal
 
         try {
             ZclAttribute attribute = cluster.getAttribute(ZclColorControlCluster.ATTR_CURRENTHUE);
+            //attribute.setReporting(1, 900).get();
             attribute.readValue(60);
 
             attribute = cluster.getAttribute(ZclColorControlCluster.ATTR_CURRENTSATURATION);
+            //attribute.setReporting(1, 900).get();
             attribute.readValue(60);
         } catch (Exception e) {
             logger.log(Level.WARNING, "Was unable to initialize cluster reporting rate.", e);
@@ -67,8 +71,23 @@ public class ZigbeeColorConfig extends ZigbeeHalEventDeviceConfig implements Hal
         if (! (data instanceof ColorEventData))
             return null;
 
-        float[] cieXYZ = ((ColorEventData) data).getCieXYZ();
-        return new MoveToColorCommand((int) (cieXYZ[0] * 65536), (int) (cieXYZ[2] * 65536), 1);
+        //float[] cie = ((ColorEventData) data).getCieXYZ();
+        //int x = (int) (cie[0] * 65536);
+        //int y = (int) (cie[1] * 65536);
+        Cie cie = Cie.rgb2cie(((ColorEventData) data).getRed(), ((ColorEventData) data).getGreen(), ((ColorEventData) data).getBlue());
+        int x = (int) (cie.x * 65536);
+        int y = (int) (cie.y * 65536);
+
+        if (x > 65279)
+            x = 65279;
+        if (y > 65279)
+            y = 65279;
+
+        return new MoveToColorCommand(x, y, 10);
+
+        //double hue = ((ColorEventData) data).getHue() * 254.0f / 360.0f + 0.5f;
+        //double saturation = ((ColorEventData) data).getSaturation() * 256;
+        //return new MoveToHueAndSaturationCommand((int) hue, (int) saturation, 1);
     }
 
     // --------------------------

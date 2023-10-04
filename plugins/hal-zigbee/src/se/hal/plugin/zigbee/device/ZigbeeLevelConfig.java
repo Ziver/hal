@@ -32,7 +32,7 @@ public class ZigbeeLevelConfig extends ZigbeeHalEventDeviceConfig implements Hal
 
         try {
             ZclAttribute attribute = cluster.getAttribute(ZclLevelControlCluster.ATTR_CURRENTLEVEL);
-            attribute.setReporting(1, 900).get();
+            //attribute.setReporting(1, 900).get();
             attribute.readValue(60);
         } catch (Exception e) {
             logger.log(Level.WARNING, "Was unable to initialize cluster reporting rate.", e);

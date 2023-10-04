@@ -24,9 +24,7 @@ package se.hal.struct.devicedata;
 
 import se.hal.intf.HalEventData;
 import zutil.ColorUtil;
-import zutil.converter.Converter;
 
-import java.awt.*;
 import java.awt.color.ColorSpace;
 
 /**
@@ -94,10 +92,6 @@ public class ColorEventData extends HalEventData {
     }
     public double getLightness() {
         return ColorUtil.getLightness(red, green, blue);
-    }
-
-    public float[] getCieXYZ() {
-        return cieXYZ.fromRGB(new float[]{red, green, blue});
     }
 
     public String getHex() {

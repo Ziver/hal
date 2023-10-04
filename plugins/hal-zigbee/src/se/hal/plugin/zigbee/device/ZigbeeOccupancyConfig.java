@@ -30,7 +30,7 @@ public class ZigbeeOccupancyConfig extends ZigbeeHalEventDeviceConfig implements
 
         try {
             ZclAttribute attribute = cluster.getAttribute(ZclOccupancySensingCluster.ATTR_OCCUPANCY);
-            attribute.setReporting(1, 900).get();
+            //attribute.setReporting(1, 900).get();
             attribute.readValue(60);
         } catch (Exception e) {
             logger.log(Level.WARNING, "Was unable to initialize cluster reporting rate.", e);

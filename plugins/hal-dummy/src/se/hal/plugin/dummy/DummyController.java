@@ -2,15 +2,20 @@ package se.hal.plugin.dummy;
 
 import se.hal.HalServer;
 import se.hal.intf.*;
+import zutil.log.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class DummyController implements HalSensorController, HalEventController, Runnable, HalDaemon {
+    private static final Logger logger = LogUtil.getLogger();
+
     private List<DummyDevice> registeredDevices = new ArrayList<>();
     private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
 
@@ -39,7 +44,7 @@ public class DummyController implements HalSensorController, HalEventController,
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Dummy device data generation has crashed.", e);
         }
     }
 

@@ -43,11 +43,16 @@
             <table class="table table-hover table-condensed">
                 <thead>
                     <th class="col-md-3">Name</th>
+                    <th class="col-md-1">Status</th>
                     <th class="col-md-1 text-right">Actions</th>
                 </thead>
                 {{#controllers}}
                 <tr>
                     <td>{{.getClass().getName()}}</td>
+                    <td>
+                        {{#.isAvailable()}}<span class="label label-success">Running</span>{{/.isAvailable()}}
+                        {{^.isAvailable()}}<span class="label label-secondary">Down</span>{{/.isAvailable()}}
+                    </td>
                     <td>
                         {{#.isScannable()}}
                         <div class="btn-toolbar pull-right">

@@ -46,8 +46,8 @@ public class SensorApiEndpoint extends HalApiEndpoint {
         if (request.get("id") != null)
             reqIds = request.get("id").split(",");
 
-        String reqTypeConfig = request.get("typeConfig");
-        String reqTypeData = request.get("typeData");
+        String reqConfigType = request.get("configType");
+        String reqDataType = request.get("dataType");
 
 
         List<Sensor> sensors = new ArrayList<>();
@@ -60,14 +60,14 @@ public class SensorApiEndpoint extends HalApiEndpoint {
             }
 
             // device type filtering
-            if (!ObjectUtil.isEmpty(reqTypeConfig) &&
-                    !sensor.getDeviceConfig().getClass().getSimpleName().equals(reqTypeConfig)) {
+            if (!ObjectUtil.isEmpty(reqConfigType) &&
+                    !sensor.getDeviceConfig().getClass().getSimpleName().equals(reqConfigType)) {
                 filter_match = false;
             }
 
             // data type filtering
-            if (!ObjectUtil.isEmpty(reqTypeData) &&
-                    !sensor.getDeviceConfig().getDeviceDataClass().getSimpleName().equals(reqTypeData)) {
+            if (!ObjectUtil.isEmpty(reqDataType) &&
+                    !sensor.getDeviceConfig().getDeviceDataClass().getSimpleName().equals(reqDataType)) {
                 filter_match = false;
             }
 
@@ -118,6 +118,7 @@ public class SensorApiEndpoint extends HalApiEndpoint {
                 deviceNode.set("aggregate", aggregateNode);
             }
 
+            deviceNode.set("type", "Sensor");
             root.add(deviceNode);
         }
 

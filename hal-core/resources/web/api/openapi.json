@@ -19,6 +19,7 @@
             "type": "object",
             "$ref": "#/components/schemas/dataClass"
           },
+          "dataType": {"type": "string"},
           "name": {"type": "string"},
           "id": {"type": "integer"},
           "map": {
@@ -29,7 +30,8 @@
           "config": {
             "type": "object",
             "$ref": "#/components/schemas/configClass"
-          }
+          },
+          "configType": {"type": "string"}
         }
       },
 
@@ -86,8 +88,6 @@
       "configClass": {
         "type": "object",
         "properties": {
-          "typeConfig": {"type": "string"},
-          "typeData": {"type": "string"}
         }
       },
 
@@ -198,7 +198,7 @@
               "type": "string"
             },
             "in": "query",
-            "name": "typeConfig",
+            "name": "configType",
             "required": false
           },
           {
@@ -206,7 +206,7 @@
               "type": "string"
             },
             "in": "query",
-            "name": "typeData",
+            "name": "dataType",
             "required": false
           }
         ]
@@ -276,7 +276,7 @@
               "type": "string"
             },
             "in": "query",
-            "name": "typeConfig",
+            "name": "configType",
             "required": false
           },
           {
@@ -284,7 +284,7 @@
               "type": "string"
             },
             "in": "query",
-            "name": "typeData",
+            "name": "dataType",
             "required": false
           },
           {

@@ -244,27 +244,32 @@ public abstract class HalAbstractDevice<V extends HalAbstractDevice, C extends H
         DataNode deviceNode = new DataNode(DataNode.DataType.Map);
         deviceNode.set("id", getId());
         deviceNode.set("name", getName());
-        deviceNode.set("user", getUser().getUsername());
+        deviceNode.set("owner", getUser().getUsername());
 
         DataNode mapNode = deviceNode.set("map", DataNode.DataType.Map);
         mapNode.set("x", getMapX());
         mapNode.set("y", getMapY());
 
         if (getDeviceConfig() != null) {
-            DataNode configNode = deviceNode.set("config", DataNode.DataType.Map);
-            configNode.set("typeConfig", getDeviceConfig().getClass().getSimpleName());
-            configNode.set("typeData", getDeviceConfig().getDeviceDataClass().getSimpleName());
+            deviceNode.set("configType", getDeviceConfig().getClass().getSimpleName());
 
+            DataNode configNode = deviceNode.set("config", DataNode.DataType.Map);
             for (Configurator.ConfigurationParam param : getDeviceConfigurator().getConfiguration()) {
                 configNode.set(param.getName(), param.getString());
             }
+        } else {
+            deviceNode.set("configType", (String)null);
         }
 
         if (getDeviceData() != null) {
+            deviceNode.set("dataType", getDeviceConfig().getDeviceDataClass().getSimpleName());
+
             DataNode dataNode = deviceNode.set("data", DataNode.DataType.Map);
             dataNode.set("value", getDeviceData().getData());
             dataNode.set("valueStr", getDeviceData().toString());
             dataNode.set("timestamp", getDeviceData().getTimestamp());
+        } else {
+            deviceNode.set("dataType", (String)null);
         }
 
         return deviceNode;

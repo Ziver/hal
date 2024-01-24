@@ -39,12 +39,12 @@ public class EventApiEndpoint extends HalApiEndpoint {
         // Get Action
         // --------------------------------------
 
-        String[] req_ids = new String[0];
+        String[] reqIds = new String[0];
         if (request.get("id") != null)
-            req_ids = request.get("id").split(",");
+            reqIds = request.get("id").split(",");
 
-        String req_typeConfig = request.get("typeConfig");
-        String req_typeData = request.get("typeData");
+        String reqConfigType = request.get("configType");
+        String reqDataType = request.get("dataType");
 
         // Filter devices
 
@@ -53,19 +53,19 @@ public class EventApiEndpoint extends HalApiEndpoint {
             boolean filter_match = true;
 
             // id filtering
-            if (!ObjectUtil.isEmpty((Object) req_ids) && !ArrayUtil.contains(req_ids, "" + event.getId())) {
+            if (!ObjectUtil.isEmpty((Object) reqIds) && !ArrayUtil.contains(reqIds, "" + event.getId())) {
                 filter_match = false;
             }
 
             // device type filtering
-            if (!ObjectUtil.isEmpty(req_typeConfig) &&
-                    !event.getDeviceConfig().getClass().getSimpleName().equals(req_typeConfig)) {
+            if (!ObjectUtil.isEmpty(reqConfigType) &&
+                    !event.getDeviceConfig().getClass().getSimpleName().equals(reqConfigType)) {
                 filter_match = false;
             }
 
             // data type filtering
-            if (!ObjectUtil.isEmpty(req_typeData) &&
-                    !event.getDeviceConfig().getDeviceDataClass().getSimpleName().equals(req_typeData)) {
+            if (!ObjectUtil.isEmpty(reqDataType) &&
+                    !event.getDeviceConfig().getDeviceDataClass().getSimpleName().equals(reqDataType)) {
                 filter_match = false;
             }
 
@@ -81,6 +81,7 @@ public class EventApiEndpoint extends HalApiEndpoint {
 
         for (Event event : events) {
             DataNode deviceNode = event.getDataNode();
+            deviceNode.set("type", "Event");
             root.add(deviceNode);
         }
 

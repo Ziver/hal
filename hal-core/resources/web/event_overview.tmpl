@@ -57,7 +57,7 @@
                         // Only update if data has changed
                         row.dataset.deviceId = deviceData.id;
                         row.cells[0].innerHTML = "<a href='?id=" + deviceData.id + "'>" + deviceData.name + "</a>";
-                        row.cells[1].innerHTML = deviceData.config?.typeConfig;
+                        row.cells[1].innerHTML = deviceData.configType;
                         row.cells[2].innerHTML = deviceData.data?.valueStr;
 
                         row.dataset.timestamp = deviceData.data?.timestamp;
@@ -65,7 +65,7 @@
                         $(row.cells[3]).relTimestamp();
 
                         var actionHtml = "";
-                        switch (deviceData.config?.typeData) {
+                        switch (deviceData.dataType) {
                             case "ColorEventData":
                                 actionHtml =
                                         '<input type="hidden" name="type" value="color">' +

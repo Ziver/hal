@@ -3,6 +3,7 @@ package se.hal;
 
 import se.hal.daemon.HalExternalWebDaemon;
 import se.hal.intf.*;
+import se.hal.intf.HalJavascriptModule.HalJsModule;
 import se.hal.page.StartupWebPage;
 import se.hal.struct.PluginConfig;
 import zutil.db.DBConnection;
@@ -141,6 +142,15 @@ public class HalServer {
                 registerPage(it.next());
             for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalWebPage.class); it.hasNext(); )
                 registerPage(it.next());
+            for (Iterator<HalJavascriptModule> it = pluginManager.getSingletonIterator(HalJavascriptModule.class); it.hasNext(); ) {
+                HalJsModule[] jsModules = it.next().getJavascriptModules();
+
+                if (jsModules != null) {
+                    for (HalJsModule module : jsModules)
+                        HalWebPage.addJavascriptModule(module);
+                }
+            }
+
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Startup failed.", e);

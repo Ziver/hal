@@ -1,6 +1,8 @@
 package se.hal.intf;
 
 import se.hal.HalContext;
+import se.hal.intf.HalJavascriptModule.HalJsModule;
+import se.hal.intf.HalJavascriptModule.HalJsModulePage;
 import se.hal.struct.User;
 import zutil.db.DBConnection;
 import zutil.io.file.FileUtil;
@@ -11,6 +13,7 @@ import zutil.parser.Templator;
 import zutil.ui.Navigation;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,8 @@ public abstract class HalWebPage implements HttpPage{
 
     private static Navigation rootNav = Navigation.createRootNav();
     private static Navigation userNav = Navigation.createRootNav();
+    private static List<HalJsModule> jsModules = new ArrayList<>();
+    private static List<HalJsModulePage> jsPages = new ArrayList<>();
 
     private String pageId;
     private boolean showSubNav;
@@ -76,6 +81,8 @@ public abstract class HalWebPage implements HttpPage{
             main.setAll(data);
             main.set("navigation", navigationTemplate);
             main.set("side_navigation", subNavigationTemplate);
+            main.set("javascriptModules", jsModules);
+            main.set("javascriptPages", jsPages);
             main.set("content", httpRespond(session, cookie, request));
 
             out.print(main.compile());
@@ -97,7 +104,12 @@ public abstract class HalWebPage implements HttpPage{
     public static Navigation getUserNav(){
         return userNav;
     }
+    public static void addJavascriptModule(HalJsModule module) {
+        jsModules.add(module);
 
+        if (module instanceof HalJsModulePage)
+            jsPages.add((HalJsModulePage) module);
+    }
 
     public abstract Templator httpRespond(
             Map<String, Object> session,

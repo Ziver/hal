@@ -37,13 +37,14 @@
 
 <div class="col-md-12">
     <div class="panel panel-default drop-shadow">
-        <div class="panel-heading">Active Controllers</div>
+        <div class="panel-heading">Controllers</div>
         <div class="panel-body">
 
             <table class="table table-hover table-condensed">
                 <thead>
                     <th class="col-md-3">Name</th>
                     <th class="col-md-1">Status</th>
+                    <th class="col-md-1">Registered Devices</th>
                     <th class="col-md-1 text-right">Actions</th>
                 </thead>
                 {{#controllers}}
@@ -53,6 +54,7 @@
                         {{#.isAvailable()}}<span class="label label-success">Running</span>{{/.isAvailable()}}
                         {{^.isAvailable()}}<span class="label label-secondary">Down</span>{{/.isAvailable()}}
                     </td>
+                    <td>{{.size()}}</td>
                     <td>
                         {{#.isScannable()}}
                         <div class="btn-toolbar pull-right">
@@ -76,6 +78,25 @@
                     </td>
                 </tr>
                 {{/controllers}}
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12">
+    <div class="panel panel-default drop-shadow">
+        <div class="panel-heading">Daemons</div>
+        <div class="panel-body">
+
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <th class="col-md-6">Name</th>
+                </thead>
+                {{#daemons}}
+                <tr>
+                    <td>{{.getClass().getName()}}</td>
+                </tr>
+                {{/daemons}}
             </table>
         </div>
     </div>

@@ -180,3 +180,54 @@ body {
         opacity: 1;
     }
 }
+
+/*
+ * Switch checkbox CSS, originally from:
+ * https://community.tadabase.io/t/convert-checkbox-to-toggle-switch/2566
+ */
+
+input[type="checkbox"].switch {
+    /* Backgrpund properties */
+    appearance: none;
+    background-color: #e1e1e1; /* unchecked background color */
+    border-radius: 72px;
+    border-style: none;
+    flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+    margin: 0 !important;
+    width: 40px !important;
+    height: 20px !important;
+    border: 1px solid #ccc;
+}
+input[type="checkbox"].switch,
+input[type="checkbox"].switch::after {
+    transition: all 100ms ease-out;
+}
+input[type="checkbox"].switch::after {
+    /* Ball properties */
+    background-color: #fff; /* Color of ball */
+    border-radius: 50%;
+    content: "";
+    height: 15px !important;
+    width: 15px !important;
+    left: 3px !important;
+    top: 2px !important;
+    position: absolute;
+}
+/* Properties for a checked state */
+input[type="checkbox"].switch:checked {
+    background-color: #d9534f; /* Color of background */
+}
+input[type="checkbox"].switch:checked::after {
+    background-color: #fff; /* Color of ball */
+    left: 20px !important;
+}
+
+/*
+ * Slider styling
+ */
+
+input[type="range"] {
+  accent-color: #d9534f;
+}

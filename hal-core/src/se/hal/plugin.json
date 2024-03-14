@@ -18,7 +18,8 @@
 		{"se.hal.intf.HalApiEndpoint": "se.hal.page.api.RoomApiEndpoint"},
 		{"se.hal.intf.HalApiEndpoint": "se.hal.page.api.SensorApiEndpoint"},
 
-		{"se.hal.intf.HalWebPage": "se.hal.page.EventOverviewWebPage"},
+		{"se.hal.intf.HalJavascriptModule": "se.hal.page.JavascriptModules"},
+		{"DISABLEDse.hal.intf.HalWebPage": "se.hal.page.EventOverviewWebPage"},
 		{"se.hal.intf.HalWebPage": "se.hal.page.EventConfigWebPage"},
 		{"se.hal.intf.HalWebPage": "se.hal.page.PropertyConfigWebPage"},
 		{"se.hal.intf.HalWebPage": "se.hal.page.PluginConfigWebPage"},

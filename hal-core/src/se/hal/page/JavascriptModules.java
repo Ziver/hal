@@ -1,11 +1,14 @@
 package se.hal.page;
 
 import se.hal.intf.HalJavascriptModule;
+import se.hal.intf.HalWebPage;
 
 public class JavascriptModules implements HalJavascriptModule {
 
     @Override
     public HalJsModule[] getJavascriptModules() {
+        HalWebPage.getRootNav().createSubNav("Events").createSubNav("/event_overview", "Overview");
+
         return new HalJsModule[] {
                 new HalJsModule("AlertStore",         "./js/vue/stores/AlertStore.js"),
                 new HalJsModule("EventStore",         "./js/vue/stores/EventStore.js"),

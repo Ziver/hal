@@ -22,7 +22,7 @@ $(function(){
                 return null;
             }
 
-            var obj = {};
+            let obj = {};
             $.each(this[0].attributes, function() {
                 if(this.specified) {
                     obj[this.name] = this.value;
@@ -42,26 +42,32 @@ $(function(){
 // Converts all timestamps to human readable time and date
 $.fn.relTimestamp = function() {
     return this.each(function() {
-        var timestamp = parseInt($(this).text());
-        var timestampNow = Date.now();
-        var timeDiff = timestampNow - timestamp;
+        let timestamp = parseInt($(this).text());
 
-        if(timeDiff < 10 * 60 * 1000) // less than 10 min
-            $(this).text(moment(timestamp).fromNow());
-        else if(timeDiff < 24 * 60 * 60 * 1000) // less than 24 hours
-            $(this).text(moment(timestamp).fromNow() + " ("+moment(timestamp).format("HH:mm")+")");
-        else
-            $(this).text(moment(timestamp).format("YYYY-MM-DD HH:mm"));
+        $(this).text(getRelTimestamp(timestamp));
         return this;
     });
 };
+
+// Converts all timestamps to human readable time and date
+function getRelTimestamp(timestamp) {
+    let timestampNow = Date.now();
+    let timeDiff = timestampNow - timestamp;
+
+    if(timeDiff < 10 * 60 * 1000) // less than 10 min
+        return moment(timestamp).fromNow();
+    else if(timeDiff < 24 * 60 * 60 * 1000) // less than 24 hours
+        return moment(timestamp).fromNow() + " ("+moment(timestamp).format("HH:mm")+")";
+    else
+        return moment(timestamp).format("YYYY-MM-DD HH:mm");
+}
 
 // --------------------------------------------------------
 // Chart functions
 // --------------------------------------------------------
 
 function createChart(elementId, url, updateTime=-1){
-    var tickConf = {count: 20};
+    let tickConf = {count: 20};
     if (updateTime < 60*60*1000)
         tickConf['format'] = '%H:%M';
     else if (updateTime < 24*60*60*1000)
@@ -116,10 +122,10 @@ function updateChart(chart, url, updateTime=-1){
     }
 }
 function getChartData(json){
-    var dataXaxis = {};
-    var dataYaxis = {};
-    var data = [];
-    var labels = [];
+    let dataXaxis = {};
+    let dataYaxis = {};
+    let data = [];
+    let labels = [];
 
     json.forEach(function(sensor, i) {
         var index = 'data' + i;
@@ -166,8 +172,8 @@ function initDynamicModalForm(modalId, formTemplateId = null, templateID = null)
 
     // click event
     $("#" + modalId).on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var modal = $(this);
+        let button = $(event.relatedTarget);
+        let modal = $(this);
 
         modal.find(" input, select").val('').change(); // Reset all inputs
 

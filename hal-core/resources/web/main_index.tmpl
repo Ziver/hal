@@ -19,11 +19,12 @@
     <script src="js/lib/bootstrap-switch.min.js"></script>
     <script src="js/lib/moment.js"></script>
     <script src="js/hal.js"></script>
-    <script src="js/hal_alert.js"></script>
+    <!-- <script src="js/hal_alert.js"></script> -->
 
     <!-- charts -->
-    <script src="js/lib/d3.js"></script>
-    <script src="js/lib/c3.js"></script>
+    <script src="js/lib/d3.min.js"></script>
+    <script src="js/lib/force-graph.min.js"></script>
+    <script src="js/lib/c3.min.js"></script>
 
 </head>
 
@@ -39,10 +40,52 @@
             {{/side_navigation}}
             {{^side_navigation}}<div class="main">{{/side_navigation}}
                 <div id="alert-container"></div>
+
+                <div id="app"></div>
+
                 {{content}}
             </div>
 
         </div>
     </div>
+
+
+    <script type="importmap">
+        {
+            "imports": {
+                "vue":                "./js/vue/vue.esm-browser.js",
+                "vue-router":         "./js/vue/vue-router.esm-browser.js",
+                "@vue/devtools-api":  "https://unpkg.com/@vue/devtools-api@6.4.5/lib/esm/index.js",
+
+                {{#javascriptModules}}"{{.getModuleName()}}": "{{.getScriptPath()}}",
+                {{/javascriptModules}}
+
+                "App":                "./js/vue/components/App.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import { createApp } from 'vue'
+        import { createRouter, createWebHistory } from 'vue-router'
+
+        {{#javascriptPages}}import {{.getModuleName()}} from '{{.getModuleName()}}'
+        {{/javascriptPages}}
+
+        import App from 'App'
+
+        const app = createApp(App);
+
+        const router = createRouter({
+            history: createWebHistory(),
+            routes: [
+                {{#javascriptPages}}{ name: "{{.getModuleName()}}",  path: "{{.getPage()}}", component: {{.getModuleName()}} },
+                {{/javascriptPages}}
+            ]
+        });
+        app.use(router);
+
+        app.mount('#app');
+    </script>
 </body>
 </html>

@@ -4,6 +4,7 @@ package se.hal;
 import se.hal.daemon.HalExternalWebDaemon;
 import se.hal.intf.*;
 import se.hal.intf.HalJavascriptModule.HalJsModule;
+import se.hal.page.EmptyWebPage;
 import se.hal.page.StartupWebPage;
 import se.hal.struct.PluginConfig;
 import zutil.db.DBConnection;
@@ -138,18 +139,22 @@ public class HalServer {
             http.setDefaultPage(filePage);
             http.setPage("/", new HttpRedirectPage("/map"));
 
-            for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalApiEndpoint.class); it.hasNext(); )
-                registerPage(it.next());
-            for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalWebPage.class); it.hasNext(); )
-                registerPage(it.next());
             for (Iterator<HalJavascriptModule> it = pluginManager.getSingletonIterator(HalJavascriptModule.class); it.hasNext(); ) {
                 HalJsModule[] jsModules = it.next().getJavascriptModules();
 
                 if (jsModules != null) {
-                    for (HalJsModule module : jsModules)
+                    for (HalJsModule module : jsModules) {
                         HalWebPage.addJavascriptModule(module);
+
+                        if (module instanceof HalJavascriptModule.HalJsModulePage)
+                            registerPage(((HalJavascriptModule.HalJsModulePage) module).getPage(), new EmptyWebPage());
+                    }
                 }
             }
+            for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalApiEndpoint.class); it.hasNext(); )
+                registerPage(it.next());
+            for (Iterator<HalWebPage> it = pluginManager.getSingletonIterator(HalWebPage.class); it.hasNext(); )
+                registerPage(it.next());
 
 
         } catch (Exception e) {
@@ -200,6 +205,10 @@ public class HalServer {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Unable to initialize daemon: " + daemon.getClass(), e);
         }
+    }
+
+    public static List<HalDaemon> getAllDaemons() {
+        return daemons;
     }
 
 

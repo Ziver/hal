@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public abstract class HalWebPage implements HttpPage{
+public abstract class HalWebPage implements HttpPage {
     private static final String TEMPLATE_MAIN = HalContext.RESOURCE_WEB_ROOT + "/main_index.tmpl";
     private static final String TEMPLATE_NAVIGATION = HalContext.RESOURCE_WEB_ROOT + "/main_nav.tmpl";
     private static final String TEMPLATE_SIDE_NAVIGATION = HalContext.RESOURCE_WEB_ROOT + "/main_nav_side.tmpl";
@@ -83,7 +83,12 @@ public abstract class HalWebPage implements HttpPage{
             main.set("side_navigation", subNavigationTemplate);
             main.set("javascriptModules", jsModules);
             main.set("javascriptPages", jsPages);
-            main.set("content", httpRespond(session, cookie, request));
+
+            Templator body = httpRespond(session, cookie, request);
+            if (body == null)
+                main.set("content", "");
+            else
+                main.set("content", body);
 
             out.print(main.compile());
         } catch (Exception e) {

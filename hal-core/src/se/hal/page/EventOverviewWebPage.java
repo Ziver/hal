@@ -64,12 +64,12 @@ public class EventOverviewWebPage extends HalWebPage {
                     break;
             }
 
-            if (eventData != null) {
+            if (id >= 0 && eventData != null) {
                 logger.info("Modifying Event(" + id + ") state: " + eventData.toString());
                 Event event = Event.getEvent(db, id);
                 EventControllerManager.getInstance().send(event, eventData);
             } else {
-                logger.warning("Unable to process event change request, data type most likely not supported: " + request.get("type"));
+                logger.warning("Unable to process event change request for event " + id + ", data type most likely not supported: " + request.get("type"));
             }
         }
 

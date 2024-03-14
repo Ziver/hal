@@ -1,5 +1,5 @@
 dependencies {
-    def ZIGBEE_LIB_VERSION = "1.4.11"
+    def ZIGBEE_LIB_VERSION = "1.4.13"
 
     implementation project(':hal-core')
 

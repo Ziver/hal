@@ -28,6 +28,31 @@
     </div>
 </div>
 
+<h2>Network Graph</h2>
+
+<div id="network_graph"></div>
+
+<script>
+    var nodes = [
+        {{#nodes}}{"id": "{{.getIeeeAddress()}}", "name": "{{.getIeeeAddress()}}"},
+        {{/nodes}}
+    ]
+
+    var links = [
+        {{#nodes}}{{#.getNeighbors()}}{"source": "", "target": "{{.getNetworkAddress()}}"},
+        {{/.getNeighbors()}}{{/nodes}}
+    ]
+
+    const Graph = ForceGraph()
+      (document.getElementById('network_graph'))
+        .linkDirectionalParticles(2)
+        .graphData({
+            nodes: nodes,
+            links: links
+        }
+    );
+</script>
+
 <h2>Connected Nodes</h2>
 
 {{#nodes}}

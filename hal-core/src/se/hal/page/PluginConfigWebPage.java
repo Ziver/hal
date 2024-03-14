@@ -6,13 +6,9 @@ import se.hal.intf.HalAbstractController;
 import se.hal.intf.HalAbstractControllerManager;
 import se.hal.intf.HalScannableController;
 import se.hal.intf.HalWebPage;
-import zutil.ObjectUtil;
 import zutil.io.file.FileUtil;
 import zutil.parser.Templator;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import static zutil.ui.UserMessageManager.*;
@@ -83,6 +79,7 @@ public class PluginConfigWebPage extends HalWebPage {
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
         tmpl.set("plugins", HalServer.getAllPlugins());
         tmpl.set("controllers", HalAbstractControllerManager.getControllers());
+        tmpl.set("daemons", HalServer.getAllDaemons());
         return tmpl;
     }
 }

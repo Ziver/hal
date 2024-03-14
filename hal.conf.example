@@ -13,7 +13,7 @@ hal_core.http_port=8080
 #hal_core.http_external_domain=example.com
 
 # Set the local domain that hal will announce to the local network. Default value is hal.local leave empty to disable.
-hal_core.dns_local_domain=hal.local|<empty>
+#hal_core.dns_local_domain=hal.local|<empty>
 
 # ------------------------------------------------------------------------
 # Plugin configurations
@@ -23,12 +23,18 @@ hal_core.dns_local_domain=hal.local|<empty>
 # Sensors and Events
 # ------------------------------------
 
-## Tellstick plugin
-#hal_tellstick.com_port=COM5|/dev/serial/by-id/usb-Telldus_TellStick_Duo_A6XNNE6Z-if00-port0
-
 ## NetUPS plugin
 #hal_nutups.host=
 #hal_nutups.port=
+
+## Power Challenge Plugin
+#hal_powerchallenge.sync_port=6666
+
+## Tellstick plugin
+#hal_tellstick.com_port=COM5|/dev/serial/by-id/usb-Telldus_TellStick_Duo_A6XNNE6Z-if00-port0
+
+## Tibber Plugin
+#hal_tibber.token=
 
 ## Zigbee plugin
 #hal_zigbee.com_port=COM4
@@ -37,12 +43,9 @@ hal_core.dns_local_domain=hal.local|<empty>
 ## ZWave plugin
 #hal_zwave.com_port=COM4
 
-## Power Challenge Plugin
-hal_powerchallenge.sync_port=6666
-
 # ------------------------------------
 # Assistants
 # ------------------------------------
 
 ## Google Assistant
-hal_assistant.google.client_id=https://oauth-redirect.googleusercontent.com/r/optimal-comfort-XXXXX
+#hal_assistant.google.client_id=https://oauth-redirect.googleusercontent.com/r/optimal-comfort-XXXXX

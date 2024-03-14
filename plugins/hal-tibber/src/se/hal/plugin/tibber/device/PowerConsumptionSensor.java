@@ -27,7 +27,7 @@ package se.hal.plugin.tibber.device;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
-import se.hal.struct.devicedata.TemperatureSensorData;
+import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import se.hal.plugin.tibber.TibberController;
 
 
@@ -51,7 +51,7 @@ public class PowerConsumptionSensor implements HalSensorConfig {
 
     @Override
     public Class<? extends HalSensorData> getDeviceDataClass() {
-        return TemperatureSensorData.class;
+        return PowerConsumptionSensorData.class;
     }
 
     @Override

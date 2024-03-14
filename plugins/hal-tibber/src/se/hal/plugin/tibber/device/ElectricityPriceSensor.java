@@ -24,12 +24,11 @@
 
 package se.hal.plugin.tibber.device;
 
-import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
-import se.hal.struct.devicedata.HumiditySensorData;
 import se.hal.plugin.tibber.TibberController;
+import se.hal.struct.devicedata.PriceSensorData;
 
 /**
  * A sensor that shows the price of electricity at a specific time

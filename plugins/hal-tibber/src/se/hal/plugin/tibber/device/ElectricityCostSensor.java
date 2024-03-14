@@ -28,7 +28,7 @@ import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
 import se.hal.plugin.tibber.TibberController;
-import se.hal.struct.devicedata.HumiditySensorData;
+import se.hal.struct.devicedata.CostSensorData;
 
 /**
  * A sensor that calculate current electricity bil

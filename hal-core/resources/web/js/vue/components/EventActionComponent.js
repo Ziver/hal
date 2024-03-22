@@ -17,7 +17,9 @@ export default {
             <input type="hidden" name="action-id" :value="event.id">
 
             <div class="btn-toolbar pull-right">
-                <template v-if="event.dataType === 'ColorEventData'">
+                <template v-if="event.dataType === null">
+                </template>
+                <template v-else-if="event.dataType === 'ColorEventData'">
                     <input type="hidden" name="type" value="color">
                     <input type="color" name="data" onchange="this.form.submit()" :value="event.data?.valueStr">
                 </template>

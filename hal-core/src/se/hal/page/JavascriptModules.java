@@ -7,7 +7,7 @@ public class JavascriptModules implements HalJavascriptModule {
 
     @Override
     public HalJsModule[] getJavascriptModules() {
-        HalWebPage.getRootNav().createSubNav("Events").createSubNav("/event_overview", "Overview");
+        HalWebPage.getRootNav().createSubNav("Events").createSubNav("event_overview", "Overview");
 
         return new HalJsModule[] {
                 new HalJsModule("AlertStore",         "./js/vue/stores/AlertStore.js"),

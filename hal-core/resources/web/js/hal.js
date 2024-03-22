@@ -51,6 +51,9 @@ $.fn.relTimestamp = function() {
 
 // Converts all timestamps to human readable time and date
 function getRelTimestamp(timestamp) {
+    if (timestamp == null)
+        return "";
+
     let timestampNow = Date.now();
     let timeDiff = timestampNow - timestamp;
 

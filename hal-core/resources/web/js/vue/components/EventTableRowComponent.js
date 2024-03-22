@@ -9,7 +9,7 @@ export default {
   let event = eventStore.getEvent(this.id)
     return {
         event: event,
-        timestamp: getRelTimestamp(event.data.timestamp)
+        timestamp: getRelTimestamp(event.data?.timestamp)
     }
   },
   components: {
@@ -19,7 +19,7 @@ export default {
     <tr :data-device-id="event.id">
         <td><a :href="'?id=' + event.id">{{ event.name }}</a></td>
         <td>{{ event.configType }}</td>
-        <td>{{ event.data.valueStr }}</td>
+        <td>{{ event.data?.valueStr }}</td>
         <td class="timestamp">{{ timestamp }}</td>
         <td>
             <EventAction :id="event.id"/>

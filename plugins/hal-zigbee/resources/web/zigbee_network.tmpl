@@ -33,24 +33,28 @@
 <div id="network_graph"></div>
 
 <script>
-    var nodes = [
-        {{#nodes}}{"id": "{{.getIeeeAddress()}}", "name": "{{.getIeeeAddress()}}"},
-        {{/nodes}}
-    ]
+    fetch('/api/zigbee')
+        .then(response => response.json())
+        .then(data => {
+            var nodes = [];
+            var links = [];
 
-    var links = [
-        {{#nodes}}{{#.getNeighbors()}}{"source": "", "target": "{{.getNetworkAddress()}}"},
-        {{/.getNeighbors()}}{{/nodes}}
-    ]
+            data.forEach(node => {
+                nodes.add({"id": node.address, "name": node.address});
+                nodes.neighbours.forEach(neighbour => {
+                    links.add({"source": node.address, "target": neighbour})
+                }
+            });
 
-    const Graph = ForceGraph()
-      (document.getElementById('network_graph'))
-        .linkDirectionalParticles(2)
-        .graphData({
-            nodes: nodes,
-            links: links
-        }
-    );
+            const Graph = ForceGraph()
+              (document.getElementById('network_graph'))
+                .linkDirectionalParticles(2)
+                .graphData({
+                    nodes: nodes,
+                    links: links
+                }
+            );
+        });
 </script>
 
 <h2>Connected Nodes</h2>

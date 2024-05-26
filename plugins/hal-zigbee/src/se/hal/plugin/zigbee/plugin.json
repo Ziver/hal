@@ -17,6 +17,7 @@
 		{"se.hal.intf.HalAutostartController": "se.hal.plugin.zigbee.ZigbeeController"},
 		{"se.hal.intf.HalDaemon": "se.hal.plugin.zigbee.ZigbeeAttributeUpdateDaemon"},
 
-		{"se.hal.intf.HalWebPage": "se.hal.plugin.zigbee.page.ZigbeeNetworkPage"}
+		{"se.hal.intf.HalWebPage": "se.hal.plugin.zigbee.page.ZigbeeNetworkPage"},
+		{"se.hal.intf.HalApiEndpoint": "se.hal.plugin.zigbee.page.api.ZigbeeApiEndpoint"}
 	]
 }

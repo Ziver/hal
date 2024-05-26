@@ -40,10 +40,10 @@
             var links = [];
 
             data.forEach(node => {
-                nodes.add({"id": node.address, "name": node.address});
-                nodes.neighbours.forEach(neighbour => {
-                    links.add({"source": node.address, "target": neighbour})
-                }
+                nodes.push({"id": node.address, "name": node.address});
+                node.neighbors.forEach(neighbor => {
+                    links.push({"source": node.address, "target": neighbor})
+                })
             });
 
             const Graph = ForceGraph()

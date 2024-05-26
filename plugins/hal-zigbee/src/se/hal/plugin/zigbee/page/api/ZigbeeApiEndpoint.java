@@ -39,20 +39,23 @@ public class ZigbeeApiEndpoint extends HalApiEndpoint {
 
         for (ZigBeeNode node : controller.getNodes()) {
             DataNode zigbeeNode = new DataNode(DataNode.DataType.Map);
+            root.add(zigbeeNode);
             zigbeeNode.set("address", node.getIeeeAddress().toString());
             zigbeeNode.set("logicalType", node.getLogicalType().toString());
 
             DataNode powerNode = new DataNode(DataNode.DataType.Map);
-            powerNode.set("currentPowerMode", node.getPowerDescriptor().getCurrentPowerMode().toString());
-            powerNode.set("currentPowerSource", node.getPowerDescriptor().getCurrentPowerSource().toString());
-            powerNode.set("powerLevel", node.getPowerDescriptor().getPowerLevel().toString());
+            zigbeeNode.set("powerDescriptor", powerNode);
+            if (node.getPowerDescriptor() != null) {
+                powerNode.set("currentPowerMode", node.getPowerDescriptor().getCurrentPowerMode().toString());
+                powerNode.set("currentPowerSource", node.getPowerDescriptor().getCurrentPowerSource().toString());
+                powerNode.set("powerLevel", node.getPowerDescriptor().getPowerLevel().toString());
+            }
 
             DataNode neighborsNode = new DataNode(DataNode.DataType.List);
+            zigbeeNode.set("neighbors", neighborsNode);
             for (NeighborTable neighbor : node.getNeighbors()) {
                 neighborsNode.add(neighbor.getExtendedAddress().toString());
             }
-
-            zigbeeNode.set("neighbors", neighborsNode);
         }
 
         return root;

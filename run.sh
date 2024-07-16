@@ -25,17 +25,15 @@ until [[ $# -eq 0 ]]; do
     case "$1" in
         -f|--foreground)
             MODE="FOREGROUND"
-            shift
         ;;
 
         -b|--background)
             MODE="BACKGROUND"
-            shift
         ;;
 
         --no-color)
+            echo "INFO: Running with plain console."
             GRADLE_COLOR="--console=plain"
-            shift
         ;;
 
         -h|--help)
@@ -124,7 +122,7 @@ elif [[ ${MODE} == "BACKGROUND" ]]; then
     # Kill current session
     screen -S hal -X kill
     # Start new session
-    screen -S hal -L -d -m "$(dirname "$0")/run.sh" --foreground --no-color
+    screen -S hal -L -d -m $(dirname "$0")/run.sh --foreground --no-color
 
     echo "-------------------------"
     screen -list

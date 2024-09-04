@@ -57,11 +57,31 @@ import zutil.ui.conf.Configurator;
 import java.util.Objects;
 
 public abstract class HalMqttDeviceConfig implements HalSensorConfig {
+
     @Configurator.Configurable(value = "MQTT Topic")
     private String topic;
     @Configurator.Configurable(value = "JSON Path", description = "If the value of the topic is a JSON then this parameter can be used to specify the path to the e.g. temperature value." +
             "<br>THe parameter uses the JSON-Path syntax where it always starts with $ and object fields can be accessed by .<key> and a array element by [index]")
     private String jsonPath;
+
+
+    public HalMqttDeviceConfig() {}
+
+    /**
+     * @param topic is the topic associated to this device
+     */
+    public HalMqttDeviceConfig(String topic) {
+        this.topic = topic;
+    }
+
+    /**
+     * @param topic     is the topic associated to this device.
+     * @param jsonPath  indicates that the payload is  of JSON format and the data should be extracted from this path.
+     */
+    public HalMqttDeviceConfig(String topic, String jsonPath) {
+        this.topic = topic;
+        this.jsonPath = jsonPath;
+    }
 
 
     public String getTopic() {

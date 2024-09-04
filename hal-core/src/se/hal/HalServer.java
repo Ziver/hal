@@ -1,6 +1,5 @@
 package se.hal;
 
-
 import se.hal.daemon.HalExternalWebDaemon;
 import se.hal.intf.*;
 import se.hal.intf.HalJavascriptModule.HalJsModule;
@@ -82,7 +81,7 @@ public class HalServer {
             logger.info("Looking for plugins.");
 
             // Disable plugins based on settings
-            for (PluginData plugin : getAllPlugins()) {
+            for (PluginData plugin : (List<PluginData>) pluginManager.getAllPlugins()) {
                 PluginConfig pluginConfig = PluginConfig.getPluginConfig(db, plugin.getName());
 
                 // If plugin is not found in DB then disable it and create  an entry.
@@ -177,17 +176,13 @@ public class HalServer {
         logger.info("Plugin '" + name + "' has been " + (enabled ? "enabled" : "disabled") + ", change will take affect after restart.");
 
         pluginConfig.setEnabled(enabled);
-        pluginManager.getPluginData(name).setEnabled(pluginConfig.isEnabled());
+        pluginManager.getPlugin(name).setEnabled(pluginConfig.isEnabled());
         pluginConfig.save(db);
     }
 
 
-    public static List<PluginData> getEnabledPlugins() {
-        return pluginManager.toArray();
-    }
-
-    public static List<PluginData> getAllPlugins() {
-        return pluginManager.toArrayAll();
+    public static PluginManager<?> getPluginManager() {
+        return pluginManager;
     }
 
     public static List<HalAbstractControllerManager> getControllerManagers() {

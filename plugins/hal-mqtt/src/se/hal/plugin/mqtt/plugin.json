@@ -4,7 +4,13 @@
 	"interfaces": [
 		{"se.hal.intf.HalAutostartController": "se.hal.plugin.mqtt.HalMqttController"},
 
+		{"se.hal.plugin.mqtt.detector.HalMqttDetector": "se.hal.plugin.mqtt.detector.GenericMqttDetector"},
+		{"se.hal.plugin.mqtt.detector.HalMqttDetector": "se.hal.plugin.mqtt.detector.TasmotaMqttDetector"},
+		{"se.hal.plugin.mqtt.detector.HalMqttDetector": "se.hal.plugin.mqtt.detector.Zigbee2mqttDetector"},
+
+		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.mqtt.device.HalMqttHumidityDeviceConfig"},
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.mqtt.device.HalMqttParticularMatterDeviceConfig"},
+		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.mqtt.device.HalMqttTemperatureDeviceConfig"},
 
 		{"se.hal.intf.HalWebPage": "se.hal.plugin.mqtt.page.MqttOverviewPage"}
 	]

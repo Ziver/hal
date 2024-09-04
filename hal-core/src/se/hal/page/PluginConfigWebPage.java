@@ -77,7 +77,7 @@ public class PluginConfigWebPage extends HalWebPage {
         }
 
         Templator tmpl = new Templator(FileUtil.find(TEMPLATE));
-        tmpl.set("plugins", HalServer.getAllPlugins());
+        tmpl.set("plugins", HalServer.getPluginManager().getAllPlugins());
         tmpl.set("controllers", HalAbstractControllerManager.getControllers());
         tmpl.set("daemons", HalServer.getAllDaemons());
         return tmpl;

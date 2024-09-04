@@ -22,4 +22,14 @@ public abstract class HalDeviceData {
     public abstract double getData();
 
     public abstract void setData(double data);
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HalDeviceData that = (HalDeviceData) o;
+        return getTimestamp() == that.getTimestamp() &&
+                getData() == that.getData();
+    }
 }

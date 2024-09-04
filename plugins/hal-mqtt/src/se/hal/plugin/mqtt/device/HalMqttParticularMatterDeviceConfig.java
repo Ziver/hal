@@ -62,6 +62,14 @@ import java.nio.charset.StandardCharsets;
 
 public class HalMqttParticularMatterDeviceConfig extends HalMqttDeviceConfig {
 
+    public HalMqttParticularMatterDeviceConfig() {}
+    public HalMqttParticularMatterDeviceConfig(String topic) {
+        super(topic);
+    }
+    public HalMqttParticularMatterDeviceConfig(String topic, String jsonPath) {
+        super(topic, jsonPath);
+    }
+
     // --------------------------
     // Hal Methods
     // --------------------------
@@ -77,7 +85,7 @@ public class HalMqttParticularMatterDeviceConfig extends HalMqttDeviceConfig {
     }
 
     @Override
-    public HalDeviceData getDeviceData(byte[] data) {
+    public ParticulateMatterSensorData getDeviceData(byte[] data) {
         if (!ObjectUtil.isEmpty(getJsonPath())) {
             String dataStr = new String(data, StandardCharsets.UTF_8);
             DataNode json = JSONParser.read(dataStr);

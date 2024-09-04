@@ -24,10 +24,11 @@
 
 package se.hal.plugin.mqtt;
 
+import se.hal.HalServer;
 import se.hal.daemon.HalMulticastDnsDaemon;
 import se.hal.intf.*;
+import se.hal.plugin.mqtt.detector.HalMqttDetector;
 import se.hal.plugin.mqtt.device.HalMqttDeviceConfig;
-import se.hal.plugin.mqtt.device.HalMqttUnknownDeviceConfig;
 import zutil.InetUtil;
 import zutil.ObjectUtil;
 import zutil.log.LogUtil;
@@ -37,10 +38,7 @@ import zutil.net.mqtt.MqttSubscriptionListener;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,6 +48,7 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
 
     private MqttBroker mqttBroker;
 
+    private List<HalMqttDetector> detectors = Collections.emptyList();
     private HashMap<String, List<HalMqttDeviceConfig>> topics = new HashMap<>();
     private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
 
@@ -73,16 +72,13 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
             mqttBroker.addGlobalSubscriber(this);
             mqttBroker.start();
 
+            detectors = HalServer.getPluginManager().getEnabledPluginSingletons(HalMqttDetector.class);
+
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Unable to initialize MQTT plugin.", e);
 
             close();
         }
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return true;
     }
 
     @Override
@@ -102,16 +98,40 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
     public void dataPublished(String topic, byte[] data) {
         logger.finest("MQTT data published(topic: " + topic + "): " + new String(data, StandardCharsets.UTF_8));
 
-        List<HalMqttDeviceConfig> devices = topics.get(topic);
-        if (ObjectUtil.isEmpty(devices))
-            devices = Arrays.asList(new HalMqttUnknownDeviceConfig(topic, data));
+        List<HalMqttDeviceConfig> registeredDevices = topics.get(topic);
 
-        for (HalMqttDeviceConfig deviceConfig : devices) {
-            HalDeviceData deviceData = deviceConfig.getDeviceData(data);
+        // Handle existing devices
 
-            if (deviceListeners != null) {
-                for (HalDeviceReportListener deviceListener : deviceListeners) {
-                    deviceListener.reportReceived(deviceConfig, deviceData);
+        if (!ObjectUtil.isEmpty(registeredDevices)) {
+            for (HalMqttDeviceConfig deviceConfig : registeredDevices) {
+                HalDeviceData deviceData = deviceConfig.getDeviceData(data);
+
+                if (deviceListeners != null) {
+                    for (HalDeviceReportListener deviceListener : deviceListeners) {
+                        deviceListener.reportReceived(deviceConfig, deviceData);
+                    }
+                }
+            }
+        }
+
+        // Handle new devices
+
+        for (HalMqttDetector detector : detectors) {
+            List<HalMqttDeviceConfig> detectedDevices = detector.parseTopic(topic, data);
+
+            // Check if we already know the device
+            if (!ObjectUtil.isEmpty(detectedDevices)) {
+                for (HalMqttDeviceConfig detectedDeviceConfig : detectedDevices) {
+                    // Only handle unknown devices
+                    if (!registeredDevices.contains(detectedDeviceConfig)) {
+                        HalDeviceData deviceData = detectedDeviceConfig.getDeviceData(data);
+
+                        if (deviceListeners != null) {
+                            for (HalDeviceReportListener deviceListener : deviceListeners) {
+                                deviceListener.reportReceived(detectedDeviceConfig, deviceData);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -153,7 +173,8 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
         if (eventConfig instanceof HalMqttDeviceConfig) {
             HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) eventConfig;
             mqttBroker.publish(mqttEvent.getTopic(), Double.toString(eventData.getData()).getBytes());
-        } else throw new IllegalArgumentException(
+        } else
+            throw new IllegalArgumentException(
                 "Device config is not an instance of " + HalMqttDeviceConfig.class + ": " + eventConfig.getClass());
     }
 

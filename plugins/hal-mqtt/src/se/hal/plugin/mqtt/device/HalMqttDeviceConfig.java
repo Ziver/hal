@@ -58,8 +58,8 @@ import java.util.Objects;
 
 public abstract class HalMqttDeviceConfig implements HalSensorConfig {
 
-    @Configurator.Configurable(value = "MQTT Topic")
-    private String topic;
+    @Configurator.Configurable(value = "MQTT Topic Name")
+    private String topicName;
     @Configurator.Configurable(value = "JSON Path", description = "If the value of the topic is a JSON then this parameter can be used to specify the path to the e.g. temperature value." +
             "<br>THe parameter uses the JSON-Path syntax where it always starts with $ and object fields can be accessed by .<key> and a array element by [index]")
     private String jsonPath;
@@ -68,27 +68,27 @@ public abstract class HalMqttDeviceConfig implements HalSensorConfig {
     public HalMqttDeviceConfig() {}
 
     /**
-     * @param topic is the topic associated to this device
+     * @param topicName is the topic associated to this device
      */
-    public HalMqttDeviceConfig(String topic) {
-        this.topic = topic;
+    public HalMqttDeviceConfig(String topicName) {
+        this.topicName = topicName;
     }
 
     /**
-     * @param topic     is the topic associated to this device.
+     * @param topicName is the topic associated to this device.
      * @param jsonPath  indicates that the payload is  of JSON format and the data should be extracted from this path.
      */
-    public HalMqttDeviceConfig(String topic, String jsonPath) {
-        this.topic = topic;
+    public HalMqttDeviceConfig(String topicName, String jsonPath) {
+        this.topicName = topicName;
         this.jsonPath = jsonPath;
     }
 
 
-    public String getTopic() {
-        return topic;
+    public String getTopicName() {
+        return topicName;
     }
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
     }
 
     public String getJsonPath() {
@@ -124,19 +124,19 @@ public abstract class HalMqttDeviceConfig implements HalSensorConfig {
 
         HalMqttDeviceConfig that = (HalMqttDeviceConfig) o;
 
-        if (!Objects.equals(topic, that.topic)) return false;
+        if (!Objects.equals(topicName, that.topicName)) return false;
         return Objects.equals(jsonPath, that.jsonPath);
     }
 
     @Override
     public int hashCode() {
-        int result = topic != null ? topic.hashCode() : 0;
+        int result = topicName != null ? topicName.hashCode() : 0;
         result = 31 * result + (jsonPath != null ? jsonPath.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "Topic: " + topic + ", JSON Path: " + jsonPath;
+        return "Topic: " + topicName + ", JSON Path: " + jsonPath;
     }
 }

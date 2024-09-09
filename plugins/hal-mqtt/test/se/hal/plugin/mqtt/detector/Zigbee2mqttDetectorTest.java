@@ -1,10 +1,12 @@
 package se.hal.plugin.mqtt.detector;
 
 import org.junit.Test;
+import se.hal.plugin.mqtt.device.HalMqttDeviceConfig;
 import se.hal.plugin.mqtt.device.HalMqttParticularMatterDeviceConfig;
 import se.hal.test.MockHalDeviceReportListener;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -13,17 +15,13 @@ public class Zigbee2mqttDetectorTest {
 
     @Test
     public void ignoredTopics() {
-        MockHalDeviceReportListener listener = new MockHalDeviceReportListener();
         Zigbee2mqttDetector detector = new Zigbee2mqttDetector();
-        detector.addListener(listener);
 
-        listener.reset();
-        detector.parseTopic("", new byte[]{});
-        assertEquals(0, listener.getNumberOfReports());
+        List<HalMqttDeviceConfig> devices = detector.parseTopic("", new byte[]{});
+        assertEquals(0, devices.size());
 
-        listener.reset();
-        detector.parseTopic("invalid/topic", new byte[]{});
-        assertEquals(0, listener.getNumberOfReports());
+        devices = detector.parseTopic("invalid/topic", new byte[]{});
+        assertEquals(0, devices.size());
     }
 /*
     @Test

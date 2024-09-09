@@ -51,7 +51,7 @@ public class GenericMqttDetector implements HalMqttDetector {
 
             if (config != null) {
                 detectedDeviceConfigs.add(config);
-                return null;
+                return detectedDeviceConfigs;
             }
         }
 

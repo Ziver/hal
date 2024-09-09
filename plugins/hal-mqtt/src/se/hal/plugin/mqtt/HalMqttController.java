@@ -49,7 +49,7 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
     private MqttBroker mqttBroker;
 
     private List<HalMqttDetector> detectors = Collections.emptyList();
-    private HashMap<String, List<HalMqttDeviceConfig>> topics = new HashMap<>();
+    private Map<String, List<HalMqttDeviceConfig>> topics = new HashMap<>();
     private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
 
     // --------------------------
@@ -95,10 +95,13 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
     // --------------------------
 
     @Override
-    public void dataPublished(String topic, byte[] data) {
-        logger.finest("MQTT data published(topic: " + topic + "): " + new String(data, StandardCharsets.UTF_8));
+    public void dataPublished(String topicName, byte[] data) {
+        if (data == null)
+            data = new byte[0];
+        logger.finest("MQTT data published(topic: " + topicName + "): " + new String(data, StandardCharsets.UTF_8));
 
-        List<HalMqttDeviceConfig> registeredDevices = topics.get(topic);
+        topicName = topicName.trim();
+        List<HalMqttDeviceConfig> registeredDevices = topics.get(topicName);
 
         // Handle existing devices
 
@@ -114,16 +117,16 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
             }
         }
 
-        // Handle new devices
+        // Handle detection of new devices
 
         for (HalMqttDetector detector : detectors) {
-            List<HalMqttDeviceConfig> detectedDevices = detector.parseTopic(topic, data);
+            List<HalMqttDeviceConfig> detectedDevices = detector.parseTopic(topicName, data);
 
             // Check if we already know the device
             if (!ObjectUtil.isEmpty(detectedDevices)) {
                 for (HalMqttDeviceConfig detectedDeviceConfig : detectedDevices) {
                     // Only handle unknown devices
-                    if (!registeredDevices.contains(detectedDeviceConfig)) {
+                    if (registeredDevices == null || !registeredDevices.contains(detectedDeviceConfig)) {
                         HalDeviceData deviceData = detectedDeviceConfig.getDeviceData(data);
 
                         if (deviceListeners != null) {
@@ -150,9 +153,9 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
         if (deviceConfig instanceof HalMqttDeviceConfig) {
             HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) deviceConfig;
 
-            if (!topics.containsKey(mqttEvent.getTopic()))
-                topics.put(mqttEvent.getTopic(), new ArrayList<>());
-            topics.get(mqttEvent.getTopic()).add(mqttEvent);
+            if (!topics.containsKey(mqttEvent.getTopicName()))
+                topics.put(mqttEvent.getTopicName(), new ArrayList<>());
+            topics.get(mqttEvent.getTopicName()).add(mqttEvent);
         } else {
             throw new IllegalArgumentException(
                     "Device config is not an instance of " + HalMqttDeviceConfig.class + ": " + deviceConfig.getClass());
@@ -163,8 +166,8 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
     public void deregister(HalDeviceConfig deviceConfig) {
         if (deviceConfig instanceof HalMqttDeviceConfig) {
             HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) deviceConfig;
-            if (topics.containsKey(mqttEvent.getTopic()))
-                topics.get(mqttEvent.getTopic()).remove(deviceConfig);
+            if (topics.containsKey(mqttEvent.getTopicName()))
+                topics.get(mqttEvent.getTopicName()).remove(deviceConfig);
         }
     }
 
@@ -172,7 +175,7 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
     public void send(HalEventConfig eventConfig, HalEventData eventData) {
         if (eventConfig instanceof HalMqttDeviceConfig) {
             HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) eventConfig;
-            mqttBroker.publish(mqttEvent.getTopic(), Double.toString(eventData.getData()).getBytes());
+            mqttBroker.publish(mqttEvent.getTopicName(), Double.toString(eventData.getData()).getBytes());
         } else
             throw new IllegalArgumentException(
                 "Device config is not an instance of " + HalMqttDeviceConfig.class + ": " + eventConfig.getClass());

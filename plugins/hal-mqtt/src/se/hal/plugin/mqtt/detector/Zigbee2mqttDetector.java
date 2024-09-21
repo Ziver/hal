@@ -9,6 +9,9 @@ import zutil.ObjectUtil;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * https://www.zigbee2mqtt.io/guide/usage/mqtt_topics_and_messages.html
+ */
 public class Zigbee2mqttDetector implements HalMqttDetector {
 
     @Override

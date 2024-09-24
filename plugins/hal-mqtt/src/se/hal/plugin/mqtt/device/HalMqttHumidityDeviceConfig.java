@@ -60,7 +60,7 @@ import zutil.parser.json.JSONParser;
 
 import java.nio.charset.StandardCharsets;
 
-public class HalMqttHumidityDeviceConfig extends HalMqttDeviceConfig {
+public class HalMqttHumidityDeviceConfig extends HalMqttSensorConfig {
 
     public HalMqttHumidityDeviceConfig() {}
     public HalMqttHumidityDeviceConfig(String topic) {
@@ -75,26 +75,26 @@ public class HalMqttHumidityDeviceConfig extends HalMqttDeviceConfig {
     // --------------------------
 
     @Override
-    public Class<? extends HalEventController> getDeviceControllerClass() {
-        return HalMqttController.class;
-    }
-
-    @Override
     public Class<? extends HalDeviceData> getDeviceDataClass() {
         return HumiditySensorData.class;
     }
 
     @Override
     public HumiditySensorData getDeviceData(byte[] data) {
+        if(ObjectUtil.isEmpty(data)) {
+            return null;
+        }
+
         if (!ObjectUtil.isEmpty(getJsonPath())) {
             String dataStr = new String(data, StandardCharsets.UTF_8);
             DataNode json = JSONParser.read(dataStr);
             DataNode deviceDataValue = DataNodePath.search(getJsonPath(), json);
 
-            if (deviceDataValue != null)
+            if (deviceDataValue != null) {
                 return new HumiditySensorData(deviceDataValue.getDouble(), System.currentTimeMillis());
-            else
+            } else {
                 return null;
+            }
         }
         return new HumiditySensorData(Converter.toInt(data), System.currentTimeMillis());
     }

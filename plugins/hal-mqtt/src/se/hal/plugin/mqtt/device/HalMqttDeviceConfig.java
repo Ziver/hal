@@ -48,6 +48,7 @@
 
 package se.hal.plugin.mqtt.device;
 
+import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalSensorConfig;
@@ -56,7 +57,7 @@ import zutil.ui.conf.Configurator;
 
 import java.util.Objects;
 
-public abstract class HalMqttDeviceConfig implements HalSensorConfig {
+public abstract class HalMqttDeviceConfig implements HalDeviceConfig {
 
     @Configurator.Configurable(value = "MQTT Topic Name")
     private String topicName;
@@ -102,7 +103,6 @@ public abstract class HalMqttDeviceConfig implements HalSensorConfig {
     // Hal Methods
     // --------------------------
 
-    @Override
     public Class<? extends HalEventController> getDeviceControllerClass() {
         return HalMqttController.class;
     }

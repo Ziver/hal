@@ -60,7 +60,7 @@ import zutil.parser.json.JSONParser;
 
 import java.nio.charset.StandardCharsets;
 
-public class HalMqttParticularMatterDeviceConfig extends HalMqttDeviceConfig {
+public class HalMqttParticularMatterDeviceConfig extends HalMqttSensorConfig {
 
     public HalMqttParticularMatterDeviceConfig() {}
     public HalMqttParticularMatterDeviceConfig(String topic) {
@@ -75,26 +75,26 @@ public class HalMqttParticularMatterDeviceConfig extends HalMqttDeviceConfig {
     // --------------------------
 
     @Override
-    public Class<? extends HalEventController> getDeviceControllerClass() {
-        return HalMqttController.class;
-    }
-
-    @Override
     public Class<? extends HalDeviceData> getDeviceDataClass() {
         return ParticulateMatterSensorData.class;
     }
 
     @Override
     public ParticulateMatterSensorData getDeviceData(byte[] data) {
+        if(ObjectUtil.isEmpty(data)) {
+            return null;
+        }
+
         if (!ObjectUtil.isEmpty(getJsonPath())) {
             String dataStr = new String(data, StandardCharsets.UTF_8);
             DataNode json = JSONParser.read(dataStr);
             DataNode deviceDataValue = DataNodePath.search(getJsonPath(), json);
 
-            if (deviceDataValue != null)
+            if (deviceDataValue != null) {
                 return new ParticulateMatterSensorData(deviceDataValue.getDouble(), System.currentTimeMillis());
-            else
+            } else {
                 return null;
+            }
         }
         return new ParticulateMatterSensorData(Converter.toInt(data), System.currentTimeMillis());
     }

@@ -2,6 +2,7 @@ package se.hal.plugin.mqtt.detector;
 
 import org.junit.Test;
 import se.hal.plugin.mqtt.device.HalMqttDeviceConfig;
+import se.hal.plugin.mqtt.device.HalMqttOnOffEventConfig;
 import se.hal.plugin.mqtt.device.HalMqttParticularMatterDeviceConfig;
 import se.hal.test.MockHalDeviceReportListener;
 
@@ -22,6 +23,11 @@ public class Zigbee2mqttDetectorTest {
 
         devices = detector.parseTopic("invalid/topic", new byte[]{});
         assertEquals(0, devices.size());
+
+        devices = detector.parseTopic("zigbee2mqtt/Kitchen Plant Light", "{\"power\":10.48,\"state\":\"ON\"}".getBytes(StandardCharsets.UTF_8));
+        assertEquals(1, devices.size());
+        assertEquals(new HalMqttOnOffEventConfig("zigbee2mqtt/Kitchen Plant Light", "$.state"), devices.get(0));
+
     }
 /*
     @Test

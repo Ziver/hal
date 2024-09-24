@@ -12,6 +12,8 @@
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.mqtt.device.HalMqttParticularMatterDeviceConfig"},
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.mqtt.device.HalMqttTemperatureDeviceConfig"},
 
+		{"se.hal.intf.HalEventConfig": "se.hal.plugin.mqtt.device.HalMqttOnOffEventConfig"},
+
 		{"se.hal.intf.HalWebPage": "se.hal.plugin.mqtt.page.MqttOverviewPage"}
 	]
 }

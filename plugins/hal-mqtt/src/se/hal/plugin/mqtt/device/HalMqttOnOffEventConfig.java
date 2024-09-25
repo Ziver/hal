@@ -1,11 +1,8 @@
 package se.hal.plugin.mqtt.device;
 
-import se.hal.intf.HalAbstractController;
 import se.hal.intf.HalDeviceData;
-import se.hal.struct.devicedata.HumiditySensorData;
 import se.hal.struct.devicedata.OnOffEventData;
 import zutil.ObjectUtil;
-import zutil.converter.Converter;
 import zutil.parser.DataNode;
 import zutil.parser.DataNodePath;
 import zutil.parser.json.JSONParser;
@@ -81,5 +78,18 @@ public class HalMqttOnOffEventConfig extends HalMqttEventConfig {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public byte[] getMqttPublishPayload(HalDeviceData data) {
+        if (data instanceof OnOffEventData) {
+            if (((OnOffEventData) data).isOn()) {
+                return valueOnString.getBytes(StandardCharsets.UTF_8);
+            } else {
+                return valueOffString.getBytes(StandardCharsets.UTF_8);
+            }
+        }
+
+        return null;
     }
 }

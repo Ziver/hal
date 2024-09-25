@@ -5,6 +5,7 @@ import se.hal.struct.devicedata.OnOffEventData;
 
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.Assert.*;
 import static se.hal.test.HalAssert.assertEqualsIgnoreTimestamp;
 
 public class HalMqttOnOffEventConfigTest {
@@ -52,5 +53,19 @@ public class HalMqttOnOffEventConfigTest {
         assertEqualsIgnoreTimestamp(ON_EVENT, config.getDeviceData("{\"power\":10.48,\"state\":\"ONLINE\"}".getBytes(StandardCharsets.UTF_8)));
         assertEqualsIgnoreTimestamp(ON_EVENT, config.getDeviceData("{\"power\":10.48,\"state\":\"online\"}".getBytes(StandardCharsets.UTF_8)));
 
+    }
+
+    @Test
+    public void getMqttPublishPayload() {
+        HalMqttOnOffEventConfig config = new HalMqttOnOffEventConfig();
+
+        assertEquals("ON", new String(config.getMqttPublishPayload(ON_EVENT)));
+        assertEquals("OFF", new String(config.getMqttPublishPayload(OFF_EVENT)));
+
+        config.setValueOnString("online");
+        config.setValueOffString("offline");
+
+        assertEquals("online", new String(config.getMqttPublishPayload(ON_EVENT)));
+        assertEquals("offline", new String(config.getMqttPublishPayload(OFF_EVENT)));
     }
 }

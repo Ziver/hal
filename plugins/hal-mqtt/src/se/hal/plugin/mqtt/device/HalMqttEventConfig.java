@@ -1,5 +1,6 @@
 package se.hal.plugin.mqtt.device;
 
+import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalEventConfig;
 import se.hal.intf.HalEventController;
 import se.hal.intf.HalSensorConfig;
@@ -31,6 +32,14 @@ public abstract class HalMqttEventConfig extends HalMqttDeviceConfig implements 
         this.writeTopicName = writeTopicName;
     }
 
+    /**
+     * Generates the payload that will be added to a MQTT publish message.
+     *
+     * @param data  the data that should be converted to a payload.
+     * @return a byte array representing the given data, null if the conversion was not possible.
+     */
+    public abstract byte[] getMqttPublishPayload(HalDeviceData data);
+
     // --------------------------
     // Java Methods
     // --------------------------
@@ -51,4 +60,5 @@ public abstract class HalMqttEventConfig extends HalMqttDeviceConfig implements 
         result = 31 * result + Objects.hashCode(writeTopicName);
         return result;
     }
+
 }

@@ -29,6 +29,7 @@ import se.hal.daemon.HalMulticastDnsDaemon;
 import se.hal.intf.*;
 import se.hal.plugin.mqtt.detector.HalMqttDetector;
 import se.hal.plugin.mqtt.device.HalMqttDeviceConfig;
+import se.hal.plugin.mqtt.device.HalMqttEventConfig;
 import zutil.InetUtil;
 import zutil.ObjectUtil;
 import zutil.log.LogUtil;
@@ -173,7 +174,10 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
 
     @Override
     public void send(HalEventConfig eventConfig, HalEventData eventData) {
-        if (eventConfig instanceof HalMqttDeviceConfig) {
+        if (eventConfig instanceof HalMqttEventConfig) {
+            HalMqttEventConfig mqttEvent = (HalMqttEventConfig) eventConfig;
+            mqttBroker.publish(mqttEvent.getWriteTopicName(), mqttEvent.getMqttPublishPayload(eventData));
+        } else if (eventConfig instanceof HalMqttDeviceConfig) {
             HalMqttDeviceConfig mqttEvent = (HalMqttDeviceConfig) eventConfig;
             mqttBroker.publish(mqttEvent.getTopicName(), Double.toString(eventData.getData()).getBytes());
         } else

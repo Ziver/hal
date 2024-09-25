@@ -22,6 +22,7 @@ public class Zigbee2mqttDetector implements HalMqttDetector {
     public List<HalMqttDeviceConfig> parseTopic(String topic, byte[] data) {
         if (ObjectUtil.isEmpty(topic) ||
                 ! topic.startsWith("zigbee2mqtt/") ||
+                topic.endsWith("/set") ||
                 topic.startsWith("zigbee2mqtt/bridge/"))
             return Collections.emptyList();
 

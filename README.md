@@ -22,11 +22,12 @@ Currently supported devices:
   - Humidity Sensors
   - Pressure Sensors
   - OnnOff Devices
+- **Google Assistant**
+- **MQTT Devices**
 
 Under development (Not ready to be used yet)
 - **Z-Wave**
-- **Google Assistant**
-- **MQTT Devices**
+
 
 The project is currently in alpha state, and as such things will change and break continuously.
 

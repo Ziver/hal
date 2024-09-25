@@ -34,7 +34,7 @@ public class SendEventAction implements HalAction {
                 // Send
                 EventControllerManager.getInstance().send(event, dataObj);
             } else
-                logger.warning("Unable to find event with id: "+ event.getId());
+                logger.warning("Unable to find event for EventAction: " + this);
         } catch (Exception e) {
             logger.log(Level.SEVERE, null, e);
         }

@@ -10,10 +10,14 @@ Usage:
 
     $(basename $0)
         [-f|--foreground]
+        [-b|--background]
+        [--no-color]
         [-h|--help]
 
 Where:
-    --foreground        Run Hal Server in the foreground instead of detaching a new screen.
+    --foreground        (Default) Run Hal Server in the foreground instead of detaching a new screen.
+    --background        Run Hal Server in the background through screen.
+    --no-color          Disable color printout on the console.
     --help              Print this help message.
     "
 }

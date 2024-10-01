@@ -25,8 +25,10 @@ public class Zigbee2mqttDetectorTest {
         assertEquals(0, devices.size());
 
         devices = detector.parseTopic("zigbee2mqtt/Kitchen Plant Light", "{\"power\":10.48,\"state\":\"ON\"}".getBytes(StandardCharsets.UTF_8));
+        HalMqttOnOffEventConfig actualOnOff = new HalMqttOnOffEventConfig("zigbee2mqtt/Kitchen Plant Light", "$.state");
+        actualOnOff.setWriteTopicName("zigbee2mqtt/Kitchen Plant Light/set");
         assertEquals(1, devices.size());
-        assertEquals(new HalMqttOnOffEventConfig("zigbee2mqtt/Kitchen Plant Light", "$.state"), devices.get(0));
+        assertEquals(actualOnOff, devices.get(0));
 
     }
 /*

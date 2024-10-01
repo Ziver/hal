@@ -31,7 +31,7 @@ public class Zigbee2mqttDetector implements HalMqttDetector {
 
         if (json.getString("state") != null) {
             HalMqttOnOffEventConfig event = new HalMqttOnOffEventConfig(topic, "$.state");
-            event.setWriteTopicName(topic + "/set");
+            event.setWriteTopicName(topic + "/set/state");
             event.setValueOnString("ON");
             event.setValueOffString("OFF");
             detectedDeviceConfigs.add(event);

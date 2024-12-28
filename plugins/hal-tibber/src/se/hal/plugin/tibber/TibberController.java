@@ -88,7 +88,7 @@ public class TibberController implements HalSensorController, Runnable, HalDaemo
             HttpClient client = new HttpClient(HttpClient.HttpRequestType.POST);
             client.setURL(TIBBER_API_ENDPOINT);
             client.setHeader("Authorization", "Bearer " + HalContext.getStringProperty(CONFIG_TIBBER_TOKEN));
-            client.setContent("application/json");
+            client.setHeader("Content-Type", "application/json");
             String requestQuery = "{ " +
                 "\"query\": \"{" +
                     "viewer {" +

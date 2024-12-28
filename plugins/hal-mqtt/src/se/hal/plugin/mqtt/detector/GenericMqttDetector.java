@@ -1,9 +1,6 @@
 package se.hal.plugin.mqtt.detector;
 
-import se.hal.plugin.mqtt.device.HalMqttDeviceConfig;
-import se.hal.plugin.mqtt.device.HalMqttHumidityDeviceConfig;
-import se.hal.plugin.mqtt.device.HalMqttParticularMatterDeviceConfig;
-import se.hal.plugin.mqtt.device.HalMqttTemperatureDeviceConfig;
+import se.hal.plugin.mqtt.device.*;
 import zutil.ObjectUtil;
 import zutil.parser.DataNode;
 import zutil.parser.json.JSONParser;
@@ -47,6 +44,12 @@ public class GenericMqttDetector implements HalMqttDetector {
                 case "pm25":
                     config = new HalMqttParticularMatterDeviceConfig(topic);
                     break;
+                case "voltage":
+                    config = new HalMqttVoltageDeviceConfig(topic);
+                    break;
+                case "current":
+                    config = new HalMqttCurrentDeviceConfig(topic);
+                    break;
             }
 
             if (config != null) {
@@ -70,6 +73,14 @@ public class GenericMqttDetector implements HalMqttDetector {
             if (jsonPayload.get("pm25") != null) {
                 HalMqttDeviceConfig config = new HalMqttParticularMatterDeviceConfig(topic, "$.pm25");
                 detectedDeviceConfigs.add(config);
+            }
+            if (jsonPayload.get("voltage") != null) {
+                HalMqttVoltageDeviceConfig sensor = new HalMqttVoltageDeviceConfig(topic, "$.voltage");
+                detectedDeviceConfigs.add(sensor);
+            }
+            if (jsonPayload.get("current") != null) {
+                HalMqttCurrentDeviceConfig event = new HalMqttCurrentDeviceConfig(topic, "$.current");
+                detectedDeviceConfigs.add(event);
             }
         }
 

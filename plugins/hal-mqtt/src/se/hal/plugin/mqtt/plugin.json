@@ -8,9 +8,12 @@
 		{"se.hal.plugin.mqtt.detector.HalMqttDetector": "se.hal.plugin.mqtt.detector.TasmotaMqttDetector"},
 		{"se.hal.plugin.mqtt.detector.HalMqttDetector": "se.hal.plugin.mqtt.detector.Zigbee2mqttDetector"},
 
+		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.mqtt.device.HalMqttCurrentDeviceConfig"},
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.mqtt.device.HalMqttHumidityDeviceConfig"},
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.mqtt.device.HalMqttParticularMatterDeviceConfig"},
+		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.mqtt.device.HalMqttPowerConsumptionDeviceConfig"},
 		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.mqtt.device.HalMqttTemperatureDeviceConfig"},
+		{"se.hal.intf.HalSensorConfig": "se.hal.plugin.mqtt.device.HalMqttVoltageDeviceConfig"},
 
 		{"se.hal.intf.HalEventConfig": "se.hal.plugin.mqtt.device.HalMqttOnOffEventConfig"},
 

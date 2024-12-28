@@ -9,6 +9,7 @@ import zutil.parser.json.JSONParser;
 import zutil.ui.conf.Configurator;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class HalMqttOnOffEventConfig extends HalMqttEventConfig {
 

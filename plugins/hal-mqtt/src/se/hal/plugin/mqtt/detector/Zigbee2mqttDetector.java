@@ -3,8 +3,7 @@ package se.hal.plugin.mqtt.detector;
 import se.hal.intf.HalDeviceConfig;
 import se.hal.intf.HalDeviceData;
 import se.hal.intf.HalDeviceReportListener;
-import se.hal.plugin.mqtt.device.HalMqttDeviceConfig;
-import se.hal.plugin.mqtt.device.HalMqttOnOffEventConfig;
+import se.hal.plugin.mqtt.device.*;
 import zutil.ObjectUtil;
 import zutil.parser.DataNode;
 import zutil.parser.json.JSONParser;
@@ -34,6 +33,11 @@ public class Zigbee2mqttDetector implements HalMqttDetector {
             event.setWriteTopicName(topic + "/set/state");
             event.setValueOnString("ON");
             event.setValueOffString("OFF");
+            detectedDeviceConfigs.add(event);
+        }
+
+        if (json.getString("power") != null) {
+            HalMqttPowerConsumptionDeviceConfig event = new HalMqttPowerConsumptionDeviceConfig(topic, "$.power");
             detectedDeviceConfigs.add(event);
         }
 

@@ -27,19 +27,16 @@ package se.hal.plugin.tibber.device;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
+import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import se.hal.plugin.tibber.TibberController;
-import se.hal.struct.devicedata.PriceSensorData;
 
-/**
- * A sensor that shows the price of electricity at a specific time
- */
-public class ElectricityPriceSensor implements HalSensorConfig {
 
+public class TibberPowerConsumptionSensor implements HalSensorConfig {
 
 
     @Override
     public long getDataInterval() {
-        return 60*60*1000; // 1 h
+        return 60*60 * 1000; // 1 min
     }
 
     @Override
@@ -54,7 +51,7 @@ public class ElectricityPriceSensor implements HalSensorConfig {
 
     @Override
     public Class<? extends HalSensorData> getDeviceDataClass() {
-        return PriceSensorData.class;
+        return PowerConsumptionSensorData.class;
     }
 
     @Override

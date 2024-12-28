@@ -27,6 +27,11 @@ package se.hal.plugin.tibber;
 import se.hal.HalContext;
 import se.hal.HalServer;
 import se.hal.intf.*;
+import se.hal.plugin.tibber.device.TibberElectricityCostSensor;
+import se.hal.plugin.tibber.device.TibberElectricityPriceSensor;
+import se.hal.plugin.tibber.device.TibberPowerConsumptionSensor;
+import se.hal.struct.devicedata.PriceSensorData;
+import se.hal.util.ListenerUtil;
 import zutil.ObjectUtil;
 import zutil.log.LogUtil;
 import zutil.net.http.HttpClient;
@@ -35,6 +40,7 @@ import zutil.parser.DataNode;
 import zutil.parser.json.JSONParser;
 import zutil.ui.UserMessageManager;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -51,6 +57,7 @@ public class TibberController implements HalSensorController, Runnable, HalDaemo
 
     private static final String TIBBER_API_ENDPOINT = "https://api.tibber.com/v1-beta/gql";
     private static final int POLL_TIME = 60*60; // poll every 1h defined in sec
+    private static SimpleDateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"); // 2024-12-28T23:00:00.000+01:00
 
     private List<TibberDevice> registeredDevices = new ArrayList<>();
     private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
@@ -124,7 +131,7 @@ public class TibberController implements HalSensorController, Runnable, HalDaemo
             HttpHeader header = client.send();
             JSONParser parser = new JSONParser(header.getInputStream());
             DataNode json = parser.read();
-            logger.finest("Response: " + json);
+            logger.finest("Received data from Tibber API: " + json);
 
             if (header.getResponseStatusCode() != 200) {
                 logger.severe("There was a error fetching data from tibber: StatusCode=" + header.getResponseStatusCode() + ", Response=" + header.getResponseStatusString());
@@ -147,6 +154,20 @@ public class TibberController implements HalSensorController, Runnable, HalDaemo
             }
 
             DataNode data = json.get("data").get("viewer").get("homes").get(0).get("consumption").get("nodes").get(0);
+            long timestamp = DATE_PARSER.parse(data.getString("from")).getTime();
+
+            // Data example:
+            // unitPrice=0.1507875, cost=0.3131856375, from=2024-12-28T21:00:00.000+01:00, consumption=2.077, to=2024-12-28T22:00:00.000+01:00, unitPriceVAT=0.0301575, consumptionUnit=kWh
+
+            if (data.get("cost") != null) {
+                ListenerUtil.callReportReceived(deviceListeners, new TibberElectricityCostSensor(), new PriceSensorData(data.getDouble("cost"), timestamp));
+            }
+            if (data.get("unitPriceVAT") != null) {
+                ListenerUtil.callReportReceived(deviceListeners, new TibberElectricityPriceSensor(), new PriceSensorData(data.getDouble("unitPriceVAT"), timestamp));
+            }
+            if (data.get("consumption") != null) {
+                ListenerUtil.callReportReceived(deviceListeners, new TibberPowerConsumptionSensor(), new PriceSensorData(data.getDouble("consumption"), timestamp));
+            }
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Tibber API querying failed.", e);

@@ -33,7 +33,7 @@ import se.hal.struct.devicedata.CostSensorData;
 /**
  * A sensor that calculate current electricity bil
  */
-public class ElectricityCostSensor implements HalSensorConfig {
+public class TibberElectricityCostSensor implements HalSensorConfig {
 
 
 

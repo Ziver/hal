@@ -1,0 +1,10 @@
+{
+  "version": 0.1,
+  "name": "Hal-Vendor-EcoSense",
+  "description": "Plugin that connects to EcoSense Cloud API.",
+  "interfaces": [
+    {"se.hal.intf.HalAutostartController": "se.hal.plugin.vendor.ecosense.EcoSenseController"},
+
+    {"se.hal.intf.HalSensorConfig": "se.hal.plugin.vendor.ecosense.device.EccoCubeRadonSensor"}
+  ]
+}

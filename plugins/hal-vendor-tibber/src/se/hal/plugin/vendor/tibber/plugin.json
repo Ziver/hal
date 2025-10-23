@@ -5,8 +5,8 @@
     "interfaces": [
         {"se.hal.intf.HalAutostartController": "se.hal.plugin.vendor.tibber.TibberController"},
 
-        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.vendor.tibber.device.TibberElectricityCostSensor"},
-        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.vendor.tibber.device.TibberElectricityPriceSensor"},
-        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.vendor.tibber.device.TibberPowerConsumptionSensor"}
+        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.vendor.tibber.device.TibberElectricityCostSensorConfig"},
+        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.vendor.tibber.device.TibberElectricityPriceSensorConfig"},
+        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.vendor.tibber.device.TibberPowerConsumptionSensorConfig"}
     ]
 }

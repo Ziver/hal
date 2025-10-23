@@ -27,7 +27,7 @@ package se.hal.plugin.vendor.ecosense;
 import se.hal.HalContext;
 import se.hal.HalServer;
 import se.hal.intf.*;
-import se.hal.plugin.vendor.ecosense.device.EccoCubeRadonSensor;
+import se.hal.plugin.vendor.ecosense.device.EccoCubeRadonSensorConfig;
 import se.hal.struct.devicedata.RadonSensorData;
 import zutil.ObjectUtil;
 import zutil.log.LogUtil;
@@ -83,7 +83,7 @@ public class EcoSenseController implements HalSensorController, Runnable, HalDae
                     return;
                 }
 
-                EccoCubeRadonSensor radonSensor = new EccoCubeRadonSensor();
+                EccoCubeRadonSensorConfig radonSensor = new EccoCubeRadonSensorConfig();
                 radonSensor.setSerialNumber(apiResponse.serialNumber);
 
                 RadonSensorData radonSensorData = new RadonSensorData(apiResponse.radonLevel, apiResponse.lastRadonUpdateTime);

@@ -27,21 +27,24 @@ package se.hal.plugin.vendor.tibber.device;
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
-import se.hal.struct.devicedata.PowerConsumptionSensorData;
 import se.hal.plugin.vendor.tibber.TibberController;
+import se.hal.struct.devicedata.CostSensorData;
 
+/**
+ * A sensor that calculate current electricity bil
+ */
+public class TibberElectricityCostSensorConfig implements HalSensorConfig {
 
-public class TibberPowerConsumptionSensor implements HalSensorConfig {
 
 
     @Override
     public long getDataInterval() {
-        return 60*60 * 1000; // 1 min
+        return 60*60*1000; // 1 h
     }
 
     @Override
     public AggregationMethod getAggregationMethod() {
-        return AggregationMethod.AVERAGE;
+        return AggregationMethod.SUM;
     }
 
     @Override
@@ -51,11 +54,11 @@ public class TibberPowerConsumptionSensor implements HalSensorConfig {
 
     @Override
     public Class<? extends HalSensorData> getDeviceDataClass() {
-        return PowerConsumptionSensorData.class;
+        return CostSensorData.class;
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof TibberPowerConsumptionSensor;
+        return obj instanceof TibberElectricityCostSensorConfig;
     }
 }

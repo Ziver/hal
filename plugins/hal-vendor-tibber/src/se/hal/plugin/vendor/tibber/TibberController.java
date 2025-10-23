@@ -27,9 +27,9 @@ package se.hal.plugin.vendor.tibber;
 import se.hal.HalContext;
 import se.hal.HalServer;
 import se.hal.intf.*;
-import se.hal.plugin.vendor.tibber.device.TibberElectricityCostSensor;
-import se.hal.plugin.vendor.tibber.device.TibberElectricityPriceSensor;
-import se.hal.plugin.vendor.tibber.device.TibberPowerConsumptionSensor;
+import se.hal.plugin.vendor.tibber.device.TibberElectricityCostSensorConfig;
+import se.hal.plugin.vendor.tibber.device.TibberElectricityPriceSensorConfig;
+import se.hal.plugin.vendor.tibber.device.TibberPowerConsumptionSensorConfig;
 import se.hal.struct.devicedata.PriceSensorData;
 import se.hal.util.ListenerUtil;
 import zutil.log.LogUtil;
@@ -92,13 +92,13 @@ public class TibberController implements HalSensorController, Runnable, HalDaemo
             }
 
             if (consumption.cost > 0) {
-                ListenerUtil.callReportReceived(deviceListeners, new TibberElectricityCostSensor(), new PriceSensorData(consumption.cost, consumption.timestamp));
+                ListenerUtil.callReportReceived(deviceListeners, new TibberElectricityCostSensorConfig(), new PriceSensorData(consumption.cost, consumption.timestamp));
             }
             if (consumption.unitPriceVAT > 0) {
-                ListenerUtil.callReportReceived(deviceListeners, new TibberElectricityPriceSensor(), new PriceSensorData(consumption.unitPriceVAT, consumption.timestamp));
+                ListenerUtil.callReportReceived(deviceListeners, new TibberElectricityPriceSensorConfig(), new PriceSensorData(consumption.unitPriceVAT, consumption.timestamp));
             }
             if (consumption.consumption > 0) {
-                ListenerUtil.callReportReceived(deviceListeners, new TibberPowerConsumptionSensor(), new PriceSensorData(consumption.consumption, consumption.timestamp));
+                ListenerUtil.callReportReceived(deviceListeners, new TibberPowerConsumptionSensorConfig(), new PriceSensorData(consumption.consumption, consumption.timestamp));
             }
 
         } catch (Exception e) {

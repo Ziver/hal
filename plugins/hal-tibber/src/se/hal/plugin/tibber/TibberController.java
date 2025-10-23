@@ -55,11 +55,9 @@ public class TibberController implements HalSensorController, Runnable, HalDaemo
     private static final Logger logger = LogUtil.getLogger();
 
     private static final String CONFIG_TIBBER_TOKEN = "hal_tibber.token";
-
-    private static final String TIBBER_API_ENDPOINT = "https://api.tibber.com/v1-beta/gql";
     private static final int POLL_TIME = 60*60; // poll every 1h defined in sec
-    private static SimpleDateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"); // 2024-12-28T23:00:00.000+01:00
 
+    private TibberAPIClient tibberClient;
     private List<TibberDevice> registeredDevices = new ArrayList<>();
     private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
     private ScheduledFuture<?> threadSchedule;
@@ -74,6 +72,7 @@ public class TibberController implements HalSensorController, Runnable, HalDaemo
 
     @Override
     public void initialize() {
+        tibberClient = new TibberAPIClient(HalContext.getStringProperty(CONFIG_TIBBER_TOKEN));
         HalServer.registerDaemon(this);
     }
 
@@ -92,81 +91,21 @@ public class TibberController implements HalSensorController, Runnable, HalDaemo
         try {
             logger.fine("Querying Tibber API for new data.");
 
-            HttpClient client = new HttpClient(HttpClient.HttpRequestType.POST);
-            client.setURL(TIBBER_API_ENDPOINT);
-            client.setHeader("Authorization", "Bearer " + HalContext.getStringProperty(CONFIG_TIBBER_TOKEN));
-            client.setHeader("Content-Type", "application/json");
-            String requestQuery = "{ " +
-                "\"query\": \"{" +
-                    "viewer {" +
-                        "homes {" +
-                            "consumption(resolution: HOURLY, last: 1) {" +
-                                "nodes {" +
-                                    "from " +
-                                    "to " +
-                                    "cost " + // Total cost
-                                    "unitPrice " + // Cost per Kwh
-                                    "unitPriceVAT " + // Cost per Kwh with taxes
-                                    "consumption " + // Total consumption
-                                    "consumptionUnit " + // Should be Kwh
-                                "}" +
-                            "}" +
-//                            "currentSubscription {" +
-//                                "priceInfo {" +
-//                                    "current {" +
-//                                        "total " +
-//                                        "energy " +
-//                                        "tax " +
-//                                        "startsAt " +
-//                                    "}" +
-//                                "}" +
-//                            "}" +
-                        "}" +
-                    "}" +
-                "}\"" +
-            "}";
-            client.setContent(requestQuery);
-            logger.finest("Request: " + requestQuery);
+            TibberAPIClient.TibberConsumption consumption = tibberClient.getConsumption();
 
-            HttpHeader header = client.send();
-            JSONParser parser = new JSONParser(header.getInputStream());
-            DataNode json = parser.read();
-            logger.finest("Received data from Tibber API: " + json);
-
-            if (header.getResponseStatusCode() != 200) {
-                logger.severe("There was a error fetching data from tibber: StatusCode=" + header.getResponseStatusCode() + ", Response=" + header.getResponseStatusString());
-                HalContext.getUserMessageManager().add(new UserMessageManager.UserMessage(
-                        UserMessageManager.MessageLevel.ERROR,
-                        "Tibber API error.",
-                        "There was a error fetching data from tibber: StatusCode=" + header.getResponseStatusCode() + ", Response=" + header.getResponseStatusString(),
-                        UserMessageManager.MessageTTL.DISMISSED));
+            if (consumption == null) {
+                logger.severe("There was a error fetching data from Tibber API");
                 return;
             }
 
-            if (!ObjectUtil.isEmpty(json.get("error"))) {
-                logger.severe("There was a error fetching data from tibber: " + json.getString("error"));
-                HalContext.getUserMessageManager().add(new UserMessageManager.UserMessage(
-                        UserMessageManager.MessageLevel.ERROR,
-                        "Tibber API error.",
-                        "There was a error fetching data from tibber: " + json.getString("error"),
-                        UserMessageManager.MessageTTL.DISMISSED));
-                return;
+            if (consumption.cost > 0) {
+                ListenerUtil.callReportReceived(deviceListeners, new TibberElectricityCostSensor(), new PriceSensorData(consumption.cost, consumption.timestamp));
             }
-
-            DataNode data = json.get("data").get("viewer").get("homes").get(0).get("consumption").get("nodes").get(0);
-            long timestamp = DATE_PARSER.parse(data.getString("from")).getTime();
-
-            // Data example:
-            // unitPrice=0.1507875, cost=0.3131856375, from=2024-12-28T21:00:00.000+01:00, consumption=2.077, to=2024-12-28T22:00:00.000+01:00, unitPriceVAT=0.0301575, consumptionUnit=kWh
-
-            if (data.get("cost") != null) {
-                ListenerUtil.callReportReceived(deviceListeners, new TibberElectricityCostSensor(), new PriceSensorData(data.getDouble("cost"), timestamp));
+            if (consumption.unitPriceVAT > 0) {
+                ListenerUtil.callReportReceived(deviceListeners, new TibberElectricityPriceSensor(), new PriceSensorData(consumption.unitPriceVAT, consumption.timestamp));
             }
-            if (data.get("unitPriceVAT") != null) {
-                ListenerUtil.callReportReceived(deviceListeners, new TibberElectricityPriceSensor(), new PriceSensorData(data.getDouble("unitPriceVAT"), timestamp));
-            }
-            if (data.get("consumption") != null) {
-                ListenerUtil.callReportReceived(deviceListeners, new TibberPowerConsumptionSensor(), new PriceSensorData(data.getDouble("consumption"), timestamp));
+            if (consumption.consumption > 0) {
+                ListenerUtil.callReportReceived(deviceListeners, new TibberPowerConsumptionSensor(), new PriceSensorData(consumption.consumption, consumption.timestamp));
             }
 
         } catch (Exception e) {

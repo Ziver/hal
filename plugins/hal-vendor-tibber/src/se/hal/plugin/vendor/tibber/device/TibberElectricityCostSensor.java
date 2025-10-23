@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ziver Koc
+ * Copyright (c) 2024-2025 Ziver Koc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.tibber.device;
+package se.hal.plugin.vendor.tibber.device;
 
 import se.hal.intf.HalSensorConfig;
 import se.hal.intf.HalSensorController;
 import se.hal.intf.HalSensorData;
-import se.hal.plugin.tibber.TibberController;
+import se.hal.plugin.vendor.tibber.TibberController;
 import se.hal.struct.devicedata.CostSensorData;
 
 /**

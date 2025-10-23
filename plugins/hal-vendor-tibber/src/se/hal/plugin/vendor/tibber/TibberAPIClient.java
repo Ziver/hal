@@ -22,23 +22,16 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.tibber;
+package se.hal.plugin.vendor.tibber;
 
 import se.hal.HalContext;
-import se.hal.plugin.tibber.device.TibberElectricityCostSensor;
-import se.hal.plugin.tibber.device.TibberElectricityPriceSensor;
-import se.hal.plugin.tibber.device.TibberPowerConsumptionSensor;
-import se.hal.struct.devicedata.PriceSensorData;
-import se.hal.util.ListenerUtil;
 import zutil.ObjectUtil;
 import zutil.log.LogUtil;
 import zutil.net.http.HttpClient;
 import zutil.net.http.HttpHeader;
 import zutil.parser.DataNode;
 import zutil.parser.json.JSONParser;
-import zutil.ui.UserMessageManager;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -1,0 +1,12 @@
+{
+    "version": 0.1,
+    "name": "Hal-Vendor-Tibber",
+    "description": "Plugin that connects to the Tibber API.",
+    "interfaces": [
+        {"se.hal.intf.HalAutostartController": "se.hal.plugin.vendor.tibber.TibberController"},
+
+        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.vendor.tibber.device.TibberElectricityCostSensor"},
+        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.vendor.tibber.device.TibberElectricityPriceSensor"},
+        {"se.hal.intf.HalSensorConfig": "se.hal.plugin.vendor.tibber.device.TibberPowerConsumptionSensor"}
+    ]
+}

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ziver Koc
+ * Copyright (c) 2024-2025 Ziver Koc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,40 @@
  * THE SOFTWARE.
  */
 
-package se.hal.plugin.tibber;
+package se.hal.plugin.vendor.tibber.device;
 
-public interface TibberDevice {
+import se.hal.intf.HalSensorConfig;
+import se.hal.intf.HalSensorController;
+import se.hal.intf.HalSensorData;
+import se.hal.struct.devicedata.PowerConsumptionSensorData;
+import se.hal.plugin.vendor.tibber.TibberController;
+
+
+public class TibberPowerConsumptionSensor implements HalSensorConfig {
+
+
+    @Override
+    public long getDataInterval() {
+        return 60*60 * 1000; // 1 min
+    }
+
+    @Override
+    public AggregationMethod getAggregationMethod() {
+        return AggregationMethod.AVERAGE;
+    }
+
+    @Override
+    public Class<? extends HalSensorController> getDeviceControllerClass() {
+        return TibberController.class;
+    }
+
+    @Override
+    public Class<? extends HalSensorData> getDeviceDataClass() {
+        return PowerConsumptionSensorData.class;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof TibberPowerConsumptionSensor;
+    }
 }

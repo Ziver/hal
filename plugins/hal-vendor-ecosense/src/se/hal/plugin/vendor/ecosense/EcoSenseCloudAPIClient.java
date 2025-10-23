@@ -40,10 +40,11 @@ import zutil.parser.json.JSONWriter;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -92,7 +93,9 @@ public class EcoSenseCloudAPIClient {
         cognitoClient.close();
     }
 
-    public EcoSenseDevice getDevices() {
+    public List<EcoSenseDevice> getDevices() {
+        List<EcoSenseDevice> devices = new ArrayList<>();
+
         try {
             if (ObjectUtil.isEmpty(idToken)) {
                 authenticate();
@@ -153,7 +156,7 @@ public class EcoSenseCloudAPIClient {
                     logger.log(Level.WARNING, "Was unable to parse timestamp from EcoSense API.", e);
                 }
 
-                return ecoSenseDevice;
+                devices.add(ecoSenseDevice);
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
@@ -162,7 +165,7 @@ public class EcoSenseCloudAPIClient {
             throw new RuntimeException(e);
         }
 
-        return null;
+        return devices;
     }
 
     public class EcoSenseDevice {

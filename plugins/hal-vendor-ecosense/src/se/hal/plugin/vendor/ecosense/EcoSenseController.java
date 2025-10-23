@@ -77,19 +77,21 @@ public class EcoSenseController implements HalSensorController, Runnable, HalDae
     public void run() {
         try {
             if (!ObjectUtil.isEmpty(ecoSenseClient)) {
-                EcoSenseCloudAPIClient.EcoSenseDevice apiResponse = ecoSenseClient.getDevices();
-                if (apiResponse == null) {
-                    logger.warning("Received empty response from EcoSense API.");
+                List<EcoSenseCloudAPIClient.EcoSenseDevice> apiResponse = ecoSenseClient.getDevices();
+                if (apiResponse.isEmpty()) {
+                    logger.info("Received no devices from EcoSense API.");
                     return;
                 }
 
-                EccoCubeRadonSensorConfig radonSensor = new EccoCubeRadonSensorConfig();
-                radonSensor.setSerialNumber(apiResponse.serialNumber);
+                for (EcoSenseCloudAPIClient.EcoSenseDevice device : apiResponse) {
+                    EccoCubeRadonSensorConfig radonSensor = new EccoCubeRadonSensorConfig();
+                    radonSensor.setSerialNumber(device.serialNumber);
 
-                RadonSensorData radonSensorData = new RadonSensorData(apiResponse.radonLevel, apiResponse.lastRadonUpdateTime);
+                    RadonSensorData radonSensorData = new RadonSensorData(device.radonLevel, device.lastRadonUpdateTime);
 
-                if (deviceReportListener != null) {
-                    deviceReportListener.reportReceived(radonSensor, radonSensorData);
+                    if (deviceReportListener != null) {
+                        deviceReportListener.reportReceived(radonSensor, radonSensorData);
+                    }
                 }
             }
         } catch (Exception e) {

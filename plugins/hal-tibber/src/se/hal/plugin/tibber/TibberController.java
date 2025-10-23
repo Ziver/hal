@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ziver Koc
+ * Copyright (c) 2024-2025 Ziver Koc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,7 +62,7 @@ public class TibberController implements HalSensorController, Runnable, HalDaemo
 
     private List<TibberDevice> registeredDevices = new ArrayList<>();
     private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
-    private ScheduledExecutorService executor;
+    private ScheduledFuture<?> threadSchedule;
 
 
     public TibberController() {}
@@ -78,8 +79,7 @@ public class TibberController implements HalSensorController, Runnable, HalDaemo
 
     @Override
     public void initiate(ScheduledExecutorService executor) {
-        this.executor = executor;
-        executor.scheduleAtFixedRate(this, 10, POLL_TIME, TimeUnit.SECONDS);
+        threadSchedule = executor.scheduleAtFixedRate(this, 10, POLL_TIME, TimeUnit.SECONDS);
     }
 
     @Override
@@ -198,7 +198,7 @@ public class TibberController implements HalSensorController, Runnable, HalDaemo
 
     @Override
     public synchronized void close() {
-        registeredDevices = new ArrayList<>();
-
+        registeredDevices.clear();
+        threadSchedule.cancel(false);
     }
 }

@@ -17,7 +17,7 @@ export default {
   },
   template: `
     <tr :data-device-id="event.id">
-        <td><a :href="'?id=' + event.id">{{ event.name }}</a></td>
+        <td><a :href="'event/' + event.id">{{ event.name }}</a></td>
         <td>{{ event.configType }}</td>
         <td>{{ event.data?.valueStr }}</td>
         <td class="timestamp">{{ timestamp }}</td>

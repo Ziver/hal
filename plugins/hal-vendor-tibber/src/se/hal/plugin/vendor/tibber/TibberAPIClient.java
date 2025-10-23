@@ -35,6 +35,8 @@ import zutil.parser.json.JSONParser;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.logging.Logger;
 
 /**
@@ -44,7 +46,6 @@ public class TibberAPIClient {
     private static final Logger logger = LogUtil.getLogger();
 
     private static final String TIBBER_API_ENDPOINT = "https://api.tibber.com/v1-beta/gql";
-    private static SimpleDateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"); // 2024-12-28T23:00:00.000+01:00
 
     private String tibberToken;
 
@@ -80,16 +81,16 @@ public class TibberAPIClient {
                                 "consumptionUnit " + // Should be Kwh
                             "}" +
                         "}" +
-                            "currentSubscription {" +
-                                "priceInfo {" +
-                                    "current {" +
-                                        "total " +
-                                        "energy " +
-                                        "tax " +
-                                        "startsAt " +
-                                    "}" +
-                                "}" +
-                            "}" +
+//                            "currentSubscription {" +
+//                                "priceInfo {" +
+//                                    "current {" +
+//                                        "total " +
+//                                        "energy " +
+//                                        "tax " +
+//                                        "startsAt " +
+//                                    "}" +
+//                                "}" +
+//                            "}" +
                         "}" +
                     "}" +
                 "}\"" +
@@ -100,12 +101,7 @@ public class TibberAPIClient {
         // unitPrice=0.1507875, cost=0.3131856375, from=2024-12-28T21:00:00.000+01:00, consumption=2.077, to=2024-12-28T22:00:00.000+01:00, unitPriceVAT=0.0301575, consumptionUnit=kWh
 
         TibberConsumption consumption = new TibberConsumption();
-
-        try {
-            consumption.timestamp = DATE_PARSER.parse(data.getString("from")).getTime();
-        } catch (ParseException e) {
-            logger.warning("Was unable to parse timestamp from Tibber API.");
-        }
+        consumption.timestamp = LocalDateTime.parse(data.getString("from")).toInstant(ZoneOffset.UTC).toEpochMilli();
 
         if (data.get("cost") != null) {
             consumption.cost = data.getDouble("cost");

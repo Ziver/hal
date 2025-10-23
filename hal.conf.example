@@ -36,6 +36,10 @@ hal_core.http_port=8080
 ## Tibber Plugin
 #hal_tibber.token=
 
+## EcoSense plugin
+#hal_vendor_ecosense.username=
+#hal_vendor_ecosense.password=
+
 ## Zigbee plugin
 #hal_zigbee.com_port=COM4
 #hal_zigbee.dongle=CC2531|CONBEE|XBEE

@@ -41,6 +41,8 @@ import zutil.parser.json.JSONWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -58,8 +60,6 @@ public class EcoSenseCloudAPIClient {
     private static final String CLIENT_ID = "1dk9ul54cdo42lt6e9u1oa9g1d";
     private static final String USER_POOL_REGION = "us-west-2";
     private static final String API_URL = "https://api.cloud.ecosense.io/api";
-
-    private static SimpleDateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"); //2025-10-22T14:09:29.691533
 
     private String username;
     private String password;
@@ -147,8 +147,8 @@ public class EcoSenseCloudAPIClient {
                 ecoSenseDevice.wifiName = deviceNode.getString("wifi_name");
 
                 try {
-                    ecoSenseDevice.lastRadonUpdateTime = DATE_PARSER.parse(deviceNode.getString("last_radon_update_time")).getTime();
-                    ecoSenseDevice.lastUpdateTime = DATE_PARSER.parse(deviceNode.getString("last_update_time")).getTime();
+                    ecoSenseDevice.lastRadonUpdateTime = LocalDateTime.parse(deviceNode.getString("last_radon_update_time")).toInstant(ZoneOffset.UTC).toEpochMilli();
+                    ecoSenseDevice.lastUpdateTime = LocalDateTime.parse(deviceNode.getString("last_update_time")).toInstant(ZoneOffset.UTC).toEpochMilli();
                 } catch (Exception e) {
                     logger.log(Level.WARNING, "Was unable to parse timestamp from EcoSense API.", e);
                 }

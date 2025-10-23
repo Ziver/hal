@@ -30,6 +30,8 @@ import se.hal.intf.HalSensorData;
 import se.hal.plugin.vendor.ecosense.EcoSenseController;
 import se.hal.struct.devicedata.RadonSensorData;
 
+import java.util.Objects;
+
 /**
  * A sensor that calculate current radon level
  */
@@ -63,7 +65,15 @@ public class EccoCubeRadonSensor implements HalSensorConfig {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return false;
+    public final boolean equals(Object o) {
+        if (!(o instanceof EccoCubeRadonSensor)) return false;
+
+        EccoCubeRadonSensor that = (EccoCubeRadonSensor) o;
+        return Objects.equals(serialNumber, that.serialNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(serialNumber);
     }
 }

@@ -65,6 +65,11 @@ subprojects {
             }
         }
     }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:deprecation"
+        //options.compilerArgs << "-Xlint:unchecked"
+    }
 }
 
 // ------------------------------------
@@ -78,34 +83,44 @@ dependencies {
 }
 
 distributions {
-    distTar.enabled = false
-    distZip.enabled = false
-
     main {
         contents {
+            // from root project
             from 'hal.conf.example'
             from 'logging.properties'
+            from 'run.sh'
 
-            from sourceSets.main.output.resourcesDir
+            // from subprojects
+            project.subprojects.each { subProject ->
+                into('bin') {
+                    from "${subProject.projectDir}/resources/bin"
+                }
+                into('web') {
+                    from "${subProject.projectDir}/resources/web"
+                }
+                into('resources') {
+                    from ("${subProject.projectDir}/resources") {
+                        exclude 'bin'
+                        exclude 'web'
+                    }
+                }
+            }
         }
     }
 }
 
-task copyRecources(type: Copy) {
-    doFirst{
-        System.out.println("Copying resource files...")
-    }
+distTar.enabled = false
+distZip.enabled = false
+assemble.dependsOn(installDist)
 
-    project.subprojects.each { subProject ->
-        from "${subProject.projectDir}/resources"
+project.gradle.startParameter.taskNames.each { taskName ->
+    if (taskName == 'distZip') {
+        distZip.enabled = true
     }
-
-    into(sourceSets.main.output.resourcesDir)
 }
-
-jar.dependsOn(copyRecources)
-copyRecources.mustRunAfter(processResources)
 
 application {
     mainClass = 'se.hal.HalServer'
 }
+
+startScripts.enabled = false

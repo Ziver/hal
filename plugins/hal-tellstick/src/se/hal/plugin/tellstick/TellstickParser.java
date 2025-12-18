@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2015 Ziver
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015-2025 Ziver Koc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -113,7 +115,7 @@ public class TellstickParser {
 
     public static void registerProtocol(Class<? extends TellstickProtocol> protClass) {
         try {
-            registerProtocol(protClass.newInstance());
+            registerProtocol(protClass.getDeclaredConstructor().newInstance());
         } catch (Exception e) {
             logger.log(Level.SEVERE, null, e);
         }

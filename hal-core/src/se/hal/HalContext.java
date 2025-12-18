@@ -1,3 +1,27 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2025 Ziver Koc
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package se.hal;
 
 import zutil.ObjectUtil;
@@ -22,6 +46,7 @@ public class HalContext {
     private static final Logger logger = LogUtil.getLogger();
 
     // Constants
+
     public static final String CONFIG_HTTP_PORT = "hal_core.http_port";
     public static final String CONFIG_HTTP_EXTERNAL_PORT = "hal_core.http_external_port";
     public static final String CONFIG_HTTP_EXTERNAL_DOMAIN = "hal_core.http_external_domain";
@@ -29,22 +54,25 @@ public class HalContext {
     public static final String CONFIG_DNS_LOCAL_DOMAIN = "hal_core.dns_local_domain";
     public static final String CONFIG_MAP_BACKGROUND_IMAGE = "hal_core.map_bgimage";
 
-    public static final String RESOURCE_ROOT;
+    // Path Constants
+
+    public static final String RUNTIME_ROOT;
     static {
-        if (FileUtil.find("build/resources/") != null) // Development environment
-            RESOURCE_ROOT = "build/resources";
-        else if (FileUtil.find("resources/") != null) // Release package environment
-            RESOURCE_ROOT = "resources";
+        if (FileUtil.find("build/install/Hal") != null) // Development environment
+            RUNTIME_ROOT = "build/install/Hal";
         else
-            RESOURCE_ROOT = ".";
+            RUNTIME_ROOT = ".";
     }
 
-    public static final String RESOURCE_WEB_ROOT = HalContext.RESOURCE_ROOT + "/web";
+    public static final String RESOURCE_ROOT     = HalContext.RUNTIME_ROOT + "/resources";
+    public static final String RESOURCE_WEB_ROOT = HalContext.RUNTIME_ROOT + "/web";
+    public static final String RESOURCE_BIN_ROOT = HalContext.RUNTIME_ROOT + "/bin";
 
-    private static final String CONF_FILE = "hal.conf";
-    static final String DB_FILE           = "hal.db";
+    private static final String CONF_FILE = RUNTIME_ROOT + "/hal.conf";
+    static final String DB_FILE           = RUNTIME_ROOT + "/hal.db";
 
     // Variables
+
     private static DBConnection db; // TODO: Should probably be a db pool as we have multiple threads accessing the DB
 
     private static HashMap<String,String> registeredConf = new HashMap<>();

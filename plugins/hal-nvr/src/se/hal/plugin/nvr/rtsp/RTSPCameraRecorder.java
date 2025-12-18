@@ -1,3 +1,27 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2025 Ziver Koc
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package se.hal.plugin.nvr.rtsp;
 
 import se.hal.HalContext;
@@ -21,11 +45,11 @@ import java.util.logging.Logger;
 public class RTSPCameraRecorder implements Runnable {
     private static final Logger logger = LogUtil.getLogger();
 
-    private static final File FFMPEG_BINARY_PATH = FileUtil.find(HalContext.RESOURCE_ROOT + "/bin/");
+    private static final File FFMPEG_BINARY_PATH = FileUtil.find(HalContext.RESOURCE_BIN_ROOT);
 
     private RTSPCameraConfig camera;
     private String storagePath;
-    private Process process;
+    private Process ffmpegProcess;
 
 
     public RTSPCameraRecorder(RTSPCameraConfig camera, String storagePath) {
@@ -64,42 +88,46 @@ public class RTSPCameraRecorder implements Runnable {
                         "-var_stream_map \"v:0,a:0,name:Source v:1,a:1,name:720p v:2,a:2,name:360p\""
                 );*/
                 ffmpegOutput.addAdditionalArg(
-                        "-c:v:0 libx264 -x264-params \"nal-hrd=cbr:force-cfr=1\" -b:v:0 5M -maxrate:v:0 5M -minrate:v:0 5M -bufsize:v:0 10M -preset veryfast -g 25 -sc_threshold 0"
+                        "-c:v:0", "libx264",
+                        "-x264-params", "nal-hrd=cbr:force-cfr=1",
+                        "-b:v:0", "5M",
+                        "-maxrate:v:0", "5M",
+                        "-minrate:v:0", "5M",
+                        "-bufsize:v:0", "10M",
+                        "-preset", "veryfast",
+                        "-g", "25",
+                        "-sc_threshold", "0"
                 );
-                ffmpegOutput.addAdditionalArg("-f hls",
-                        "-hls_time 2", // segment length in seconds
-                        //"-hls_playlist_type event", // Do not delete old segments
-                        "-hls_flags independent_segments+delete_segments",
-                        "-hls_segment_type mpegts",
-                        "-hls_segment_filename \"" + new File(storagePath, "stream_%v/data%02d.ts").getPath() + "\"",
-                        "-master_pl_name \"playlist.m3u8\""
+                ffmpegOutput.addAdditionalArg("-f", "hls",
+                        "-hls_time", "2", // segment length in seconds
+                        //"-hls_playlist_type", "event", // Do not delete old segments
+                        "-hls_flags", "independent_segments+delete_segments",
+                        "-hls_segment_type", "mpegts",
+                        "-hls_segment_filename", new File(storagePath, "stream_%v/data%02d.ts").getPath(),
+                        "-master_pl_name", "playlist.m3u8"
                 );
 
                 FFmpeg ffmpeg = new FFmpeg();
                 ffmpeg.setLogLevel(FFmpegConstants.FFmpegLogLevel.ERROR);
                 ffmpeg.addInput(ffmpegInput);
                 ffmpeg.addOutput(ffmpegOutput);
-                String cmdParams = ffmpeg.buildCommand();
 
                 // ----------------------------------
                 // Execute command
                 // ----------------------------------
 
-                File cmdPath = OSALBinaryManager.getPath(FFMPEG_BINARY_PATH, "ffmpeg");
-
-                String cmd = cmdPath.getParent() + File.separator + cmdParams;
-                logger.finest("Executing ffmpeg: " + cmd);
-
                 Runtime.getRuntime().addShutdownHook(new Thread() {
                     public void run() {
-                        if (process != null) process.destroyForcibly();
+                        if (ffmpegProcess != null) ffmpegProcess.destroyForcibly();
                     }
                 });
 
-                process = Runtime.getRuntime().exec(cmd);
-                BufferedReader output = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                File cmdPath = OSALBinaryManager.getPath(FFMPEG_BINARY_PATH, "ffmpeg");
+                ffmpegProcess = ffmpeg.execute(cmdPath);
 
-                while (process.isAlive()) {
+                BufferedReader output = new BufferedReader(new InputStreamReader(ffmpegProcess.getInputStream()));
+
+                while (ffmpegProcess.isAlive()) {
                     String line;
                     while ((line = output.readLine()) != null) {
                         logger.finest("[Cam: " + camera.getRtspUrl() + "] " + line);
@@ -107,6 +135,7 @@ public class RTSPCameraRecorder implements Runnable {
 
                     Thread.sleep(1000);
                 }
+
                 output.close();
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "RTSP Stream recording thread has crashed for: " + camera.getRtspUrl(), e);
@@ -124,10 +153,10 @@ public class RTSPCameraRecorder implements Runnable {
     }
 
     public void close() {
-        if (process != null) {
-            logger.info("Killing ffmpeg instance.");
+        if (ffmpegProcess != null) {
+            logger.info("Killing FFmpeg instance.");
             camera = null;
-            process.destroy();
+            ffmpegProcess.destroyForcibly();
         }
     }
 }

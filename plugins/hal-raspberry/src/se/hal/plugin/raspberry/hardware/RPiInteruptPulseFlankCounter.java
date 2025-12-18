@@ -1,3 +1,27 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2025 Ziver Koc
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package se.hal.plugin.raspberry.hardware;
 
 import com.pi4j.io.gpio.*;
@@ -32,20 +56,17 @@ public class RPiInteruptPulseFlankCounter implements Runnable, GpioPinListenerDi
         this.controller = controller;
         this.gpioPin = gpioPin;
 
-        // setup a thread pool for executing jobs
+        // Setup a thread pool for executing jobs
         this.executorPool = Executors.newCachedThreadPool();
 
-    //Enable non privileged access to the GPIO pins (no sudo required from now)
-    GpioUtil.enableNonPrivilegedAccess();
+        //Enable non privileged access to the GPIO pins (no sudo required from now)
+        GpioUtil.enableNonPrivilegedAccess();
 
         // create gpio controller
         GpioController gpio = null;
-        try{
+        try {
             gpio = GpioFactory.getInstance();
-        }catch(IllegalArgumentException e) {
-            logger.log(Level.SEVERE, "", e);
-            throw e;
-        }catch(UnsatisfiedLinkError e) {
+        } catch(IllegalArgumentException e) {
             logger.log(Level.SEVERE, "", e);
             throw e;
         }
@@ -73,9 +94,8 @@ public class RPiInteruptPulseFlankCounter implements Runnable, GpioPinListenerDi
     @Override
     public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
         if (event.getState() == PinState.LOW) {  //low = light went on
-            //System.out.println("IR LED turned ON");
             //logger.log(Level.INFO, "IR LED turned on");
-            synchronized(impulseCount) {
+            synchronized(this) {
                 impulseCount++;
             }
         }
@@ -84,19 +104,24 @@ public class RPiInteruptPulseFlankCounter implements Runnable, GpioPinListenerDi
     @Override
     public void run() {
         long startTime = System.nanoTime();
-        synchronized(impulseCount) {
+
+        synchronized(this) {
             impulseCount = 0;	//reset the impulse count
         }
+
         while (!executorPool.isShutdown()) {
             sleepNano(nanoSecondsSleep);	//sleep for some time. This variable will be modified every loop to compensate for the loop time spent.
             int count = -1;
-            synchronized(impulseCount) {
+
+            synchronized(this) {
                 count = impulseCount;
                 impulseCount = 0;
             }
-            save(System.currentTimeMillis(), count);	//save the impulse count
+
+            report(count, System.currentTimeMillis());	//save the impulse count
             long estimatedNanoTimeSpent = System.nanoTime() - startTime;  //this is where the loop ends
             startTime = System.nanoTime();  //this is where the loop starts from now on
+
             if (estimatedNanoTimeSpent > 0) {  //if no overflow
                 long nanoSecondsTooMany = estimatedNanoTimeSpent - (REPORT_TIMEOUT*1000000L);
                 //System.out.println("the look took ~" + estimatedNanoTimeSpent + "ns. That is " + nanoSecondsTooMany/1000000L + "ms off");
@@ -107,10 +132,10 @@ public class RPiInteruptPulseFlankCounter implements Runnable, GpioPinListenerDi
 
     /**
      * Sleep for [ns] nanoseconds
-     * @param ns
+     *
+     * @param ns    nanoseconds to sleep
      */
     private void sleepNano(long ns) {
-        //System.out.println("will go to sleep for " + ns + "ns");
         try{
             Thread.sleep(ns/1000000L, (int)(ns%1000000L));
         }catch(InterruptedException e) {
@@ -119,25 +144,21 @@ public class RPiInteruptPulseFlankCounter implements Runnable, GpioPinListenerDi
     }
 
     /**
-     * Saves the data to the database.
-     * This method should block the caller as short time as possible.
-     * This method should try block the same amount of time every time it is called.
-     * Try to make the time spent in the method the same for every call (low variation).
+     * Report back some data to Hal Core,
      *
-     * @param timestamp_end
-     * @param data
+     * @param data      The data to report back to Hal.
+     * @param timestamp The timestamp of the received data
      */
-    private void save(final long timestamp_end, final int data) {
-        //offload the timed loop by not doing the db interaction in this thread.
+    private void report(final int data, final long timestamp) {
+        // Offload the timed loop by not doing the db interaction in this thread.
         executorPool.execute(new Runnable() {
             @Override
             public void run() {
-                logger.log(Level.INFO, "Reporting data. timestamp_end="+timestamp_end+", data="+data);
+                logger.log(Level.INFO, "Reporting data. timestamp_end=" + timestamp + ", data=" + data);
                 controller.sendDataReport(
-                        new RPiPowerConsumptionSensor(gpioPin),
-                        new PowerConsumptionSensorData(
-                                timestamp_end, data
-                        ));
+                    new RPiPowerConsumptionSensor(gpioPin),
+                    new PowerConsumptionSensorData(data, timestamp)
+                );
             }
         });
     }

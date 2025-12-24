@@ -58,6 +58,8 @@ public class HalContext {
 
     public static final String RUNTIME_ROOT;
     static {
+        logger.info("Runtime folder: " + new File("").getAbsolutePath());
+
         if (FileUtil.find("build/install/Hal") != null) // Development environment
             RUNTIME_ROOT = "build/install/Hal";
         else
@@ -95,7 +97,7 @@ public class HalContext {
                 fileConf.load(in);
                 in.close();
             } else {
-                logger.info("No hal.conf file found");
+                logger.info("No hal.conf file found at: " + CONF_FILE);
             }
 
             // Init DB

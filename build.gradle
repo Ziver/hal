@@ -90,13 +90,6 @@ distributions {
             from 'logging.properties'
             from 'run.sh'
 
-            if (file('hal.conf').exists()) {
-                from 'hal.conf'
-            }
-            if (file('hal.db').exists()) {
-                from 'hal.db'
-            }
-
             // from subprojects
             project.subprojects.each { subProject ->
                 into('bin') {

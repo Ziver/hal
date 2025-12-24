@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2020 Ziver Koc
+ * Copyright (c) 2020-2025 Ziver Koc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,11 +44,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class HalMqttController implements HalAutostartController, MqttSubscriptionListener, HalEventController {
+public class HalMqttController implements HalAutostartController, MqttSubscriptionListener, HalEventController, HalScannableController {
     private final Logger logger = LogUtil.getLogger();
 
     private MqttBroker mqttBroker;
 
+    private boolean isScanning = false;
     private List<HalMqttDetector> detectors = Collections.emptyList();
     private Map<String, List<HalMqttDeviceConfig>> topics = new HashMap<>();
     private List<HalDeviceReportListener> deviceListeners = new CopyOnWriteArrayList<>();
@@ -139,6 +140,12 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
                 }
             }
         }
+
+        // Handle scanning status
+
+        if ("zigbee2mqtt/bridge/response/permit_join".equals(topicName)) {
+            isScanning = Objects.equals("true", new String(data, StandardCharsets.UTF_8));
+        }
     }
 
     public MqttBroker getBroker() {
@@ -198,5 +205,22 @@ public class HalMqttController implements HalAutostartController, MqttSubscripti
     public void addListener(HalDeviceReportListener listener) {
         if (!deviceListeners.contains(listener))
             deviceListeners.add(listener);
+    }
+
+
+    @Override
+    public boolean isScannable() {
+        return true;
+    }
+
+    @Override
+    public void startScan() {
+        // Start scanning for zigbee2mqtt
+        mqttBroker.publish("zigbee2mqtt/bridge/request/permit_join", "{\"value\": true}");
+    }
+
+    @Override
+    public boolean isScanning() {
+        return isScanning;
     }
 }

@@ -61,7 +61,7 @@ public class HalContext {
         logger.info("Runtime folder: " + new File("").getAbsolutePath());
 
         if (FileUtil.find("build/install/Hal") != null) // Development environment
-            RUNTIME_ROOT = "build/install/Hal";
+            RUNTIME_ROOT = "./build/install/Hal";
         else
             RUNTIME_ROOT = ".";
     }
@@ -70,8 +70,8 @@ public class HalContext {
     public static final String RESOURCE_WEB_ROOT = HalContext.RUNTIME_ROOT + "/web";
     public static final String RESOURCE_BIN_ROOT = HalContext.RUNTIME_ROOT + "/bin";
 
-    private static final String CONF_FILE = RUNTIME_ROOT + "/hal.conf";
-    static final String DB_FILE           = RUNTIME_ROOT + "/hal.db";
+    private static final String CONF_FILE = "./hal.conf";
+            static final String DB_FILE   = "./hal.db";
 
     // Variables
 

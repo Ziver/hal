@@ -3,17 +3,38 @@
 <div class="row">
     <div class="col-md-8">
         <div class="panel panel-default drop-shadow">
-            <div class="panel-heading">Published Topic Data</div>
+            <div class="panel-heading">Publish Data</div>
+            <div class="panel-body">
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="topic">Topic:</label>
+                        <input type="text" class="form-control" id="topic" name="topic">
+                    </div>
+                    <div class="form-group">
+                        <label for="topic">Value:</label>
+                        <input type="text" class="form-control" id="value" name="value">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="panel panel-default drop-shadow">
+            <div class="panel-heading">Broker Topic Data History</div>
             <div class="panel-body">
                 <table class="table table-hover table-condensed">
                     <tr>
                         <th>Topic</th>
                         <th>Published Data</th>
+                        <th>Sub-Count</th>
                     </tr>
                     {{#topics}}
                     <tr>
-                        <td style="font-family:monospace;">{{.getKey()}}</td>
-                        <td><pre style="white-space: pre-wrap;">{{.getValue()}}</pre></td>
+                        <td style="font-family:monospace;">{{.topicName}}</td>
+                        <td><pre style="white-space: pre-wrap;">{{.value}}</pre></td>
+                        <td>{{.getSubscriberCount()}}</td>
                     </tr>
                     {{/topics}}
                 </table>
